@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  webappmulti1:
+    image: webappmulti
+    ports:
+      - "5078:80"
+  webappmulti2:
+    image: webappmulti
+    ports:
+      - "5079:80"

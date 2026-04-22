@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  webappmulti:
+    image: webappmulti
+    container_name: webappmulti
+    environment:
+      - ASPNETCORE_PATHBASE=/app1
+    networks:
+      - appnet
+
+  webappmulti2:
+    image: webappmulti
+    container_name: webappmulti2
+    environment:
+      - ASPNETCORE_PATHBASE=/app2
+    networks:
+      - appnet
+
+  nginx-proxy:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "8090:80"   # exposed on host
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - webappmulti
+      - webappmulti2
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge

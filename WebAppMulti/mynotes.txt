@@ -1,0 +1,50 @@
+
+docker rm -f webappmulti
+
+docker build -t webappmulti .
+docker run -d -p 5078:80 --name webappmulti webappmulti
+
+docker run -d -p 5079:80 --name webappmulti2 webappmulti
+
+4. Access Each Microservice
+•	First instance: http://localhost:5078/swagger
+•	Second instance: http://localhost:5079/swagger
+
+http://localhost:5078/weatherforecast
+https://localhost:7009/swagger/index.html
+
+5. (Optional) Docker Compose for Multiple Services
+If you want to orchestrate both containers together, create a docker-compose.yml:
+docker compose up -d
+
+http://localhost:8080/app1/api/swagger
+
+C:\Users\mastronardif\source\repos\WebAppMulti
+
+2. Build and Start Everything Fresh
+docker-compose up --build -d
+
+EF
+dotnet ef dbcontext scaffold "Server=LAPTOP-JIH94VS9\\SQLEXPRESS;Database=AdventureWorksDW;Trusted_Connection=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models --schema dbo --table DimCustomer --table DimGeography --force
+
+
+dotnet ef dbcontext scaffold "Server=your_server;Database=AdventureWorksDW;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models -f
+
+dotnet ef dbcontext scaffold "Server=LAPTOP-JIH94VS9\\SQLEXPRESS;Database=AdventureWorksDW;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models -f
+
+dotnet ef dbcontext scaffold "Server=LAPTOP-JIH94VS9\\SQLEXPRESS;Database=AdventureWorksDW;Trusted_Connection=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -o ModelsPRE --schema dbo --table DimEmployee
+
+curl -k -X GET "https://localhost:7009/api/Customer/summary" -H "accept: text/plain"
+
+start https://localhost:7009/swagger
+dotnet run --launch-profile App1 --environment "ASPNETCORE_PATHBASE=/app1"
+dotnet run --launch-profile App2 --environment "ASPNETCORE_PATHBASE=/app2"
+
+.ps1
+tasklist /fi "imagename eq nginx.exe"
+taskkill /F /IM nginx.exe
+
+C:\nginx\nginx.exe -c C:\Users\mastronardif\source\repos\WebAppMulti\nginx.conf
+PS C:\nginx> .\nginx.exe -c C:\nginx\conf\nginx.conf
+
+nginx.exe -s reload

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ABA Intake Form</title>
+  <style>
+    :root{
+      --bg:#f4f7fb; --card:#ffffff; --accent:#0b74de; --muted:#6b7280;
+      --border:#e6eef9; --radius:12px; --pad:18px; --maxw:980px;
+      --shadow: 0 10px 30px rgba(15,30,60,0.06);
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; background:var(--bg); color:#0b2545; margin:20px}
+    .wrap{max-width:var(--maxw); margin:0 auto}
+    .header{display:flex;gap:14px;align-items:center;margin-bottom:16px}
+    .logo{width:84px;height:84px;border-radius:12px;background:linear-gradient(135deg,#4A90E2,#6DD5FA);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:20px;box-shadow:var(--shadow)}
+    .title{flex:1}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+    .card{background:var(--card);border-radius:var(--radius);padding:var(--pad);box-shadow:var(--shadow);margin-bottom:14px}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .section-title h2{margin:0;font-size:15px;color:var(--accent)}
+    label{display:block;font-weight:600;margin-bottom:6px;font-size:13px}
+    .muted{color:var(--muted);font-size:13px;margin-bottom:8px}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    input[type=text],input[type=date],input[type=time],select,textarea{
+      width:100%;padding:10px;border-radius:10px;border:1px solid var(--border);background:#fbfdff;font-size:14px;color:#0b2545;
+    }
+    textarea{min-height:90px;resize:vertical}
+    .small{font-size:13px;color:var(--muted)}
+    .inline{display:flex;gap:8px;align-items:center}
+    .checkbox-grid{display:flex;flex-wrap:wrap;gap:10px}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:#fff}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{padding:8px;border:1px solid var(--border);font-size:14px;text-align:left}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{background:var(--accent);color:white;padding:10px 14px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+    .small-muted{font-size:12px;color:var(--muted);margin-top:8px}
+    @media (max-width:880px){ .row{flex-direction:column} .header{flex-direction:column;align-items:flex-start} .logo{width:64px;height:64px} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="logo" aria-hidden="true">ABA</div>
+      <div class="title">
+        <h1>ABA New Case Intake</h1>
+        <p class="lead">Clean, fillable intake to capture client & session details — printable & savable.</p>
+      </div>
+      <div style="text-align:right">
+        <div class="small-muted">Form version: 1.0</div>
+      </div>
+    </div>
+
+    <form id="intakeForm" class="card" autocomplete="off">
+      <!-- Client Info -->
+      <div class="section-title"><h2>Client Information</h2><div class="small-muted">Basic details</div></div>
+      <div class="row">
+        <div class="col">
+          <label for="caseid">Case ID</label>
+          <input id="caseid" name="caseid" type="text" placeholder="ex. CASE-0001">
+        </div>
+        <div class="col">
+          <label for="clientName">Client Name</label>
+          <input id="clientName" name="clientName" type="text" placeholder="Child full name">
+        </div>
+        <div class="col">
+          <label for="dob">Date of Birth</label>
+          <input id="dob" name="dob" type="date">
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="row">
+        <div class="col">
+          <label for="parentName">Primary Caregiver</label>
+          <input id="parentName" name="parentName" type="text" placeholder="Parent / Guardian name">
+        </div>
+        <div class="col">
+          <label for="phone">Phone</label>
+          <input id="phone" name="phone" type="text" placeholder="(555) 555-5555">
+        </div>
+        <div class="col">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="text" placeholder="parent@example.com">
+        </div>
+      </div>
+
+      <!-- Visits -->
+      <div style="height:12px"></div>
+      <div class="section-title">
+        <h2>Visits / Sessions</h2>
+        <div class="small-muted">Select scheduled visit(s)</div>
+      </div>
+
+      <div class="card" style="padding:12px">
+        <div class="row" style="align-items:center">
+          <div style="width:36px">
+            <input id="visit1_sel" name="visit1_sel" type="checkbox">
+          </div>
+          <div class="col">
+            <label for="visit1_time" style="font-weight:600">09/17/2025 — 5:00pm to 5:30pm</label>
+            <div class="small-muted">Therapist: Kristine B Mastronardi</div>
+          </div>
+          <div style="width:140px">
+            <label for="visit1_length" class="small">Length</label>
+            <input id="visit1_length" name="visit1_length" type="text" placeholder="e.g., 30 min / 1 hour" value="1 hour">
+          </div>
+        </div>
+
+        <hr style="margin:10px 0;border:none;border-top:1px solid var(--border)">
+
+        <div class="row" style="align-items:center">
+          <div style="width:36px">
+            <input id="visit2_sel" name="visit2_sel" type="checkbox">
+          </div>
+          <div class="col">
+            <label for="visit2_time" style="font-weight:600">09/17/2025 — 5:30pm to 7:00pm</label>
+            <div class="small-muted">Therapist: Kristine B Mastronardi</div>
+          </div>
+          <div style="width:140px">
+            <label class="small" for="visit2_length">Length</label>
+            <input id="visit2_length" name="visit2_length" type="text" placeholder="e.g., 90 min">
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Details -->
+      <div style="height:12px"></div>
+      <div class="section-title">
+        <h2>Session Details</h2>
+        <div class="small-muted">Service & context</div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label for="serviceStart">Service Start Date</label>
+          <input id="serviceStart" name="serviceStart" type="date">
+        </div>
+        <div class="col">
+          <label for="hoursWeek">Hours per week</label>
+          <input id="hoursWeek" name="hoursWeek" type="text" placeholder="e.g., 6">
+        </div>
+        <div class="col">
+          <label for="setting">Place of Service</label>
+          <select id="setting" name="setting">
+            <option value="">Select</option>
+            <option>Home</option>
+            <option>School</option>
+            <option>Clinic</option>
+            <option>Telehealth</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <!-- Presentation -->
+      <div class="section-title">
+        <h2>Child Presentation at Start</h2>
+        <div class="small-muted">Select all that apply</div>
+      </div>
+      <div class="checkbox-grid">
+        <label class="chip"><input type="checkbox" name="present_smiling"> Smiling</label>
+        <label class="chip"><input type="checkbox" name="present_relaxed"> Relaxed</label>
+        <label class="chip"><input type="checkbox" name="present_excited"> Excited</label>
+        <label class="chip"><input type="checkbox" name="present_withdrawn"> Withdrawn</label>
+        <label class="chip"><input type="checkbox" name="present_tired"> Tired</label>
+        <label class="chip"><input type="checkbox" name="present_engaged"> Engaged</label>
+        <label class="chip"><input type="checkbox" name="present_quiet"> Quiet</label>
+        <label class="chip"><input type="checkbox" name="present_crying"> Crying</label>
+        <label class="chip"><input type="checkbox" name="present_other"> Other</label>
+      </div>
+      <div style="height:8px"></div>
+      <label for="present_other_text" class="small">If Other, describe</label>
+      <input id="present_other_text" name="present_other_text" type="text" placeholder="Describe other presentation">
+
+      <!-- Medical & History -->
+      <div style="height:12px"></div>
+      <div class="section-title">
+        <h2>Medical / Developmental History</h2>
+        <div class="small-muted">Important health notes</div>
+      </div>
+      <textarea id="medicalHistory" name="medicalHistory" placeholder="Allergies, diagnoses, medications, relevant medical history"></textarea>
+
+      <!-- Current Services -->
+      <div style="height:12px"></div>
+      <div class="section-title">
+        <h2>Current Services</h2>
+        <div class="small-muted">Other therapies or school supports</div>
+      </div>
+      <textarea id="currentServices" name="currentServices" placeholder="Speech, OT, PT, special education, hours, providers"></textarea>
+
+      <!-- Goals -->
+      <div style="height:12px"></div>
+      <div class="section-title">
+        <h2>Initial Goals / Concerns</h2>
+        <div class="small-muted">Top priorities for first month</div>
+      </div>
+      <textarea id="goals" name="goals" placeholder="List 3–5 measurable goals"></textarea>
+
+      <!-- Caregiver coaching and notes -->
+      <div style="height:12px"></div>
+      <div class="section-title">
+        <h2>Caregiver / Consent</h2>
+        <div class="small-muted">Permissions & notes</div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label for="consent">Consent to ABA services</label>
+          <select id="consent" name="consent">
+            <option value="">Select</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="preferredContact">Preferred contact method</label>
+          <select id="preferredContact" name="preferredContact">
+            <option>Phone</option>
+            <option>Email</option>
+            <option>Text</option>
+          </select>
+        </div>
+        <div class="col">
+          <label for="notes">Other notes</label>
+          <input id="notes" name="notes" type="text" placeholder="Anything to flag for first session">
+        </div>
+      </div>
+
+      <!-- Signature block -->
+      <div style="height:12px"></div>
+      <div class="section-title">
+        <h2>Signatures</h2>
+        <div class="small-muted">Electronic signature / printed name</div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label for="parentSig">Parent / Guardian Name (printed)</label>
+          <input id="parentSig" name="parentSig" type="text" placeholder="Parent printed name">
+        </div>
+        <div class="col">
+          <label for="parentSignDate">Date</label>
+          <input id="parentSignDate" name="parentSignDate" type="date">
+        </div>
+        <div class="col">
+          <label for="staffName">Staff (RBT/BCBA)</label>
+          <input id="staffName" name="staffName" type="text" placeholder="Staff completing intake">
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="height:16px"></div>
+      <div class="actions">
+        <button type="button" class="btn" id="saveLocal">Save locally</button>
+        <button type="button" class="btn ghost" id="loadLocal">Load last</button>
+        <button

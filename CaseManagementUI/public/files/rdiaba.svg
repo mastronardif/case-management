@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600" role="img" aria-labelledby="title desc">
+  <title id="title">Autism ABA RDI Logo</title>
+  <desc id="desc">A friendly logo combining an abstract puzzle heart with interlocking rings and the text ABA • RDI, using calm gradients and accessible shapes.</desc>
+
+  <!-- Background -->
+  <rect width="1200" height="600" fill="none"/>
+
+  <!-- Gradients and shadow -->
+  <defs>
+    <linearGradient id="g1" x1="0" x2="1">
+      <stop offset="0" stop-color="#4A90E2"/>
+      <stop offset="1" stop-color="#6DD5FA"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" x2="1">
+      <stop offset="0" stop-color="#F5A623"/>
+      <stop offset="1" stop-color="#FF6B6B"/>
+    </linearGradient>
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Stylized heart/puzzle left -->
+  <g transform="translate(140,120)" filter="url(#shadow)">
+    <path d="M220 60c0 41-34 75-75 75-24 0-46-11-60-29-14 18-36 29-60 29-41 0-75-34-75-75 0-47 56-92 99-128 12-9 30-9 42 0 43 36 99 81 99 128z"
+          fill="url(#g1)" stroke="#2E6FB7" stroke-width="6" stroke-linejoin="round"/>
+    <path d="M220 60c0 41-34 75-75 75-24 0-46-11-60-29 20-24 42-46 60-66 18-20 30-36 52-36 13 0 25 6 34 15 19 18 39 41 39 67z"
+          fill="url(#g2)" opacity="0.96" transform="translate(60,0) scale(0.88)"/>
+  </g>
+
+  <!-- Interlocking rings (RDI / relationship) -->
+  <g transform="translate(420,120)">
+    <circle cx="120" cy="120" r="84" fill="none" stroke="#4A90E2" stroke-width="22" stroke-linecap="round" opacity="0.95"/>
+    <circle cx="220" cy="120" r="84" fill="none" stroke="#F5A623" stroke-width="22" stroke-linecap="round" opacity="0.95"/>
+    <path d="M170 60c20 0 40 40 0 80" fill="none" stroke="#6DD5FA" stroke-width="12" stroke-linecap="round" opacity="0.65"/>
+  </g>
+
+  <!-- Main text -->
+  <g transform="translate(640,190)">
+    <text x="0" y="0" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="56" fill="#0B2545">ABA <tspan fill="#4A90E2">•</tspan> <tspan fill="#0B2545">RDI</tspan></text>
+    <text x="0" y="48" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#4d5a72">Evidence-based behavioral &amp; relationship-centered supports</text>
+  </g>
+
+  <!-- Badge / tagline -->
+  <g transform="translate(640,270)">
+    <rect x="0" y="28" rx="8" ry="8" width="360" height="44" fill="#ffffff" stroke="#e6eef9" stroke-width="1.5"/>
+    <text x="18" y="60" font-family="Helvetica, Arial, sans-serif" font-size="16" fill="#344154">In-home • Clinic • Telehealth</text>
+  </g>
+
+  <!-- Decorative accents -->
+  <g transform="translate(1040,40)" opacity="0.22">
+    <circle cx="0" cy="0" r="8" fill="#4A90E2"/>
+    <circle cx="28" cy="18" r="6" fill="#F5A623"/>
+    <circle cx="-20" cy="30" r="5" fill="#FF6B6B"/>
+  </g>
+</svg>

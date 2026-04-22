@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fillable Month 1 ABA Plan — Age 7</title>
+  <style>
+    :root{
+      --bg:#f7f9fc; --card:#fff; --accent:#0b74de; --muted:#667085; --border:#e6eef9; --radius:10px; --maxw:980px;
+    }
+    *{box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;margin:18px;background:var(--bg);color:#0b2136}
+    .wrap{max-width:var(--maxw);margin:0 auto}
+    .card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 8px 24px rgba(20,30,60,0.06);margin-bottom:14px}
+    h1{font-size:20px;margin:0 0 6px}
+    h2{font-size:16px;color:var(--accent);margin:12px 0}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type=text],textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);font-size:13px}
+    textarea{min-height:80px}
+    .row{display:flex;gap:12px}
+    .col{flex:1}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    th,td{border:1px solid var(--border);padding:8px;text-align:left;font-size:13px}
+    th{background:#f3f7ff;font-weight:600}
+    .btn{display:inline-block;background:var(--accent);color:white;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600;border:0;cursor:pointer}
+    .secondary{background:#eef6ff;color:var(--accent);border:0}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    @media (max-width:880px){.row{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <form id="abaForm" class="card" autocomplete="off">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <div>
+          <h1>Fillable Month 1 — ABA Plan (Age 7)</h1>
+          <p style="margin:0;color:var(--muted)">Editable form for RBTs and caregivers. Save locally or print to PDF.</p>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:13px;color:var(--muted)">Date: <input id="date" type="text" name="date" placeholder="MM/DD/YYYY" style="width:120px;display:inline-block;margin-left:6px"></div>
+        </div>
+      </div>
+
+      <hr style="margin:12px 0;border:none;border-top:1px solid #eef3fb" />
+
+      <div class="row">
+        <div class="col">
+          <label>Child Name</label>
+          <input type="text" name="childName" placeholder="Child Name">
+        </div>
+        <div class="col">
+          <label>DOB / Age</label>
+          <input type="text" name="dob" placeholder="MM/DD/YYYY  •  7 yrs">
+        </div>
+        <div class="col">
+          <label>RBT</label>
+          <input type="text" name="rbtName" placeholder="RBT Name">
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <div class="col">
+          <label>Primary Caregiver</label>
+          <input type="text" name="caregiver" placeholder="Parent / Caregiver">
+        </div>
+        <div class="col">
+          <label>BCBA Supervisor</label>
+          <input type="text" name="bcba" placeholder="BCBA Name">
+        </div>
+      </div>
+
+      <h2>Session Objectives (Top 5)</h2>
+      <label class="small">List measurable goals for Month 1</label>
+      <textarea name="objectives" placeholder="1)&#10;2)&#10;3)&#10;4)&#10;5()"></textarea>
+
+      <h2>Materials & Reinforcers</h2>
+      <label class="small">Preferred reinforcers and materials needed</label>
+      <textarea name="reinforcers" placeholder="Preferred reinforcers and materials (e.g., token board, iPad 5 min, snacks)"></textarea>
+
+      <h2>Session Timeline (2 hours)</h2>
+      <table>
+        <thead><tr><th style="width:140px">Time</th><th>Activity</th><th>Notes / Data</th></tr></thead>
+        <tbody>
+          <tr><td>0–10 min</td><td><input type="text" name="t1_activity" value="Warm-up & pair: rapport, preference check, token board"></td><td><input type="text" name="t1_notes"></td></tr>
+          <tr><td>10–30 min</td><td><input type="text" name="t2_activity" value="Preference assessment / baseline probes"></td><td><input type="text" name="t2_notes"></td></tr>
+          <tr><td>30–60 min</td><td><input type="text" name="t3_activity" value="Skill Block A — communication"></td><td><input type="text" name="t3_notes"></td></tr>
+          <tr><td>60–75 min</td><td><input type="text" name="t4_activity" value="Movement / sensory break"></td><td><input type="text" name="t4_notes"></td></tr>
+          <tr><td>75–105 min</td><td><input type="text" name="t5_activity" value="Skill Block B — daily living / academic"></td><td><input type="text" name="t5_notes"></td></tr>
+          <tr><td>105–115 min</td><td><input type="text" name="t6_activity" value="Behavior protocol / FCT"></td><td><input type="text" name="t6_notes"></td></tr>
+          <tr><td>115–120 min</td><td><input type="text" name="t7_activity" value="Cool-down & caregiver coaching"></td><td><input type="text" name="t7_notes"></td></tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:12px">Data Collection — Targets</h2>
+      <table>
+        <thead><tr><th style="width:140px">Target</th><th style="width:90px">Trials</th><th style="width:90px">Correct</th><th style="width:110px">Prompt Level</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td><input type="text" name="target1" placeholder="Target 1"></td><td><input type="text" name="t1_trials"></td><td><input type="text" name="t1_correct"></td><td><input type="text" name="t1_prompt"></td><td><input type="text" name="t1_notes2"></td></tr>
+          <tr><td><input type="text" name="target2" placeholder="Target 2"></td><td><input type="text" name="t2_trials"></td><td><input type="text" name="t2_correct"></td><td><input type="text" name="t2_prompt"></td><td><input type="text" name="t2_notes2"></td></tr>
+          <tr><td><input type="text" name="target3" placeholder="Target 3"></td><td><input type="text" name="t3_trials"></td><td><input type="text" name="t3_correct"></td><td><input type="text" name="t3_prompt"></td><td><input type="text" name="t3_notes2"></td></tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:12px">Behavior Incident Log (if any)</h2>
+      <table>
+        <thead><tr><th style="width:90px">Time</th><th style="width:160px">Antecedent</th><th style="width:160px">Behavior</th><th style="width:160px">Consequence</th><th>Duration</th></tr></thead>
+        <tbody>
+          <tr><td><input type="text" name="b_time1"></td><td><input type="text" name="b_ante1"></td><td><input type="text" name="b_beh1"></td><td><input type="text" name="b_cons1"></td><td><input type="text" name="b_dur1"></td></tr>
+          <tr><td><input type="text" name="b_time2"></td><td><input type="text" name="b_ante2"></td><td><input type="text" name="b_beh2"></td><td><input type="text" name="b_cons2"></td><td><input type="text" name="b_dur2"></td></tr>
+          <tr><td><input type="text" name="b_time3"></td><td><input type="text" name="b_ante3"></td><td><input type="text" name="b_beh3"></td><td><input type="text" name="b_cons3"></td><td><input type="text" name="b_dur3"></td></tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:12px">Caregiver Coaching Checklist</h2>
+      <label><input type="checkbox" name="coach1"> Modeled use of reinforcement system</label><br>
+      <label><input type="checkbox" name="coach2"> Caregiver practiced target(s)</label><br>
+      <label><input type="checkbox" name="coach3"> Explained replacement behavior & prompting</label><br>
+      <label><input type="checkbox" name="coach4"> Provided home practice ideas</label><br>
+
+      <h2 style="margin-top:12px">Session Summary & Next Steps</h2>
+      <textarea name="summary" placeholder="Brief summary of progress, barriers, and recommended next steps"></textarea>
+
+      <div style="display:flex;gap:8px;margin-top:14px;align-items:center;">
+        <div class="actions">
+          <button type="button" class="btn" id="saveLocal">Save locally</button>
+          <button type="button" class="btn secondary" id="loadLocal">Load last saved</button>
+          <button type="button" class="btn" id="downloadJSON">Download (JSON)</button>
+          <button type="button" class="btn secondary" id="clearForm">Clear</button>
+          <button type="button" class="btn" id="printPDF">Print / Save as PDF</button>
+        </div>
+      </div>
+
+      <div style="margin-top:8px;font-size:13px;color:var(--muted)">Tip: Use <strong>Save locally</strong> to store progress in this browser. Use <strong>Download (JSON)</strong> to create a transferable file you can email or re-upload via Load.</div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('abaForm');
+    const storageKey = 'aba_month1_7yo_fillable_v1';
+
+    function saveToLocal(){
+      const data = {};
+      new FormData(form).forEach((v,k)=>{data[k]=v});
+      // include checkboxes
+      data.coach1 = form.querySelector('[name=coach1]').checked;
+      data.coach2 = form.querySelector('[name=coach2]').checked;
+      data.coach3 = form.querySelector('[name=coach3]').checked;
+      data.coach4 = form.querySelector('[name=coach4]').checked;
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      alert('Saved locally in this browser.');
+    }
+
+    function loadFromLocal(){
+      const raw = localStorage.getItem(storageKey);
+      if(!raw){ alert('No saved form found.'); return; }
+      const data = JSON.parse(raw);
+      for(const k in data){
+        const el = form.elements[k];
+        if(!el) continue;
+        if(el.type === 'checkbox'){ el.checked = data[k]; } else { el.value = data[k]; }
+      }
+      alert('Loaded saved form.');
+    }
+
+    function downloadJSON(){
+      const data = {};
+      new FormData(form).forEach((v,k)=>{data[k]=v});
+      data.coach1 = form.querySelector('[name=coach1]').checked;
+      data.coach2 = form.querySelector('[name=coach2]').checked;
+      data.coach3 = form.querySelector('[name=coach3]').checked;
+      data.coach4 = form.querySelector('[name=coach4]').checked;
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'ABA_Month1_7yo_fillable.json'; document.body.appendChild(a); a.click();
+      setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1000);
+    }
+
+    function clearForm(){
+      if(confirm('Clear all fields?')){ form.reset(); localStorage.removeItem(storageKey); }
+    }
+
+    document.getElementById('saveLocal').addEventListener('click', saveToLocal);
+    document.getElementById('loadLocal').addEventListener('click', loadFromLocal);
+    document.getElementById('downloadJSON').addEventListener('click', downloadJSON);
+    document.getElementById('clearForm').addEventListener('click', clearForm);
+    document.getElementById('printPDF').addEventListener('click', ()=>{ window.print(); });
+
+    // Auto-load if data exists
+    window.addEventListener('load', ()=>{
+      if(localStorage.getItem(storageKey)){
+        // don't auto-load; but enable visual hint (could be enhanced)
+        console.log('Saved form exists — use Load last saved to restore it.');
+      }
+    });
+  </script>
+</body>
+</html>

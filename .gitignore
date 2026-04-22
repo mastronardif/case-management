@@ -1,0 +1,16 @@
+# Node
+node_modules/
+dist/
+build/
+
+# .NET
+bin/
+obj/
+
+# VS
+.vs/
+*.user
+
+# Angular/React temp
+.angular/
+.cache/

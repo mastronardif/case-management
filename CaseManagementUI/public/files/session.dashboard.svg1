@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="1000" height="640" viewBox="0 0 1000 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Monthly ABA Sessions Dashboard — September 2025</title>
+  <desc id="desc">Summary metrics, weekly sessions, program target distribution, and daily heatmap for an example month.</desc>
+
+  <style>
+    .bg { fill: #fbfcfe; }
+    .card { fill: #ffffff; stroke: #e6eef8; stroke-width:1; rx:12; ry:12; filter: drop-shadow(0 4px 10px rgba(20,40,80,0.06)); }
+    .h1 { font-family: Inter, Arial, sans-serif; font-size:18px; fill:#102a43; font-weight:700; }
+    .muted { font-family: Inter, Arial, sans-serif; font-size:12px; fill:#486581; }
+    .metric { font-family: Inter, Arial, sans-serif; font-size:28px; fill:#0b3b66; font-weight:700; }
+    .sub { font-family: Inter, Arial, sans-serif; font-size:12px; fill:#7b8ea3; }
+    .bar { fill: #4a90e2; rx:4; ry:4; }
+    .bar-phantom { fill: #cfe5ff; rx:4; ry:4; }
+    .pie-label { font-family: Inter, Arial, sans-serif; font-size:12px; fill:#0b3b66; }
+    .grid-label { font-family: Inter, Arial, sans-serif; font-size:10px; fill:#6b7f93; }
+    .heat-text { font-family: Inter, Arial, sans-serif; font-size:10px; fill:#0b3b66; }
+    .legend-dot { stroke: none; }
+  </style>
+
+  <!-- Background -->
+  <rect class="bg" x="0" y="0" width="1000" height="640"/>
+
+  <!-- Header -->
+  <text x="32" y="38" class="h1">Monthly ABA Sessions Dashboard</text>
+  <text x="32" y="60" class="muted">September 2025 • Summary of sessions and targets • Editable SVG (change numbers directly)</text>
+
+  <!-- Metric cards -->
+  <g transform="translate(32,80)">
+    <rect class="card" x="0" y="0" width="220" height="96"/>
+    <text x="16" y="26" class="sub">Total sessions</text>
+    <text x="16" y="62" class="metric" id="total_sessions">20</text>
+    <text x="16" y="80" class="muted">(2 hrs each)</text>
+  </g>
+
+  <g transform="translate(272,80)">
+    <rect class="card" x="0" y="0" width="220" height="96"/>
+    <text x="16" y="26" class="sub">Total hours</text>
+    <text x="16" y="62" class="metric" id="total_hours">40</text>
+    <text x="16" y="80" class="muted">hours billed</text>
+  </g>
+
+  <g transform="translate(512,80)">
+    <rect class="card" x="0" y="0" width="220" height="96"/>
+    <text x="16" y="26" class="sub">Average duration</text>
+    <text x="16" y="62" class="metric" id="avg_duration">120 min</text>
+    <text x="16" y="80" class="muted">per session</text>
+  </g>
+
+  <g transform="translate(752,80)">
+    <rect class="card" x="0" y="0" width="220" height="96"/>
+    <text x="16" y="26" class="sub">Completion rate</text>
+    <text x="16" y="62" class="metric" id="completion_rate">95%</text>
+    <text x="16" y="80" class="muted">of planned activities</text>
+  </g>
+
+  <!-- Weekly sessions bar chart card -->
+  <g transform="translate(32,200)">
+    <rect class="card" x="0" y="0" width="560" height="300"/>
+    <text x="18" y="28" class="h1">Sessions per week</text>
+    <text x="18" y="48" class="muted">Weekly distribution (example data)</text>
+
+    <!-- grid lines -->
+    <g transform="translate(18,70)">
+      <!-- y-axis labels -->
+      <text x="-10" y="-6" class="grid-label" text-anchor="end">8</text>
+      <line x1="0" y1="-8" x2="520" y2="-8" stroke="#eef6ff" stroke-width="1"/>
+      <text x="-10" y="32" class="grid-label" text-anchor="end">6</text>
+      <line x1="0" y1="20" x2="520" y2="20" stroke="#eef6ff" stroke-width="1"/>
+      <text x="-10" y="70" class="grid-label" text-anchor="end">4</text>
+      <line x1="0" y1="58" x2="520" y2="58" stroke="#eef6ff" stroke-width="1"/>
+      <text x="-10" y="110" class="grid-label" text-anchor="end">2</text>
+      <line x1="0" y1="98" x2="520" y2="98" stroke="#eef6ff" stroke-width="1"/>
+      <text x="-10" y="150" class="grid-label" text-anchor="end">0</text>
+      <line x1="0" y1="138" x2="520" y2="138" stroke="#eef6ff" stroke-width="1"/>
+
+      <!-- bars (sample values: week1=6, week2=5, week3=5, week4=4) -->
+      <!-- bar width 80, gap 30 -->
+      <!-- map value to height: max value 8 -> 140px -->
+      <!-- week1 -->
+      <rect class="bar-phantom" x="10" y="0" width="80" height="140" rx="6" ry="6" />
+      <rect class="bar" x="10" y="40" width="80" height="100" rx="6" ry="6" />
+      <text x="50" y="160" class="grid-label" text-anchor="middle">Week 1</text>
+      <text x="50" y="36" class="pie-label" text-anchor="middle">6</text>
+
+      <!-- week2 -->
+      <rect class="bar-phantom" x="120" y="0" width="80" height="140" rx="6" ry="6" />
+      <rect class="bar" x="120" y="60" width="80" height="80" rx="6" ry="6" />
+      <text x="160" y="160" class="grid-label" text-anchor="middle">Week 2</text>
+      <text x="160" y="56" class="pie-label" text-anchor="middle">5</text>
+
+      <!-- week3 -->
+      <rect class="bar-phantom" x="230" y="0" width="80" height="140" rx="6" ry="6" />
+      <rect class="bar" x="230" y="60" width="80" height="80" rx="6" ry="6" />
+      <text x="270" y="160" class="grid-label" text-anchor="middle">Week 3</text>
+      <text x="270" y="56" class="pie-label" text-anchor="middle">5</text>
+
+      <!-- week4 -->
+      <rect class="bar-phantom" x="340" y="0" width="80" height="140" rx="6" ry="6" />
+      <rect class="bar" x="340" y="80" width="80" height="60" rx="6" ry="6" />
+      <text x="380" y="160" class="grid-label" text-anchor="middle">Week 4</text>
+      <text x="380" y="76" class="pie-label" text-anchor="middle">4</text>
+
+      <!-- optional week5 placeholder (if month stretches) -->
+      <rect class="bar-phantom" x="450" y="0" width="80" height="140" rx="6" ry="6" opacity="0.12"/>
+      <text x="490" y="160" class="grid-label" text-anchor="middle">Week 5</text>
+      <text x="490" y="36" class="pie-label" text-anchor="middle" opacity="0.3">—</text>
+    </g>
+  </g>
+
+  <!-- Pie chart for program targets -->
+  <g transform="translate(612,200)">
+    <rect class="card" x="0" y="0" width="336" height="300"/>
+    <text x="16" y="28" class="h1">Program target distribution</text>
+    <text x="16" y="48" class="muted">Proportion of focus areas (sample)</text>
+
+    <!-- pie center at 168,165 radius 80 -->
+    <!-- sample distribution: Puzzle 50%, Communication 25%, Motor 15%, Social 10% -->
+    <!-- angles: 360 * pct -->
+    <!-- Puzzle: 0 -> 180deg -->
+    <g transform="translate(168,165)">
+      <!-- Puzzle slice (50%) -->
+      <path d="M 0 0 L 80 0 A 80 80 0 0 1 -80 0 Z" fill="#4a90e2" stroke="#fff" stroke-width="1"/>
+      <!-- Communication (25%): -180 -> -270 -->
+      <path d="M 0 0 L -80 0 A 80 80 0 0 1 -24.7 -76.6 Z" transform="rotate(-180)" fill="#7bd389" stroke="#fff" stroke-width="1"/>
+      <!-- Motor (15%): -->
+      <path d="M 0 0 L -80 0 A 80 80 0 0 1 -4.7 -79.4 Z" transform="rotate(-270)" fill="#f4b942" stroke="#fff" stroke-width="1"/>
+      <!-- Social (10%) -->
+      <path d="M 0 0 L -80 0 A 80 80 0 0 1 37.7 -73.9 Z" transform="rotate(-324)" fill="#f56c6c" stroke="#fff" stroke-width="1"/>
+    </g>
+
+    <!-- legend -->
+    <g transform="translate(18,200)">
+      <rect x="0" y="0" width="12" height="12" class="legend-dot" fill="#4a90e2"/><text x="20" y="10" class="pie-label">Puzzle tasks — 50%</text>
+      <rect x="0" y="22" width="12" height="12" class="legend-dot" fill="#7bd389"/><text x="20" y="32" class="pie-label">Communication — 25%</text>
+      <rect x="0" y="44" width="12" height="12" class="legend-dot" fill="#f4b942"/><text x="20" y="54" class="pie-label">Motor — 15%</text>
+      <rect x="0" y="66" width="12" height="12" class="legend-dot" fill="#f56c6c"/><text x="20" y="76" class="pie-label">Social — 10%</text>
+    </g>
+  </g>
+
+  <!-- small calendar heatmap -->
+  <g transform="translate(32,520)">
+    <rect class="card" x="0" y="0" width="916" height="96"/>
+    <text x="16" y="26" class="h1">Daily activity heatmap — Sep 2025</text>
+    <text x="16" y="46" class="muted">Darker = more sessions that day (sample)</text>
+
+    <!-- a 7x5 grid (columns: Mon-Sun). For simplicity: assume Sep 1 is Monday (for example); adjust as needed. -->
+    <g transform="translate(16,60)">
+      <!-- days of week -->
+      <text x="0" y="-10" class="grid-label">Mon</text>
+      <text x="46" y="-10" class="grid-label">Tue</text>
+      <text x="92" y="-10" class="grid-label">Wed</text>
+      <text x="138" y="-10" class="grid-label">Thu</text>
+      <text x="184" y="-10" class="grid-label">Fri</text>
+      <text x="230" y="-10" class="grid-label">Sat</text>
+      <text x="276" y="-10" class="grid-label">Sun</text>
+
+      <!-- function for shade: 0->#f2fbff 1->#d7efff 2->#9ed1ff 3->#4a90e2 -->
+      <!-- Row 1 (days 1-7) -->
+      <rect x="0" y="0" width="44" height="20" rx="4" ry="4" fill="#4a90e2"/><text x="8" y="14" class="heat-text">1</text>
+      <rect x="46" y="0" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="54" y="14" class="heat-text">2</text>
+      <rect x="92" y="0" width="44" height="20" rx="4" ry="4" fill="#d7efff"/><text x="100" y="14" class="heat-text">3</text>
+      <rect x="138" y="0" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="146" y="14" class="heat-text">4</text>
+      <rect x="184" y="0" width="44" height="20" rx="4" ry="4" fill="#f2fbff"/><text x="192" y="14" class="heat-text">5</text>
+      <rect x="230" y="0" width="44" height="20" rx="4" ry="4" fill="#d7efff"/><text x="238" y="14" class="heat-text">6</text>
+      <rect x="276" y="0" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="284" y="14" class="heat-text">7</text>
+
+      <!-- Row 2 (8-14) -->
+      <rect x="0" y="28" width="44" height="20" rx="4" ry="4" fill="#d7efff"/><text x="8" y="42" class="heat-text">8</text>
+      <rect x="46" y="28" width="44" height="20" rx="4" ry="4" fill="#f2fbff"/><text x="54" y="42" class="heat-text">9</text>
+      <rect x="92" y="28" width="44" height="20" rx="4" ry="4" fill="#4a90e2"/><text x="100" y="42" class="heat-text">10</text>
+      <rect x="138" y="28" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="146" y="42" class="heat-text">11</text>
+      <rect x="184" y="28" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="192" y="42" class="heat-text">12</text>
+      <rect x="230" y="28" width="44" height="20" rx="4" ry="4" fill="#f2fbff"/><text x="238" y="42" class="heat-text">13</text>
+      <rect x="276" y="28" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="284" y="42" class="heat-text">14</text>
+
+      <!-- Row 3 (15-21) -->
+      <rect x="0" y="56" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="8" y="70" class="heat-text">15</text>
+      <rect x="46" y="56" width="44" height="20" rx="4" ry="4" fill="#d7efff"/><text x="54" y="70" class="heat-text">16</text>
+      <rect x="92" y="56" width="44" height="20" rx="4" ry="4" fill="#4a90e2"/><text x="100" y="70" class="heat-text">17</text>
+      <rect x="138" y="56" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="146" y="70" class="heat-text">18</text>
+      <rect x="184" y="56" width="44" height="20" rx="4" ry="4" fill="#d7efff"/><text x="192" y="70" class="heat-text">19</text>
+      <rect x="230" y="56" width="44" height="20" rx="4" ry="4" fill="#f2fbff"/><text x="238" y="70" class="heat-text">20</text>
+      <rect x="276" y="56" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="284" y="70" class="heat-text">21</text>
+
+      <!-- Row 4 (22-28) -->
+      <rect x="0" y="84" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="8" y="98" class="heat-text">22</text>
+      <rect x="46" y="84" width="44" height="20" rx="4" ry="4" fill="#f2fbff"/><text x="54" y="98" class="heat-text">23</text>
+      <rect x="92" y="84" width="44" height="20" rx="4" ry="4" fill="#d7efff"/><text x="100" y="98" class="heat-text">24</text>
+      <rect x="138" y="84" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="146" y="98" class="heat-text">25</text>
+      <rect x="184" y="84" width="44" height="20" rx="4" ry="4" fill="#4a90e2"/><text x="192" y="98" class="heat-text">26</text>
+      <rect x="230" y="84" width="44" height="20" rx="4" ry="4" fill="#d7efff"/><text x="238" y="98" class="heat-text">27</text>
+      <rect x="276" y="84" width="44" height="20" rx="4" ry="4" fill="#f2fbff"/><text x="284" y="98" class="heat-text">28</text>
+
+      <!-- Row 5 (29-30) -->
+      <rect x="0" y="112" width="44" height="20" rx="4" ry="4" fill="#9ed1ff"/><text x="8" y="126" class="heat-text">29</text>
+      <rect x="46" y="112" width="44" height="20" rx="4" ry="4" fill="#d7efff"/><text x="54" y="126" class="heat-text">30</text>
+      <!-- empty days -->
+      <rect x="92" y="112" width="44" height="20" rx="4" ry="4" fill="#fbfcfe" opacity="0.4"/><text x="100" y="126" class="heat-text" fill="#c5d5e6">31</text>
+    </g>
