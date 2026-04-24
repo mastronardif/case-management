@@ -71,7 +71,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "WebAppMulti API", Version = "v1" });
-    c.SwaggerDoc("CaseManagement", new() { Title = "Case Management", Version = "v1" });
+    c.SwaggerDoc("CaseManagement", new() { Title = "Case Management", Version = "v1", Description = "Case Management API<br/><a href='/table' target='_blank'>Open Case Management UI</a>" });
 
     c.DocInclusionPredicate((docName, apiDesc) =>
     {
@@ -184,6 +184,17 @@ app.MapGet("/", (IUserStore userStore) =>
     return $"Hello {user.UserName}, Roles: {string.Join(", ", user.Roles)}";
 });
 
+//app.MapGet("/api/table", () =>
+//{
+//    return Results.Redirect("/table");
+//})
+//.WithName("HomeTable")
+//.WithTags("Home")
+//.WithSummary("Home")
+//.WithDescription("Redirects to the Table UI page");
+////
+
+////
 // Auth
 app.UseAuthentication();
 app.UseAuthorization();
