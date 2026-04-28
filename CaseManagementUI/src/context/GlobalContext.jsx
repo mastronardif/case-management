@@ -10,11 +10,27 @@ export function GlobalProvider({ children }) {
         "/api/Calendar/GetCalendar"
     // "https://localhost:44344/api/Calendar/GetCalendar"
   );
-  const [urlCases] = useState([
-    "https://jsonplaceholder.typicode.com/albums"
-  ]);
-  const [urlTemplates] = useState("file://cases.json");
-  const [url] = useState("https://jsonplaceholder.typicode.com/users");
+  // const [urlCases] = useState([
+  //   "https://jsonplaceholder.typicode.com/albums"
+  // ]);
+  // const [urlTemplates] = useState("file://cases.json");
+  // const [url] = useState("https://jsonplaceholder.typicode.com/users");
+
+
+  //
+  const [urlCases, setUrlCases] = useState(
+  localStorage.getItem("urlCases") || "https://jsonplaceholder.typicode.com/albums"
+);
+
+const [urlTemplates, setUrlTemplates] = useState(
+  localStorage.getItem("urlTemplates") || "file://cases.json"
+);
+
+const [url, setUrl] = useState(
+  localStorage.getItem("url") || "https://jsonplaceholder.typicode.com/users"
+);
+
+  //
 
   const [loading, setLoading] = useState(false);
   const [requestCount, setRequestCount] = useState(0);
@@ -51,16 +67,41 @@ export function GlobalProvider({ children }) {
     setLoading(requestCount > 0);
   }, [requestCount]);
 
+  useEffect(() => {
+  localStorage.setItem("url", url);
+}, [url]);
+
+useEffect(() => {
+  localStorage.setItem("urlCases", urlCases);
+}, [urlCases]);
+
+useEffect(() => {
+  localStorage.setItem("urlTemplates", urlTemplates);
+}, [urlTemplates]);
+
+
   return (
     <GlobalContext.Provider
-      value={{
-        urlCalendar,
-        urlCases,
-        urlTemplates,
-        url,
-        loading,
-        setLoading
-      }}
+    value={{
+  urlCalendar,
+  url,
+  setUrl,
+  urlCases,
+  setUrlCases,
+  urlTemplates,
+  setUrlTemplates,
+  loading,
+  setLoading
+}}
+
+      // value={{
+      //   urlCalendar,
+      //   urlCases,
+      //   urlTemplates,
+      //   url,
+      //   loading,
+      //   setLoading
+      // }}
     >
       {children}
     </GlobalContext.Provider>

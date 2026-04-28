@@ -3,35 +3,47 @@ using Microsoft.AspNetCore.HttpOverrides;
 //using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
 using System.Text;
 using WebAppMulti.Database.Auth;
 using WebAppMulti.Database.Repository;
 using WebAppMulti.Middleware;
 using WebAppMulti.Services;
 using WebAppMulti.Services.CaseManagement;
-using Serilog;
-using Serilog.Events;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Configure Serilog
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(builder.Configuration)
+//    .Enrich.FromLogContext()
+//    .Enrich.WithMachineName()
+//    .Enrich.WithThreadId()
+//    .Enrich.WithProcessId()
+//    .WriteTo.Console()
+//    .WriteTo.File(
+//        "Logs/log-.txt",
+//        rollingInterval: RollingInterval.Day,
+//        retainedFileCountLimit: 30)
+
+//    .WriteTo.MSSqlServer(
+//        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
+//        sinkOptions: new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions
+//        {
+//            TableName = "ApplicationLogs",
+//            AutoCreateSqlTable = true
+//        },
+//        restrictedToMinimumLevel: LogEventLevel.Error)
+//    .CreateLogger();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .Enrich.WithMachineName()
-    .Enrich.WithThreadId()
-    .Enrich.WithProcessId()
-    .WriteTo.Console()
-    .WriteTo.File(
-        "Logs/log-.txt",
-        rollingInterval: RollingInterval.Day,
-        retainedFileCountLimit: 30)
-
     .WriteTo.MSSqlServer(
         connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
-        sinkOptions: new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions
+        sinkOptions: new MSSqlServerSinkOptions
         {
             TableName = "ApplicationLogs",
             AutoCreateSqlTable = true
