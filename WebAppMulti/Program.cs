@@ -9,8 +9,38 @@ using WebAppMulti.Database.Repository;
 using WebAppMulti.Middleware;
 using WebAppMulti.Services;
 using WebAppMulti.Services.CaseManagement;
+using Serilog;
+using Serilog.Events;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .Enrich.WithMachineName()
+    .Enrich.WithThreadId()
+    .Enrich.WithProcessId()
+    .WriteTo.Console()
+    .WriteTo.File(
+        "Logs/log-.txt",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30)
+
+    .WriteTo.MSSqlServer(
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
+        sinkOptions: new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions
+        {
+            TableName = "ApplicationLogs",
+            AutoCreateSqlTable = true
+        },
+        restrictedToMinimumLevel: LogEventLevel.Error)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 
 // Read path base from environment variable (e.g., "/app1")
 var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
@@ -184,6 +214,12 @@ app.MapGet("/", (IUserStore userStore) =>
     return $"Hello {user.UserName}, Roles: {string.Join(", ", user.Roles)}";
 });
 
+app.MapGet("/test-error", () =>
+{
+    throw new Exception("This is a test exception for Serilog.");
+});
+
+
 //app.MapGet("/api/table", () =>
 //{
 //    return Results.Redirect("/table");
@@ -205,4 +241,17 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-app.Run();
+//app.Run();
+try
+{
+    Log.Information("Application starting up");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application failed to start");
+}
+finally
+{
+    Log.CloseAndFlush();
+}
