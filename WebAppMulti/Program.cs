@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
-//using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -12,33 +11,10 @@ using WebAppMulti.Database.Repository;
 using WebAppMulti.Middleware;
 using WebAppMulti.Services;
 using WebAppMulti.Services.CaseManagement;
-
+//using WebAppMulti.Modules.Cases;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-// Configure Serilog
-//Log.Logger = new LoggerConfiguration()
-//    .ReadFrom.Configuration(builder.Configuration)
-//    .Enrich.FromLogContext()
-//    .Enrich.WithMachineName()
-//    .Enrich.WithThreadId()
-//    .Enrich.WithProcessId()
-//    .WriteTo.Console()
-//    .WriteTo.File(
-//        "Logs/log-.txt",
-//        rollingInterval: RollingInterval.Day,
-//        retainedFileCountLimit: 30)
-
-//    .WriteTo.MSSqlServer(
-//        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
-//        sinkOptions: new Serilog.Sinks.MSSqlServer.MSSqlServerSinkOptions
-//        {
-//            TableName = "ApplicationLogs",
-//            AutoCreateSqlTable = true
-//        },
-//        restrictedToMinimumLevel: LogEventLevel.Error)
-//    .CreateLogger();
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .WriteTo.MSSqlServer(
@@ -53,30 +29,36 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-
-// Read path base from environment variable (e.g., "/app1")
 var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
-
 var jwtKey = builder.Configuration["Jwt:Key"];
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 
 builder.Services.AddScoped<GenericRepository>();
 builder.Services.AddScoped<DapperRepository>();
+builder.Services.AddScoped<SessionDocumentService>();
+builder.Services.AddScoped<SessionService>();
+builder.Services.AddScoped<FormTemplateService>();
+builder.Services.AddScoped<CustomerService>();
+builder.Services.AddScoped<EFdbServie>();
+builder.Services.AddScoped<IUserStore, DummyAuthStore>();
+builder.Services.AddScoped<MyMarker>();
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddHttpClient();
 
+builder.Services.AddDbContext<WebAppMulti.Database.MyDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
     });
 });
 
-// Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -88,41 +70,32 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtIssuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
         };
     });
 
-// Services
-builder.Services.AddScoped<SessionDocumentService>();
-builder.Services.AddScoped<SessionService>();
-builder.Services.AddScoped<FormTemplateService>();
-
-
-builder.Services.AddScoped<CustomerService>();
-builder.Services.AddScoped<EFdbServie>();
-builder.Services.AddDbContext<WebAppMulti.Database.MyDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<IUserStore, DummyAuthStore>();
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddScoped<MyMarker>();
-builder.Services.AddHttpClient();
 
-// Swagger
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "WebAppMulti API", Version = "v1" });
-    c.SwaggerDoc("CaseManagement", new() { Title = "Case Management", Version = "v1", Description = "Case Management API<br/><a href='/table' target='_blank'>Open Case Management UI</a>" });
+    c.SwaggerDoc("CaseManagement", new()
+    {
+        Title = "Case Management",
+        Version = "v1",
+        Description = "Case Management API<br/><a href='/table' target='_blank'>Open Case Management UI</a>"
+    });
 
     c.DocInclusionPredicate((docName, apiDesc) =>
     {
         if (docName == "CaseManagement")
             return apiDesc.GroupName == "Case Management";
-        return true; // default v1
+
+        return true;
     });
 
-    // JWT support in Swagger
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -130,7 +103,7 @@ builder.Services.AddSwaggerGen(c =>
         Scheme = "bearer",
         BearerFormat = "JWT",
         In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-        Description = "Enter 'Bearer' [space] and then your valid token.\nExample: Bearer eyJhbGciOiJIUzI1NiIs..."
+        Description = "Enter 'Bearer' [space] and then your valid token."
     });
 
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
@@ -144,7 +117,7 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "Bearer"
                 }
             },
-            new string[] {}
+            Array.Empty<string>()
         }
     });
 });
@@ -153,70 +126,53 @@ builder.WebHost.UseUrls("http://0.0.0.0:80");
 
 var app = builder.Build();
 
-// Apply forwarded headers (important when behind Nginx reverse proxy)
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
-// Apply CORS
-app.UseCors("AllowAll");
-
-//Begin 12/21/25
-app.UseDefaultFiles();
-app.UseStaticFiles();
-
-
-app.MapControllers();
-
-// React routes fallback
-app.MapFallbackToFile("index.html");
-// END 1221/25
-
-
-
-
-// Apply PathBase if defined
 if (!string.IsNullOrEmpty(pathBase))
 {
     app.UsePathBase(pathBase);
 }
 
-// Custom middleware
+app.UseSerilogRequestLogging();
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseMiddleware<BeforeAfterMiddleware>();
 app.UseMiddleware<RequestTimingMiddleware>();
 
-// Swagger configuration
-if (app.Environment.IsDevelopment() || true)
+app.UseSwagger(c =>
 {
-    app.UseSwagger(c =>
+    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
     {
-        c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+        var pb = httpReq.HttpContext.Request.PathBase.Value;
+        if (!string.IsNullOrEmpty(pb))
         {
-            var pb = httpReq.HttpContext.Request.PathBase.Value;
-            if (!string.IsNullOrEmpty(pb))
+            swaggerDoc.Servers = new List<Microsoft.OpenApi.Models.OpenApiServer>
             {
-                swaggerDoc.Servers = new List<Microsoft.OpenApi.Models.OpenApiServer>
-                {
-                    new Microsoft.OpenApi.Models.OpenApiServer { Url = pb }
-                };
-            }
-        });
+                new() { Url = pb }
+            };
+        }
     });
+});
 
-    app.UseSwaggerUI(c =>
-    {
-        var swaggerJsonBasePath = string.IsNullOrEmpty(pathBase) ? "" : pathBase;
-        c.SwaggerEndpoint($"{swaggerJsonBasePath}/swagger/v1/swagger.json", "My API V1");
-        c.SwaggerEndpoint($"{swaggerJsonBasePath}/swagger/CaseManagement/swagger.json", "Case Management");
-        c.RoutePrefix = "swagger";
-    });
-}
+app.UseSwaggerUI(c =>
+{
+    var basePath = string.IsNullOrEmpty(pathBase) ? "" : pathBase;
+    c.SwaggerEndpoint($"{basePath}/swagger/v1/swagger.json", "WebAppMulti API v1");
+    c.SwaggerEndpoint($"{basePath}/swagger/CaseManagement/swagger.json", "Case Management API");
+    c.RoutePrefix = "swagger";
+});
 
-// Routing
-app.UseRouting();
+app.MapControllers();
+app.MapCasesEndpoints();
 
-// Test endpoint
 app.MapGet("/", (IUserStore userStore) =>
 {
     var user = userStore.FindByUsername("frank");
@@ -231,29 +187,8 @@ app.MapGet("/test-error", () =>
     throw new Exception("This is a test exception for Serilog.");
 });
 
+app.MapFallbackToFile("index.html");
 
-//app.MapGet("/api/table", () =>
-//{
-//    return Results.Redirect("/table");
-//})
-//.WithName("HomeTable")
-//.WithTags("Home")
-//.WithSummary("Home")
-//.WithDescription("Redirects to the Table UI page");
-////
-
-////
-// Auth
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Map controllers
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
-
-//app.Run();
 try
 {
     Log.Information("Application starting up");
