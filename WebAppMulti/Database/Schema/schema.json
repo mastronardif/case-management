@@ -4,6 +4,11 @@
       "name": "searchCases",
       "storedProcedure": "cases.usp_SearchCases",
       "route": "/api/corqs/searchCases"
+    },
+    {
+      "name": "getCalendar",
+      "storedProcedure": "cases.usp_GetCalendar",
+      "route": "/api/corqs/getCalendar"
     }
   ]
 }
