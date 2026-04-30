@@ -2,13 +2,21 @@
   "apis": [
     {
       "name": "searchCases",
+      "type": "storedProcedure",
       "storedProcedure": "cases.usp_SearchCases",
       "route": "/api/corqs/searchCases"
     },
     {
       "name": "getCalendar",
+      "type": "storedProcedure",
       "storedProcedure": "cases.usp_GetCalendar",
       "route": "/api/corqs/getCalendar"
+    },
+    {
+      "name": "getServerTime",
+      "type": "handler",
+      "handler": "ServerTime",
+      "route": "/api/corqs/getServerTime"
     }
   ]
 }

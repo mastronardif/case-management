@@ -82,6 +82,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<SchemaRegistry>();
 builder.Services.AddScoped<CorqsExecutor>();
 
+builder.Services.AddScoped<ICorqsExecutionStrategy, StoredProcedureStrategy>();
+builder.Services.AddScoped<ICorqsExecutionStrategy, HandlerStrategy>();
+
+builder.Services.AddScoped<ICorqsHandler, ServerTimeHandler>();
+
 
 
 builder.Services.AddSwaggerGen(c =>
