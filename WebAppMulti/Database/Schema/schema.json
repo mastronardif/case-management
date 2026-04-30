@@ -1,0 +1,9 @@
+{
+  "apis": [
+    {
+      "name": "searchCases",
+      "storedProcedure": "cases.usp_SearchCases",
+      "route": "/api/corqs/searchCases"
+    }
+  ]
+}

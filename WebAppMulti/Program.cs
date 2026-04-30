@@ -11,6 +11,7 @@ using WebAppMulti.Database.Repository;
 using WebAppMulti.Middleware;
 using WebAppMulti.Services;
 using WebAppMulti.Services.CaseManagement;
+using WebAppMulti.Modules.Corqs;
 //using WebAppMulti.Modules.Cases;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -78,6 +79,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddSingleton<SchemaRegistry>();
+builder.Services.AddScoped<CorqsExecutor>();
+
+
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "WebAppMulti API", Version = "v1" });
@@ -126,6 +132,13 @@ builder.WebHost.UseUrls("http://0.0.0.0:80");
 
 var app = builder.Build();
 
+// FORCE CORQS BOOTSTRAP
+var schema = app.Services.GetRequiredService<SchemaRegistry>();
+schema.WarmUp();
+
+Console.WriteLine($"SCHEMA APIs LOADED: {schema.GetType().Name}");
+app.MapCorqsEndpoints();
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -171,7 +184,7 @@ app.UseSwaggerUI(c =>
 });
 
 app.MapControllers();
-app.MapCasesEndpoints();
+//app.MapCasesEndpoints();
 
 app.MapGet("/", (IUserStore userStore) =>
 {
