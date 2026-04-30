@@ -42,9 +42,9 @@ builder.Services.AddScoped<CustomerService>();
 builder.Services.AddScoped<EFdbServie>();
 builder.Services.AddScoped<IUserStore, DummyAuthStore>();
 builder.Services.AddScoped<MyMarker>();
-builder.Services.AddMediatR(cfg =>
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+
 builder.Services.AddHttpClient();
+
 
 builder.Services.AddDbContext<WebAppMulti.Database.MyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

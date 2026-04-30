@@ -19,10 +19,19 @@ namespace WebAppMulti.Database.Repository
         {
             var dp = new DynamicParameters();
             if (parameters == null) return dp;
-
+            
             foreach (var kvp in parameters)
             {
-                dp.Add(kvp.Key, NormalizeJsonValue(kvp.Value));
+                //dp.Add(kvp.Key, NormalizeJsonValue(kvp.Value));
+                var value = kvp.Value;
+                if (value == null || value == DBNull.Value)
+                {
+                    dp.Add(kvp.Key, null);
+                }
+                else
+                {
+                    dp.Add(kvp.Key, NormalizeJsonValue(value));
+                }
             }
 
             return dp;
@@ -78,34 +87,53 @@ namespace WebAppMulti.Database.Repository
         }
 
         // 🔹 Normalize values like in your GenericRepository
-        private static object NormalizeJsonValue(object? value)
+        // 🔹 Normalize values like in your GenericRepository
+        private static object? NormalizeJsonValue(object? value)
         {
             if (value == null)
-                return DBNull.Value;
+                return null;
 
             if (value is JsonElement json)
             {
                 switch (json.ValueKind)
                 {
                     case JsonValueKind.String:
-                        return (object?)json.GetString() ?? DBNull.Value;
+                        return json.GetString();
+
                     case JsonValueKind.Number:
                         if (json.TryGetInt32(out int i)) return i;
                         if (json.TryGetInt64(out long l)) return l;
                         if (json.TryGetDecimal(out decimal d)) return d;
                         if (json.TryGetDouble(out double dbl)) return dbl;
                         return json.GetRawText();
+
                     case JsonValueKind.True:
                     case JsonValueKind.False:
                         return json.GetBoolean();
+
                     case JsonValueKind.Null:
-                        return DBNull.Value;
+                    case JsonValueKind.Undefined:
+                        return null;
+
                     case JsonValueKind.Object:
-                        var dict = JsonSerializer.Deserialize<Dictionary<string, object>>(json.GetRawText());
-                        return dict == null ? DBNull.Value : string.Join(",", dict.Select(kvp => $"{kvp.Key}:{kvp.Value}"));
+                        var dict = JsonSerializer.Deserialize<Dictionary<string, object?>>(
+                            json.GetRawText());
+
+                        return dict == null
+                            ? null
+                            : string.Join(",",
+                                dict.Select(kvp => $"{kvp.Key}:{kvp.Value}"));
+
                     case JsonValueKind.Array:
-                        var list = json.EnumerateArray().Select(e => NormalizeJsonValue(e)).ToList();
-                        return list.Count == 0 ? DBNull.Value : string.Join(",", list);
+                        var list = json.EnumerateArray()
+                            .Select(e => NormalizeJsonValue(e))
+                            .Where(v => v != null)
+                            .ToList();
+
+                        return list.Count == 0
+                            ? null
+                            : string.Join(",", list);
+
                     default:
                         return json.GetRawText();
                 }
@@ -113,6 +141,7 @@ namespace WebAppMulti.Database.Repository
 
             return value;
         }
+
 
         public async Task<object> RunAsync(string spName, Dictionary<string, object>? parameters = null)
         {

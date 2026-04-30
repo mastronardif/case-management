@@ -1,4 +1,6 @@
-using MediatR;
+ 
+using WebAppMulti.Database.Repository;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 public static class CasesEndpoints
 {
@@ -16,9 +18,20 @@ public static class CasesEndpoints
         return app;
     }
 
-    private static async Task<IResult> SearchCases(ISender sender)
+    private static async Task<IResult> SearchCases(DapperRepository db)
     {
-        var result = await sender.Send(new SearchCasesQuery());
+        var result = await db.ExecuteStoredProcedureAsync(
+            "cases.usp_SearchCases",
+            new Dictionary<string, object?>
+            {
+            { "ClientId", null }
+            });
+
         return Results.Ok(result);
     }
+
+
+
+
+
 }
