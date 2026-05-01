@@ -57,8 +57,11 @@ export default function CasesTablePage() {
   };
 
   const handleOpenCase = (row) => {
+    // console.table(rows);
     // Navigate to CasePage with URL param and optional state
-    navigate(`/cases/${row.id}`, { state: { caseData: row } });
+    // navigate(`/cases/${row.id}`, { state: { caseData: row } });
+ navigate(`/cases/${row.CaseNumber}`, { state: { caseData: row } });
+ 
   };
 
   const filteredRows = rows.filter((row) =>

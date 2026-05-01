@@ -30,6 +30,21 @@
       "type": "sql",
       "sql": "SELECT TOP 100 * FROM [cases].[Case] WHERE Status = @Status ORDER BY CreatedDate DESC",
       "route": "/api/corqs/activeCases"
+    },
+
+    {
+      "name": "getBooks",
+      "type": "handler",
+      "handler": "GetBooks",
+      "route": "/api/corqs/getBooks"
+    },
+    {
+      "name": "getBook",
+      "type": "handler",
+      "handler": "GetBook",
+      "route": "/api/corqs/getBook"
     }
+
+
   ]
 }

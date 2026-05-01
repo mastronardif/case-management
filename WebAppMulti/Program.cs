@@ -9,10 +9,10 @@ using System.Text;
 using WebAppMulti.Database.Auth;
 using WebAppMulti.Database.Repository;
 using WebAppMulti.Endpoints.Corqs;
+using WebAppMulti.Extensions;
 using WebAppMulti.Middleware;
 using WebAppMulti.Services;
 using WebAppMulti.Services.CaseManagement;
-using WebAppMulti.Services.Corqs.Strategies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,15 +82,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<SchemaRegistry>();
 builder.Services.AddScoped<CorqsExecutor>();
 
-builder.Services.AddScoped<ICorqsExecutionStrategy, StoredProcedureStrategy>();
-builder.Services.AddScoped<ICorqsExecutionStrategy, HandlerStrategy>();
-builder.Services.AddScoped<ICorqsExecutionStrategy, HttpExecutionStrategy>();
-builder.Services.AddScoped<ICorqsExecutionStrategy, SqlExecutionStrategy>();
-
-
-builder.Services.AddScoped<ICorqsHandler, ServerTimeHandler>();
-
-
+//builder.Services.AddScoped<ICorqsExecutionStrategy, StoredProcedureStrategy>();
+//builder.Services.AddScoped<ICorqsExecutionStrategy, HandlerStrategy>();
+//builder.Services.AddScoped<ICorqsExecutionStrategy, HttpExecutionStrategy>();
+//builder.Services.AddScoped<ICorqsExecutionStrategy, SqlExecutionStrategy>();
+//builder.Services.AddScoped<ICorqsHandler, GetBooksHandler>();
+//builder.Services.AddScoped<ICorqsHandler, GetBookHandler>();
+//builder.Services.AddScoped<ICorqsHandler, ServerTimeHandler>();
+builder.Services.AddCorqs();
 
 builder.Services.AddSwaggerGen(c =>
 {

@@ -15,6 +15,7 @@ namespace WebAppMulti.Controllers
         public IActionResult GetByCaseId(string caseId)
         {
             // Folder path: Workbooks/{caseId}
+            caseId = "42";
             var caseFolder = Path.Combine(_basePath, caseId);
 
             if (!Directory.Exists(caseFolder))
@@ -41,6 +42,7 @@ namespace WebAppMulti.Controllers
         [HttpGet("GetBook")]
         public IActionResult DownloadFile(string caseId, string fileName)
         {
+            caseId = "42";
             if (string.IsNullOrWhiteSpace(caseId) || string.IsNullOrWhiteSpace(fileName))
             {
                 return BadRequest(new { message = "caseId and fileName are required." });

@@ -9,8 +9,8 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        // target: 'https://localhost:44344',
-        target: 'http://localhost', // port 80
+        target: 'https://localhost:44344',
+        // target: 'http://localhost', // port 80
         secure: false
       }
     }
