@@ -12,8 +12,7 @@ using WebAppMulti.Endpoints.Corqs;
 using WebAppMulti.Middleware;
 using WebAppMulti.Services;
 using WebAppMulti.Services.CaseManagement;
-//using WebAppMulti.Modules.Corqs;
-//using WebAppMulti.Modules.Cases;
+using WebAppMulti.Services.Corqs.Strategies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -86,6 +85,7 @@ builder.Services.AddScoped<CorqsExecutor>();
 builder.Services.AddScoped<ICorqsExecutionStrategy, StoredProcedureStrategy>();
 builder.Services.AddScoped<ICorqsExecutionStrategy, HandlerStrategy>();
 builder.Services.AddScoped<ICorqsExecutionStrategy, HttpExecutionStrategy>();
+builder.Services.AddScoped<ICorqsExecutionStrategy, SqlExecutionStrategy>();
 
 
 builder.Services.AddScoped<ICorqsHandler, ServerTimeHandler>();

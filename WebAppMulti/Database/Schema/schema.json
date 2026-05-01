@@ -24,6 +24,12 @@
       "url": "https://jsonplaceholder.typicode.com/users/{id}",
       "method": "GET",
       "route": "/api/corqs/getUser"
+    },
+    {
+      "name": "activeCases",
+      "type": "sql",
+      "sql": "SELECT TOP 100 * FROM [cases].[Case] WHERE Status = @Status ORDER BY CreatedDate DESC",
+      "route": "/api/corqs/activeCases"
     }
   ]
 }

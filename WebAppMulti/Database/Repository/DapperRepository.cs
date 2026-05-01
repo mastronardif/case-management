@@ -232,5 +232,25 @@ namespace WebAppMulti.Database.Repository
             };
         }
 
+        public async Task<IEnumerable<dynamic>> QueryAsync(
+            string sql,
+            object? parameters = null,
+            CommandType commandType = CommandType.Text)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            object? dbParams = parameters;
+
+            if (parameters is Dictionary<string, object?> dict)
+            {
+                dbParams = ToDynamicParameters(dict);
+            }
+
+            return await conn.QueryAsync(
+                sql,
+                dbParams,
+                commandType: commandType);
+        }
+
     }
 }
