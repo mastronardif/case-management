@@ -17,6 +17,13 @@
       "type": "handler",
       "handler": "ServerTime",
       "route": "/api/corqs/getServerTime"
+    },
+    {
+      "name": "getUser",
+      "type": "http",
+      "url": "https://jsonplaceholder.typicode.com/users/{id}",
+      "method": "GET",
+      "route": "/api/corqs/getUser"
     }
   ]
 }

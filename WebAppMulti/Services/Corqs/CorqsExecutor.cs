@@ -12,15 +12,29 @@ public class CorqsExecutor
     }
 
     public async Task<object> ExecuteAsync(
-        ApiDefinition api,
-        Dictionary<string, object?> input)
+    ApiDefinition api,
+    Dictionary<string, object?> input)
     {
-        if (!_strategies.TryGetValue(api.Type, out var strategy))
-        {
-            throw new InvalidOperationException(
-                $"Unsupported API type '{api.Type}'.");
-        }
+        var result = await _strategies[api.Type]
+            .ExecuteAsync(api, input);
 
-        return await strategy.ExecuteAsync(api, input);
+        return new CorqsResponse
+        {
+            Success = true,
+            Data = result
+        };
     }
+
+    //public async Task<object> ExecuteAsync(
+    //    ApiDefinition api,
+    //    Dictionary<string, object?> input)
+    //{
+    //    if (!_strategies.TryGetValue(api.Type, out var strategy))
+    //    {
+    //        throw new InvalidOperationException(
+    //            $"Unsupported API type '{api.Type}'.");
+    //    }
+
+    //    return await strategy.ExecuteAsync(api, input);
+    //}
 }

@@ -8,10 +8,11 @@ using Serilog.Sinks.MSSqlServer;
 using System.Text;
 using WebAppMulti.Database.Auth;
 using WebAppMulti.Database.Repository;
+using WebAppMulti.Endpoints.Corqs;
 using WebAppMulti.Middleware;
 using WebAppMulti.Services;
 using WebAppMulti.Services.CaseManagement;
-using WebAppMulti.Modules.Corqs;
+//using WebAppMulti.Modules.Corqs;
 //using WebAppMulti.Modules.Cases;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -84,6 +85,8 @@ builder.Services.AddScoped<CorqsExecutor>();
 
 builder.Services.AddScoped<ICorqsExecutionStrategy, StoredProcedureStrategy>();
 builder.Services.AddScoped<ICorqsExecutionStrategy, HandlerStrategy>();
+builder.Services.AddScoped<ICorqsExecutionStrategy, HttpExecutionStrategy>();
+
 
 builder.Services.AddScoped<ICorqsHandler, ServerTimeHandler>();
 
