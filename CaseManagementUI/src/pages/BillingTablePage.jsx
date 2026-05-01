@@ -31,7 +31,7 @@ export default function BillingTablePage() {
 
   const handleOpenCase = (row) => {
     // Navigate to CasePage with URL param and optional state
-    navigate(`/billing/${row.case} (Payer: ${row.Payer})`, { state: { caseData: row } });
+    navigate(`/billing/${row.case} (Payer: ${row.payer})`, { state: { caseData: row } });
   };
 
   // Prepare rows with Action column if you want buttons, optional
@@ -51,7 +51,7 @@ export default function BillingTablePage() {
   return (
     <div className="relative min-h-screen p-6 flex flex-col items-center">
       <div className="relative w-full max-w-6xl p-6 rounded shadow bg-white mb-6">
-        <h1 className="text-xl font-bold mb-4">Billing</h1>
+        <h1 className="text-xl font-bold mb-4">Billing for Case tbd</h1>
 
         <div className="flex gap-2 mb-4 flex-wrap">
           <button

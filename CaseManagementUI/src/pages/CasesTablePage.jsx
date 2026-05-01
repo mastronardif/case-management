@@ -60,7 +60,8 @@ export default function CasesTablePage() {
     // console.table(rows);
     // Navigate to CasePage with URL param and optional state
     // navigate(`/cases/${row.id}`, { state: { caseData: row } });
- navigate(`/cases/${row.CaseNumber}`, { state: { caseData: row } });
+//  navigate(`/cases/${row.CaseNumber}`, { state: { caseData: row } });
+  navigate(`/cases/${row.caseNumber} - ${row.title} ***** ${row.caseId} `, { state: { caseData: row } });
  
   };
 

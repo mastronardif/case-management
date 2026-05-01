@@ -16,7 +16,7 @@ export async function fetchBillingData(count = 20) {
       min: 1000,
       max: 9999,
     },
-    { name: "Payer", type: "Last Name" },
+    { name: "payer", type: "Last Name" },
     { name: "case", type: "First Name" },
   ];
 
@@ -45,9 +45,9 @@ export async function fetchBillingData(count = 20) {
 export async function fetchBillingData22(id, count = 10) {
   const payload = [
     { name: "date", type: "Datetime" },
-    { name: "Invoice", type: "Number", min: 1000, max: 9999, decimals: 0 },
-    { name: "Service", type: "Number", min: 100, max: 999, decimals: 0 },
-    { name: "Code", type: "Number", min: 10, max: 99, decimals: 0 },
+    { name: "invoice", type: "Number", min: 1000, max: 9999, decimals: 0 },
+    { name: "service", type: "Number", min: 100, max: 999, decimals: 0 },
+    { name: "code", type: "Number", min: 10, max: 99, decimals: 0 },
     {
       name: "total",
       type: "Money",

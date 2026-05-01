@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using System.Text;
+using System.Text.Json;
 using WebAppMulti.Database.Auth;
 using WebAppMulti.Database.Repository;
 using WebAppMulti.Endpoints.Corqs;
@@ -76,7 +77,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+    });
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.SerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<SchemaRegistry>();
@@ -90,6 +103,9 @@ builder.Services.AddScoped<CorqsExecutor>();
 //builder.Services.AddScoped<ICorqsHandler, GetBookHandler>();
 //builder.Services.AddScoped<ICorqsHandler, ServerTimeHandler>();
 builder.Services.AddCorqs();
+
+
+
 
 builder.Services.AddSwaggerGen(c =>
 {

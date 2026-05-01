@@ -34,7 +34,7 @@ export default function BillingPage() {
  
    const handleOpenCase = (row) => {
      // Navigate to CasePage with URL param and optional state
-     navigate(`/billing/${row.case}`, { state: { caseData: row } });
+     navigate(`/billing/${row.invoice}`, { state: { caseData: row } });
    };
  
    // Prepare rows with Action column if you want buttons, optional
