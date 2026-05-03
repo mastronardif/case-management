@@ -137,9 +137,10 @@ namespace WebAppMulti.Controllers
         public async Task<IActionResult> RunMultiple([FromBody] List<StoredProcRequest> request, [FromQuery] bool parallel = false)
         {
             var list = request.Select(r => (r.Name, r.Parameters)).ToList();
-            var result = await _repoDapper.RunProceduresAsync(list, parallel);
+            //var result = await _repoDapper.RunProceduresAsync(list, parallel);
 
-            return Ok(result);
+            //return Ok(result);
+            return BadRequest("RunMultiple.");
         }
 
         [HttpPost("run-multiRS")]

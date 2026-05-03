@@ -14,16 +14,16 @@ namespace WebAppMulti.Database.Repository
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        // Convert Dictionary<string, object> to Dapper parameters
-        private static DynamicParameters ToDynamicParameters(Dictionary<string, object>? parameters)
+        // ✅ UPDATED: supports IDictionary (CORQS friendly)
+        private static DynamicParameters ToDynamicParameters(IDictionary<string, object?>? parameters)
         {
             var dp = new DynamicParameters();
             if (parameters == null) return dp;
-            
+
             foreach (var kvp in parameters)
             {
-                //dp.Add(kvp.Key, NormalizeJsonValue(kvp.Value));
                 var value = kvp.Value;
+
                 if (value == null || value == DBNull.Value)
                 {
                     dp.Add(kvp.Key, null);
@@ -38,22 +38,34 @@ namespace WebAppMulti.Database.Repository
         }
 
         // 🔹 Single Stored Procedure (Sync)
-        public IEnumerable<dynamic> ExecuteStoredProcedure(string spName, Dictionary<string, object>? parameters = null)
+        public IEnumerable<dynamic> ExecuteStoredProcedure(
+            string spName,
+            IDictionary<string, object?>? parameters = null)
         {
             using var conn = new SqlConnection(_connectionString);
-            return conn.Query(spName, ToDynamicParameters(parameters), commandType: CommandType.StoredProcedure);
+
+            return conn.Query(
+                spName,
+                ToDynamicParameters(parameters),
+                commandType: CommandType.StoredProcedure);
         }
 
         // 🔹 Single Stored Procedure (Async)
-        public async Task<IEnumerable<dynamic>> ExecuteStoredProcedureAsync(string spName, Dictionary<string, object>? parameters = null)
+        public async Task<IEnumerable<dynamic>> ExecuteStoredProcedureAsync(
+            string spName,
+            IDictionary<string, object?>? parameters = null)
         {
             using var conn = new SqlConnection(_connectionString);
-            return await conn.QueryAsync(spName, ToDynamicParameters(parameters), commandType: CommandType.StoredProcedure);
+
+            return await conn.QueryAsync(
+                spName,
+                ToDynamicParameters(parameters),
+                commandType: CommandType.StoredProcedure);
         }
 
         // 🔹 Multiple Stored Procedures (Sequential)
         public async Task<List<object>> ExecuteMultipleStoredProceduresAsync(
-            List<(string SpName, Dictionary<string, object>? Parameters)> procedures)
+            List<(string SpName, IDictionary<string, object?>? Parameters)> procedures)
         {
             var results = new List<object>();
 
@@ -62,8 +74,11 @@ namespace WebAppMulti.Database.Repository
 
             foreach (var proc in procedures)
             {
-                var dp = ToDynamicParameters(proc.Parameters);
-                var rows = await conn.QueryAsync(proc.SpName, dp, commandType: CommandType.StoredProcedure);
+                var rows = await conn.QueryAsync(
+                    proc.SpName,
+                    ToDynamicParameters(proc.Parameters),
+                    commandType: CommandType.StoredProcedure);
+
                 results.Add(new { Name = proc.SpName, Rows = rows });
             }
 
@@ -72,13 +87,17 @@ namespace WebAppMulti.Database.Repository
 
         // 🔹 Multiple Stored Procedures (Parallel)
         public async Task<List<object>> ExecuteMultipleStoredProceduresParallelAsync(
-            List<(string SpName, Dictionary<string, object>? Parameters)> procedures)
+            List<(string SpName, IDictionary<string, object?>? Parameters)> procedures)
         {
             var tasks = procedures.Select(async proc =>
             {
                 using var conn = new SqlConnection(_connectionString);
-                var dp = ToDynamicParameters(proc.Parameters);
-                var rows = await conn.QueryAsync(proc.SpName, dp, commandType: CommandType.StoredProcedure);
+
+                var rows = await conn.QueryAsync(
+                    proc.SpName,
+                    ToDynamicParameters(proc.Parameters),
+                    commandType: CommandType.StoredProcedure);
+
                 return new { Name = proc.SpName, Rows = rows };
             });
 
@@ -86,8 +105,7 @@ namespace WebAppMulti.Database.Repository
             return resultsArray.Cast<object>().ToList();
         }
 
-        // 🔹 Normalize values like in your GenericRepository
-        // 🔹 Normalize values like in your GenericRepository
+        // 🔹 Normalize values (unchanged logic)
         private static object? NormalizeJsonValue(object? value)
         {
             if (value == null)
@@ -121,8 +139,7 @@ namespace WebAppMulti.Database.Repository
 
                         return dict == null
                             ? null
-                            : string.Join(",",
-                                dict.Select(kvp => $"{kvp.Key}:{kvp.Value}"));
+                            : string.Join(",", dict.Select(kvp => $"{kvp.Key}:{kvp.Value}"));
 
                     case JsonValueKind.Array:
                         var list = json.EnumerateArray()
@@ -142,13 +159,16 @@ namespace WebAppMulti.Database.Repository
             return value;
         }
 
-
-        public async Task<object> RunAsync(string spName, Dictionary<string, object>? parameters = null)
+        public async Task<object> RunAsync(
+            string spName,
+            IDictionary<string, object?>? parameters = null)
         {
             using var conn = new SqlConnection(_connectionString);
 
-            var dp = ToDynamicParameters(parameters);
-            var rows = await conn.QueryAsync(spName, dp, commandType: CommandType.StoredProcedure);
+            var rows = await conn.QueryAsync(
+                spName,
+                ToDynamicParameters(parameters),
+                commandType: CommandType.StoredProcedure);
 
             return new
             {
@@ -157,12 +177,16 @@ namespace WebAppMulti.Database.Repository
             };
         }
 
-        public async Task<object> RunMultiResultAsync(string spName, Dictionary<string, object>? parameters = null)
+        public async Task<object> RunMultiResultAsync(
+            string spName,
+            IDictionary<string, object?>? parameters = null)
         {
             using var conn = new SqlConnection(_connectionString);
 
-            var dp = ToDynamicParameters(parameters);
-            using var multi = await conn.QueryMultipleAsync(spName, dp, commandType: CommandType.StoredProcedure);
+            using var multi = await conn.QueryMultipleAsync(
+                spName,
+                ToDynamicParameters(parameters),
+                commandType: CommandType.StoredProcedure);
 
             var resultSets = new List<object>();
 
@@ -176,15 +200,20 @@ namespace WebAppMulti.Database.Repository
             };
         }
 
-        public async Task<object> RunProceduresAsync(List<(string SpName, Dictionary<string, object>? Parameters)> procedures, bool parallel = false)
+        public async Task<object> RunProceduresAsync(
+            List<(string SpName, IDictionary<string, object?>? Parameters)> procedures,
+            bool parallel = false)
         {
             if (parallel)
             {
                 var tasks = procedures.Select(async x =>
                 {
                     using var conn = new SqlConnection(_connectionString);
-                    var dp = ToDynamicParameters(x.Parameters);
-                    var rows = await conn.QueryAsync(x.SpName, dp, commandType: CommandType.StoredProcedure);
+
+                    var rows = await conn.QueryAsync(
+                        x.SpName,
+                        ToDynamicParameters(x.Parameters),
+                        commandType: CommandType.StoredProcedure);
 
                     return new { Name = x.SpName, Rows = rows.ToList() };
                 });
@@ -200,8 +229,10 @@ namespace WebAppMulti.Database.Repository
 
                 foreach (var proc in procedures)
                 {
-                    var dp = ToDynamicParameters(proc.Parameters);
-                    var rows = await conn.QueryAsync(proc.SpName, dp, commandType: CommandType.StoredProcedure);
+                    var rows = await conn.QueryAsync(
+                        proc.SpName,
+                        ToDynamicParameters(proc.Parameters),
+                        commandType: CommandType.StoredProcedure);
 
                     results.Add(new { Name = proc.SpName, Rows = rows.ToList() });
                 }
@@ -210,27 +241,11 @@ namespace WebAppMulti.Database.Repository
             }
         }
 
-        public async Task<object> RunStoredProcMultiAsync(string spName,  Dictionary<string, object>? parameters = null)
+        public async Task<object> RunStoredProcMultiAsync(string spName, IDictionary<string, object?>? parameters = null)
         {
-            using var conn = new SqlConnection(_connectionString);
-            var dp = ToDynamicParameters(parameters);
-
-            var multi = await conn.QueryMultipleAsync(spName, dp, commandType: CommandType.StoredProcedure);
-
-            var resultSets = new List<object>();
-
-            while (!multi.IsConsumed)
-            {
-                var rows = await multi.ReadAsync();
-                resultSets.Add(rows.ToList());
-            }
-
-            return new
-            {
-                StoredProcedure = spName,
-                ResultSets = resultSets
-            };
+            return await RunMultiResultAsync(spName, parameters);
         }
+
 
         public async Task<IEnumerable<dynamic>> QueryAsync(
             string sql,
@@ -241,16 +256,12 @@ namespace WebAppMulti.Database.Repository
 
             object? dbParams = parameters;
 
-            if (parameters is Dictionary<string, object?> dict)
+            if (parameters is IDictionary<string, object?> dict)
             {
                 dbParams = ToDynamicParameters(dict);
             }
 
-            return await conn.QueryAsync(
-                sql,
-                dbParams,
-                commandType: commandType);
+            return await conn.QueryAsync(sql, dbParams, commandType: commandType);
         }
-
     }
 }

@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json;
 using WebAppMulti.Database.Auth;
 using WebAppMulti.Database.Repository;
-using WebAppMulti.Endpoints.Corqs;
+//using WebAppMulti.Endpoints.Corqs;
 using WebAppMulti.Extensions;
 using WebAppMulti.Middleware;
 using WebAppMulti.Services;
@@ -102,7 +102,11 @@ builder.Services.AddScoped<CorqsExecutor>();
 //builder.Services.AddScoped<ICorqsHandler, GetBooksHandler>();
 //builder.Services.AddScoped<ICorqsHandler, GetBookHandler>();
 //builder.Services.AddScoped<ICorqsHandler, ServerTimeHandler>();
+//builder.Services.AddCorqs();
 builder.Services.AddCorqs();
+//builder.Services.AddDynamicApi();
+
+
 
 
 
@@ -172,6 +176,10 @@ if (!string.IsNullOrEmpty(pathBase))
     app.UsePathBase(pathBase);
 }
 
+
+app.UseMiddleware<BeforeAfterMiddleware>();
+app.UseMiddleware<RequestTimingMiddleware>();
+
 app.UseSerilogRequestLogging();
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -180,8 +188,10 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<BeforeAfterMiddleware>();
-app.UseMiddleware<RequestTimingMiddleware>();
+//app.UseDynamicApi();
+
+
+
 
 app.UseSwagger(c =>
 {
@@ -214,7 +224,7 @@ app.MapGet("/", (IUserStore userStore) =>
     var user = userStore.FindByUsername("frank");
     if (user == null) return "User not found";
 
-    var principal = userStore.CreatePrincipal(user);
+    //var principal = userStore.CreatePrincipal(user);
     return $"Hello {user.UserName}, Roles: {string.Join(", ", user.Roles)}";
 });
 

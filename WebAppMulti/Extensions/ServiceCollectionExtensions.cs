@@ -32,4 +32,15 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
+
+    public static IServiceCollection AddDynamicApi(this IServiceCollection services)
+    {
+        //services.AddScoped<IRequestContextBuilder, RequestContextBuilder>();
+        //services.AddScoped<IApiExecutor, ApiExecutor>();
+        //services.AddScoped<IStoredProcedureExecutor, StoredProcedureExecutor>();
+        //services.AddScoped<ISqlExecutor, SqlExecutor>();
+        //services.AddScoped<IHttpProxyExecutor, HttpProxyExecutor>();
+
+        return services;
+    }
 }

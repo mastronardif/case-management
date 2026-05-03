@@ -43,6 +43,19 @@
       "type": "handler",
       "handler": "GetBook",
       "route": "/api/corqs/getBook"
+    },
+
+    {
+      "name": "getWorkbooksByCase",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_Workbook_GetByCaseId",
+      "route": "/api/corqs/cases/{caseId}/workbooks"
+    },
+    {
+      "name": "initializeWorkbooks",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_Workbook_InitializeForCase",
+      "route": "/api/corqs/cases/{caseId}/workbooks/init"
     }
 
 

@@ -1,0 +1,149 @@
+tree /F /A > folder-structure.txt
+
++---Configuration
+|       ApiDefinition.cs
+|       
++---Controllers
+|   |   ADOController.cs
+|   |   AuthController.cs
+|   |   CgiController.cs
+|   |   CustomerController.cs
+|   |   DomainAdminController.cs
+|   |   EFdbController.cs
+|   |   EmployeesController.cs
+|   |   MultithreadingController.cs
+|   |   PayerDocsController.cs
+|   |   ProxyController.cs
+|   |   WeatherForecastController.cs
+|   |   WorkbooksController.cs
+|   |   
+|   \---CaseManagement
+|           CalendarDemoControllerr.cs
+|           FormTemplateController .cs
+|           SessionController.cs
+|           SessionDocumentController .cs
+|           
+
+|   |           
+|   +---Auth
+|   |       DummyAuthStore.cs
+|   |       IdentityUserStore.cs
+|   |       InMemoryUserStore.cs
+|   |       IUserStore.cs
+|   |       
+|   +---Configurations
+|   |       Class.cs
+|   |       DimCustomerConfig.cs
+|   |       DimGeographyConfig.cs
+|   |       EmployeeConfig.cs
+|   |       
+|   +---Dtos
+|   |       CustomerWithGeoDto.cs
+|   |       DocumentCreateDto.cs
+|   |       Dtos.cs
+|   |       
+|   +---Models
+|   |   |   Customer.cs
+|   |   |   DimCustomer.cs
+|   |   |   DimGeography.cs
+|   |   |   Employee.cs
+|   |   |   InventoryItem.cs
+|   |   |   Order.cs
+|   |   |   OrderLine.cs
+|   |   |   
+|   |   \---CaseManagement
+|   |           FormTemplate.cs
+|   |           
+|   +---Repository
+|   |       DapperRepository.cs
+|   |       GenericRepository.cs
+|   |       
+|   +---Schema
+|   |       schema.json
+|   |       SchemaRegistry.cs
+|   |       
+| 
+|               
++---Endpoints
+|   \---Corqs
+|           CorqsEndpoints.cs
+|           
++---Extensions
+|       ApplicationBuilderExtensions.cs
+|       ServiceCollectionExtensions.cs
+|       
++---Helpers
+|       MyMarker.cs
+|       SessionRenderer.cs
+|       StringExtensions.cs
+|       
++---Logs
++---Middleware
+|   |   DynamicApiMiddleware.cs
+|   |   RequestTimingMiddleware.cs
+|   |   
+|   \---BeforeAfterMiddleware
+|           BeforeAfterMiddleware.cs
+|           
++---Models
+|   \---Corqs
+|           ApiDefinition.cs
+|           CorqsRequest.cs
+|           CorqsResponse.cs
+|           ParameterDefinition.cs
+|           ProcedureDefinition.cs
+|           SchemaDefinition.cs
+|           
++---ModelsPRE
++---Modules
+|   |   RequestContext.cs
+|   |   
+|   \---Cases
+|       |   CasesEndpoints.cs
+|       |   
+|       +---Commands
+|       +---Contracts
+|       +---Domain
+|       +---Queries
+|       |   \---SearchCases
+|       \---Sql
+|               usp_SearchCases.sql
+|               
+
+
++---Properties
+|       launchSettings.json
+|       
++---Services
+|   |   ApiExecutor.cs
+|   |   CustomerService.cs
+|   |   EFdbServie.cs
+|   |   RequestContextBuilder.cs
+|   |   StoredProcedureExecutor.cs
+|   |   
+|   +---CaseManagement
+|   |       FormTemplateService.cs
+|   |       ISessionDocumentService.cs
+|   |       SessionDocumentService.cs
+|   |       SessionService.cs
+|   |       
+|   +---Corqs
+|   |   |   CorqsExecutor.cs
+|   |   |   ICorqsExecutionStrategy.cs
+|   |   |   ICorqsHandler.cs
+|   |   |   
+|   |   +---Handlers
+|   |   |       GetBookHandler.cs
+|   |   |       GetBooksHandler.cs
+|   |   |       ServerTimeHandler.cs
+|   |   |       
+|   |   \---Strategies
+|   |           HandlerStrategy.cs
+|   |           HttpExecutionStrategy.cs
+|   |           SqlExecutionStrategy.cs
+|   |           StoredProcedureStrategy.cs
+|   |           
+|   \---OpenApi
+|           CorqsOpenApiService.cs
+
+            

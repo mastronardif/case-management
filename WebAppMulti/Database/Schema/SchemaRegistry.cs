@@ -26,14 +26,17 @@ public class SchemaRegistry
     ?? throw new Exception("Schema failed to load");
     }
 
-    public ApiDefinition? GetApi(string name)
+    public ApiDefinition GetApi(string name)
     {
-        Console.WriteLine($"Loaded APIs: {_schema.Apis.Count}");
+        var api = _schema.Apis.FirstOrDefault(x =>
+            x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
 
-        return _schema.Apis
-            .FirstOrDefault(x =>
-                x.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+        if (api == null)
+            throw new InvalidOperationException($"API '{name}' not found in schema");
+
+        return api;
     }
+
 
     public void WarmUp()
     {

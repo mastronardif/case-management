@@ -1,5 +1,8 @@
-CREATE PROCEDURE [cases].[usp_SearchCases]
-    @ClientId INT = NULL
+﻿CREATE PROCEDURE [cases].[usp_GetCalendar]
+--    @ClientId INT = NULL
+	@year INT  = NULL,
+	@month INT = NULL
+	--EXEC calendar.usp_GetCalendar @year = 2026, @month = 4
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -13,7 +16,6 @@ BEGIN
         ClientId,
         OpenedDate
     FROM cases.[Case]
-    WHERE @ClientId IS NULL OR ClientId = @ClientId
+    WHERE @year IS NULL OR ClientId = @year
     ORDER BY OpenedDate DESC;
 END
-

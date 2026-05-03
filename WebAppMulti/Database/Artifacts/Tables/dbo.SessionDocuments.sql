@@ -1,0 +1,16 @@
+-- TABLE: dbo.SessionDocuments
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [dbo].[SessionDocuments](
+	[DocumentId] [int] IDENTITY(1,1) NOT NULL,
+	[SessionId] [int] NOT NULL,
+	[FormTemplateId] [int] NOT NULL,
+	[JsonData] [nvarchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[DocumentId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+ALTER TABLE [dbo].[SessionDocuments] ADD  DEFAULT (getdate()) FOR [CreatedAt]

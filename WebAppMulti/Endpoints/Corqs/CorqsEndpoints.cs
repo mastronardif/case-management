@@ -1,60 +1,52 @@
-using WebAppMulti.Models.Corqs;
-
-namespace WebAppMulti.Endpoints.Corqs;
+using System.Text.Json;
 
 public static class CorqsEndpoints
 {
     public static void MapCorqsEndpoints(this WebApplication app)
     {
-        //app.MapPost("/api/corqs/{operation}", ExecuteAsync);
-        app.MapMethods(
-    "/api/corqs/{operation}",
-    new[] { "GET", "POST" },
-    ExecuteAsync);
-
+        app.MapPost("/api/corqs", ExecuteAsync);
     }
 
     private static async Task<IResult> ExecuteAsync(
-        string operation,
         HttpRequest request,
         SchemaRegistry registry,
         CorqsExecutor executor)
     {
-        var api = registry.GetApi(operation);
+        var body = await request.ReadFromJsonAsync<Dictionary<string, object?>>();
+
+        if (body == null)
+            return Results.BadRequest("Invalid JSON body");
+
+        if (!body.TryGetValue("action", out var actionObj))
+            return Results.BadRequest("Missing 'action'");
+
+        var action = actionObj?.ToString();
+
+        if (string.IsNullOrWhiteSpace(action))
+            return Results.BadRequest("Empty action");
+
+        var api = registry.GetApi(action);   // ? FIXED HERE
 
         if (api is null)
         {
             return Results.NotFound(new
             {
-                error = $"API '{operation}' not found."
+                error = $"API '{action}' not found."
             });
         }
 
-        var input = new Dictionary<string, object?>(
-            StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, object?> input = new();
 
-        // Merge query string parameters
-        foreach (var q in request.Query)
+        if (body.TryGetValue("params", out var p) && p is JsonElement json)
         {
-            input[q.Key] = q.Value.ToString();
-        }
-
-        // Merge JSON body if present
-        if (request.ContentLength > 0 &&
-            request.HasJsonContentType())
-        {
-            var body = await request.ReadFromJsonAsync<Dictionary<string, object?>>();
-            if (body is not null)
-            {
-                foreach (var kv in body)
-                {
-                    input[kv.Key] = kv.Value;
-                }
-            }
+            input = JsonSerializer.Deserialize<Dictionary<string, object?>>(
+                json.GetRawText()
+            ) ?? new();
         }
 
         var result = await executor.ExecuteAsync(api, input);
 
-        return Results.Json(result);
+        return Results.Ok(result);
     }
+
 }
