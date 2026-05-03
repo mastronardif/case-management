@@ -6,31 +6,24 @@ import { GlobalContext } from "./GlobalStore";
 export function GlobalProvider({ children }) {
   const { auth, logout } = useAuth();
 
-  const [urlCalendar] = useState(
-        "/api/Calendar/GetCalendar"
-    // "https://localhost:44344/api/Calendar/GetCalendar"
-  );
-  // const [urlCases] = useState([
-  //   "https://jsonplaceholder.typicode.com/albums"
-  // ]);
-  // const [urlTemplates] = useState("file://cases.json");
-  // const [url] = useState("https://jsonplaceholder.typicode.com/users");
+  const [urlCalendar] = useState("/api/Calendar/GetCalendar");
 
-
-  //
   const [urlCases, setUrlCases] = useState(
-  localStorage.getItem("urlCases") || "https://jsonplaceholder.typicode.com/albums"
-);
+    localStorage.getItem("urlCases") || "https://jsonplaceholder.typicode.com/albums"
+  );
 
-const [urlTemplates, setUrlTemplates] = useState(
-  localStorage.getItem("urlTemplates") || "file://cases.json"
-);
+  const [urlTemplates, setUrlTemplates] = useState(
+    localStorage.getItem("urlTemplates") || "file://cases.json"
+  );
 
-const [url, setUrl] = useState(
-  localStorage.getItem("url") || "https://jsonplaceholder.typicode.com/users"
-);
-
-  //
+  const [url, setUrl] = useState(
+    localStorage.getItem("url") || "https://jsonplaceholder.typicode.com/users"
+  );
+  
+  const [body, setBody] = useState(() => {
+      const saved = localStorage.getItem("body");
+      return saved ? JSON.parse(saved) : null;
+    });
 
   const [loading, setLoading] = useState(false);
   const [requestCount, setRequestCount] = useState(0);
@@ -67,41 +60,27 @@ const [url, setUrl] = useState(
     setLoading(requestCount > 0);
   }, [requestCount]);
 
-  useEffect(() => {
-  localStorage.setItem("url", url);
-}, [url]);
-
-useEffect(() => {
-  localStorage.setItem("urlCases", urlCases);
-}, [urlCases]);
-
-useEffect(() => {
-  localStorage.setItem("urlTemplates", urlTemplates);
-}, [urlTemplates]);
+  useEffect(() => localStorage.setItem("url", url), [url]);
+  useEffect(() => localStorage.setItem("urlCases", urlCases), [urlCases]);
+  useEffect(() => localStorage.setItem("urlTemplates", urlTemplates), [urlTemplates]);
+  useEffect(() => {  localStorage.setItem("body", JSON.stringify(body));}, [body]);
 
 
   return (
     <GlobalContext.Provider
-    value={{
-  urlCalendar,
-  url,
-  setUrl,
-  urlCases,
-  setUrlCases,
-  urlTemplates,
-  setUrlTemplates,
-  loading,
-  setLoading
-}}
-
-      // value={{
-      //   urlCalendar,
-      //   urlCases,
-      //   urlTemplates,
-      //   url,
-      //   loading,
-      //   setLoading
-      // }}
+      value={{
+        urlCalendar,
+        url,
+        setUrl,
+        body,
+        setBody,
+        urlCases,
+        setUrlCases,
+        urlTemplates,
+        setUrlTemplates,
+        loading,
+        setLoading,
+      }}
     >
       {children}
     </GlobalContext.Provider>

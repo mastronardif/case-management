@@ -3,25 +3,47 @@ import { useAuth } from "../context/AuthContext";
 import { useGlobalStore } from "../context/GlobalStore";
 
 export default function Settings() {
-  const { auth } = useAuth(); // ✅ use AuthContext
-  const { url, setUrl, urlCases, setUrlCases, urlTemplates, setUrlTemplates} = useGlobalStore();
+  const { auth } = useAuth();
+  const {
+    url,
+    setUrl,
+    body,
+    setBody,  
+    urlCases,
+    setUrlCases,
+    urlTemplates,
+    setUrlTemplates,
+  } = useGlobalStore();
+
   const [inputValue, setInputValue] = useState(url);
-  const [inputCases, setInputCases] = useState(urlCases);  
+  const [inputCases, setInputCases] = useState(urlCases);
   const [inputTemplates, setInputTemplates] = useState(urlTemplates);
+  const [inputBody, setInputBody] = useState(body ? JSON.stringify(body, null, 2) : "");
 
   const handleSave = () => {
-    setUrl(inputValue);
-    setUrlCases(inputCases);
-    setUrlTemplates(inputTemplates);
-  }
+    try {
+      const parsedBody = inputBody?.trim() ? JSON.parse(inputBody) : null;
+
+      setUrl(inputValue);
+      setUrlCases(inputCases);
+      setUrlTemplates(inputTemplates);
+      setBody(parsedBody);
+
+      alert("Settings saved successfully.");
+    } catch (error) {
+      alert("Invalid JSON in requet Body.");
+      console.error("Invalid JSON:", error);
+    }
+  };
 
   return (
     <div>
       <h1 className="text-xl font-bold mb-4">Settings</h1>
 
-      {/* API URL */}
       <div className="mb-6">
-        <label className="block mb-2 font-medium" htmlFor="url">API URL</label>
+        <label className="block mb-2 font-medium" htmlFor="url">
+          API URL
+        </label>
         <input
           id="url"
           type="text"
@@ -29,8 +51,8 @@ export default function Settings() {
           onChange={(e) => setInputValue(e.target.value)}
           className="w-full border border-gray-300 rounded px-3 py-2"
         />
+      </div>
 
-      {/* Cases URL */}
       <div className="mb-4">
         <label className="block mb-2 font-medium">Cases API URL</label>
         <input
@@ -39,9 +61,19 @@ export default function Settings() {
           onChange={(e) => setInputCases(e.target.value)}
           className="w-full border border-gray-300 rounded px-3 py-2"
         />
-        </div>
+      </div>
 
-        <div className="mb-4">
+      <div className="mb-4">
+        <label className="block mb-2 font-medium">Body (JSON)</label>
+        <textarea
+          value={inputBody}
+          onChange={(e) => setInputBody(e.target.value)}
+          rows={10}
+          className="w-full border border-gray-300 rounded px-3 py-2 font-mono"
+        />
+      </div>
+
+      <div className="mb-4">
         <label className="block mb-2 font-medium">Templates URL</label>
         <input
           type="text"
@@ -49,18 +81,20 @@ export default function Settings() {
           onChange={(e) => setInputTemplates(e.target.value)}
           className="w-full border border-gray-300 rounded px-3 py-2"
         />
-        </div>
-
-        <button onClick={handleSave} className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-          Save
-        </button>
-        <p className="mt-2 text-gray-600 text-sm">
-          Changing this URL will automatically refresh the table data.
-        </p>
       </div>
 
-      {/* Authentication Info */}
-      <div className="p-4 border rounded bg-gray-50">
+      <button
+        onClick={handleSave}
+        className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+      >
+        Save
+      </button>
+
+      <p className="mt-2 text-gray-600 text-sm">
+        Changing these settings will automatically refresh the table data.
+      </p>
+
+      <div className="mt-8 p-4 border rounded bg-gray-50">
         <h2 className="text-lg font-semibold mb-2">Authentication</h2>
         {auth?.token ? (
           <>

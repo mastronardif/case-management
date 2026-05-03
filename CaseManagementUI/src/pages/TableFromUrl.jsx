@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGlobalStore } from "../context/GlobalStore";
-import api from "../services/http";
+import { apiFetch } from "../services/apiFetch";
+
+
+
 
 const renderValue = (val) => {
   if (val === null || val === undefined) return "";
@@ -13,51 +16,48 @@ const renderValue = (val) => {
 };
 
 export default function TableFromUrl() {
-  const { url } = useGlobalStore();
+  const { url, body } = useGlobalStore();
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchPromiseRef = useRef(null);
+const fetchPromiseRef = useRef(null);
 
-  const fetchData = async () => {
-    if (!url) return;
+const fetchData = useCallback(async () => {
+  if (!url) return;
 
-    if (fetchPromiseRef.current) return fetchPromiseRef.current;
+  if (fetchPromiseRef.current) return fetchPromiseRef.current;
 
-    setLoading(true);
+  setLoading(true);
 
-    fetchPromiseRef.current = (async () => {
-      try {
-        setError(null);
-        const res = await api.get(url);
+  fetchPromiseRef.current = (async () => {
+    try {
+      setError(null);
 
-        let normalized = [];
-        if (res.data?.data) {
-          normalized = Array.isArray(res.data.data) ? res.data.data : [res.data.data];
-        } else if (Array.isArray(res.data)) {
-          normalized = res.data;
-        } else if (res.data && typeof res.data === "object") {
-          normalized = [res.data];
-        }
+      const result = body
+        ? await apiFetch(url, body)
+        : await apiFetch(url);
 
-        setRows(normalized);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setRows([]);
-        setError("Failed to fetch data.");
-      } finally {
-        fetchPromiseRef.current = null;
-        setLoading(false);
-      }
-    })();
+      setRows(result);
+    } catch (err) {
+      console.error(err);
+      setRows([]);
+      setError("Failed to fetch data.");
+    } finally {
+      fetchPromiseRef.current = null;
+      setLoading(false);
+    }
+  })();
 
-    return fetchPromiseRef.current;
-  };
+  return fetchPromiseRef.current;
+}, [url, body]);
 
-  useEffect(() => {
-    fetchData();
-  }, [url]);
+
+
+useEffect(() => {
+  fetchData();
+}, [url, body]);
+
 
   return (
     <div>
