@@ -31,7 +31,7 @@ export default function CasePage() {
 
   const handleWorkbooks = () => {
     alert(`Work Book feature coming soon! 
-      0. Get OK from Insurance 
+      0. Get OK from Insurance 88
       1. Assessment 
       2. Treatment plan 
       3. Progress report`);
@@ -39,7 +39,7 @@ export default function CasePage() {
   };
   const handleRBTbooks = (row) => {
       alert(`RBT Work Book feature coming soon!
-      1. Check docs 
+      1. Check docs 77
       2. Check hours
       3. Verify hours
       4 *Audit

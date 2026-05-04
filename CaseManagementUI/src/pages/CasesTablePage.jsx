@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ActionTable from "../components/ActionTable";
 import DataTable from "../components/DataTable";
 import { useGlobalStore } from "../context/GlobalStore";
-import api from "../services/http";
+// import api from "../services/http";
+import { apiFetch } from "../services/apiFetch";
 
 
 export default function CasesTablePage() {
@@ -18,19 +19,16 @@ export default function CasesTablePage() {
     if (!urlCases) return;
     setLoading(true);
     try {
-      setError(null);
-      const res = await api.get(urlCases);
-      let normalized = [];
-      if (res.data?.data) {
-        normalized = Array.isArray(res.data.data)
-          ? res.data.data
-          : [res.data.data];
-      } else if (Array.isArray(res.data)) {
-        normalized = res.data;
-      } else if (res.data && typeof res.data === "object") {
-        normalized = [res.data];
-      }
-      setRows(normalized);
+      setError(null);      
+      // const res = await api.get(urlCases);
+      const body = {
+        "action": "searchCases",
+        "params": { }
+        };
+      const res = await apiFetch(urlCases, body);
+
+      setRows(res ?? []); // always safe
+
     } catch (err) {
       console.error("Error fetching cases:", err);
       setRows([]);

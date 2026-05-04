@@ -34,15 +34,17 @@ const normalizeResponse = (res) => {
 
   if (!data) return [];
 
-  // common CORQS shape: { data: [...] }
-  if (data?.data) {
-    return Array.isArray(data.data) ? data.data : [data.data];
+  // CORQS / wrapped: { data: [...] or {...} }
+  if (data?.data !== undefined) {
+    if (Array.isArray(data.data)) return data.data;
+    if (data.data !== null && typeof data.data === "object") return [data.data];
+    return [];
   }
 
-  // raw array
+  // Raw array
   if (Array.isArray(data)) return data;
 
-  // single object
+  // Single object
   if (typeof data === "object") return [data];
 
   return [];
