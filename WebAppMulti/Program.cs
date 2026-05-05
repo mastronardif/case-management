@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -33,6 +34,9 @@ builder.Host.UseSerilog();
 
 var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
 var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(jwtKey))
+    throw new Exception("Jwt:Key is missing in configuration");
+
 var jwtIssuer = builder.Configuration["Jwt:Issuer"];
 
 builder.Services.AddScoped<GenericRepository>();
@@ -93,6 +97,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<SchemaRegistry>();
+builder.Services.AddSingleton<SchemaService>();
 builder.Services.AddScoped<CorqsExecutor>();
 
 //builder.Services.AddScoped<ICorqsExecutionStrategy, StoredProcedureStrategy>();
@@ -160,10 +165,23 @@ builder.WebHost.UseUrls("http://0.0.0.0:80");
 var app = builder.Build();
 
 // FORCE CORQS BOOTSTRAP
-var schema = app.Services.GetRequiredService<SchemaRegistry>();
-schema.WarmUp();
+//var schema = app.Services.GetRequiredService<SchemaRegistry>();
+//schema.WarmUp();
+try
+{
+    var schema = app.Services.GetRequiredService<SchemaRegistry>();
+    schema.WarmUp();
+    Console.WriteLine("Schema warmup complete");
+    Console.WriteLine($"SCHEMA APIs LOADED: {schema.GetType().Name}");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Schema warmup failed: {ex.Message}");
+    throw; // keep throwing for now
+}
 
-Console.WriteLine($"SCHEMA APIs LOADED: {schema.GetType().Name}");
+
+
 app.MapCorqsEndpoints();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -231,6 +249,19 @@ app.MapGet("/", (IUserStore userStore) =>
 app.MapGet("/test-error", () =>
 {
     throw new Exception("This is a test exception for Serilog.");
+});
+
+var api = app.MapGroup("/api");
+app.MapGet("/api/swagger.json", (SchemaService schema) =>
+{
+    var generator = new OpenApiGenerator();
+    return Results.Json(generator.Generate(schema.Apis));
+});
+
+api.MapGet("/postman.json", (SchemaService schema) =>
+{
+    var generator = new PostmanGenerator();
+    return Results.Json(generator.Generate(schema.Apis));
 });
 
 app.MapFallbackToFile("index.html");
