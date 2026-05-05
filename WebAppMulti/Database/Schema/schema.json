@@ -42,7 +42,20 @@
       "name": "getBook",
       "type": "handler",
       "handler": "GetBook",
-      "route": "/api/corqs/getBook"
+      "routeNA": "/api/corqs/getBookZZZZZZZZZZZZZZZZZZ",
+      "params": {
+        "caseId": {
+          "type": "string",
+          "required": true,
+          "source": "body"
+        },
+        "fileName": {
+          "type": "string",
+          "required": true,
+          "source": "body"
+        }
+      }
+
     },
 
     {

@@ -1,0 +1,99 @@
+import { useCallback, useEffect, useState } from "react";
+import DataTable22 from "../components/DataTable22";
+import { apiFetch } from "../services/apiFetch";
+
+export default function DataPage({
+  title,
+  request,
+  rowActions = [],
+  tableActions = [],
+}) {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchData = useCallback(async () => {
+    if (!request?.url) return;
+
+    setLoading(true);
+
+    try {
+      setError(null);
+
+      const body = request?.action
+        ? {
+            action: request.action,
+            params: request.params || {},
+          }
+        : request?.body || null;
+
+      const result = await apiFetch(request.url, body);
+
+      setRows(result ?? []);
+    } catch (err) {
+      console.error("DataPage error:", err);
+      setRows([]);
+      setError("Failed to load data.");
+    } finally {
+      setLoading(false);
+    }
+  }, [request]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const rowsWithActions = rows.map((row) => ({
+    ...row,
+    Action:
+      rowActions.length > 0 ? (
+        <div className="flex gap-1">
+          {rowActions.map((a, i) => (
+            <button
+              key={i}
+              onClick={() => a.onClick(row)}
+              className={a.className}
+            >
+              {a.label}
+            </button>
+          ))}
+        </div>
+      ) : undefined,
+  }));
+
+  return (
+    <div className="p-6">
+      {/* 🔹 HEADER */}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-xl font-bold">{title}</h1>
+
+        <div className="flex gap-2">
+          {tableActions.map((a, i) => (
+            <button
+              key={i}
+              onClick={a.onClick}
+              className={a.className}
+            >
+              {a.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* 🔹 ERROR */}
+      {error && <p className="text-red-500 mb-2">{error}</p>}
+
+      {/* 🔹 TABLE */}
+      {rowsWithActions.length > 0 ? (
+        <DataTable22 rows={rowsWithActions} />
+      ) : (
+        <p>{loading ? "Loading..." : "No data found."}</p>
+      )}
+
+      {/* 🔹 FOOTER */}
+      <div className="mt-4 text-sm text-gray-500">
+        {rows.length} rows
+      </div>
+    </div>
+  );
+}
