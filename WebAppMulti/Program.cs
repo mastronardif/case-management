@@ -264,6 +264,13 @@ api.MapGet("/postman.json", (SchemaService schema) =>
     return Results.Json(generator.Generate(schema.Apis));
 });
 
+api.MapGet("/react/queryMap.js", (SchemaService schema) =>
+{
+    var generator = new ReactQueryMapGenerator();
+    return Results.Content(generator.Generate(schema.Apis), "application/javascript");
+});
+
+
 app.MapFallbackToFile("index.html");
 
 try

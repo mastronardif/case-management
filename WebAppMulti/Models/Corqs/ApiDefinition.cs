@@ -23,5 +23,7 @@ public class ApiDefinition
     public string? Method { get; set; }
     public string? Route { get; set; }
     public Dictionary<string, ParamDefinition> Params { get; set; }
+    public DataRouteDefinition? DataRoute { get; set; }
+
 }
 

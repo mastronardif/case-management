@@ -9,6 +9,18 @@ export function buildQuery(resource, type, id) {
         }
       };
     }
+    }
+
+    if (resource === "getWorkbooksByCase") {
+        if (type === "caseId") {
+        return {
+        method: "POST",
+        body: {
+            action: "getWorkbooksByCase",
+            params: {caseId: Number(id)}
+        }
+    };
+    }
 
     if (type === "case") {
       return {

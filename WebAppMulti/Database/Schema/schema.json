@@ -54,7 +54,8 @@
           "required": true,
           "source": "body"
         }
-      }
+      },
+      "dataRoute": { "resource": "getBook",      "typeParam": "fileName", "idParam": "caseId" }
 
     },
 

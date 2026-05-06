@@ -36,7 +36,15 @@ export default function CasePage() {
       2. Treatment plan 
       3. Progress report`);
     // future implementation: navigate to form component/page
-    navigate(`/workbooks/${id}`, { state: { caseData: row } });
+    // navigate(`/workbooks/${id}`, { state: { caseData: row } });
+
+     // navigate(`/data/calendar/month/${id}`, { state: { caseData: row } });
+     navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData: row } });
+
+    //  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Test", link: "/data/cases" },
+    //   { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Calendar", link: "/data/calendar/month/1001" },
+    
+    
 
   };
   const handleRBTbooks = (row) => {
