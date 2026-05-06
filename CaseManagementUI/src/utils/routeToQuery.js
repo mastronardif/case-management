@@ -31,6 +31,16 @@ export function buildQuery(resource, type, id) {
     };
   }
 
+    if (resource === "calendar") {
+    return {
+      method: "POST",
+      body: {
+        action: "getCalendar",
+        params: {month: Number(id)}
+      }
+    };
+  }
+
   // fallback
   return null;
 }

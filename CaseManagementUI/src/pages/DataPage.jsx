@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useParams } from "react-router-dom";
 import DataTable22 from "../components/DataTable22";
 import { apiFetch } from "../services/apiFetch";
+import { buildQuery } from "../utils/routeToQuery";
 
 export default function DataPage({
-  title,
+  title = "Data",
   request,
   rowActions = [],
   tableActions = [],
@@ -12,24 +14,47 @@ export default function DataPage({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const { resource, type, id } = useParams();
+
+  const resolvedRequest = useMemo(() => {
+    if (request) return request;
+
+    const query = buildQuery(resource, type, id);
+
+    if (!query) return null;
+
+    return {
+      url: "/api/corqs",
+      ...query,
+    };
+  }, [request, resource, type, id]);
+
   const fetchData = useCallback(async () => {
-    if (!request?.url) return;
+    if (!resolvedRequest?.url) {
+      console.warn("No request available");
+      return;
+    }
 
     setLoading(true);
 
     try {
       setError(null);
 
-      const body = request?.action
-        ? {
-            action: request.action,
-            params: request.params || {},
-          }
-        : request?.body || null;
+      const body =
+        resolvedRequest?.action
+          ? {
+              action: resolvedRequest.action,
+              params: resolvedRequest.params || {},
+            }
+          : resolvedRequest?.body || null;
 
-      const result = await apiFetch(request.url, body);
+      const result = await apiFetch(resolvedRequest.url, body);
 
-      setRows(result ?? []);
+      const data =
+        result?.data ?? result ?? [];
+
+      setRows(Array.isArray(data) ? data : [data]);
+
     } catch (err) {
       console.error("DataPage error:", err);
       setRows([]);
@@ -37,12 +62,13 @@ export default function DataPage({
     } finally {
       setLoading(false);
     }
-  }, [request]);
+  }, [resolvedRequest]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
+  // 🔹 Add row actions
   const rowsWithActions = rows.map((row) => ({
     ...row,
     Action:
@@ -63,9 +89,11 @@ export default function DataPage({
 
   return (
     <div className="p-6">
-      {/* 🔹 HEADER */}
+      {/* HEADER */}
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">{title}</h1>
+        <h1 className="text-xl font-bold">
+          {title || `${resource || ""} ${type || ""}`}
+        </h1>
 
         <div className="flex gap-2">
           {tableActions.map((a, i) => (
@@ -80,17 +108,17 @@ export default function DataPage({
         </div>
       </div>
 
-      {/* 🔹 ERROR */}
+      {/* ERROR */}
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
-      {/* 🔹 TABLE */}
+      {/* TABLE */}
       {rowsWithActions.length > 0 ? (
         <DataTable22 rows={rowsWithActions} />
       ) : (
         <p>{loading ? "Loading..." : "No data found."}</p>
       )}
 
-      {/* 🔹 FOOTER */}
+      {/* FOOTER */}
       <div className="mt-4 text-sm text-gray-500">
         {rows.length} rows
       </div>

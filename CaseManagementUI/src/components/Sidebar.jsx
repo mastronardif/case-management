@@ -3,6 +3,7 @@ import routes from "../routes.jsx";
 
 export default function Sidebar({ open, toggle }) {
   const getRouteLink = (route) => {
+    if (route.link) return route.link;
     if (route.defaultParams) {
       return route.path.replace(":vvv?", route.defaultParams.vvv);
     }

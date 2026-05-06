@@ -4,6 +4,7 @@ import BillingTablePage from "./pages/BillingTablePage";
 import CalendarPage from "./pages/CalendarPage";
 import CasePage from "./pages/CasePage";
 import CasesTablePage from "./pages/CasesTablePage";
+import DataPage from "./pages/DataPage";
 import FilesTablePage from "./pages/FilesTablePage";
 import FileViewerPage from "./pages/FileViewerPage";
 import IframeView from "./pages/IframeView";
@@ -20,6 +21,22 @@ const routes = [
   { path: "/cases/:caseId", element: <CasePage />, hideFromNav: true }, // dynamic route
 
   { path: "/workbooks/:caseId", element: <WorkbooksTablePage />, hideFromNav: true }, // dynamic route
+
+    // ========================
+  // DATA PAGE (generic)
+  // ========================
+  { path: "/cases/:caseId/workbooks/:workbookId/data", element: <DataPage />, hideFromNav: true },
+  // { path: "/test", element: <DataPage />, label: "Test" },
+   //{ path: "/data/cases", element: <DataPage />, label: "Test" },
+  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Test", link: "/data/cases" },
+  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Calendar", link: "/data/calendar/month/1001" },
+
+
+
+//   /data/workbooks            → all workbooks
+// /data/workbooks/case/5     → workbooks by case
+// /data/cases                → search cases
+
   { path: "/viewer", element: <FileViewerPage />, hideFromNav: true },
 
   // {

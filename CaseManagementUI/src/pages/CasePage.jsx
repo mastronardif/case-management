@@ -29,13 +29,15 @@ export default function CasePage() {
     // future implementation: open file picker or scanner integration
   };
 
-  const handleWorkbooks = () => {
+  const handleWorkbooks = (row) => {
     alert(`Work Book feature coming soon! 
       0. Get OK from Insurance 88
       1. Assessment 
       2. Treatment plan 
       3. Progress report`);
     // future implementation: navigate to form component/page
+    navigate(`/workbooks/${id}`, { state: { caseData: row } });
+
   };
   const handleRBTbooks = (row) => {
       alert(`RBT Work Book feature coming soon!
