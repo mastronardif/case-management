@@ -39,7 +39,10 @@ export default function CasePage() {
     // navigate(`/workbooks/${id}`, { state: { caseData: row } });
 
      // navigate(`/data/calendar/month/${id}`, { state: { caseData: row } });
-     navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData: row } });
+    //  navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData: row } });
+    //  navigate(`/data/getBook`, { state: { caseId: row.caseId, fileName: row.fileName } });
+    console.log("Navigating to data page with caseId:", row.caseId);
+     navigate(`/data/getBook`, { state: { caseId: "CASE-2026-000002", fileName: "session.187.aba_session_editable.pdf" } });
 
     //  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Test", link: "/data/cases" },
     //   { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Calendar", link: "/data/calendar/month/1001" },

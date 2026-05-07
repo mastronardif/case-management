@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import DataTable22 from "../components/DataTable22";
 import { apiFetch } from "../services/apiFetch";
 import { buildQuery } from "../utils/routeToQuery";
@@ -15,11 +15,12 @@ export default function DataPage({
   const [error, setError] = useState(null);
 
   const { resource, type, id } = useParams();
+  const { state } = useLocation();
 
   const resolvedRequest = useMemo(() => {
     if (request) return request;
 
-    const query = buildQuery(resource, type, id);
+    const query = buildQuery(resource, type, id, state ?? {});
 
     if (!query) return null;
 
@@ -27,7 +28,7 @@ export default function DataPage({
       url: "/api/corqs",
       ...query,
     };
-  }, [request, resource, type, id]);
+  }, [request, resource, type, id, state]);
 
   const fetchData = useCallback(async () => {
     if (!resolvedRequest?.url) {

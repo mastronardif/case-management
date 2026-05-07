@@ -4,14 +4,22 @@
       "name": "searchCases",
       "type": "storedProcedure",
       "storedProcedure": "cases.usp_SearchCases",
-      "route": "/api/corqs/searchCases"
+      "route": "/api/corqs/searchCases",
+      "dataRoute": { "resource": "searchCases" }
     },
     {
       "name": "getCalendar",
       "type": "storedProcedure",
       "storedProcedure": "cases.usp_GetCalendar",
-      "route": "/api/corqs/getCalendar"
-    },
+      "route": "/api/corqs/getCalendar",      
+        "params": {
+          "month": {
+            "type": "string",
+            "required": true,
+            "source": "body"
+          }
+        }
+      },
     {
       "name": "getServerTime",
       "type": "handler",

@@ -1,58 +1,22 @@
-export function buildQuery(resource, type, id) {
-  if (resource === "workbooks") {
-    if (!type) {
-      return {
-        method: "POST",
-        body: {
-          action: "getAllWorkbooks",
-          params: {}
-        }
-      };
-    }
-    }
+import { QUERY_MAP } from "./corqsreact.js";
 
-    if (resource === "getWorkbooksByCase") {
-        if (type === "caseId") {
-        return {
-        method: "POST",
-        body: {
-            action: "getWorkbooksByCase",
-            params: {caseId: Number(id)}
-        }
-    };
-    }
+export function buildQuery(resource, type, id, state = {}) {
+  const entry = QUERY_MAP.find(e => e.resource === resource);
+  if (!entry) return null;
 
-    if (type === "case") {
-      return {
-        method: "POST",
-        body: {
-          action: "getWorkbooksByCase",
-          params: { caseId: Number(id) }
-        }
-      };
+  const params = {};
+
+  if (entry.routeParams) {
+    if (entry.routeParams.length === 1) {
+      // single param — comes from :id URL slot
+      params[entry.routeParams[0]] = id;
+    } else {
+      // multiple params — come from navigate state
+      entry.routeParams.forEach(key => {
+        if (state[key] !== undefined) params[key] = state[key];
+      });
     }
   }
 
-  if (resource === "cases") {
-    return {
-      method: "POST",
-      body: {
-        action: "searchCases",
-        params: {}
-      }
-    };
-  }
-
-    if (resource === "calendar") {
-    return {
-      method: "POST",
-      body: {
-        action: "getCalendar",
-        params: {month: Number(id)}
-      }
-    };
-  }
-
-  // fallback
-  return null;
+  return { method: "POST", body: { action: entry.action, params } };
 }
