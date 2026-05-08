@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ActionTable from "../components/ActionTable";
-import DataTable from "../components/DataTable";
+import DataTable22 from "../components/DataTable22";
 import { useGlobalStore } from "../context/GlobalStore";
-// import api from "../services/http";
 import { apiFetch } from "../services/apiFetch";
+import { QUERY_MAP } from "../utils/corqsreact";
 
 
 export default function CasesTablePage() {
@@ -54,15 +54,15 @@ export default function CasesTablePage() {
     navigate("/cases/new");
   };
 
-  const handleOpenCase = (row) => {
-    // console.table(rows);
-    // Navigate to CasePage with URL param and optional state
-    // navigate(`/cases/${row.id}`, { state: { caseData: row } });
-//  navigate(`/cases/${row.CaseNumber}`, { state: { caseData: row } });
-  // navigate(`/cases/${row.caseNumber} - ${row.title} ***** ${row.caseId} `, { state: { caseData: row } });
-  navigate(`/cases/${row.caseId}`, { state: { caseData: row } });
-
-  };
+  const schemaEntry = QUERY_MAP.find((e) => e.resource === "searchCases");
+  const actions = (schemaEntry?.actions ?? []).map((action) => ({
+    label: action.label,
+    onClick: (row) =>
+      navigate(
+        action.route.replace(/\{(\w+)\}/g, (_, key) => row[key] ?? ""),
+        { state: { caseData: row } }
+      ),
+  }));
 
   const filteredRows = rows.filter((row) =>
     JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
@@ -83,19 +83,7 @@ export default function CasesTablePage() {
         {error && <p className="text-red-500 mb-2">{error}</p>}
 
         {filteredRows.length > 0 ? (
-          <DataTable
-            rows={filteredRows.map((row) => ({
-              ...row,
-              Action: (
-                <button
-                  onClick={() => handleOpenCase(row)}
-                  className="px-2 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600"
-                >
-                  Open
-                </button>
-              ),
-            }))}
-          />
+          <DataTable22 rows={filteredRows} actions={actions} />
         ) : (
           <p>{loading ? "Loading cases..." : "No cases found."}</p>
         )}

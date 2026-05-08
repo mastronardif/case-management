@@ -6,10 +6,16 @@ public class ParamDefinition
     public bool Required { get; set; }
     public string Source { get; set; }        // "body", "route", "query"
 
-    // Optional (future-proofing — highly recommended)
+    // Optional (future-proofing ï¿½ highly recommended)
     public string Description { get; set; }
     public string Format { get; set; }        // "uuid", "date", etc.
     public object Example { get; set; }
+}
+
+public class ActionDefinition
+{
+    public string Label { get; set; } = string.Empty;
+    public string Route { get; set; } = string.Empty;
 }
 
 public class ApiDefinition
@@ -24,6 +30,6 @@ public class ApiDefinition
     public string? Route { get; set; }
     public Dictionary<string, ParamDefinition> Params { get; set; }
     public DataRouteDefinition? DataRoute { get; set; }
-
+    public List<ActionDefinition>? Actions { get; set; }
 }
 

@@ -3,11 +3,14 @@ export const QUERY_MAP = [
     {
         resource: "searchCases",
         action: "searchCases",
+        actions: [
+            { label: "Open", route: "/cases/{caseId}" },
+        ],
     },
     {
         resource: "getCalendar",
         action: "getCalendar",
-        routeParams: ["month"]
+        routeParams: ["month"],
     },
     {
         resource: "getServerTime",
@@ -28,12 +31,15 @@ export const QUERY_MAP = [
     {
         resource: "getBook",
         action: "getBook",
-        routeParams: ["caseId", "fileName"]
+        routeParams: ["caseId", "fileName"],
     },
     {
         resource: "getWorkbooksByCase",
         action: "getWorkbooksByCase",
-        routeParams: ["caseId"]
+        routeParams: ["caseId"],
+        actions: [
+            { label: "Open", route: "/data/getBook/{fileName}/{caseId}" },
+        ],
     },
     {
         resource: "initializeWorkbooks",

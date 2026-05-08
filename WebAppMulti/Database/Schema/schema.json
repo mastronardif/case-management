@@ -5,7 +5,10 @@
       "type": "storedProcedure",
       "storedProcedure": "cases.usp_SearchCases",
       "route": "/api/corqs/searchCases",
-      "dataRoute": { "resource": "searchCases" }
+      "dataRoute": { "resource": "searchCases" },
+      "actions": [
+        { "label": "Open", "route": "/cases/{caseId}" } 
+      ]
     },
     {
       "name": "getCalendar",
@@ -78,7 +81,10 @@
           "required": true,
           "source": "body"
         }
-      }
+      },
+      "actions": [
+        { "label": "Open", "route": "/data/getBook/{fileName}/{caseId}" }
+      ]
     },
     {
       "name": "initializeWorkbooks",

@@ -18,7 +18,15 @@ public class ReactQueryMapGenerator
 
             var routeParams = BuildRouteParams(api);
             if (routeParams != null)
-                sb.AppendLine($"    routeParams: {routeParams}");
+                sb.AppendLine($"    routeParams: {routeParams},");
+
+            if (api.Actions != null && api.Actions.Any())
+            {
+                sb.AppendLine("    actions: [");
+                foreach (var action in api.Actions)
+                    sb.AppendLine($"      {{ label: \"{action.Label}\", route: \"{action.Route}\" }},");
+                sb.AppendLine("    ],");
+            }
 
             sb.AppendLine("  },");
         }

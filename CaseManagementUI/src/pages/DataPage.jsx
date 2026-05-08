@@ -1,21 +1,34 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DataTable22 from "../components/DataTable22";
 import { apiFetch } from "../services/apiFetch";
+import { QUERY_MAP } from "../utils/corqsreact";
 import { buildQuery } from "../utils/routeToQuery";
 
 export default function DataPage({
   title = "Data",
   request,
-  rowActions = [],
+  // rowActions = [],
   tableActions = [],
 }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const navigate = useNavigate();
   const { resource, type, id } = useParams();
   const { state } = useLocation();
+
+  const schemaEntry = QUERY_MAP.find((e) => e.resource === resource);
+  const urlContext = type && id ? { [type]: id } : {};
+  const actions = (schemaEntry?.actions ?? []).map((action) => ({
+    label: action.label,
+    onClick: (row) =>
+      navigate(
+        action.route.replace(/\{(\w+)\}/g, (_, key) => row[key] ?? urlContext[key] ?? ""),
+        { state: { ...row, ...urlContext, caseData: row } }
+      ),
+  }));
 
   const resolvedRequest = useMemo(() => {
     if (request) return request;
@@ -69,24 +82,6 @@ export default function DataPage({
     fetchData();
   }, [fetchData]);
 
-  // 🔹 Add row actions
-  const rowsWithActions = rows.map((row) => ({
-    ...row,
-    Action:
-      rowActions.length > 0 ? (
-        <div className="flex gap-1">
-          {rowActions.map((a, i) => (
-            <button
-              key={i}
-              onClick={() => a.onClick(row)}
-              className={a.className}
-            >
-              {a.label}
-            </button>
-          ))}
-        </div>
-      ) : undefined,
-  }));
 
   return (
     <div className="p-6">
@@ -113,8 +108,8 @@ export default function DataPage({
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
       {/* TABLE */}
-      {rowsWithActions.length > 0 ? (
-        <DataTable22 rows={rowsWithActions} />
+      {rows.length > 0 ? (
+        <DataTable22 rows={rows} actions={actions} />
       ) : (
         <p>{loading ? "Loading..." : "No data found."}</p>
       )}
