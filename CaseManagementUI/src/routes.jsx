@@ -4,6 +4,7 @@ import BillingTablePage from "./pages/BillingTablePage";
 import CalendarPage from "./pages/CalendarPage";
 import CasePage from "./pages/CasePage";
 import CasesTablePage from "./pages/CasesTablePage";
+import CorqsTestPage from "./pages/CorqsTestPage";
 import DataPage from "./pages/DataPage";
 import FilesTablePage from "./pages/FilesTablePage";
 import FileViewerPage from "./pages/FileViewerPage";
@@ -26,10 +27,7 @@ const routes = [
   // DATA PAGE (generic)
   // ========================
   { path: "/cases/:caseId/workbooks/:workbookId/data", element: <DataPage />, hideFromNav: true },
-  // { path: "/test", element: <DataPage />, label: "Test" },
-   //{ path: "/data/cases", element: <DataPage />, label: "Test" },
-  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Test", link: "/data/cases" },
-  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Calendar", link: "/data/calendar/month/1001" },
+   { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Calendar", link: "/data/calendar/month/1001" },
 
 
 
@@ -60,6 +58,13 @@ const routes = [
   { path: "/table", element: <TableFromUrl />, label: "Table" },
   { path: "/settings", element: <Settings />, label: "Settings" },
   { path: "/login", element: <Login />, label: "Login" },
+
+  { path: "/corqs", element: <CorqsTestPage />, label: "CORQS" },
+
+   // { path: "/test", element: <DataPage />, label: "Test" },
+   //{ path: "/data/cases", element: <DataPage />, label: "Test" },
+  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Test", link: "/data/cases" },
+
 
   // IframeView examples
   {
