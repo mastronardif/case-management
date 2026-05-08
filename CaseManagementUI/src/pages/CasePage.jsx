@@ -1,5 +1,5 @@
 // CasePage.jsx
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ActionPage from "../components/ActionPage";
 
 export default function CasePage() {
@@ -7,42 +7,46 @@ export default function CasePage() {
     // Always resolve to /dist/myreactapp/files/...
   // const pdfUrl = `${process.env.PUBLIC_URL}/files/caseIntake.pdf`;
   const navigate = useNavigate();
+  const { state } = useLocation();
+  const caseData = state?.caseData;
   const pdfUrl = `${import.meta.env.BASE_URL}files/intake.html`;
 
     // Grey button style for all buttons
   const greyButtonClass =
     "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-150 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed";
+  const { caseId } = useParams(); // URL param
+  const id = caseId ?? "new"; // ✅ use nullish coalescing
 
     const pageActions = [
-    { label: "Work Books", onClick: () => handleWorkbooks() },
-    { label: "RBT Books", onClick: () => handleRBTbooks() },
-    { label: "Insurance Books", onClick: () => handleInsurancebooks() },
+    { label: "Work Books", onClick: () => handleWorkbooks(caseId) },
+    { label: "RBT Books", onClick: () => handleRBTbooks(caseId) },
+    { label: "Insurance Books", onClick: () => handleInsurancebooks(caseId) },
     { label: "Import from Scan", onClick: () => handleImportScan() },
     { label: "tbd", onClick: () => handleFillForm() },
   ];
 
-  const { caseId } = useParams(); // URL param
-  const id = caseId ?? "new"; // ✅ use nullish coalescing
+
 
   const handleImportScan = () => {
     alert("Import from scan feature coming soon!");
     // future implementation: open file picker or scanner integration
   };
 
-  const handleWorkbooks = (row) => {
+  const handleWorkbooks = () => {
     alert(`Work Book feature coming soon! 
       0. Get OK from Insurance 88
       1. Assessment 
       2. Treatment plan 
       3. Progress report`);
+      console.log(caseData);
     // future implementation: navigate to form component/page
     // navigate(`/workbooks/${id}`, { state: { caseData: row } });
 
      // navigate(`/data/calendar/month/${id}`, { state: { caseData: row } });
-    //  navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData: row } });
+     navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData: caseData } });
     //  navigate(`/data/getBook`, { state: { caseId: row.caseId, fileName: row.fileName } });
-    console.log("Navigating to data page with caseId:", row.caseId);
-     navigate(`/data/getBook`, { state: { caseId: "CASE-2026-000002", fileName: "session.187.aba_session_editable.pdf" } });
+    // console.log("Navigating to data page with caseId:", caseId);
+    //  navigate(`/data/getBook`, { state: { caseId: "CASE-2026-000002", fileName: "session.187.aba_session_editable.pdf" } });
 
     //  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Test", link: "/data/cases" },
     //   { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Calendar", link: "/data/calendar/month/1001" },

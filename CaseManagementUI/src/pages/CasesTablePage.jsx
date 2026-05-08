@@ -59,8 +59,9 @@ export default function CasesTablePage() {
     // Navigate to CasePage with URL param and optional state
     // navigate(`/cases/${row.id}`, { state: { caseData: row } });
 //  navigate(`/cases/${row.CaseNumber}`, { state: { caseData: row } });
-  navigate(`/cases/${row.caseNumber} - ${row.title} ***** ${row.caseId} `, { state: { caseData: row } });
- 
+  // navigate(`/cases/${row.caseNumber} - ${row.title} ***** ${row.caseId} `, { state: { caseData: row } });
+  navigate(`/cases/${row.caseId}`, { state: { caseData: row } });
+
   };
 
   const filteredRows = rows.filter((row) =>

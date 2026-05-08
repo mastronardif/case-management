@@ -33,6 +33,7 @@ export const QUERY_MAP = [
     {
         resource: "getWorkbooksByCase",
         action: "getWorkbooksByCase",
+        routeParams: ["caseId"]
     },
     {
         resource: "initializeWorkbooks",

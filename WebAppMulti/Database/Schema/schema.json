@@ -71,7 +71,14 @@
       "name": "getWorkbooksByCase",
       "type": "storedProcedure",
       "storedProcedure": "cases.usp_Workbook_GetByCaseId",
-      "route": "/api/corqs/cases/{caseId}/workbooks"
+      "route": "/api/corqs/cases/{caseId}/workbooks",
+      "params": {
+        "caseId": {
+          "type": "string",
+          "required": true,
+          "source": "body"
+        }
+      }
     },
     {
       "name": "initializeWorkbooks",
