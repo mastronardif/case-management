@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
-import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Spinner from "./components/Spinner";
 import { GlobalProvider } from "./context/GlobalContext";
@@ -17,7 +16,6 @@ export default function App() {
         <div className="flex h-screen w-screen overflow-hidden relative">
           <Sidebar open={sidebarOpen} toggle={() => setSidebarOpen(!sidebarOpen)} />
           <div className="flex flex-col flex-1">
-            <Navbar />
             <main className="flex-1 bg-gray-50 overflow-auto p-4 relative">        
                            <Spinner /> 
               <Routes>

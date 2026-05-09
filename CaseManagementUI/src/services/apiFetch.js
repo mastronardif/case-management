@@ -1,4 +1,5 @@
 import api from "./http";
+import { setConnected } from "../utils/connectionStore";
 
 /**
  * Flexible API helper for GET or POST (CORQS + REST friendly)
@@ -19,8 +20,10 @@ export const apiFetch = async (url, body = null, config = {}) => {
       res = await api.get(url, config);
     }
 
+    setConnected("connected");
     return normalizeResponse(res);
   } catch (err) {
+    setConnected("disconnected");
     console.error("apiFetch error:", err);
     throw err;
   }

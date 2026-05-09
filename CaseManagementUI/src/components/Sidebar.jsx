@@ -4,23 +4,32 @@ import routes from "../routes.jsx";
 export default function Sidebar({ open, toggle }) {
   const getRouteLink = (route) => {
     if (route.link) return route.link;
-    if (route.defaultParams) {
+    if (route.defaultParams)
       return route.path.replace(":vvv?", route.defaultParams.vvv);
-    }
     return route.path.replace(":vvv?", "");
   };
 
   return (
     <aside
-      className={`bg-gray-800 text-white transition-all duration-300 ${
-        open ? "w-64" : "w-16"
+      className={`bg-gray-800 text-white transition-all duration-300 flex flex-col h-full ${
+        open ? "w-44" : "w-12"
       }`}
     >
-      <div className="p-4 font-bold text-lg">
-        Dyno Minds ©
-      </div>
+      <button
+        onClick={toggle}
+        className="p-3 hover:bg-gray-700 text-left text-xl leading-none flex-shrink-0"
+        title={open ? "Collapse" : "Expand"}
+      >
+        ☰
+      </button>
 
-      <nav className="flex flex-col">
+      {open && (
+        <div className="px-4 pb-3 font-bold text-lg border-b border-gray-700">
+          Dyno Minds ©
+        </div>
+      )}
+
+      <nav className="flex flex-col mt-1 flex-1 overflow-y-auto">
         {routes
           .filter((r) => !r.hideFromNav)
           .map((route) => (
@@ -28,23 +37,17 @@ export default function Sidebar({ open, toggle }) {
               key={route.path}
               to={getRouteLink(route)}
               end
+              title={!open ? (route.label || route.name) : undefined}
               className={({ isActive }) =>
-                `block px-4 py-2 rounded hover:bg-gray-700 ${
+                `block px-3 py-2 rounded hover:bg-gray-700 truncate ${
                   isActive ? "bg-gray-900" : ""
                 }`
               }
             >
-              {route.label || route.name}
+              {open ? (route.label || route.name) : "·"}
             </NavLink>
           ))}
       </nav>
-
-      <button
-        onClick={toggle}
-        className="mt-auto p-2 bg-gray-700 hover:bg-gray-600 w-full text-sm"
-      >
-        {open ? "Collapse" : "Expand"}
-      </button>
     </aside>
   );
 }
