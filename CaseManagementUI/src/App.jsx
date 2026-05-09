@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Spinner from "./components/Spinner";
@@ -33,6 +34,7 @@ export default function App() {
                 )}
               </Routes>
             </main>
+            <Footer />
           </div>
         </div>
       </Router>

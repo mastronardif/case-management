@@ -1,23 +1,27 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import ActionTable from "../components/ActionTable";
 import DataTable22 from "../components/DataTable22";
 import { apiFetch } from "../services/apiFetch";
 import { QUERY_MAP } from "../utils/corqsreact";
 import { buildQuery } from "../utils/routeToQuery";
+import { getTableActions } from "../utils/tableActionStore";
 
 export default function DataPage({
-  title = "Data",
+  title,
   request,
-  // rowActions = [],
   tableActions = [],
 }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
   const { resource, type, id } = useParams();
   const { state } = useLocation();
+
+  const allTableActions = [...getTableActions(resource), ...tableActions];
 
   const schemaEntry = QUERY_MAP.find((e) => e.resource === resource);
   const urlContext = type && id ? { [type]: id } : {};
@@ -32,15 +36,9 @@ export default function DataPage({
 
   const resolvedRequest = useMemo(() => {
     if (request) return request;
-
     const query = buildQuery(resource, type, id, state ?? {});
-
     if (!query) return null;
-
-    return {
-      url: "/api/corqs",
-      ...query,
-    };
+    return { url: "/api/corqs", ...query };
   }, [request, resource, type, id, state]);
 
   const fetchData = useCallback(async () => {
@@ -48,27 +46,15 @@ export default function DataPage({
       console.warn("No request available");
       return;
     }
-
     setLoading(true);
-
     try {
       setError(null);
-
-      const body =
-        resolvedRequest?.action
-          ? {
-              action: resolvedRequest.action,
-              params: resolvedRequest.params || {},
-            }
-          : resolvedRequest?.body || null;
-
+      const body = resolvedRequest?.action
+        ? { action: resolvedRequest.action, params: resolvedRequest.params || {} }
+        : resolvedRequest?.body || null;
       const result = await apiFetch(resolvedRequest.url, body);
-
-      const data =
-        result?.data ?? result ?? [];
-
+      const data = result?.data ?? result ?? [];
       setRows(Array.isArray(data) ? data : [data]);
-
     } catch (err) {
       console.error("DataPage error:", err);
       setRows([]);
@@ -82,42 +68,57 @@ export default function DataPage({
     fetchData();
   }, [fetchData]);
 
+  const handleExport = () => {
+    if (!rows.length) return;
+    const cols = Object.keys(rows[0]);
+    const csv = [cols.join(","), ...rows.map((r) =>
+      cols.map((c) => {
+        const v = r[c] ?? "";
+        const s = typeof v === "object" ? JSON.stringify(v) : String(v);
+        return s.includes(",") || s.includes('"') ? `"${s.replace(/"/g, '""')}"` : s;
+      }).join(",")
+    )].join("\n");
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.download = `${resource ?? "export"}.csv`;
+    a.click();
+  };
+
+  const resolvedTitle = title ?? `${resource ?? ""}${type ? ` / ${type}` : ""}${id ? ` / ${id}` : ""}`;
+
+  const filteredRows = rows.filter((row) =>
+    JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
+  );
+
+  const btnClass = "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-150 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <div className="p-6">
-      {/* HEADER */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-bold">
-          {title || `${resource || ""} ${type || ""}`}
-        </h1>
-
-        <div className="flex gap-2">
-          {tableActions.map((a, i) => (
-            <button
-              key={i}
-              onClick={a.onClick}
-              className={a.className}
-            >
-              {a.label}
-            </button>
-          ))}
-        </div>
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <ActionTable
+          title={resolvedTitle}
+          onReload={fetchData}
+          onExport={handleExport}
+          onSearch={setSearch}
+          loading={loading}
+          buttonClass={btnClass}
+        />
+        {allTableActions.map((a, i) => (
+          <button key={i} onClick={a.onClick} className={a.className ?? btnClass}>
+            {a.label}
+          </button>
+        ))}
       </div>
 
-      {/* ERROR */}
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
-      {/* TABLE */}
-      {rows.length > 0 ? (
-        <DataTable22 rows={rows} actions={actions} />
+      {filteredRows.length > 0 ? (
+        <DataTable22 rows={filteredRows} actions={actions} />
       ) : (
         <p>{loading ? "Loading..." : "No data found."}</p>
       )}
 
-      {/* FOOTER */}
-      <div className="mt-4 text-sm text-gray-500">
-        {rows.length} rows
-      </div>
+      <div className="mt-4 text-sm text-gray-500">{rows.length} rows</div>
     </div>
   );
 }

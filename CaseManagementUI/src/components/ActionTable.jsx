@@ -19,6 +19,7 @@ export default function ActionTable({
 
   return (
     <div className="flex items-center gap-2">
+      {title && <span className="text-lg font-semibold mr-2">{title}</span>}
       <button onClick={onNew} className={buttonClass} disabled={loading}>
         New
       </button>
