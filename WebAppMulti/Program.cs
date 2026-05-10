@@ -193,6 +193,7 @@ catch (Exception ex)
 
 
 app.MapCorqsEndpoints();
+app.MapGetDocumentEndpoint();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

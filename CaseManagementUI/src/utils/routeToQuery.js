@@ -11,9 +11,11 @@ export function buildQuery(resource, type, id, state = {}) {
       // single param — comes from :id URL slot
       params[entry.routeParams[0]] = id;
     } else {
-      // multiple params — come from navigate state
+      // multiple params — come from URL context first, then navigate state
+      const urlContext = type && id ? { [type]: id } : {};
       entry.routeParams.forEach(key => {
-        if (state[key] !== undefined) params[key] = state[key];
+        if (urlContext[key] !== undefined) params[key] = urlContext[key];
+        else if (state[key] !== undefined) params[key] = state[key];
       });
     }
   }

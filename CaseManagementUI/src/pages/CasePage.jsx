@@ -48,7 +48,9 @@ export default function CasePage() {
         className: greenButtonClass,
       },
     ]);
-    navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData } });
+    //navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData } });
+    navigate(`/data/getBooks22/caseId/${id}`, { state: { caseData, workbookQId: "1001" } });
+    // navigate(`/data/getBooks22/caseId/${id}`)
   };
 
   const handleRBTbooks = () => {

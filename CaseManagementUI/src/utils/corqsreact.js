@@ -8,6 +8,14 @@ export const QUERY_MAP = [
         ],
     },
     {
+        resource: "getBooks22",
+        action: "getBooks22",
+        routeParams: ["caseId", "workbookQId"],
+        actions: [
+            { label: "Open", route: "/docviewer/{documentId}" },
+        ],
+    },
+    {
         resource: "getCalendar",
         action: "getCalendar",
         routeParams: ["month"],

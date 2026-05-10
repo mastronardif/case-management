@@ -5,6 +5,7 @@ import CalendarPage from "./pages/CalendarPage";
 import CasePage from "./pages/CasePage";
 import CasesTablePage from "./pages/CasesTablePage";
 import CorqsTestPage from "./pages/CorqsTestPage";
+import DocumentViewerPage from "./pages/DocumentViewerPage";
 import DataPage from "./pages/DataPage";
 import FilesTablePage from "./pages/FilesTablePage";
 import FileViewerPage from "./pages/FileViewerPage";
@@ -36,6 +37,7 @@ const routes = [
 // /data/cases                → search cases
 
   { path: "/viewer", element: <FileViewerPage />, hideFromNav: true },
+  { path: "/docviewer/:documentId", element: <DocumentViewerPage />, hideFromNav: true },
 
   // {
   //   path: "/iframe/session/:vvv?",

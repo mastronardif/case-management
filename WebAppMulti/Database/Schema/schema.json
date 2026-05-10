@@ -7,22 +7,50 @@
       "route": "/api/corqs/searchCases",
       "dataRoute": { "resource": "searchCases" },
       "actions": [
-        { "label": "Open", "route": "/cases/{caseId}" } 
+        {
+          "label": "Open",
+          "route": "/cases/{caseId}"
+        }
+      ]
+    },
+    {
+      "name": "getBooks22",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_WorkbookQ_GetDocuments",
+      "route": "/api/corqs/getBooks22",
+      "dataRoute": { "resource": "getBooks22" },
+      "params": {
+        "caseId": {
+          "type": "string",
+          "required": true,
+          "source": "body"
+        },
+        "workbookQId": {
+          "type": "string",
+          "required": true,
+          "source": "body"
+        }
+      },
+      "actions": [
+        {
+          "label": "Open",
+          "route": "/docviewer/{documentId}"
+        }
       ]
     },
     {
       "name": "getCalendar",
       "type": "storedProcedure",
       "storedProcedure": "cases.usp_GetCalendar",
-      "route": "/api/corqs/getCalendar",      
-        "params": {
-          "month": {
-            "type": "string",
-            "required": true,
-            "source": "body"
-          }
+      "route": "/api/corqs/getCalendar",
+      "params": {
+        "month": {
+          "type": "string",
+          "required": true,
+          "source": "body"
         }
-      },
+      }
+    },
     {
       "name": "getServerTime",
       "type": "handler",
@@ -66,9 +94,8 @@
           "source": "body"
         }
       },
-      "dataRoute": { "resource": "getBook",      "typeParam": "fileName", "idParam": "caseId" }
-
-    },
+      "dataRoute": { "resource": "getBook", "typeParam": "fileName", "idParam": "caseId" }
+        },
 
     {
       "name": "getWorkbooksByCase",
