@@ -18,19 +18,29 @@ using WebAppMulti.Services.CaseManagement;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .WriteTo.MSSqlServer(
-        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
-        sinkOptions: new MSSqlServerSinkOptions
-        {
-            TableName = "ApplicationLogs",
-            AutoCreateSqlTable = true
-        },
-        restrictedToMinimumLevel: LogEventLevel.Error)
-    .CreateLogger();
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(builder.Configuration)
+//    .WriteTo.MSSqlServer(
+//        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
+//        sinkOptions: new MSSqlServerSinkOptions
+//        {
+//            TableName = "ApplicationLogs",
+//            AutoCreateSqlTable = true
+//        },
+//        restrictedToMinimumLevel: LogEventLevel.Error)
+//    .CreateLogger();
 
-builder.Host.UseSerilog();
+// ONLY read from config (no duplicate sinks here)
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(builder.Configuration)
+//    .CreateLogger();
+
+//builder.Host.UseSerilog();
+// 
+builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+{
+    loggerConfiguration.ReadFrom.Configuration(context.Configuration);
+});
 
 var pathBase = Environment.GetEnvironmentVariable("ASPNETCORE_PATHBASE");
 var jwtKey = builder.Configuration["Jwt:Key"];

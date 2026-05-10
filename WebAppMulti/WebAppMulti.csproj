@@ -8,12 +8,16 @@
 
   <ItemGroup>
     <Compile Remove="Database\Scripts\DbExporter\**" />
+    <Compile Remove="Database\Scripts\ImportDocs\**" />
     <Compile Remove="ModelsPRE\**" />
     <Content Remove="Database\Scripts\DbExporter\**" />
+    <Content Remove="Database\Scripts\ImportDocs\**" />
     <Content Remove="ModelsPRE\**" />
     <EmbeddedResource Remove="Database\Scripts\DbExporter\**" />
+    <EmbeddedResource Remove="Database\Scripts\ImportDocs\**" />
     <EmbeddedResource Remove="ModelsPRE\**" />
     <None Remove="Database\Scripts\DbExporter\**" />
+    <None Remove="Database\Scripts\ImportDocs\**" />
     <None Remove="ModelsPRE\**" />
   </ItemGroup>
 

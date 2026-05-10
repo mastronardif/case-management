@@ -1,0 +1,89 @@
+✅ How to Submit an 837 Claim to Cigna
+
+Pick an EDI Vendor / Clearinghouse
+
+Use an EDI vendor that supports 837 submissions. Cigna lists supported vendors here: Electronic Data Interchange Vendors. 
+Cigna
+
+Examples: Office Ally, Change Healthcare, etc. 
+Cigna
++1
+
+Trading Partner Setup
+
+You’ll need to become a “trading partner” with Cigna for EDI. 
+Cigna
+
+Complete the technical assessments required by Cigna. 
+Cigna
+
+After setup, you can run system tests with Cigna before going live. 
+Cigna
+
+Use the Correct Payer ID
+
+For behavioral or medical claims, the payer ID is 62308. 
+chk.static.cigna.com
++1
+
+Follow Cigna’s 837 Format Requirements
+
+Use the Cigna “837 Professional” Companion Guide, which describes required data elements and how to format them. 
+Cigna
+
+If you’re sending institutional claims, use their 837-I Companion Guide. 
+Cigna
+
+Make Sure Your Claim Is “Clean”
+
+Provide all required data so the claim won’t be rejected. Cigna has “clean claim” requirements including certain loops in the 837 file. 
+Cigna
+
+If the claim is coordination of benefits (COB), make sure the 837 has correct loop 2320/2330 info. 
+Cigna
+
+Submitting Claims with Attachments
+
+If you need to attach documentation (e.g., medical records), use the PWK segment in loop 2300 of the 837. Indicate in PWK that notes will be faxed or mailed — don’t put full notes in the segment. 
+Cigna
++1
+
+Include in the fax or mailed notes: patient name, Cigna ID, date of service, total billed amount, and other details. 
+midlandschoice.com
+
+Submit
+
+Use your EDI software / clearinghouse to transmit the 837 to Cigna.
+
+If you don’t want to use a clearinghouse, Cigna offers Post-n-Track®, their free web service for submitting 837 claims. 
+Cigna
+
+Receive Acknowledgement & Remittance
+
+After submission, you should receive a 277CA (Claim Acknowledgment) from Cigna via your vendor. 
+chk.static.cigna.com
+
+You will also receive 835 (Electronic Remittance Advice) for payments. 
+chk.static.cigna.com
+
+Common Pitfalls to Avoid
+
+Not having a formal trading partner agreement — without it, your 837 may be rejected.
+
+Missing required segments in the 837 (per Cigna’s companion guide) → leads to rejections.
+
+Sending attachments incorrectly (e.g., putting full notes in the PWK text instead of faxing) → Cigna doesn’t want the full attachment inside the 837.
+
+Not testing properly in a test environment before going live.
+
+Sample_837P_Claim
+
+>>>>>>>>>>>>>>>>>>>>>>>
+ABILITY Network If you currently submit 100 percent of your claims to Cigna Healthcare on paper, and agree to convert to electronic claims submission, you may be eligible to submit claims electronically for free. You may also qualify for special offers on all payer solutions. 
+For more information, go to mdol.com/Cigna or call 1 (888) 499-5465.
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>
+https://developer.availity.com/
+Availity for developers
+https://developer.availity.com/blog/2025/3/25/hipaa-transactions#claim_statuses
+
