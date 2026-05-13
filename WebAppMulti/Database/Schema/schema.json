@@ -14,6 +14,25 @@
       ]
     },
     {
+      "name": "Case_GetDocuments",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_Case_GetDocuments",
+      "dataRoute": { "resource": "Case_GetDocuments" },
+      "params": {
+        "caseId": {
+          "type": "string",
+          "required": true,
+          "source": "body"
+        }
+      },
+      "actions": [
+        {
+          "label": "Open",
+          "route": "/docviewer/{documentId}"
+        }
+      ]
+    },
+    {
       "name": "getBooks22",
       "type": "storedProcedure",
       "storedProcedure": "cases.usp_WorkbookQ_GetDocuments",

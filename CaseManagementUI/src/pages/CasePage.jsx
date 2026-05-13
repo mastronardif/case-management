@@ -49,7 +49,8 @@ export default function CasePage() {
       },
     ]);
     //navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData } });
-    navigate(`/data/getBooks22/caseId/${id}`, { state: { caseData, workbookQId: "1001" } });
+    //navigate(`/data/getBooks22/caseId/${id}`, { state: { caseData, workbookQId: "1001" } });
+    navigate(`/data/Case_GetDocuments/caseId/${id}`, { state: { caseData } });
     // navigate(`/data/getBooks22/caseId/${id}`)
   };
 
