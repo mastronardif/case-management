@@ -58,7 +58,7 @@ class Program
                     continue;
                 }
 
-                int caseId = int.Parse(parts[0]);
+                string caseNumber = parts[0];
                 string filePath = parts[1];
                 string documentType = parts[2];
                 string title = parts[3];
@@ -90,7 +90,7 @@ class Program
 INSERT INTO [cases].[Document]
 (
     VersionId,
-    CaseId,
+    CaseNumber,
     DocumentType,
     Title,
     FileName,
@@ -103,7 +103,7 @@ INSERT INTO [cases].[Document]
 VALUES
 (
     @VersionId,
-    @CaseId,
+    @CaseNumber,
     @DocumentType,
     @Title,
     @FileName,
@@ -115,7 +115,7 @@ VALUES
 )", conn, transaction);
 
                     cmd.Parameters.Add("@VersionId", SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
-                    cmd.Parameters.Add("@CaseId", SqlDbType.Int).Value = caseId;
+                    cmd.Parameters.Add("@CaseNumber", SqlDbType.Int).Value = caseNumber;
                     cmd.Parameters.Add("@DocumentType", SqlDbType.VarChar, 50).Value = documentType;
                     cmd.Parameters.Add("@Title", SqlDbType.NVarChar, 200).Value = title;
                     cmd.Parameters.Add("@FileName", SqlDbType.NVarChar, 255).Value = Path.GetFileName(filePath);
@@ -127,7 +127,7 @@ VALUES
 
                     transaction.Commit();
 
-                    Log.Information("Imported {File} for Case {CaseId}", filePath, caseId);
+                    Log.Information("Imported {File} for CaseNumber {CaseNumber}", filePath, caseNumber);
                 }
                 catch (Exception ex)
                 {

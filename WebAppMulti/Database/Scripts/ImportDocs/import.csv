@@ -1,3 +1,2 @@
-CaseId,FilePath,DocumentType,Title,ContentType
-1,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\session.909.aba_session_dashboard_mixed.svg,Import,SessionNote.001,image/svg+xml
-1,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\claim837.txt,Import,claim837,text/html
+CaseNumber,FilePath,DocumentType,Title,ContentType
+82001,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\aba.html,IntakeForm,Intake.001,text/html
