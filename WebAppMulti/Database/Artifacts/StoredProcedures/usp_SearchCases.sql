@@ -1,5 +1,7 @@
-﻿CREATE PROCEDURE [cases].[usp_SearchCases]
+﻿-- exec [cases].[usp_SearchCases] =1005
+CREATE PROCEDURE [cases].[usp_SearchCases]
     @ClientId INT = NULL
+    --EXEC cases.usp_SearchCases  @ClientId = 1005
 AS
 BEGIN
     SET NOCOUNT ON;

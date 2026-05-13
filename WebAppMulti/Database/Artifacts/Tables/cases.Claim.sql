@@ -1,0 +1,16 @@
+-- TABLE: cases.Claim
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[Claim](
+	[ClaimId] [int] IDENTITY(1,1) NOT NULL,
+	[CaseId] [int] NOT NULL,
+	[ClaimNumber] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[Status] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[GeneratedDate] [datetime2](7) NULL,
+	[EdiDocumentId] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ClaimId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+

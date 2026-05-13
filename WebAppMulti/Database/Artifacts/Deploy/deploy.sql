@@ -57,6 +57,217 @@ ALTER TABLE [cases].[Case] ADD  CONSTRAINT [DF_Case_IsActive]  DEFAULT ((1)) FOR
 GO
 
 -- =====================================
+-- FILE: cases.Claim.sql
+-- =====================================
+-- TABLE: cases.Claim
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[Claim](
+	[ClaimId] [int] IDENTITY(1,1) NOT NULL,
+	[CaseId] [int] NOT NULL,
+	[ClaimNumber] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[Status] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[GeneratedDate] [datetime2](7) NULL,
+	[EdiDocumentId] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ClaimId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+GO
+
+-- =====================================
+-- FILE: cases.Document.sql
+-- =====================================
+-- TABLE: cases.Document
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[Document](
+	[DocumentId] [int] IDENTITY(1,1) NOT NULL,
+	[VersionId] [uniqueidentifier] NOT NULL,
+	[CaseId] [int] NOT NULL,
+	[SessionId] [int] NULL,
+	[WorkbookQId] [int] NULL,
+	[DocumentType] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[Title] [nvarchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[FileName] [nvarchar](255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[ContentType] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[FileData] [varbinary](max) NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[CreatedBy] [nvarchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[IsActive] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[DocumentId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+ALTER TABLE [cases].[Document] ADD  DEFAULT (newid()) FOR [VersionId]
+ALTER TABLE [cases].[Document] ADD  DEFAULT (sysutcdatetime()) FOR [CreatedDate]
+ALTER TABLE [cases].[Document] ADD  DEFAULT ((1)) FOR [IsActive]
+
+GO
+
+-- =====================================
+-- FILE: cases.Session.sql
+-- =====================================
+-- TABLE: cases.Session
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[Session](
+	[SessionId] [int] IDENTITY(1,1) NOT NULL,
+	[CaseId] [int] NOT NULL,
+	[SessionDate] [datetime2](7) NOT NULL,
+	[DurationMinutes] [int] NULL,
+	[ProviderId] [int] NULL,
+	[Location] [nvarchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[NotesSummary] [nvarchar](max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[CreatedBy] [nvarchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[SessionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+ALTER TABLE [cases].[Session] ADD  DEFAULT (sysutcdatetime()) FOR [CreatedDate]
+
+GO
+
+-- =====================================
+-- FILE: cases.Workbook.sql
+-- =====================================
+-- TABLE: cases.Workbook
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[Workbook](
+	[WorkbookId] [int] IDENTITY(1,1) NOT NULL,
+	[CaseId] [int] NOT NULL,
+	[WorkbookTypeId] [int] NOT NULL,
+	[Status] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[DueDate] [datetime2](7) NULL,
+	[CompletedDate] [datetime2](7) NULL,
+	[CreatedBy] [nvarchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[ModifiedBy] [nvarchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[ModifiedDate] [datetime2](7) NULL,
+	[IsActive] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[WorkbookId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+ALTER TABLE [cases].[Workbook] ADD  DEFAULT ('Pending') FOR [Status]
+ALTER TABLE [cases].[Workbook] ADD  DEFAULT (sysutcdatetime()) FOR [CreatedDate]
+ALTER TABLE [cases].[Workbook] ADD  DEFAULT ((1)) FOR [IsActive]
+
+GO
+
+-- =====================================
+-- FILE: cases.WorkbookDocument.sql
+-- =====================================
+-- TABLE: cases.WorkbookDocument
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[WorkbookDocument](
+	[WorkbookDocumentId] [int] IDENTITY(1,1) NOT NULL,
+	[WorkbookId] [int] NOT NULL,
+	[DocumentId] [int] NOT NULL,
+	[DocumentType] [nvarchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[CreatedBy] [nvarchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[CreatedDate] [datetime2](0) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+ CONSTRAINT [PK_WorkbookDocument] PRIMARY KEY CLUSTERED 
+(
+	[WorkbookDocumentId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+ALTER TABLE [cases].[WorkbookDocument] ADD  CONSTRAINT [DF_WorkbookDocument_CreatedDate]  DEFAULT (sysutcdatetime()) FOR [CreatedDate]
+ALTER TABLE [cases].[WorkbookDocument] ADD  CONSTRAINT [DF_WorkbookDocument_IsActive]  DEFAULT ((1)) FOR [IsActive]
+ALTER TABLE [cases].[WorkbookDocument]  WITH CHECK ADD  CONSTRAINT [FK_WorkbookDocument_Workbook] FOREIGN KEY([WorkbookId])
+REFERENCES [cases].[Workbook] ([WorkbookId])
+ALTER TABLE [cases].[WorkbookDocument] CHECK CONSTRAINT [FK_WorkbookDocument_Workbook]
+
+GO
+
+-- =====================================
+-- FILE: cases.WorkbookQ.sql
+-- =====================================
+-- TABLE: cases.WorkbookQ
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[WorkbookQ](
+	[WorkbookQId] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](200) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[Description] [nvarchar](500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[QueryKey] [varchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[WorkbookQId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+ALTER TABLE [cases].[WorkbookQ] ADD  DEFAULT ((1)) FOR [IsActive]
+ALTER TABLE [cases].[WorkbookQ] ADD  DEFAULT (sysutcdatetime()) FOR [CreatedDate]
+
+GO
+
+-- =====================================
+-- FILE: cases.WorkbookQRule.sql
+-- =====================================
+-- TABLE: cases.WorkbookQRule
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[WorkbookQRule](
+	[WorkbookQRuleId] [int] IDENTITY(1,1) NOT NULL,
+	[WorkbookQId] [int] NOT NULL,
+	[DocumentType] [varchar](50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[WorkbookQRuleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+GO
+
+-- =====================================
+-- FILE: cases.WorkbookType.sql
+-- =====================================
+-- TABLE: cases.WorkbookType
+SET ANSI_NULLS ON
+SET QUOTED_IDENTIFIER ON
+CREATE TABLE [cases].[WorkbookType](
+	[WorkbookTypeId] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+	[Description] [nvarchar](500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+	[DisplayOrder] [int] NOT NULL,
+	[IsRequired] [bit] NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[CreatedDate] [datetime2](0) NOT NULL,
+ CONSTRAINT [PK_WorkbookType] PRIMARY KEY CLUSTERED 
+(
+	[WorkbookTypeId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+ CONSTRAINT [UQ_WorkbookType_Name] UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+ALTER TABLE [cases].[WorkbookType] ADD  CONSTRAINT [DF_WorkbookType_IsRequired]  DEFAULT ((1)) FOR [IsRequired]
+ALTER TABLE [cases].[WorkbookType] ADD  CONSTRAINT [DF_WorkbookType_IsActive]  DEFAULT ((1)) FOR [IsActive]
+ALTER TABLE [cases].[WorkbookType] ADD  CONSTRAINT [DF_WorkbookType_CreatedDate]  DEFAULT (sysutcdatetime()) FOR [CreatedDate]
+
+GO
+
+-- =====================================
 -- FILE: dbo.__EFMigrationsHistory.sql
 -- =====================================
 -- TABLE: dbo.__EFMigrationsHistory
@@ -3130,13 +3341,77 @@ END
 GO
 
 -- =====================================
+-- FILE: usp_Case_GetDocuments.sql
+-- =====================================
+create PROCEDURE [cases].[usp_Case_GetDocuments]
+(
+    @CaseId INT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        d.DocumentId,
+        d.CaseId,
+        d.WorkbookQId,
+        d.SessionId,
+        d.DocumentType,
+        d.Title,
+        d.FileName,
+        d.ContentType,
+        d.CreatedDate,
+        d.CreatedBy
+    FROM cases.Document d
+    WHERE d.CaseId = @CaseId
+      AND d.IsActive = 1
+    ORDER BY d.CreatedDate DESC;
+END
+GO
+
+-- =====================================
+-- FILE: usp_Document_GetById.sql
+-- =====================================
+CREATE   PROCEDURE [cases].[usp_Document_GetById]
+(
+    @DocumentId INT
+)
+AS
+/*
+EXEC cases.[usp_Document_GetById] @DocumentId = 1
+*/
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        DocumentId,
+        VersionId,
+        CaseId,
+        WorkbookQId,
+        SessionId,
+        DocumentType,
+        Title,
+        FileName,
+        ContentType,
+        FileData,
+        CreatedDate,
+        CreatedBy,
+        IsActive
+    FROM [cases].[Document]
+    WHERE
+        DocumentId = @DocumentId
+        AND IsActive = 1;
+END
+GO
+
+-- =====================================
 -- FILE: usp_GetCalendar.sql
 -- =====================================
 CREATE PROCEDURE [cases].[usp_GetCalendar]
 --    @ClientId INT = NULL
 	@year INT  = NULL,
 	@month INT = NULL
-	--EXEC calendar.usp_GetCalendar @year = 2026, @month = 4
+	--EXEC cases.usp_GetCalendar  @month = 1001 ,@year = 2026
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -3159,8 +3434,10 @@ GO
 -- =====================================
 -- FILE: usp_SearchCases.sql
 -- =====================================
+-- exec [cases].[usp_SearchCases] =1005
 CREATE PROCEDURE [cases].[usp_SearchCases]
     @ClientId INT = NULL
+	--EXEC cases.usp_SearchCases  @ClientId = 1005
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -3176,6 +3453,130 @@ BEGIN
     FROM cases.[Case]
     WHERE @ClientId IS NULL OR ClientId = @ClientId
     ORDER BY OpenedDate DESC;
+END
+
+GO
+
+-- =====================================
+-- FILE: usp_Workbook_GetByCaseId.sql
+-- =====================================
+CREATE   PROCEDURE [cases].[usp_Workbook_GetByCaseId]
+    @CaseId INT
+	--EXEC [cases].[usp_Workbook_GetByCaseId]  @CaseId = 1001
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        wt.WorkbookTypeId,
+        wt.Name AS WorkbookName,
+        wt.Description,
+        wt.DisplayOrder,
+
+        w.WorkbookId,
+        --w.CaseId,
+		COALESCE(w.CaseId, 2) AS CaseId,
+		'session.187.aba_session_editable.pdf' as fileName,
+        w.Status,
+        w.DueDate,
+        w.CreatedDate,
+        w.CompletedDate,
+
+        CAST(CASE WHEN w.WorkbookId IS NULL THEN 0 ELSE 1 END AS BIT) AS IsStarted,
+        CAST(CASE WHEN ISNULL(doc.DocumentCount, 0) > 0 THEN 1 ELSE 0 END AS BIT) AS HasDocuments,
+        ISNULL(doc.DocumentCount, 0) AS DocumentCount
+    FROM [cases].[WorkbookType] wt
+    LEFT JOIN [cases].[Workbook] w
+        ON w.WorkbookTypeId = wt.WorkbookTypeId
+       AND w.CaseId = @CaseId
+       AND w.IsActive = 1
+    OUTER APPLY
+    (
+        SELECT COUNT(*) AS DocumentCount
+        FROM [cases].[WorkbookDocument] wd
+        WHERE wd.WorkbookId = w.WorkbookId
+          AND wd.IsActive = 1
+    ) doc
+    WHERE wt.IsActive = 1
+    ORDER BY wt.DisplayOrder;
+END;
+
+GO
+
+-- =====================================
+-- FILE: usp_Workbook_InitializeForCase.sql
+-- =====================================
+CREATE PROCEDURE [cases].[usp_Workbook_InitializeForCase]
+    @CaseId INT,
+    @CreatedBy NVARCHAR(100)
+	--EXEC [cases].[usp_Workbook_InitializeForCase]  @CaseId = 1, @CreatedBy = 'system'
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    ;WITH SourceTypes AS
+    (
+        SELECT
+            WorkbookTypeId,
+            Name
+        FROM [cases].[WorkbookType]
+        WHERE IsActive = 1
+    )
+    INSERT INTO [cases].[Workbook]
+    (
+        CaseId,
+        WorkbookTypeId,
+        Status,
+        CreatedBy,
+        IsActive
+    )
+    SELECT
+        @CaseId,
+        st.WorkbookTypeId,
+        'Pending',
+        @CreatedBy,
+        1
+    FROM SourceTypes st
+    WHERE NOT EXISTS
+    (
+        SELECT 1
+        FROM [cases].[Workbook] w
+        WHERE w.CaseId = @CaseId
+          AND w.WorkbookTypeId = st.WorkbookTypeId
+    );
+END;
+
+GO
+
+-- =====================================
+-- FILE: usp_WorkbookQ_GetDocuments.sql
+-- =====================================
+
+CREATE     PROCEDURE [cases].[usp_WorkbookQ_GetDocuments]
+(
+    @CaseId INT,
+    @WorkbookQId INT
+)
+AS
+/*
+EXEC cases.usp_WorkbookQ_GetDocuments @CaseId = 1, @WorkbookQId = 1001
+*/
+BEGIN
+    SET NOCOUNT ON;
+
+SELECT
+    r.DocumentType,
+    d.DocumentId,
+    d.Title,
+    d.ContentType
+FROM cases.WorkbookQRule r
+LEFT JOIN cases.Document d
+    ON d.WorkbookQId = r.WorkbookQId
+    AND d.DocumentType = r.DocumentType
+    AND d.CaseId = @CaseId
+    AND d.IsActive = 1
+WHERE r.WorkbookQId = @WorkbookQId
+    ORDER BY d.CreatedDate DESC;
 END
 
 GO
