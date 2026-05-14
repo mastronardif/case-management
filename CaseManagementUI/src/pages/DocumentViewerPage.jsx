@@ -18,7 +18,7 @@ export default function DocumentViewerPage() {
     const fetchDoc = async () => {
       setLoading(true);
       try {
-        const res = await api.get(`/api/corqs/getDocument`, {
+        const res = await api.get(`/api/corqs/getDocumentByContext`, {
           params: { documentId },
           responseType: "blob",
         });

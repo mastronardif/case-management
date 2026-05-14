@@ -5,33 +5,43 @@ public static class GetDocumentEndpoint
 {
     public static void MapGetDocumentEndpoint(this WebApplication app)
     {
-        app.MapGet("/api/corqs/getDocument", async (
-            string documentId,
+        app.MapGet("/api/corqs/getDocumentByContext", async (
+            HttpRequest request,
             IConfiguration config) =>
         {
-            if (!int.TryParse(documentId, out var id))
-                return Results.BadRequest("documentId must be an integer.");
+            var q = request.Query;
+            var documentId   = q["documentId"].FirstOrDefault();
+            var caseId       = q["caseId"].FirstOrDefault();
+            var workbookQId  = q["workbookQId"].FirstOrDefault();
+            var sessionId    = q["sessionId"].FirstOrDefault();
+            var documentType = q["documentType"].FirstOrDefault();
 
             var connStr = config.GetConnectionString("DefaultConnection");
-
             using var conn = new SqlConnection(connStr);
-            using var cmd = new SqlCommand("cases.usp_Document_GetById", conn)
+            using var cmd = new SqlCommand("cases.usp_Document_GetByContext", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
-            cmd.Parameters.AddWithValue("@DocumentId", id);
+
+            cmd.Parameters.AddWithValue("@DocumentId",   (object?)ParseInt(documentId)  ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@CaseId",       (object?)caseId                ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@WorkbookQId",  (object?)ParseInt(workbookQId) ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@SessionId",    (object?)ParseInt(sessionId)   ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@DocumentType", (object?)documentType          ?? DBNull.Value);
 
             await conn.OpenAsync();
             using var reader = await cmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
 
             if (!await reader.ReadAsync())
-                return Results.NotFound($"Document {id} not found.");
+                return Results.NotFound("No document found for the given context.");
 
             var contentType = reader.GetString(reader.GetOrdinal("ContentType"));
-            var fileDataOrdinal = reader.GetOrdinal("FileData");
-            var fileData = (byte[])reader.GetValue(fileDataOrdinal);
+            var fileData    = (byte[])reader.GetValue(reader.GetOrdinal("FileData"));
 
             return Results.File(fileData, contentType);
         });
     }
+
+    private static int? ParseInt(string? val) =>
+        int.TryParse(val, out var n) ? n : null;
 }

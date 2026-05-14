@@ -8,7 +8,10 @@ export default function CasePage() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const caseData = state?.caseData;
-  const pdfUrl = `${import.meta.env.BASE_URL}files/intake.html`;
+  const { caseId } = useParams();
+  const id = caseId ?? "new";
+  const pdfUrl = `/api/corqs/getDocumentByContext?caseId=${id}&documentType=IntakeForm`;
+  // /api/corqs/getDocument?documentId=4
 
   const greyButtonClass =
     "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-150 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed";
@@ -17,8 +20,7 @@ export default function CasePage() {
   const greenButtonClass =
     "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-green-400 bg-green-500 text-white hover:bg-green-600 flex-shrink-0";
 
-  const { caseId } = useParams();
-  const id = caseId ?? "new";
+ 
 
   const pageActions = [
     { label: "Work Books", onClick: () => handleWorkbooks() },
