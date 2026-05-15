@@ -133,6 +133,19 @@
       ]
     },
     {
+      "name": "getDocumentByContext",
+      "type": "get",
+      "route": "/api/corqs/getDocumentByContext",
+      "returns": "file",
+      "params": {
+        "documentId":   { "type": "int",    "required": false, "source": "query" },
+        "caseId":       { "type": "string", "required": false, "source": "query" },
+        "workbookQId":  { "type": "int",    "required": false, "source": "query" },
+        "sessionId":    { "type": "int",    "required": false, "source": "query" },
+        "documentType": { "type": "string", "required": false, "source": "query" }
+      }
+    },
+    {
       "name": "initializeWorkbooks",
       "type": "storedProcedure",
       "storedProcedure": "cases.usp_Workbook_InitializeForCase",

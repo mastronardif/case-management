@@ -62,3 +62,12 @@ export const QUERY_MAP = [
         action: "initializeWorkbooks",
     },
 ];
+
+export const DIRECT_ENDPOINTS = [
+    {
+        name: "getDocumentByContext",
+        url: "/api/corqs/getDocumentByContext",
+        returns: "file",
+        params: ["documentId", "caseId", "workbookQId", "sessionId", "documentType"],
+    },
+];
