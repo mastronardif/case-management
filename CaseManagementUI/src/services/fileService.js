@@ -12,9 +12,14 @@ export async function fetchFileList(urlFiles) {
   // Local file (served from public/)
   if (urlFiles.startsWith("file://")) {
     const relativePath = urlFiles.replace("file://", "");
-    const resp = await api.get(relativePath);
-    return resp.data
-    //return await resp.json();
+    const res = await api.get(relativePath);
+    return res.data;
+  }
+
+  // Relative URL — proxy or local API
+  if (urlFiles.startsWith("/")) {
+    const res = await api.get(urlFiles);
+    return res.data;
   }
 
   throw new Error(`Unsupported protocol in urlFiles: ${urlFiles}`);

@@ -11,7 +11,8 @@ export default defineConfig({
       '/api': {
         target: 'https://localhost:44344',
         // target: 'http://localhost', // port 80
-        secure: false
+        secure: false,
+        changeOrigin: true
       }
     }
   },

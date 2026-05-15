@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { DEFAULTS } from "../context/GlobalContext";
 import { useGlobalStore } from "../context/GlobalStore";
 
 export default function Settings() {
@@ -19,6 +20,16 @@ export default function Settings() {
   const [inputCases, setInputCases] = useState(urlCases);
   const [inputTemplates, setInputTemplates] = useState(urlTemplates);
   const [inputBody, setInputBody] = useState(body ? JSON.stringify(body, null, 2) : "");
+
+  const handleReset = () => {
+    setInputValue(DEFAULTS.url);
+    setInputCases(DEFAULTS.urlCases);
+    setInputTemplates(DEFAULTS.urlTemplates);
+    setUrl(DEFAULTS.url);
+    setUrlCases(DEFAULTS.urlCases);
+    setUrlTemplates(DEFAULTS.urlTemplates);
+    alert("Settings reset to defaults.");
+  };
 
   const handleSave = () => {
     try {
@@ -83,12 +94,20 @@ export default function Settings() {
         />
       </div>
 
-      <button
-        onClick={handleSave}
-        className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-      >
-        Save
-      </button>
+      <div className="flex gap-3 mt-2">
+        <button
+          onClick={handleSave}
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+        >
+          Save
+        </button>
+        <button
+          onClick={handleReset}
+          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+        >
+          Reset to Defaults
+        </button>
+      </div>
 
       <p className="mt-2 text-gray-600 text-sm">
         Changing these settings will automatically refresh the table data.

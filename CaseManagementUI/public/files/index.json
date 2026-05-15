@@ -1,0 +1,12 @@
+[
+  { "filename": "intake.html",                          "type": "html",  "title": "Intake Form" },
+  { "filename": "caseIntake.pdf",                       "type": "pdf",   "title": "Case Intake PDF" },
+  { "filename": "aba.html",                             "type": "html",  "title": "ABA Session" },
+  { "filename": "ABA_Month1_7yo_fillable.html",         "type": "html",  "title": "ABA Month 1 (Fillable)" },
+  { "filename": "MonthOneABA.html",                     "type": "html",  "title": "Month One ABA" },
+  { "filename": "calendar.html",                        "type": "html",  "title": "Calendar" },
+  { "filename": "ABA_2_Hour_Session_Template.pdf",      "type": "pdf",   "title": "ABA 2 Hour Session Template" },
+  { "filename": "ABA_Month1_SessionPlan_7yo.pdf",       "type": "pdf",   "title": "ABA Month 1 Session Plan" },
+  { "filename": "ABAIn-Home.txt",                       "type": "text",  "title": "ABA In-Home Notes" },
+  { "filename": "MonthOneABA.txt",                      "type": "text",  "title": "Month One ABA Notes" }
+]
