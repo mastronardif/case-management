@@ -114,14 +114,14 @@ VALUES
     1
 )", conn, transaction);
 
-                    cmd.Parameters.Add("@VersionId", SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
-                    cmd.Parameters.Add("@CaseNumber", SqlDbType.Int).Value = caseNumber;
+                    cmd.Parameters.Add("@VersionId",    SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
+                    cmd.Parameters.Add("@CaseNumber",   SqlDbType.NVarChar, 50).Value = caseNumber;
                     cmd.Parameters.Add("@DocumentType", SqlDbType.VarChar, 50).Value = documentType;
-                    cmd.Parameters.Add("@Title", SqlDbType.NVarChar, 200).Value = title;
-                    cmd.Parameters.Add("@FileName", SqlDbType.NVarChar, 255).Value = Path.GetFileName(filePath);
-                    cmd.Parameters.Add("@ContentType", SqlDbType.VarChar, 100).Value = contentType;
-                    cmd.Parameters.Add("@FileData", SqlDbType.VarBinary, -1).Value = fileBytes;
-                    cmd.Parameters.Add("@CreatedBy", SqlDbType.NVarChar, 100).Value = "ImportDocs";
+                    cmd.Parameters.Add("@Title",        SqlDbType.NVarChar, 200).Value = title;
+                    cmd.Parameters.Add("@FileName",     SqlDbType.NVarChar, 255).Value = Path.GetFileName(filePath);
+                    cmd.Parameters.Add("@ContentType",  SqlDbType.VarChar, 100).Value = contentType;
+                    cmd.Parameters.Add("@FileData",     SqlDbType.VarBinary, -1).Value = fileBytes;
+                    cmd.Parameters.Add("@CreatedBy",    SqlDbType.NVarChar, 100).Value = "ImportDocs";
 
                     cmd.ExecuteNonQuery();
 
