@@ -61,6 +61,14 @@ export const QUERY_MAP = [
         resource: "initializeWorkbooks",
         action: "initializeWorkbooks",
     },
+    {
+        resource: "getInvoices",
+        action: "getInvoices",
+        routeParams: ["caseId", "status", "fromDate", "toDate", "sessionId"],
+        actions: [
+            { label: "Open", route: "/data/getInvoice/{fileName}/{InvoiceId}" },
+        ],
+    },
 ];
 
 export const DIRECT_ENDPOINTS = [

@@ -150,6 +150,32 @@
       "type": "storedProcedure",
       "storedProcedure": "cases.usp_Workbook_InitializeForCase",
       "route": "/api/corqs/cases/{caseId}/workbooks/init"
+    },
+    {
+      "name": "getInvoiceDetails",
+      "type": "handler",
+      "handler": "GetInvoiceDetails",
+      "dataRoute": { "resource": "getInvoiceDetails" },
+      "params": {
+        "invoiceId": { "type": "int", "required": true, "source": "body" }
+      }
+    },
+    {
+      "name": "getInvoices",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_Invoice_List",
+      "route": "/api/corqs/getInvoices",
+      "dataRoute": { "resource": "getInvoices" },
+      "params": {
+        "caseId":    { "type": "int",    "required": false, "source": "body" },
+        "status":    { "type": "string", "required": false, "source": "body" },
+        "fromDate":  { "type": "date",   "required": false, "source": "body" },
+        "toDate":    { "type": "date",   "required": false, "source": "body" },
+        "sessionId": { "type": "int",    "required": false, "source": "body" }
+      },
+      "actions": [
+        { "label": "Open", "route": "/data/getInvoice/{fileName}/{InvoiceId}" }
+      ]
     }
 
 

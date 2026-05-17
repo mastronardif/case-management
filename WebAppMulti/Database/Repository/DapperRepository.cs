@@ -246,6 +246,29 @@ namespace WebAppMulti.Database.Repository
             return await RunMultiResultAsync(spName, parameters);
         }
 
+        public async Task<Dictionary<string, List<dynamic>>> RunNamedMultiResultAsync(
+            string spName,
+            IDictionary<string, object?>? parameters,
+            string[] resultSetNames)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            using var multi = await conn.QueryMultipleAsync(
+                spName,
+                ToDynamicParameters(parameters),
+                commandType: CommandType.StoredProcedure);
+
+            var result = new Dictionary<string, List<dynamic>>();
+
+            foreach (var name in resultSetNames)
+            {
+                if (multi.IsConsumed) break;
+                result[name] = (await multi.ReadAsync()).ToList();
+            }
+
+            return result;
+        }
+
 
         public async Task<IEnumerable<dynamic>> QueryAsync(
             string sql,

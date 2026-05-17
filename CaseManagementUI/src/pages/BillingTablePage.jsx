@@ -1,81 +1,80 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DataTable from "../components/DataTable";
-import { fetchBillingData } from "../services/billingService";
+import ActionTable from "../components/ActionTable";
+import DataTable22 from "../components/DataTable22";
+import { useGlobalStore } from "../context/GlobalStore";
+import { apiFetch } from "../services/apiFetch";
+import { QUERY_MAP } from "../utils/corqsreact";
+
+const greyBtn =
+  "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-150 flex-shrink-0";
 
 export default function BillingTablePage() {
+  const { urlCases } = useGlobalStore();
   const [rows, setRows] = useState([]);
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    setError(null);
-
     try {
-      const data = await fetchBillingData(10);
-      setRows(data);
+      setError(null);
+      const res = await apiFetch(urlCases, { action: "getInvoices", params: {} });
+      setRows(res ?? []);
     } catch (err) {
-      console.error("Error fetching billing data:", err);
+      console.error("Error fetching invoices:", err);
       setRows([]);
-      setError("Failed to fetch billing data.");
+      setError("Failed to fetch invoices.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [urlCases]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  const handleOpenCase = (row) => {
-    // Navigate to CasePage with URL param and optional state
-    navigate(`/billing/${row.case} (Payer: ${row.payer})`, { state: { caseData: row } });
-  };
-
-  // Prepare rows with Action column if you want buttons, optional
-  const tableRows = rows.map((row) => ({
-    ...row,
-    // Example: no actual button yet, but you could add View/Pay actions
-    Action: (
-      <button
-        onClick={() => handleOpenCase(row)}
-        className="px-2 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        View
-      </button>
-    ),
+  const schemaEntry = QUERY_MAP.find((e) => e.resource === "getInvoices");
+  const actions = (schemaEntry?.actions ?? []).map((action) => ({
+    label: action.label,
+    onClick: (row) =>
+      navigate(
+        action.route.replace(/\{(\w+)\}/g, (_, key) => row[key] ?? ""),
+        { state: { invoiceData: row } }
+      ),
   }));
 
-  return (
-    <div className="relative min-h-screen p-6 flex flex-col items-center">
-      <div className="relative w-full max-w-6xl p-6 rounded shadow bg-white mb-6">
-        <h1 className="text-xl font-bold mb-4">Billing for Case tbd</h1>
+  const filteredRows = rows.filter((row) =>
+    JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
+  );
 
-        <div className="flex gap-2 mb-4 flex-wrap">
-          <button
-            onClick={fetchData}
-            disabled={loading}
-            className={`px-3 py-1 rounded hover:bg-blue-600 ${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500 text-white"
-            }`}
-          >
-            {loading ? "Loading..." : "Reload"}
-          </button>
+  return (
+    <div className="relative min-h-screen p-6 flex justify-center">
+      <div className="relative w-full max-w-6xl p-6 rounded shadow bg-white">
+
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          <ActionTable
+            title="Billing"
+            onReload={fetchData}
+            loading={loading}
+            onSearch={setSearch}
+            buttonClass={greyBtn}
+          />
+          <button onClick={() => alert("F1")} className={greyBtn}>F1</button>
+          <button onClick={() => alert("F2")} className={greyBtn}>F2</button>
+          <button onClick={() => alert("F3")} className={greyBtn}>F3</button>
         </div>
 
         {error && <p className="text-red-500 mb-2">{error}</p>}
 
-        {rows.length > 0 ? (
-          <DataTable rows={tableRows} />
+        {filteredRows.length > 0 ? (
+          <DataTable22 rows={filteredRows} actions={actions} />
         ) : (
-          <p>
-            {loading ? "Loading billing data..." : "No billing data found."}
-          </p>
+          <p>{loading ? "Loading invoices..." : "No invoices found."}</p>
         )}
+
       </div>
     </div>
   );
