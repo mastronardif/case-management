@@ -1,6 +1,7 @@
 // routes.js
 import BillingPage from "./pages/BillingPage";
 import BillingTablePage from "./pages/BillingTablePage";
+import InvoiceDetailPage from "./pages/InvoiceDetailPage";
 import CalendarPage from "./pages/CalendarPage";
 import CasePage from "./pages/CasePage";
 import CasesTablePage from "./pages/CasesTablePage";
@@ -53,7 +54,8 @@ const routes = [
   { path: "/calendar", element: <CalendarPage />, label: "Calendar" },
   
   { path: "/billing", element: <BillingTablePage />, label: "Billing" },
-  { path: "/billing/:caseId", element: <BillingPage />, hideFromNav: true }, // dynamic route
+  { path: "/billing/:caseId", element: <BillingPage />, hideFromNav: true },
+  { path: "/invoice/:invoiceId", element: <InvoiceDetailPage />, hideFromNav: true },
 
   { path: "*", element: <div>Not Found</div>, hideFromNav: true },
 

@@ -62,11 +62,16 @@ export const QUERY_MAP = [
         action: "initializeWorkbooks",
     },
     {
+        resource: "getInvoiceDetails",
+        action: "getInvoiceDetails",
+        routeParams: ["invoiceId"],
+    },
+    {
         resource: "getInvoices",
         action: "getInvoices",
         routeParams: ["caseId", "status", "fromDate", "toDate", "sessionId"],
         actions: [
-            { label: "Open", route: "/data/getInvoice/{fileName}/{InvoiceId}" },
+            { label: "Open", route: "/invoice/{invoiceId}" },
         ],
     },
 ];

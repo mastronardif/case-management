@@ -174,7 +174,7 @@
         "sessionId": { "type": "int",    "required": false, "source": "body" }
       },
       "actions": [
-        { "label": "Open", "route": "/data/getInvoice/{fileName}/{InvoiceId}" }
+        { "label": "Open", "route": "/invoice/{invoiceId}" }
       ]
     }
 
