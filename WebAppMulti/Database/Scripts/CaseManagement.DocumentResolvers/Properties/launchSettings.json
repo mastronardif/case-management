@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CaseManagement.DocumentResolvers": {
+      "commandName": "Project",
+      "commandLineArgs": "22 payer"
+    }
+  }
+}

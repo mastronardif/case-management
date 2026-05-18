@@ -59,6 +59,8 @@ class Program
                 }
 
                 string caseNumber = parts[0];
+                //object caseNumberValue = string.IsNullOrWhiteSpace(caseNumber) ? DBNull.Value : caseNumber.Trim();
+        
                 string filePath = parts[1];
                 string documentType = parts[2];
                 string title = parts[3];
@@ -115,7 +117,9 @@ VALUES
 )", conn, transaction);
 
                     cmd.Parameters.Add("@VersionId",    SqlDbType.UniqueIdentifier).Value = Guid.NewGuid();
-                    cmd.Parameters.Add("@CaseNumber",   SqlDbType.NVarChar, 50).Value = caseNumber;
+                    //cmd.Parameters.Add("@CaseNumber",   SqlDbType.NVarChar, 50).Value = caseNumber;
+                    cmd.Parameters.Add("@CaseNumber",   SqlDbType.NVarChar, 50).Value = DbValue(caseNumber);
+                    
                     cmd.Parameters.Add("@DocumentType", SqlDbType.VarChar, 50).Value = documentType;
                     cmd.Parameters.Add("@Title",        SqlDbType.NVarChar, 200).Value = title;
                     cmd.Parameters.Add("@FileName",     SqlDbType.NVarChar, 255).Value = Path.GetFileName(filePath);
@@ -148,6 +152,11 @@ VALUES
         {
             Log.CloseAndFlush();
         }
+    }
+    
+    static object DbValue(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? DBNull.Value : value.Trim();
     }
 }
 //dotnet run -- import.csv "Server=.;Database=YourDb;Trusted_Connection=True;TrustServerCertificate=True;"
