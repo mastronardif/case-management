@@ -1,5 +1,277 @@
 tree /F /A > folder-structure.txt
-
+Folder PATH listing for volume Windows
+Volume serial number is 00000022 AC47:A725
+C:.
+|   .dockerignore
+|   .gitignore
+|   appsettings.Development.json
+|   appsettings.json
+|   docker-compose - Copy.yml
+|   docker-compose.yml
+|   Dockerfile
+|   folder-structure.txt
+|   mynotes.txt
+|   nginx.conf
+|   nginx.conf.txt
+|   Program.cs
+|   README.md
+|   removecontainers.sh
+|   run-both.ps1
+|   run-local.ps1
+|   runngx.sh
+|   WeatherForecast.cs
+|   WebAppMulti.csproj
+|   WebAppMulti.csproj.user
+|   WebAppMulti.http
+|   WebAppMulti.sln
+|   
++---.github
+|   \---workflows
++---bin
+|   +---Debug
+|   |   +---net8.0
+|   |   |   |   appsettings.Development.json
+|   |   |   |   appsettings.json
+|   |   |   |   Azure.Core.dll
+|   |   |   |   Azure.Identity.dll
+|   |   |   |   Humanizer.dll
+|   |   |   |   Microsoft.Bcl.AsyncInterfaces.dll
+|   |   |   |   Microsoft.Build.Locator.dll
+|   |   |   |   Microsoft.CodeAnalysis.CSharp.dll
+|   |   |   |   Microsoft.CodeAnalysis.CSharp.Workspaces.dll
+|   |   |   |   Microsoft.CodeAnalysis.dll
+|   |   |   |   Microsoft.CodeAnalysis.Workspaces.dll
+|   |   |   |   Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.dll
+|   |   |   |   Microsoft.CodeAnalysis.Workspaces.MSBuild.dll
+|   |   |   |   Microsoft.Data.SqlClient.dll
+|   |   |   |   Microsoft.EntityFrameworkCore.Abstractions.dll
+|   |   |   |   Microsoft.EntityFrameworkCore.Design.dll
+|   |   |   |   Microsoft.EntityFrameworkCore.dll
+|   |   |   |   Microsoft.EntityFrameworkCore.Relational.dll
+|   |   |   |   Microsoft.EntityFrameworkCore.SqlServer.dll
+|   |   |   |   Microsoft.Extensions.Caching.Abstractions.dll
+|   |   |   |   Microsoft.Extensions.Caching.Memory.dll
+|   |   |   |   Microsoft.Extensions.Configuration.Abstractions.dll
+|   |   |   |   Microsoft.Extensions.DependencyInjection.Abstractions.dll
+|   |   |   |   Microsoft.Extensions.DependencyInjection.dll
+|   |   |   |   Microsoft.Extensions.DependencyModel.dll
+|   |   |   |   Microsoft.Extensions.Logging.Abstractions.dll
+|   |   |   |   Microsoft.Extensions.Logging.dll
+|   |   |   |   Microsoft.Extensions.Options.dll
+|   |   |   |   Microsoft.Extensions.Primitives.dll
+|   |   |   |   Microsoft.Identity.Client.dll
+|   |   |   |   Microsoft.Identity.Client.Extensions.Msal.dll
+|   |   |   |   Microsoft.IdentityModel.Abstractions.dll
+|   |   |   |   Microsoft.IdentityModel.JsonWebTokens.dll
+|   |   |   |   Microsoft.IdentityModel.Logging.dll
+|   |   |   |   Microsoft.IdentityModel.Protocols.dll
+|   |   |   |   Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+|   |   |   |   Microsoft.IdentityModel.Tokens.dll
+|   |   |   |   Microsoft.OpenApi.dll
+|   |   |   |   Microsoft.SqlServer.Server.dll
+|   |   |   |   Microsoft.Win32.SystemEvents.dll
+|   |   |   |   Mono.TextTemplating.dll
+|   |   |   |   Swashbuckle.AspNetCore.Swagger.dll
+|   |   |   |   Swashbuckle.AspNetCore.SwaggerGen.dll
+|   |   |   |   Swashbuckle.AspNetCore.SwaggerUI.dll
+|   |   |   |   System.ClientModel.dll
+|   |   |   |   System.CodeDom.dll
+|   |   |   |   System.Composition.AttributedModel.dll
+|   |   |   |   System.Composition.Convention.dll
+|   |   |   |   System.Composition.Hosting.dll
+|   |   |   |   System.Composition.Runtime.dll
+|   |   |   |   System.Composition.TypedParts.dll
+|   |   |   |   System.Configuration.ConfigurationManager.dll
+|   |   |   |   System.Diagnostics.DiagnosticSource.dll
+|   |   |   |   System.Drawing.Common.dll
+|   |   |   |   System.Formats.Asn1.dll
+|   |   |   |   System.IdentityModel.Tokens.Jwt.dll
+|   |   |   |   System.IO.Pipelines.dll
+|   |   |   |   System.Memory.Data.dll
+|   |   |   |   System.Runtime.Caching.dll
+|   |   |   |   System.Security.Cryptography.ProtectedData.dll
+|   |   |   |   System.Security.Permissions.dll
+|   |   |   |   System.Text.Encodings.Web.dll
+|   |   |   |   System.Text.Json.dll
+|   |   |   |   System.Windows.Extensions.dll
+|   |   |   |   WebAppMulti.deps.json
+|   |   |   |   WebAppMulti.dll
+|   |   |   |   WebAppMulti.exe
+|   |   |   |   WebAppMulti.pdb
+|   |   |   |   WebAppMulti.runtimeconfig.json
+|   |   |   |   WebAppMulti.staticwebassets.endpoints.json
+|   |   |   |   
+|   |   |   +---cs
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---de
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---es
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---fr
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---it
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---ja
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---ko
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---pl
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---pt-BR
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---ru
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---runtimes
+|   |   |   |   +---browser
+|   |   |   |   |   \---lib
+|   |   |   |   |       \---net8.0
+|   |   |   |   |               System.Text.Encodings.Web.dll
+|   |   |   |   |               
+|   |   |   |   +---unix
+|   |   |   |   |   \---lib
+|   |   |   |   |       \---net6.0
+|   |   |   |   |               Microsoft.Data.SqlClient.dll
+|   |   |   |   |               System.Drawing.Common.dll
+|   |   |   |   |               
+|   |   |   |   +---win
+|   |   |   |   |   \---lib
+|   |   |   |   |       \---net6.0
+|   |   |   |   |               Microsoft.Data.SqlClient.dll
+|   |   |   |   |               Microsoft.Win32.SystemEvents.dll
+|   |   |   |   |               System.Drawing.Common.dll
+|   |   |   |   |               System.Runtime.Caching.dll
+|   |   |   |   |               System.Security.Cryptography.ProtectedData.dll
+|   |   |   |   |               System.Windows.Extensions.dll
+|   |   |   |   |               
+|   |   |   |   +---win-arm
+|   |   |   |   |   \---native
+|   |   |   |   |           Microsoft.Data.SqlClient.SNI.dll
+|   |   |   |   |           
+|   |   |   |   +---win-arm64
+|   |   |   |   |   \---native
+|   |   |   |   |           Microsoft.Data.SqlClient.SNI.dll
+|   |   |   |   |           
+|   |   |   |   +---win-x64
+|   |   |   |   |   \---native
+|   |   |   |   |           Microsoft.Data.SqlClient.SNI.dll
+|   |   |   |   |           
+|   |   |   |   \---win-x86
+|   |   |   |       \---native
+|   |   |   |               Microsoft.Data.SqlClient.SNI.dll
+|   |   |   |               
+|   |   |   +---tr
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   +---zh-Hans
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |   |       Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |   |       
+|   |   |   \---zh-Hant
+|   |   |           Microsoft.CodeAnalysis.CSharp.resources.dll
+|   |   |           Microsoft.CodeAnalysis.CSharp.Workspaces.resources.dll
+|   |   |           Microsoft.CodeAnalysis.resources.dll
+|   |   |           Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
+|   |   |           Microsoft.CodeAnalysis.Workspaces.resources.dll
+|   |   |           
+|   |   \---net9.0
+|   |       +---cs
+|   |       +---Database
+|   |       |   \---Schema
+|   |       +---de
+|   |       +---es
+|   |       +---fr
+|   |       +---it
+|   |       +---ja
+|   |       +---ko
+|   |       +---pl
+|   |       +---pt-BR
+|   |       +---ru
+|   |       +---runtimes
+|   |       |   +---browser
+|   |       |   |   \---lib
+|   |       |   |       \---net8.0
+|   |       |   +---unix
+|   |       |   |   \---lib
+|   |       |   |       +---net6.0
+|   |       |   |       +---net8.0
+|   |       |   |       \---net9.0
+|   |       |   +---win
+|   |       |   |   \---lib
+|   |       |   |       +---net6.0
+|   |       |   |       +---net8.0
+|   |       |   |       \---net9.0
+|   |       |   +---win-arm
+|   |       |   |   \---native
+|   |       |   +---win-arm64
+|   |       |   |   \---native
+|   |       |   +---win-x64
+|   |       |   |   \---native
+|   |       |   \---win-x86
+|   |       |       \---native
+|   |       +---tr
+|   |       +---Workbooks
+|   |       |   \---42
+|   |       +---zh-Hans
+|   |       \---zh-Hant
+|   \---Release
+|       \---net9.0
 +---Configuration
 |       ApiDefinition.cs
 |       
@@ -23,7 +295,127 @@ tree /F /A > folder-structure.txt
 |           SessionController.cs
 |           SessionDocumentController .cs
 |           
-
++---Database
+|   |   MyDbContext.cs
+|   |   
+|   +---Artifacts
+|   |   +---Deploy
+|   |   |       dbschema.sql
+|   |   |       README.md
+|   |   |       
+|   |   +---Functions
+|   |   |       fn_diagramobjects.sql
+|   |   |       udfBuildISO8601Date.sql
+|   |   |       udfMinimumDate.sql
+|   |   |       udfTwoDigitZeroFill.sql
+|   |   |       
+|   |   +---StoredProcedures
+|   |   |       cases.usp_GetCalendar.sql
+|   |   |       cases.usp_SearchCases.sql
+|   |   |       dbo.GetAllCountryCityTotalCustomers.sql
+|   |   |       dbo.GetAllPersons.sql
+|   |   |       dbo.GetCustomerById.sql
+|   |   |       dbo.GetMyTest.sql
+|   |   |       dbo.sp_AddSessionDocument.sql
+|   |   |       dbo.sp_alterdiagram.sql
+|   |   |       dbo.sp_creatediagram.sql
+|   |   |       dbo.sp_CreateSession.sql
+|   |   |       dbo.sp_dropdiagram.sql
+|   |   |       dbo.sp_GetDocumentsBySession.sql
+|   |   |       dbo.sp_GetFormTemplateById.sql
+|   |   |       dbo.sp_GetSessionsByMonth.sql
+|   |   |       dbo.sp_helpdiagramdefinition.sql
+|   |   |       dbo.sp_helpdiagrams.sql
+|   |   |       dbo.sp_InsertFormTemplate.sql
+|   |   |       dbo.sp_renamediagram.sql
+|   |   |       dbo.sp_SessionDocument_GetBySession.sql
+|   |   |       dbo.sp_SessionDocument_Save.sql
+|   |   |       dbo.sp_upgraddiagrams.sql
+|   |   |       dbo.UpsertDepartmentGroup.sql
+|   |   |       GetAllCountryCityTotalCustomers.sql
+|   |   |       GetAllPersons.sql
+|   |   |       GetCustomerById.sql
+|   |   |       GetMyTest.sql
+|   |   |       sp_AddSessionDocument.sql
+|   |   |       sp_alterdiagram.sql
+|   |   |       sp_creatediagram.sql
+|   |   |       sp_CreateSession.sql
+|   |   |       sp_dropdiagram.sql
+|   |   |       sp_GetDocumentsBySession.sql
+|   |   |       sp_GetFormTemplateById.sql
+|   |   |       sp_GetSessionsByMonth.sql
+|   |   |       sp_helpdiagramdefinition.sql
+|   |   |       sp_helpdiagrams.sql
+|   |   |       sp_InsertFormTemplate.sql
+|   |   |       sp_renamediagram.sql
+|   |   |       sp_SessionDocument_GetBySession.sql
+|   |   |       sp_SessionDocument_Save.sql
+|   |   |       sp_upgraddiagrams.sql
+|   |   |       UpsertDepartmentGroup.sql
+|   |   |       usp_Case_GetDocuments.sql
+|   |   |       usp_Document_GetById.sql
+|   |   |       usp_GetCalendar.sql
+|   |   |       usp_SearchCases.sql
+|   |   |       usp_WorkbookQ_GetDocuments.sql
+|   |   |       usp_Workbook_GetByCaseId.sql
+|   |   |       usp_Workbook_InitializeForCase.sql
+|   |   |       
+|   |   +---Tables
+|   |   |       cases.Case.sql
+|   |   |       cases.Claim.sql
+|   |   |       cases.Document.sql
+|   |   |       cases.Session.sql
+|   |   |       cases.Workbook.sql
+|   |   |       cases.WorkbookDocument.sql
+|   |   |       cases.WorkbookQ.sql
+|   |   |       cases.WorkbookQRule.sql
+|   |   |       cases.WorkbookType.sql
+|   |   |       dbo.AdventureWorksDWBuildVersion.sql
+|   |   |       dbo.ApplicationLogs.sql
+|   |   |       dbo.DatabaseLog.sql
+|   |   |       dbo.DimAccount.sql
+|   |   |       dbo.DimCurrency.sql
+|   |   |       dbo.DimCustomer.sql
+|   |   |       dbo.DimDate.sql
+|   |   |       dbo.DimDepartmentGroup.sql
+|   |   |       dbo.DimEmployee.sql
+|   |   |       dbo.DimGeography.sql
+|   |   |       dbo.DimOrganization.sql
+|   |   |       dbo.DimProduct.sql
+|   |   |       dbo.DimProductCategory.sql
+|   |   |       dbo.DimProductSubcategory.sql
+|   |   |       dbo.DimPromotion.sql
+|   |   |       dbo.DimReseller.sql
+|   |   |       dbo.DimSalesReason.sql
+|   |   |       dbo.DimSalesTerritory.sql
+|   |   |       dbo.DimScenario.sql
+|   |   |       dbo.FactAdditionalInternationalProductDescription.sql
+|   |   |       dbo.FactCallCenter.sql
+|   |   |       dbo.FactCurrencyRate.sql
+|   |   |       dbo.FactFinance.sql
+|   |   |       dbo.FactInternetSales.sql
+|   |   |       dbo.FactInternetSalesReason.sql
+|   |   |       dbo.FactProductInventory.sql
+|   |   |       dbo.FactResellerSales.sql
+|   |   |       dbo.FactSalesQuota.sql
+|   |   |       dbo.FactSurveyResponse.sql
+|   |   |       dbo.FormTemplates.sql
+|   |   |       dbo.InventoryItems.sql
+|   |   |       dbo.NewFactCurrencyRate.sql
+|   |   |       dbo.Orders.sql
+|   |   |       dbo.ProspectiveBuyer.sql
+|   |   |       dbo.SessionDocuments.sql
+|   |   |       dbo.Sessions.sql
+|   |   |       dbo.sysdiagrams.sql
+|   |   |       dbo.temp_mtn_table.sql
+|   |   |       dbo.__EFMigrationsHistory.sql
+|   |   |       
+|   |   \---Views
+|   |           vAssocSeqLineItems.sql
+|   |           vAssocSeqOrders.sql
+|   |           vDMPrep.sql
+|   |           vTargetMail.sql
+|   |           vTimeSeries.sql
 |   |           
 |   +---Auth
 |   |       DummyAuthStore.cs
@@ -42,6 +434,11 @@ tree /F /A > folder-structure.txt
 |   |       DocumentCreateDto.cs
 |   |       Dtos.cs
 |   |       
+|   +---Generators
+|   |       OpenApiGenerator.cs
+|   |       PostmanGenerator.cs
+|   |       ReactQueryMapGenerator.cs
+|   |       
 |   +---Models
 |   |   |   Customer.cs
 |   |   |   DimCustomer.cs
@@ -56,15 +453,518 @@ tree /F /A > folder-structure.txt
 |   |           
 |   +---Repository
 |   |       DapperRepository.cs
+|   |       DapperResultNormalizercs.cs
 |   |       GenericRepository.cs
 |   |       
 |   +---Schema
 |   |       schema.json
 |   |       SchemaRegistry.cs
 |   |       
-| 
-|               
+|   \---Scripts
+|       |   export_sps.sql
+|       |   export_stored_procs.py
+|       |   InsertFormTemplate.py
+|       |   myimport.json.open.sql
+|       |   myimportjson.py
+|       |   README.md
+|       |   
+|       +---CaseManagement.DocumentResolvers
+|       |   |   appsettings.json
+|       |   |   CaseManagement.DocumentResolvers.csproj
+|       |   |   Program.cs
+|       |   |   Readme.MD
+|       |   |   
+|       |   +---bin
+|       |   |   \---Debug
+|       |   |       \---net9.0
+|       |   |           |   appsettings.json
+|       |   |           |   Azure.Core.dll
+|       |   |           |   Azure.Identity.dll
+|       |   |           |   CaseManagement.DocumentResolvers.deps.json
+|       |   |           |   CaseManagement.DocumentResolvers.dll
+|       |   |           |   CaseManagement.DocumentResolvers.exe
+|       |   |           |   CaseManagement.DocumentResolvers.pdb
+|       |   |           |   CaseManagement.DocumentResolvers.runtimeconfig.json
+|       |   |           |   CsvHelper.dll
+|       |   |           |   Microsoft.Bcl.AsyncInterfaces.dll
+|       |   |           |   Microsoft.Bcl.Cryptography.dll
+|       |   |           |   Microsoft.Data.SqlClient.dll
+|       |   |           |   Microsoft.Extensions.Caching.Abstractions.dll
+|       |   |           |   Microsoft.Extensions.Caching.Memory.dll
+|       |   |           |   Microsoft.Extensions.Configuration.Abstractions.dll
+|       |   |           |   Microsoft.Extensions.Configuration.Binder.dll
+|       |   |           |   Microsoft.Extensions.Configuration.dll
+|       |   |           |   Microsoft.Extensions.Configuration.FileExtensions.dll
+|       |   |           |   Microsoft.Extensions.Configuration.Json.dll
+|       |   |           |   Microsoft.Extensions.DependencyInjection.Abstractions.dll
+|       |   |           |   Microsoft.Extensions.DependencyModel.dll
+|       |   |           |   Microsoft.Extensions.FileProviders.Abstractions.dll
+|       |   |           |   Microsoft.Extensions.FileProviders.Physical.dll
+|       |   |           |   Microsoft.Extensions.FileSystemGlobbing.dll
+|       |   |           |   Microsoft.Extensions.Logging.Abstractions.dll
+|       |   |           |   Microsoft.Extensions.Options.dll
+|       |   |           |   Microsoft.Extensions.Primitives.dll
+|       |   |           |   Microsoft.Identity.Client.dll
+|       |   |           |   Microsoft.Identity.Client.Extensions.Msal.dll
+|       |   |           |   Microsoft.IdentityModel.Abstractions.dll
+|       |   |           |   Microsoft.IdentityModel.JsonWebTokens.dll
+|       |   |           |   Microsoft.IdentityModel.Logging.dll
+|       |   |           |   Microsoft.IdentityModel.Protocols.dll
+|       |   |           |   Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+|       |   |           |   Microsoft.IdentityModel.Tokens.dll
+|       |   |           |   Microsoft.SqlServer.Server.dll
+|       |   |           |   Serilog.dll
+|       |   |           |   Serilog.Settings.Configuration.dll
+|       |   |           |   Serilog.Sinks.Console.dll
+|       |   |           |   System.ClientModel.dll
+|       |   |           |   System.Configuration.ConfigurationManager.dll
+|       |   |           |   System.Diagnostics.EventLog.dll
+|       |   |           |   System.IdentityModel.Tokens.Jwt.dll
+|       |   |           |   System.Memory.Data.dll
+|       |   |           |   System.Security.Cryptography.Pkcs.dll
+|       |   |           |   System.Security.Cryptography.ProtectedData.dll
+|       |   |           |   
+|       |   |           +---cs
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---de
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---es
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---fr
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---it
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---ja
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---ko
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---pl
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---pt-BR
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---ru
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---runtimes
+|       |   |           |   +---unix
+|       |   |           |   |   \---lib
+|       |   |           |   |       \---net9.0
+|       |   |           |   |               Microsoft.Data.SqlClient.dll
+|       |   |           |   |               
+|       |   |           |   +---win
+|       |   |           |   |   \---lib
+|       |   |           |   |       \---net9.0
+|       |   |           |   |               Microsoft.Data.SqlClient.dll
+|       |   |           |   |               System.Diagnostics.EventLog.dll
+|       |   |           |   |               System.Diagnostics.EventLog.Messages.dll
+|       |   |           |   |               System.Security.Cryptography.Pkcs.dll
+|       |   |           |   |               
+|       |   |           |   +---win-arm64
+|       |   |           |   |   \---native
+|       |   |           |   |           Microsoft.Data.SqlClient.SNI.dll
+|       |   |           |   |           
+|       |   |           |   +---win-x64
+|       |   |           |   |   \---native
+|       |   |           |   |           Microsoft.Data.SqlClient.SNI.dll
+|       |   |           |   |           
+|       |   |           |   \---win-x86
+|       |   |           |       \---native
+|       |   |           |               Microsoft.Data.SqlClient.SNI.dll
+|       |   |           |               
+|       |   |           +---tr
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---zh-Hans
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           \---zh-Hant
+|       |   |                   Microsoft.Data.SqlClient.resources.dll
+|       |   |                   
+|       |   +---obj
+|       |   |   |   CaseManagement.DocumentResolvers.csproj.nuget.dgspec.json
+|       |   |   |   CaseManagement.DocumentResolvers.csproj.nuget.g.props
+|       |   |   |   CaseManagement.DocumentResolvers.csproj.nuget.g.targets
+|       |   |   |   project.assets.json
+|       |   |   |   project.nuget.cache
+|       |   |   |   
+|       |   |   \---Debug
+|       |   |       \---net9.0
+|       |   |           |   .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+|       |   |           |   apphost.exe
+|       |   |           |   CaseMana.DCB2E293.Up2Date
+|       |   |           |   CaseManagement.DocumentResolvers.AssemblyInfo.cs
+|       |   |           |   CaseManagement.DocumentResolvers.AssemblyInfoInputs.cache
+|       |   |           |   CaseManagement.DocumentResolvers.assets.cache
+|       |   |           |   CaseManagement.DocumentResolvers.csproj.AssemblyReference.cache
+|       |   |           |   CaseManagement.DocumentResolvers.csproj.BuildWithSkipAnalyzers
+|       |   |           |   CaseManagement.DocumentResolvers.csproj.CoreCompileInputs.cache
+|       |   |           |   CaseManagement.DocumentResolvers.csproj.FileListAbsolute.txt
+|       |   |           |   CaseManagement.DocumentResolvers.dll
+|       |   |           |   CaseManagement.DocumentResolvers.GeneratedMSBuildEditorConfig.editorconfig
+|       |   |           |   CaseManagement.DocumentResolvers.genruntimeconfig.cache
+|       |   |           |   CaseManagement.DocumentResolvers.GlobalUsings.g.cs
+|       |   |           |   CaseManagement.DocumentResolvers.pdb
+|       |   |           |   CaseManagement.DocumentResolvers.sourcelink.json
+|       |   |           |   
+|       |   |           +---ref
+|       |   |           |       CaseManagement.DocumentResolvers.dll
+|       |   |           |       
+|       |   |           \---refint
+|       |   |                   CaseManagement.DocumentResolvers.dll
+|       |   |                   
+|       |   +---Properties
+|       |   |       launchSettings.json
+|       |   |       
+|       |   \---Resolvers
+|       |           PayerCsvResolver.cs
+|       |           
+|       +---DbExporter
+|       |   |   DatabaseExportEngine.cs
+|       |   |   DbExporter.csproj
+|       |   |   DeployScriptBuilder.cs
+|       |   |   FunctionsExporter.cs
+|       |   |   IExporter.cs
+|       |   |   Program.cs
+|       |   |   StoredProcedureExporter.cs
+|       |   |   TableExporter.cs
+|       |   |   ViewsExporter.cs
+|       |   |   
+|       |   +---bin
+|       |   |   \---Debug
+|       |   |       \---net9.0
+|       |   |           |   DbExporter.deps.json
+|       |   |           |   DbExporter.dll
+|       |   |           |   DbExporter.exe
+|       |   |           |   DbExporter.pdb
+|       |   |           |   DbExporter.runtimeconfig.json
+|       |   |           |   Microsoft.Bcl.Cryptography.dll
+|       |   |           |   Microsoft.Data.SqlClient.dll
+|       |   |           |   Microsoft.Data.SqlClient.Extensions.Abstractions.dll
+|       |   |           |   Microsoft.Data.SqlClient.Internal.Logging.dll
+|       |   |           |   Microsoft.Data.Tools.Sql.BatchParser.dll
+|       |   |           |   Microsoft.Extensions.Caching.Abstractions.dll
+|       |   |           |   Microsoft.Extensions.Caching.Memory.dll
+|       |   |           |   Microsoft.Extensions.DependencyInjection.Abstractions.dll
+|       |   |           |   Microsoft.Extensions.Logging.Abstractions.dll
+|       |   |           |   Microsoft.Extensions.Options.dll
+|       |   |           |   Microsoft.Extensions.Primitives.dll
+|       |   |           |   Microsoft.IdentityModel.Abstractions.dll
+|       |   |           |   Microsoft.IdentityModel.JsonWebTokens.dll
+|       |   |           |   Microsoft.IdentityModel.Logging.dll
+|       |   |           |   Microsoft.IdentityModel.Protocols.dll
+|       |   |           |   Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+|       |   |           |   Microsoft.IdentityModel.Tokens.dll
+|       |   |           |   Microsoft.SqlServer.ConnectionInfo.dll
+|       |   |           |   Microsoft.SqlServer.Dmf.Common.dll
+|       |   |           |   Microsoft.SqlServer.Dmf.dll
+|       |   |           |   Microsoft.SqlServer.Management.Collector.dll
+|       |   |           |   Microsoft.SqlServer.Management.CollectorEnum.dll
+|       |   |           |   Microsoft.SqlServer.Management.HadrData.dll
+|       |   |           |   Microsoft.SqlServer.Management.HadrModel.dll
+|       |   |           |   Microsoft.SqlServer.Management.RegisteredServers.dll
+|       |   |           |   Microsoft.SqlServer.Management.Sdk.Sfc.dll
+|       |   |           |   Microsoft.SqlServer.Management.SqlScriptPublish.dll
+|       |   |           |   Microsoft.SqlServer.Management.XEvent.dll
+|       |   |           |   Microsoft.SqlServer.Management.XEventDbScoped.dll
+|       |   |           |   Microsoft.SqlServer.Management.XEventDbScopedEnum.dll
+|       |   |           |   Microsoft.SqlServer.Management.XEventEnum.dll
+|       |   |           |   Microsoft.SqlServer.PolicyEnum.dll
+|       |   |           |   Microsoft.SqlServer.Server.dll
+|       |   |           |   Microsoft.SqlServer.ServiceBrokerEnum.dll
+|       |   |           |   Microsoft.SqlServer.Smo.dll
+|       |   |           |   Microsoft.SqlServer.SmoExtended.dll
+|       |   |           |   Microsoft.SqlServer.SqlEnum.dll
+|       |   |           |   Microsoft.SqlServer.SqlWmiManagement.dll
+|       |   |           |   Microsoft.SqlServer.WmiEnum.dll
+|       |   |           |   System.CodeDom.dll
+|       |   |           |   System.Configuration.ConfigurationManager.dll
+|       |   |           |   System.Data.OleDb.dll
+|       |   |           |   System.Diagnostics.EventLog.dll
+|       |   |           |   System.Diagnostics.PerformanceCounter.dll
+|       |   |           |   System.IdentityModel.Tokens.Jwt.dll
+|       |   |           |   System.Management.dll
+|       |   |           |   System.Security.Cryptography.Pkcs.dll
+|       |   |           |   System.Security.Cryptography.ProtectedData.dll
+|       |   |           |   System.Security.Permissions.dll
+|       |   |           |   System.Windows.Extensions.dll
+|       |   |           |   
+|       |   |           +---cs
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---de
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---es
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---fr
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---it
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---ja
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---ko
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---pl
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---pt-BR
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---ru
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---runtimes
+|       |   |           |   +---unix
+|       |   |           |   |   \---lib
+|       |   |           |   |       \---net9.0
+|       |   |           |   |               Microsoft.Data.SqlClient.dll
+|       |   |           |   |               
+|       |   |           |   +---win
+|       |   |           |   |   \---lib
+|       |   |           |   |       +---net8.0
+|       |   |           |   |       |       System.Data.OleDb.dll
+|       |   |           |   |       |       System.Diagnostics.PerformanceCounter.dll
+|       |   |           |   |       |       System.Management.dll
+|       |   |           |   |       |       System.Windows.Extensions.dll
+|       |   |           |   |       |       
+|       |   |           |   |       \---net9.0
+|       |   |           |   |               Microsoft.Data.SqlClient.dll
+|       |   |           |   |               System.Diagnostics.EventLog.dll
+|       |   |           |   |               System.Diagnostics.EventLog.Messages.dll
+|       |   |           |   |               System.Security.Cryptography.Pkcs.dll
+|       |   |           |   |               
+|       |   |           |   +---win-arm64
+|       |   |           |   |   \---native
+|       |   |           |   |           Microsoft.Data.SqlClient.SNI.dll
+|       |   |           |   |           
+|       |   |           |   +---win-x64
+|       |   |           |   |   \---native
+|       |   |           |   |           Microsoft.Data.SqlClient.SNI.dll
+|       |   |           |   |           
+|       |   |           |   \---win-x86
+|       |   |           |       \---native
+|       |   |           |               Microsoft.Data.SqlClient.SNI.dll
+|       |   |           |               
+|       |   |           +---tr
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           +---zh-Hans
+|       |   |           |       Microsoft.Data.SqlClient.resources.dll
+|       |   |           |       
+|       |   |           \---zh-Hant
+|       |   |                   Microsoft.Data.SqlClient.resources.dll
+|       |   |                   
+|       |   \---obj
+|       |       |   DbExporter.csproj.nuget.dgspec.json
+|       |       |   DbExporter.csproj.nuget.g.props
+|       |       |   DbExporter.csproj.nuget.g.targets
+|       |       |   project.assets.json
+|       |       |   project.nuget.cache
+|       |       |   
+|       |       \---Debug
+|       |           \---net9.0
+|       |               |   .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+|       |               |   apphost.exe
+|       |               |   DbExporter.AssemblyInfo.cs
+|       |               |   DbExporter.AssemblyInfoInputs.cache
+|       |               |   DbExporter.assets.cache
+|       |               |   DbExporter.csproj.AssemblyReference.cache
+|       |               |   DbExporter.csproj.CoreCompileInputs.cache
+|       |               |   DbExporter.csproj.FileListAbsolute.txt
+|       |               |   DbExporter.csproj.Up2Date
+|       |               |   DbExporter.dll
+|       |               |   DbExporter.GeneratedMSBuildEditorConfig.editorconfig
+|       |               |   DbExporter.genruntimeconfig.cache
+|       |               |   DbExporter.GlobalUsings.g.cs
+|       |               |   DbExporter.pdb
+|       |               |   DbExporter.sourcelink.json
+|       |               |   
+|       |               +---ref
+|       |               |       DbExporter.dll
+|       |               |       
+|       |               \---refint
+|       |                       DbExporter.dll
+|       |                       
+|       \---ImportDocs
+|           |   appsettings.json
+|           |   import - Copy.csv
+|           |   import.csv
+|           |   ImportDocs.csproj
+|           |   Program.cs
+|           |   
+|           +---bin
+|           |   \---Debug
+|           |       \---net9.0
+|           |           |   appsettings.json
+|           |           |   ImportDocs.deps.json
+|           |           |   ImportDocs.dll
+|           |           |   ImportDocs.exe
+|           |           |   ImportDocs.pdb
+|           |           |   ImportDocs.runtimeconfig.json
+|           |           |   Microsoft.Bcl.Cryptography.dll
+|           |           |   Microsoft.Data.SqlClient.dll
+|           |           |   Microsoft.Data.SqlClient.Extensions.Abstractions.dll
+|           |           |   Microsoft.Data.SqlClient.Internal.Logging.dll
+|           |           |   Microsoft.Extensions.Caching.Abstractions.dll
+|           |           |   Microsoft.Extensions.Caching.Memory.dll
+|           |           |   Microsoft.Extensions.Configuration.Abstractions.dll
+|           |           |   Microsoft.Extensions.Configuration.Binder.dll
+|           |           |   Microsoft.Extensions.Configuration.dll
+|           |           |   Microsoft.Extensions.Configuration.FileExtensions.dll
+|           |           |   Microsoft.Extensions.Configuration.Json.dll
+|           |           |   Microsoft.Extensions.DependencyInjection.Abstractions.dll
+|           |           |   Microsoft.Extensions.DependencyModel.dll
+|           |           |   Microsoft.Extensions.FileProviders.Abstractions.dll
+|           |           |   Microsoft.Extensions.FileProviders.Physical.dll
+|           |           |   Microsoft.Extensions.FileSystemGlobbing.dll
+|           |           |   Microsoft.Extensions.Logging.Abstractions.dll
+|           |           |   Microsoft.Extensions.Options.ConfigurationExtensions.dll
+|           |           |   Microsoft.Extensions.Options.dll
+|           |           |   Microsoft.Extensions.Primitives.dll
+|           |           |   Microsoft.IdentityModel.Abstractions.dll
+|           |           |   Microsoft.IdentityModel.JsonWebTokens.dll
+|           |           |   Microsoft.IdentityModel.Logging.dll
+|           |           |   Microsoft.IdentityModel.Protocols.dll
+|           |           |   Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+|           |           |   Microsoft.IdentityModel.Tokens.dll
+|           |           |   Microsoft.SqlServer.Server.dll
+|           |           |   Serilog.dll
+|           |           |   Serilog.Settings.Configuration.dll
+|           |           |   Serilog.Sinks.Console.dll
+|           |           |   Serilog.Sinks.File.dll
+|           |           |   Serilog.Sinks.MSSqlServer.dll
+|           |           |   System.Configuration.ConfigurationManager.dll
+|           |           |   System.Diagnostics.EventLog.dll
+|           |           |   System.IdentityModel.Tokens.Jwt.dll
+|           |           |   System.IO.Pipelines.dll
+|           |           |   System.Security.Cryptography.Pkcs.dll
+|           |           |   System.Security.Cryptography.ProtectedData.dll
+|           |           |   System.Text.Encodings.Web.dll
+|           |           |   System.Text.Json.dll
+|           |           |   
+|           |           +---cs
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---de
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---es
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---fr
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---it
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---ja
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---ko
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---pl
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---pt-BR
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---ru
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---runtimes
+|           |           |   +---browser
+|           |           |   |   \---lib
+|           |           |   |       \---net8.0
+|           |           |   |               System.Text.Encodings.Web.dll
+|           |           |   |               
+|           |           |   +---unix
+|           |           |   |   \---lib
+|           |           |   |       \---net9.0
+|           |           |   |               Microsoft.Data.SqlClient.dll
+|           |           |   |               
+|           |           |   +---win
+|           |           |   |   \---lib
+|           |           |   |       \---net9.0
+|           |           |   |               Microsoft.Data.SqlClient.dll
+|           |           |   |               System.Diagnostics.EventLog.dll
+|           |           |   |               System.Diagnostics.EventLog.Messages.dll
+|           |           |   |               System.Security.Cryptography.Pkcs.dll
+|           |           |   |               System.Text.Encodings.Web.dll
+|           |           |   |               
+|           |           |   +---win-arm64
+|           |           |   |   \---native
+|           |           |   |           Microsoft.Data.SqlClient.SNI.dll
+|           |           |   |           
+|           |           |   +---win-x64
+|           |           |   |   \---native
+|           |           |   |           Microsoft.Data.SqlClient.SNI.dll
+|           |           |   |           
+|           |           |   \---win-x86
+|           |           |       \---native
+|           |           |               Microsoft.Data.SqlClient.SNI.dll
+|           |           |               
+|           |           +---tr
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           +---zh-Hans
+|           |           |       Microsoft.Data.SqlClient.resources.dll
+|           |           |       
+|           |           \---zh-Hant
+|           |                   Microsoft.Data.SqlClient.resources.dll
+|           |                   
+|           +---ImportedFiles
+|           +---logs
+|           |       import-20260509.log
+|           |       
+|           \---obj
+|               |   ImportDocs.csproj.nuget.dgspec.json
+|               |   ImportDocs.csproj.nuget.g.props
+|               |   ImportDocs.csproj.nuget.g.targets
+|               |   project.assets.json
+|               |   project.nuget.cache
+|               |   
+|               \---Debug
+|                   \---net9.0
+|                       |   .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+|                       |   apphost.exe
+|                       |   ImportDocs.AssemblyInfo.cs
+|                       |   ImportDocs.AssemblyInfoInputs.cache
+|                       |   ImportDocs.assets.cache
+|                       |   ImportDocs.csproj.AssemblyReference.cache
+|                       |   ImportDocs.csproj.CoreCompileInputs.cache
+|                       |   ImportDocs.csproj.FileListAbsolute.txt
+|                       |   ImportDocs.csproj.Up2Date
+|                       |   ImportDocs.dll
+|                       |   ImportDocs.GeneratedMSBuildEditorConfig.editorconfig
+|                       |   ImportDocs.genruntimeconfig.cache
+|                       |   ImportDocs.GlobalUsings.g.cs
+|                       |   ImportDocs.pdb
+|                       |   ImportDocs.sourcelink.json
+|                       |   
+|                       +---ref
+|                       |       ImportDocs.dll
+|                       |       
+|                       \---refint
+|                               ImportDocs.dll
+|                               
 +---Endpoints
+|   |   GetDocumentEndpoint.cs
+|   |   
 |   \---Corqs
 |           CorqsEndpoints.cs
 |           
@@ -90,9 +990,11 @@ tree /F /A > folder-structure.txt
 |           ApiDefinition.cs
 |           CorqsRequest.cs
 |           CorqsResponse.cs
+|           DataRouteDefinition.cs
 |           ParameterDefinition.cs
 |           ProcedureDefinition.cs
 |           SchemaDefinition.cs
+|           SchemaRoot.cs
 |           
 +---ModelsPRE
 +---Modules
@@ -109,17 +1011,102 @@ tree /F /A > folder-structure.txt
 |       \---Sql
 |               usp_SearchCases.sql
 |               
-
-
++---obj
+|   |   project.assets.json
+|   |   project.nuget.cache
+|   |   WebAppMulti.csproj.EntityFrameworkCore.targets
+|   |   WebAppMulti.csproj.nuget.dgspec.json
+|   |   WebAppMulti.csproj.nuget.g.props
+|   |   WebAppMulti.csproj.nuget.g.targets
+|   |   
+|   +---Debug
+|   |   +---net8.0
+|   |   |   |   .NETCoreApp,Version=v8.0.AssemblyAttributes.cs
+|   |   |   |   ApiEndpoints.json
+|   |   |   |   apphost.exe
+|   |   |   |   rjsmcshtml.dswa.cache.json
+|   |   |   |   rjsmrazor.dswa.cache.json
+|   |   |   |   rpswa.dswa.cache.json
+|   |   |   |   staticwebassets.build.endpoints.json
+|   |   |   |   staticwebassets.build.json
+|   |   |   |   staticwebassets.references.upToDateCheck.txt
+|   |   |   |   staticwebassets.removed.txt
+|   |   |   |   WebAppMu.57CD7831.Up2Date
+|   |   |   |   WebAppMulti.AssemblyInfo.cs
+|   |   |   |   WebAppMulti.AssemblyInfoInputs.cache
+|   |   |   |   WebAppMulti.assets.cache
+|   |   |   |   WebAppMulti.csproj.AssemblyReference.cache
+|   |   |   |   WebAppMulti.csproj.BuildWithSkipAnalyzers
+|   |   |   |   WebAppMulti.csproj.CoreCompileInputs.cache
+|   |   |   |   WebAppMulti.csproj.FileListAbsolute.txt
+|   |   |   |   WebAppMulti.dll
+|   |   |   |   WebAppMulti.GeneratedMSBuildEditorConfig.editorconfig
+|   |   |   |   WebAppMulti.genruntimeconfig.cache
+|   |   |   |   WebAppMulti.GlobalUsings.g.cs
+|   |   |   |   WebAppMulti.MvcApplicationPartsAssemblyInfo.cache
+|   |   |   |   WebAppMulti.MvcApplicationPartsAssemblyInfo.cs
+|   |   |   |   WebAppMulti.pdb
+|   |   |   |   WebAppMulti.sourcelink.json
+|   |   |   |   
+|   |   |   +---EndpointInfo
+|   |   |   |       WebAppMulti.json
+|   |   |   |       WebAppMulti.OpenApiFiles.cache
+|   |   |   |       
+|   |   |   +---ref
+|   |   |   |       WebAppMulti.dll
+|   |   |   |       
+|   |   |   +---refint
+|   |   |   |       WebAppMulti.dll
+|   |   |   |       
+|   |   |   \---staticwebassets
+|   |   \---net9.0
+|   |       |   .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+|   |       |   ApiEndpoints.json
+|   |       |   apphost.exe
+|   |       |   rbcswa.dswa.cache.json
+|   |       |   rpswa.dswa.cache.json
+|   |       |   staticwebassets.references.upToDateCheck.txt
+|   |       |   staticwebassets.removed.txt
+|   |       |   WebAppMulti.AssemblyInfo.cs
+|   |       |   WebAppMulti.AssemblyInfoInputs.cache
+|   |       |   WebAppMulti.assets.cache
+|   |       |   WebAppMulti.csproj.AssemblyReference.cache
+|   |       |   WebAppMulti.csproj.BuildWithSkipAnalyzers
+|   |       |   WebAppMulti.csproj.CoreCompileInputs.cache
+|   |       |   WebAppMulti.csproj.FileListAbsolute.txt
+|   |       |   WebAppMulti.GeneratedMSBuildEditorConfig.editorconfig
+|   |       |   WebAppMulti.GlobalUsings.g.cs
+|   |       |   WebAppMulti.MvcApplicationPartsAssemblyInfo.cache
+|   |       |   WebAppMulti.MvcApplicationPartsAssemblyInfo.cs
+|   |       |   WebAppMulti.sourcelink.json
+|   |       |   
+|   |       +---compressed
+|   |       +---EndpointInfo
+|   |       |       WebAppMulti.json
+|   |       |       WebAppMulti.OpenApiFiles.cache
+|   |       |       WebAppMulti_CaseManagement.json
+|   |       |       
+|   |       +---ref
+|   |       +---refint
+|   |       \---staticwebassets
+|   \---Release
+|       \---net9.0
+|           |   .NETCoreApp,Version=v9.0.AssemblyAttributes.cs
+|           |   WebAppMulti.AssemblyInfo.cs
+|           |   WebAppMulti.AssemblyInfoInputs.cache
+|           |   WebAppMulti.assets.cache
+|           |   WebAppMulti.csproj.AssemblyReference.cache
+|           |   WebAppMulti.GeneratedMSBuildEditorConfig.editorconfig
+|           |   WebAppMulti.GlobalUsings.g.cs
+|           |   
+|           +---ref
+|           \---refint
 +---Properties
 |       launchSettings.json
 |       
 +---Services
-|   |   ApiExecutor.cs
 |   |   CustomerService.cs
 |   |   EFdbServie.cs
-|   |   RequestContextBuilder.cs
-|   |   StoredProcedureExecutor.cs
 |   |   
 |   +---CaseManagement
 |   |       FormTemplateService.cs
@@ -128,13 +1115,26 @@ tree /F /A > folder-structure.txt
 |   |       SessionService.cs
 |   |       
 |   +---Corqs
+|   |   |   ApiExecutor.cs
 |   |   |   CorqsExecutor.cs
+|   |   |   HttpProxyExecutor.cs
 |   |   |   ICorqsExecutionStrategy.cs
 |   |   |   ICorqsHandler.cs
+|   |   |   RequestContextBuilder.cs
+|   |   |   SqlExecutor.cs
+|   |   |   StoredProcedureExecutor.cs
 |   |   |   
+|   |   +---Abstractions
+|   |   |       IApiExecutor.cs
+|   |   |       IHttpProxyExecutor.cs
+|   |   |       IRequestContextBuilder.cs
+|   |   |       ISqlExecutor.cs
+|   |   |       IStoredProcedureExecutor.cs
+|   |   |       
 |   |   +---Handlers
 |   |   |       GetBookHandler.cs
 |   |   |       GetBooksHandler.cs
+|   |   |       GetInvoiceDetailsHandler.cs
 |   |   |       ServerTimeHandler.cs
 |   |   |       
 |   |   \---Strategies
@@ -143,7 +1143,120 @@ tree /F /A > folder-structure.txt
 |   |           SqlExecutionStrategy.cs
 |   |           StoredProcedureStrategy.cs
 |   |           
-|   \---OpenApi
-|           CorqsOpenApiService.cs
-
+|   +---OpenApi
+|   |       CorqsOpenApiService.cs
+|   |       
+|   \---SchemaService
+|           SchemaService.cs
+|           
++---Workbooks
+|   \---42
+|       |   ABA Service Agreement & Consent Form PL.html
+|       |   aba.html
+|       |   aba_billing_statement (1).html
+|       |   Assessment.html
+|       |   AvailityEssentials.txt
+|       |   claim837.json
+|       |   claim837.txt
+|       |   Claim837_Form - Copy.pdf
+|       |   claim837_form.html
+|       |   Claim837_Form.pdf
+|       |   claim837_form.txt
+|       |   CR Essentials.pdf
+|       |   dynamic_form_record.pdf
+|       |   ediavailabilitye.html
+|       |   intake - Copy.html
+|       |   intake.7159270227.html
+|       |   intake.7341693071.html
+|       |   intake.7524488575.html
+|       |   intake.7707656738.html
+|       |   intake.7891197561.html
+|       |   intake.CASE-7524488575.html
+|       |   intake.html
+|       |   my_scanned_form.pdf
+|       |   my_scanned_form_scanned.pdf
+|       |   payer.txt.csv
+|       |   payerdoc.html
+|       |   payerdoc.txt
+|       |   RDQ2018.html
+|       |   Sample 1500_2012_02.pdf
+|       |   scrap - Copy.html
+|       |   scrap.txt
+|       |   session.0.1.html
+|       |   session.101.png
+|       |   session.111.CR Essentials.pdf
+|       |   session.124.aba_session_form.html
+|       |   session.127.aba_session_editable.pdf
+|       |   session.187.aba_session_editable.pdf
+|       |   session.909.aba_session_dashboard_mixed.svg
+|       |   session.dashboard.svg
+|       |   session.schedule.html
+|       |   SessionNote_82001.html
+|       |   SessionNote_parentTraining.html
+|       |   unnamed.jpg
+|       |   
+|       +---ABA Service Agreement & Consent Form PL_files
+|       |       5e6b428acc8c4e222d1beb91.css
+|       |       actions.js.download
+|       |       errorNavigation.js.download
+|       |       for-pdfimporter-patch.js.download
+|       |       for-sign-form-integration.js.download
+|       |       form-common.css
+|       |       hipaa-badge-compliance.png
+|       |       jotform.forms.js.download
+|       |       jotform.signaturepad.new.js.download
+|       |       jquery-3.7.1.min.js.download
+|       |       jSignature.CompressorBase30.js.download
+|       |       jSignature.CompressorSVG.js.download
+|       |       jSignature.js.download
+|       |       jSignature.UndoButton.js.download
+|       |       Logo of Team Dynamic Minds.6825ed23e24948.13253575.png
+|       |       maskedinput_5.0.9.min.js.download
+|       |       payment_feature.css
+|       |       payment_styles.css
+|       |       prototype.forms.js.download
+|       |       saved_resource
+|       |       smoothscroll.min.js.download
+|       |       
+|       \---RDQ2018_files
+|               5e6b428acc8c4e222d1beb91.css
+|               best Logo of Team Dynamic Minds.689d3d39cba3e8.49421634.png
+|               errorNavigation.js.download
+|               for-formuser.js.download
+|               for-pdfimporter-patch.js.download
+|               form-common.css
+|               jotform.forms.js.download
+|               maskedinput_5.0.9.min.js.download
+|               payment_feature.css
+|               payment_styles.css
+|               prototype.forms.js.download
+|               saved_resource
+|               smoothscroll.min.js.download
+|               
+\---wwwroot
+    |   cases.json
+    |   DynoMinds.svg
+    |   index.html
+    |   vite.svg
+    |   
+    +---assets
+    |       index-DvJGIjl8.js
+    |       index-yq3Fr6Xz.css
+    |       
+    \---files
+            aba.html
+            ABAIn-Home.txt
+            ABA_2_Hour_Session_Template.pdf
+            ABA_Month1_7yo_fillable.html
+            ABA_Month1_SessionPlan_7yo.pdf
+            buzcard.jpg
+            calendar.html
+            caseIntake.pdf
+            intake.html
+            MonthOneABA.html
+            MonthOneABA.txt
+            rdiaba.svg
+            session.909.aba_session_dashboard_mixed.svg
+            session.dashboard.svg
+            session.dashboard.svg1
             
