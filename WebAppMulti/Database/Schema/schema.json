@@ -152,6 +152,21 @@
       "route": "/api/corqs/cases/{caseId}/workbooks/init"
     },
     {
+      "name": "getDocumentList",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_Document_List",
+      "route": "/api/corqs/getDocumentList",
+      "dataRoute": { "resource": "getDocumentList" },
+      "params": {
+        "documentType": { "type": "string", "required": false, "source": "body" },
+        "caseId":       { "type": "int",    "required": false, "source": "body" },
+        "isActive":     { "type": "bit",    "required": false, "source": "body" }
+      },
+      "actions": [
+        { "label": "Open", "route": "/docviewer/{documentId}" }
+      ]
+    },
+    {
       "name": "getInvoiceDetails",
       "type": "handler",
       "handler": "GetInvoiceDetails",

@@ -1,2 +1,3 @@
-CaseNumber,FilePath,DocumentType,Title,ContentType
-,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\payer.txt.csv,Other,Payer,text/html
+CaseNumber,DocumentType,Title,ContentType,FilePath
+,Other,SessionNote.001,text/html,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\blank_editable_session_note.html
+,Other,SessionNote.001,application/pdf,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\blank_editable_session_note.pdf

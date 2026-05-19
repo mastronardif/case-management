@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGlobalStore } from "../context/GlobalStore";
+import { apiFetch } from "../services/apiFetch";
 import { fetchFileList } from "../services/fileService";
 import XyzTablePage from "./XyzTablePage";
 
@@ -21,17 +22,19 @@ const FileActionRow = ({ row, actions }) => (
 );
 
 export default function FilesTablePage() {
-  const { urlTemplates } = useGlobalStore();
+  const { urlTemplates, urlCases } = useGlobalStore();
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [docRows, setDocRows] = useState([]);
+  const [docError, setDocError] = useState(null);
+  const [docLoading, setDocLoading] = useState(false);
   const navigate = useNavigate();
 
   const fetchData = useCallback(async () => {
     if (!urlTemplates) return;
     setLoading(true);
     setError(null);
-
     try {
       const res = await fetchFileList(urlTemplates);
       const normalized = Array.isArray(res)
@@ -49,18 +52,30 @@ export default function FilesTablePage() {
     }
   }, [urlTemplates]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const fetchDocs = useCallback(async () => {
+    setDocLoading(true);
+    setDocError(null);
+    try {
+      const res = await apiFetch(urlCases, { action: "getDocumentList", params: { documentType: "Other" } });
+      setDocRows(Array.isArray(res) ? res : []);
+    } catch (err) {
+      console.error("Error fetching documents:", err);
+      setDocRows([]);
+      setDocError("Failed to fetch documents.");
+    } finally {
+      setDocLoading(false);
+    }
+  }, [urlCases]);
 
-  // Row-level actions
+  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => { fetchDocs(); }, [fetchDocs]);
+
   const rowActions = [
     {
       label: "Open",
       onClick: (row) => {
         const fileUrl = row.filename || row.file || row.name;
         if (!fileUrl) return;
-
         const url = fileUrl.startsWith("http") ? fileUrl : `files/${fileUrl}`;
         navigate("/viewer", { state: { fileUrl: url, title: `Viewing ${fileUrl}` } });
       },
@@ -73,7 +88,6 @@ export default function FilesTablePage() {
     },
   ];
 
-  // Table-level actions
   const tableActions = [
     {
       label: loading ? "Loading..." : "Reload",
@@ -82,8 +96,24 @@ export default function FilesTablePage() {
     },
   ];
 
+  const docRowActions = [
+    {
+      label: "Open",
+      onClick: (row) => navigate(`/docviewer/${row.documentId}`),
+      className: "bg-green-500 text-white hover:bg-green-600",
+    },
+  ];
+
+  const docTableActions = [
+    {
+      label: docLoading ? "Loading..." : "Reload",
+      onClick: fetchDocs,
+      className: "bg-blue-500 text-white hover:bg-blue-600 px-3 py-1 rounded text-sm",
+    },
+  ];
+
   return (
-    <div >
+    <div>
       <XyzTablePage
         title="Files"
         rows={rows}
@@ -91,8 +121,16 @@ export default function FilesTablePage() {
         rowActions={rowActions}
         tableActions={tableActions}
       />
+      {error && <p className="text-red-500 mt-2 px-6">{error}</p>}
 
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      <XyzTablePage
+        title="Documents (templates)"
+        rows={docRows}
+        ActionRowComponent={FileActionRow}
+        rowActions={docRowActions}
+        tableActions={docTableActions}
+      />
+      {docError && <p className="text-red-500 mt-2 px-6">{docError}</p>}
     </div>
   );
 }
