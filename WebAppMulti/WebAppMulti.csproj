@@ -8,21 +8,25 @@
 
   <ItemGroup>
     <Compile Remove="Database\Scripts\CaseManagement.DocumentResolvers\**" />
+    <Compile Remove="Database\Scripts\CaseManagement.SessionBillResolvers\**" />
     <Compile Remove="Database\Scripts\CaseManagement.SessionResolvers\**" />
     <Compile Remove="Database\Scripts\DbExporter\**" />
     <Compile Remove="Database\Scripts\ImportDocs\**" />
     <Compile Remove="ModelsPRE\**" />
     <Content Remove="Database\Scripts\CaseManagement.DocumentResolvers\**" />
+    <Content Remove="Database\Scripts\CaseManagement.SessionBillResolvers\**" />
     <Content Remove="Database\Scripts\CaseManagement.SessionResolvers\**" />
     <Content Remove="Database\Scripts\DbExporter\**" />
     <Content Remove="Database\Scripts\ImportDocs\**" />
     <Content Remove="ModelsPRE\**" />
     <EmbeddedResource Remove="Database\Scripts\CaseManagement.DocumentResolvers\**" />
+    <EmbeddedResource Remove="Database\Scripts\CaseManagement.SessionBillResolvers\**" />
     <EmbeddedResource Remove="Database\Scripts\CaseManagement.SessionResolvers\**" />
     <EmbeddedResource Remove="Database\Scripts\DbExporter\**" />
     <EmbeddedResource Remove="Database\Scripts\ImportDocs\**" />
     <EmbeddedResource Remove="ModelsPRE\**" />
     <None Remove="Database\Scripts\CaseManagement.DocumentResolvers\**" />
+    <None Remove="Database\Scripts\CaseManagement.SessionBillResolvers\**" />
     <None Remove="Database\Scripts\CaseManagement.SessionResolvers\**" />
     <None Remove="Database\Scripts\DbExporter\**" />
     <None Remove="Database\Scripts\ImportDocs\**" />

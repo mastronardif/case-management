@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using CaseManagement.Common;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Text.Json;
@@ -20,6 +21,13 @@ public class SessionImportResolver
             _config.GetConnectionString("DefaultConnection");
 
         var json = await File.ReadAllTextAsync(jsonFile);
+        var htmlFile = $"{jsonFile}.html";
+
+        var html = JsonToHtmlConverter.Convert(json);        
+
+        await File.WriteAllTextAsync(htmlFile,
+            //@"C:\temp\review.html",
+            html);
 
         using var conn = new SqlConnection(connectionString);
         await conn.OpenAsync();

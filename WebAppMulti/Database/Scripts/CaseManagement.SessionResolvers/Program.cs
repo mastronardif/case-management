@@ -45,10 +45,11 @@ try
     var filePath = await RunAsync(documentId);
     var jsonFile = Path.Combine(@"C:\temp", Path.GetFileName(filePath) + ".json");
 
-    Console.WriteLine($"File ready for AI step: {filePath}");
-    Console.WriteLine($"Pause: AI convert document {filePath} → {filePath}.json JSON manually");
+    Console.WriteLine($"\n " +  $"**********\n File ready for AI step: \n{filePath}\n");
+    Console.WriteLine($"Pause: AI convert document {filePath} → {filePath}.json JSON manually\n");
+    Console.WriteLine($"\n " + $"**********\n");
     Console.ReadLine();    
-    Console.WriteLine($"JsonFile: {filePath}.json");
+    Console.WriteLine($"JsonFile: {filePath}.json\n");
 
     var resolver = new SessionImportResolver(config);
 
