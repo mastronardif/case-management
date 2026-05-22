@@ -1,0 +1,27 @@
+﻿C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\CaseManagement.ArchitectureStarter\src
++---CaseManagement.DocumentResolvers
+|   \---CaseManagement.DocumentResolvers.csproj
++---CaseManagement.SessionBillResolvers.V2
+|   +---Engine
+|   +---Rules
+|   +---Services
+|   +---Sql
+|   +---CaseManagement.SessionBillResolvers.V2.csproj
+|   \---Program.cs
++---CaseManagement.SessionResolvers
+|   \---CaseManagement.SessionResolvers.csproj
++---CaseManagement.Shared
+|   +---Config
+|   +---Constants
+|   +---Extensions
+|   +---Interfaces
+|   +---Models
+|   |   +---Options
+|   |   \---SessionContext.cs
+|   \---CaseManagement.Shared.csproj
++---CaseManagement.Tooling
+|   \---CaseManagement.Tooling.csproj
++---.gitignore
++---CaseManagement.ArchitectureStarter.sln
++---create-sln.ps1
+\---README.md

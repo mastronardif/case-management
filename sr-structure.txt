@@ -1,0 +1,512 @@
+﻿
++---.github
+|   \---workflows
++---CaseManagementUI
+|   +---public
+|   |   +---files
+|   |   |   +---aba.html
+|   |   |   +---ABA_2_Hour_Session_Template.pdf
+|   |   |   +---ABA_Month1_7yo_fillable.html
+|   |   |   +---ABA_Month1_SessionPlan_7yo.pdf
+|   |   |   +---ABAIn-Home.txt
+|   |   |   +---buzcard.jpg
+|   |   |   +---calendar.html
+|   |   |   +---caseIntake.pdf
+|   |   |   +---index.json
+|   |   |   +---intake.html
+|   |   |   +---MonthOneABA.html
+|   |   |   +---MonthOneABA.txt
+|   |   |   +---rdiaba.svg
+|   |   |   +---session.909.aba_session_dashboard_mixed.svg
+|   |   |   +---session.dashboard.svg
+|   |   |   \---session.dashboard.svg1
+|   |   +---cases.json
+|   |   +---DynoMinds.svg
+|   |   \---vite.svg
+|   +---src
+|   |   +---assets
+|   |   |   +---DynoMinds.ico
+|   |   |   +---DynoMinds.svg
+|   |   |   \---react.svg
+|   |   +---components
+|   |   |   +---ActionPage.jsx
+|   |   |   +---ActionRow.jsx
+|   |   |   +---ActionTable.jsx
+|   |   |   +---Calendar.jsx
+|   |   |   +---DataTable.jsx
+|   |   |   +---DataTable22.jsx
+|   |   |   +---Footer.jsx
+|   |   |   +---Navbar.jsx
+|   |   |   +---Sidebar.jsx
+|   |   |   +---Spinner.jsx
+|   |   |   \---TableActions.jsx
+|   |   +---context
+|   |   |   +---AuthContext.jsx
+|   |   |   +---GlobalContext.jsx
+|   |   |   \---GlobalStore.js
+|   |   +---pages
+|   |   |   +---BillingPage.jsx
+|   |   |   +---BillingTablePage.jsx
+|   |   |   +---CalendarPage.jsx
+|   |   |   +---CasePage.jsx
+|   |   |   +---CasesTablePage.jsx
+|   |   |   +---ChordChart.jsx
+|   |   |   +---CorqsTestPage.jsx
+|   |   |   +---DataPage.jsx
+|   |   |   +---DocumentViewerPage.jsx
+|   |   |   +---FilesTablePage.jsx
+|   |   |   +---FileViewerPage.jsx
+|   |   |   +---IframeView.jsx
+|   |   |   +---InvoiceDetailPage.jsx
+|   |   |   +---Login.jsx
+|   |   |   +---NotFound.jsx
+|   |   |   +---sessionDashboard.svg
+|   |   |   +---Settings.jsx
+|   |   |   +---TableFromUrl.jsx
+|   |   |   +---WorkbooksPage.jsx
+|   |   |   \---XyzTablePage.jsx
+|   |   +---services
+|   |   |   +---apiFetch.js
+|   |   |   +---billingService.js
+|   |   |   +---fileService.js
+|   |   |   +---http.js
+|   |   |   \---payerdocService.js
+|   |   +---utils
+|   |   |   +---connectionStore.js
+|   |   |   +---corqsreact.js
+|   |   |   +---routeToQuery.js
+|   |   |   \---tableActionStore.js
+|   |   +---App.css
+|   |   +---App.jsx
+|   |   +---index.css
+|   |   +---main.jsx
+|   |   +---routes.jsx
+|   |   \---vite-env.d.ts
+|   +---tools
+|   |   \---CaseManagement.ArchitectureStarter
+|   |       +---src
+|   |       |   +---CaseManagement.DocumentResolvers
+|   |       |   |   \---CaseManagement.DocumentResolvers.csproj
+|   |       |   +---CaseManagement.SessionBillResolvers.V2
+|   |       |   |   +---CaseManagement.SessionBillResolvers.V2.csproj
+|   |       |   |   \---Class1.cs
+|   |       |   +---CaseManagement.SessionResolvers
+|   |       |   |   +---CaseManagement.SessionResolvers.csproj
+|   |       |   |   \---Class1.cs
+|   |       |   +---CaseManagement.Shared
+|   |       |   |   +---CaseManagement.Shared.csproj
+|   |       |   |   \---Class1.cs
+|   |       |   \---CaseManagement.Tooling
+|   |       |       +---CaseManagement.Tooling.csproj
+|   |       |       \---Class1.cs
+|   |       +---.gitignore
+|   |       +---CaseManagement.sln
+|   |       +---create-sln.ps1
+|   |       \---README.md
+|   +---.env.development
+|   +---.env.production
+|   +---.env.test
+|   +---.gitignore
+|   +---config.ts
+|   +---deploy.py
+|   +---eslint.config.js
+|   +---index.html
+|   +---package.json
+|   +---package-lock.json
+|   +---postcss.config.cjs
+|   +---README.md
+|   +---tailwind.config.cjs
+|   +---tsconfig.json
+|   \---vite.config.js
++---Payer
+|   +---JsonTo837
+|   |   +---Workbooks
+|   |   |   +---claim837.json
+|   |   |   +---claim837.txt
+|   |   |   +---cr_essentials_curricula_templateTest.json
+|   |   |   +---data000.json
+|   |   |   +---mynotes.txt
+|   |   |   +---output000.csv
+|   |   |   +---output000.xlsx
+|   |   |   \---test000.xlsx
+|   |   +---.gitattributes
+|   |   +---.gitignore
+|   |   +---edi_guide.pdf
+|   |   +---JsonTo837.csproj
+|   |   +---JsonTo837.sln
+|   |   +---Program.cs
+|   |   \---ProgramsToCsv.cs
+|   +---Notes_Cigna.txt
+|   \---Sample_837P_Claim.edi.txt
++---WebAppMulti
+|   +---.github
+|   |   \---workflows
+|   +---CaseManagement.ArchitectureStarter
+|   |   \---src
+|   |       +---CaseManagement.DocumentResolvers
+|   |       |   \---CaseManagement.DocumentResolvers.csproj
+|   |       +---CaseManagement.SessionBillResolvers.V2
+|   |       |   +---Engine
+|   |       |   +---Rules
+|   |       |   +---Services
+|   |       |   +---Sql
+|   |       |   +---CaseManagement.SessionBillResolvers.V2.csproj
+|   |       |   \---Program.cs
+|   |       +---CaseManagement.SessionResolvers
+|   |       |   \---CaseManagement.SessionResolvers.csproj
+|   |       +---CaseManagement.Shared
+|   |       |   +---Config
+|   |       |   +---Constants
+|   |       |   +---Extensions
+|   |       |   +---Interfaces
+|   |       |   +---Models
+|   |       |   |   +---Options
+|   |       |   |   \---SessionContext.cs
+|   |       |   \---CaseManagement.Shared.csproj
+|   |       +---CaseManagement.Tooling
+|   |       |   \---CaseManagement.Tooling.csproj
+|   |       +---.gitignore
+|   |       +---CaseManagement.ArchitectureStarter.sln
+|   |       +---create-sln.ps1
+|   |       \---README.md
+|   +---Configuration
+|   |   \---ApiDefinition.cs
+|   +---Controllers
+|   |   +---CaseManagement
+|   |   |   +---CalendarDemoControllerr.cs
+|   |   |   +---FormTemplateController .cs
+|   |   |   +---SessionController.cs
+|   |   |   \---SessionDocumentController .cs
+|   |   +---ADOController.cs
+|   |   +---AuthController.cs
+|   |   +---CgiController.cs
+|   |   +---CustomerController.cs
+|   |   +---DomainAdminController.cs
+|   |   +---EFdbController.cs
+|   |   +---EmployeesController.cs
+|   |   +---MultithreadingController.cs
+|   |   +---PayerDocsController.cs
+|   |   +---ProxyController.cs
+|   |   +---WeatherForecastController.cs
+|   |   \---WorkbooksController.cs
+|   +---Database
+|   |   +---Auth
+|   |   |   +---DummyAuthStore.cs
+|   |   |   +---IdentityUserStore.cs
+|   |   |   +---InMemoryUserStore.cs
+|   |   |   \---IUserStore.cs
+|   |   +---Configurations
+|   |   |   +---Class.cs
+|   |   |   +---DimCustomerConfig.cs
+|   |   |   +---DimGeographyConfig.cs
+|   |   |   \---EmployeeConfig.cs
+|   |   +---Dtos
+|   |   |   +---CustomerWithGeoDto.cs
+|   |   |   +---DocumentCreateDto.cs
+|   |   |   \---Dtos.cs
+|   |   +---Generators
+|   |   |   +---OpenApiGenerator.cs
+|   |   |   +---PostmanGenerator.cs
+|   |   |   \---ReactQueryMapGenerator.cs
+|   |   +---Models
+|   |   |   +---CaseManagement
+|   |   |   |   \---FormTemplate.cs
+|   |   |   +---Customer.cs
+|   |   |   +---DimCustomer.cs
+|   |   |   +---DimGeography.cs
+|   |   |   +---Employee.cs
+|   |   |   +---InventoryItem.cs
+|   |   |   +---Order.cs
+|   |   |   \---OrderLine.cs
+|   |   +---Repository
+|   |   |   +---DapperRepository.cs
+|   |   |   +---DapperResultNormalizercs.cs
+|   |   |   \---GenericRepository.cs
+|   |   +---Schema
+|   |   |   +---schema.json
+|   |   |   +---SchemaRegistry.cs
+|   |   |   \---script.sql
+|   |   +---Scripts
+|   |   |   +---CaseManagement.DocumentResolvers
+|   |   |   |   +---Properties
+|   |   |   |   |   \---launchSettings.json
+|   |   |   |   +---Resolvers
+|   |   |   |   |   \---PayerCsvResolver.cs
+|   |   |   |   +---appsettings.json
+|   |   |   |   +---CaseManagement.DocumentResolvers.csproj
+|   |   |   |   +---Program.cs
+|   |   |   |   \---Readme.MD
+|   |   |   +---CaseManagement.SessionBillResolvers
+|   |   |   |   +---Models
+|   |   |   |   +---Resolvers
+|   |   |   |   +---Services
+|   |   |   |   +---Sql
+|   |   |   |   |   +---usp_Claim_Upsert.sql
+|   |   |   |   |   +---usp_Invoice_Upsert.sql
+|   |   |   |   |   \---usp_Session_GetBillingContext.sql
+|   |   |   |   +---appsettings.json
+|   |   |   |   +---CaseManagement.SessionBillResolvers.csproj
+|   |   |   |   +---Program.cs
+|   |   |   |   \---Readme.MD
+|   |   |   +---CaseManagement.SessionResolvers
+|   |   |   |   +---converts
+|   |   |   |   |   \---JsonToHtmlConverter.cs
+|   |   |   |   +---appsettings.json
+|   |   |   |   +---CaseManagement.SessionResolvers.csproj
+|   |   |   |   +---DocumentFileFetcher.cs
+|   |   |   |   +---Program.cs
+|   |   |   |   +---readme.MD
+|   |   |   |   +---SessionImporter.cs
+|   |   |   |   +---SessionImportResolver.cs
+|   |   |   |   \---SessionRow.cs
+|   |   |   +---DbExporter
+|   |   |   |   +---DatabaseExportEngine.cs
+|   |   |   |   +---DbExporter.csproj
+|   |   |   |   +---DeployScriptBuilder.cs
+|   |   |   |   +---FunctionsExporter.cs
+|   |   |   |   +---IExporter.cs
+|   |   |   |   +---Program.cs
+|   |   |   |   +---StoredProcedureExporter.cs
+|   |   |   |   +---TableExporter.cs
+|   |   |   |   \---ViewsExporter.cs
+|   |   |   +---ImportDocs
+|   |   |   |   +---ImportedFiles
+|   |   |   |   +---logs
+|   |   |   |   |   \---import-20260509.log
+|   |   |   |   +---appsettings.json
+|   |   |   |   +---import - Copy.csv
+|   |   |   |   +---import.csv
+|   |   |   |   +---ImportDocs.csproj
+|   |   |   |   +---Program.cs
+|   |   |   |   \---readme.MD
+|   |   |   +---CaseManagement.Tools.sln.REMOVEthis
+|   |   |   +---export_sps.sql
+|   |   |   +---export_stored_procs.py
+|   |   |   +---InsertFormTemplate.py
+|   |   |   +---myimport.json.open.sql
+|   |   |   +---myimportjson.py
+|   |   |   \---README.md
+|   |   \---MyDbContext.cs
+|   +---Endpoints
+|   |   +---Corqs
+|   |   |   \---CorqsEndpoints.cs
+|   |   \---GetDocumentEndpoint.cs
+|   +---Extensions
+|   |   +---ApplicationBuilderExtensions.cs
+|   |   \---ServiceCollectionExtensions.cs
+|   +---Helpers
+|   |   +---MyMarker.cs
+|   |   +---SessionRenderer.cs
+|   |   \---StringExtensions.cs
+|   +---Middleware
+|   |   +---BeforeAfterMiddleware
+|   |   |   \---BeforeAfterMiddleware.cs
+|   |   +---DynamicApiMiddleware.cs
+|   |   \---RequestTimingMiddleware.cs
+|   +---Models
+|   |   \---Corqs
+|   |       +---ApiDefinition.cs
+|   |       +---CorqsRequest.cs
+|   |       +---CorqsResponse.cs
+|   |       +---DataRouteDefinition.cs
+|   |       +---ParameterDefinition.cs
+|   |       +---ProcedureDefinition.cs
+|   |       +---SchemaDefinition.cs
+|   |       \---SchemaRoot.cs
+|   +---ModelsPRE
+|   +---Modules
+|   |   +---Cases
+|   |   |   +---Commands
+|   |   |   +---Contracts
+|   |   |   +---Domain
+|   |   |   +---Queries
+|   |   |   |   \---SearchCases
+|   |   |   +---Sql
+|   |   |   |   \---usp_SearchCases.sql
+|   |   |   \---CasesEndpoints.cs
+|   |   \---RequestContext.cs
+|   +---Properties
+|   |   \---launchSettings.json
+|   +---Services
+|   |   +---CaseManagement
+|   |   |   +---FormTemplateService.cs
+|   |   |   +---ISessionDocumentService.cs
+|   |   |   +---SessionDocumentService.cs
+|   |   |   \---SessionService.cs
+|   |   +---Corqs
+|   |   |   +---Abstractions
+|   |   |   |   +---IApiExecutor.cs
+|   |   |   |   +---IHttpProxyExecutor.cs
+|   |   |   |   +---IRequestContextBuilder.cs
+|   |   |   |   +---ISqlExecutor.cs
+|   |   |   |   \---IStoredProcedureExecutor.cs
+|   |   |   +---Handlers
+|   |   |   |   +---GetBookHandler.cs
+|   |   |   |   +---GetBooksHandler.cs
+|   |   |   |   +---GetInvoiceDetailsHandler.cs
+|   |   |   |   \---ServerTimeHandler.cs
+|   |   |   +---Strategies
+|   |   |   |   +---HandlerStrategy.cs
+|   |   |   |   +---HttpExecutionStrategy.cs
+|   |   |   |   +---SqlExecutionStrategy.cs
+|   |   |   |   \---StoredProcedureStrategy.cs
+|   |   |   +---ApiExecutor.cs
+|   |   |   +---CorqsExecutor.cs
+|   |   |   +---HttpProxyExecutor.cs
+|   |   |   +---ICorqsExecutionStrategy.cs
+|   |   |   +---ICorqsHandler.cs
+|   |   |   +---RequestContextBuilder.cs
+|   |   |   +---SqlExecutor.cs
+|   |   |   \---StoredProcedureExecutor.cs
+|   |   +---OpenApi
+|   |   |   \---CorqsOpenApiService.cs
+|   |   +---SchemaService
+|   |   |   \---SchemaService.cs
+|   |   +---CustomerService.cs
+|   |   \---EFdbServie.cs
+|   +---Workbooks
+|   |   \---42
+|   |       +---ABA Service Agreement & Consent Form PL_files
+|   |       |   +---5e6b428acc8c4e222d1beb91.css
+|   |       |   +---actions.js.download
+|   |       |   +---errorNavigation.js.download
+|   |       |   +---form-common.css
+|   |       |   +---for-pdfimporter-patch.js.download
+|   |       |   +---for-sign-form-integration.js.download
+|   |       |   +---hipaa-badge-compliance.png
+|   |       |   +---jotform.forms.js.download
+|   |       |   +---jotform.signaturepad.new.js.download
+|   |       |   +---jquery-3.7.1.min.js.download
+|   |       |   +---jSignature.CompressorBase30.js.download
+|   |       |   +---jSignature.CompressorSVG.js.download
+|   |       |   +---jSignature.js.download
+|   |       |   +---jSignature.UndoButton.js.download
+|   |       |   +---Logo of Team Dynamic Minds.6825ed23e24948.13253575.png
+|   |       |   +---maskedinput_5.0.9.min.js.download
+|   |       |   +---payment_feature.css
+|   |       |   +---payment_styles.css
+|   |       |   +---prototype.forms.js.download
+|   |       |   +---saved_resource
+|   |       |   \---smoothscroll.min.js.download
+|   |       +---RDQ2018_files
+|   |       |   +---5e6b428acc8c4e222d1beb91.css
+|   |       |   +---best Logo of Team Dynamic Minds.689d3d39cba3e8.49421634.png
+|   |       |   +---errorNavigation.js.download
+|   |       |   +---for-formuser.js.download
+|   |       |   +---form-common.css
+|   |       |   +---for-pdfimporter-patch.js.download
+|   |       |   +---jotform.forms.js.download
+|   |       |   +---maskedinput_5.0.9.min.js.download
+|   |       |   +---payment_feature.css
+|   |       |   +---payment_styles.css
+|   |       |   +---prototype.forms.js.download
+|   |       |   +---saved_resource
+|   |       |   \---smoothscroll.min.js.download
+|   |       +---ABA Service Agreement & Consent Form PL.html
+|   |       +---aba.html
+|   |       +---aba_billing_statement (1).html
+|   |       +---Assessment.html
+|   |       +---AuBa_2026-05-11_CASP Protocol Modification 97155.pdf
+|   |       +---AvailityEssentials.txt
+|   |       +---blank_editable_session_note.html
+|   |       +---blank_editable_session_note.pdf
+|   |       +---claim837.json
+|   |       +---claim837.txt
+|   |       +---Claim837_Form - Copy.pdf
+|   |       +---claim837_form.html
+|   |       +---Claim837_Form.pdf
+|   |       +---claim837_form.txt
+|   |       +---CR Essentials.pdf
+|   |       +---dynamic_form_record.pdf
+|   |       +---ediavailabilitye.html
+|   |       +---intake - Copy.html
+|   |       +---intake.7159270227.html
+|   |       +---intake.7341693071.html
+|   |       +---intake.7524488575.html
+|   |       +---intake.7707656738.html
+|   |       +---intake.7891197561.html
+|   |       +---intake.CASE-7524488575.html
+|   |       +---intake.html
+|   |       +---MiAl_2026-05-12_CASP Direct Session Note 97153.pdf
+|   |       +---my_scanned_form.pdf
+|   |       +---my_scanned_form_scanned.pdf
+|   |       +---payer.txt.csv
+|   |       +---payerdoc.html
+|   |       +---payerdoc.txt
+|   |       +---RDQ2018.html
+|   |       +---Sample 1500_2012_02.pdf
+|   |       +---scrap - Copy.html
+|   |       +---scrap.txt
+|   |       +---session.0.1.html
+|   |       +---session.101.png
+|   |       +---session.111.CR Essentials.pdf
+|   |       +---session.124.aba_session_form.html
+|   |       +---session.127.aba_session_editable.pdf
+|   |       +---session.187.aba_session_editable.pdf
+|   |       +---session.909.aba_session_dashboard_mixed.svg
+|   |       +---session.dashboard.svg
+|   |       +---session.schedule.html
+|   |       +---SessionNote_82001.html
+|   |       +---SessionNote_parentTraining.html
+|   |       \---unnamed.jpg
+|   +---wwwroot
+|   |   +---assets
+|   |   |   +---index-DvJGIjl8.js
+|   |   |   \---index-yq3Fr6Xz.css
+|   |   +---files
+|   |   |   +---aba.html
+|   |   |   +---ABA_2_Hour_Session_Template.pdf
+|   |   |   +---ABA_Month1_7yo_fillable.html
+|   |   |   +---ABA_Month1_SessionPlan_7yo.pdf
+|   |   |   +---ABAIn-Home.txt
+|   |   |   +---buzcard.jpg
+|   |   |   +---calendar.html
+|   |   |   +---caseIntake.pdf
+|   |   |   +---intake.html
+|   |   |   +---MonthOneABA.html
+|   |   |   +---MonthOneABA.txt
+|   |   |   +---rdiaba.svg
+|   |   |   +---session.909.aba_session_dashboard_mixed.svg
+|   |   |   +---session.dashboard.svg
+|   |   |   \---session.dashboard.svg1
+|   |   +---cases.json
+|   |   +---DynoMinds.svg
+|   |   +---index.html
+|   |   \---vite.svg
+|   +---.dockerignore
+|   +---.gitignore
+|   +---appsettings.Development.json
+|   +---appsettings.json
+|   +---CaseManagement.ArchitectureStarter-structure.json
+|   +---CaseManagement.ArchitectureStarter-structure.txt
+|   +---docker-compose - Copy.yml
+|   +---docker-compose.yml
+|   +---Dockerfile
+|   +---folder-structure.txt
+|   +---mynotes.txt
+|   +---nginx.conf
+|   +---nginx.conf.txt
+|   +---Program.cs
+|   +---README.md
+|   +---removecontainers.sh
+|   +---run-both.ps1
+|   +---run-local.ps1
+|   +---runngx.sh
+|   +---WeatherForecast.cs
+|   +---WebAppMulti.csproj
+|   +---WebAppMulti.http
+|   \---WebAppMulti.sln
++---.filetreeignore
++---.gitignore
++---CaseManagement.ArchitectureStarter-structure.txt
++---deploy.py
++---folder-structure.json
++---folder-structure.txt
++-----help-structure.txt
++---myFolderTree.bat
++---readme.MD
++---src-structure.txt
++---sr-structure.txt
++---tree-clean.ps1
++---WebAppMulti-structure.json
+\---WebAppMulti-structure.txt
