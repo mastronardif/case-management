@@ -1,50 +1,45 @@
 using CaseManagement.SessionBillResolvers.V2;
-using CaseManagement.Shared.Configuration;
-using Microsoft.Extensions.Configuration;
+using CaseManagement.Shared.Bootstrapping;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Serilog;
+using System.CommandLine;
 
-var config = AppConfiguration.Build();
+var caseNumberOption = new Option<string?>("--case-number", "Case number to process");
+var sessionNumberOption = new Option<int?>("--session-number", "Session number within the case");
 
-var connectionString = config.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is missing from appsettings.json.");
+var rootCommand = new RootCommand("CaseManagement session billing resolver")
+{
+    caseNumberOption,
+    sessionNumberOption
+};
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(config)
-    .CreateLogger();
+BillingRunOptions? runOptions = null;
+
+rootCommand.SetHandler((caseNumber, sessionNumber) =>
+{
+    var mode = caseNumber != null || sessionNumber != null
+        ? BillingRunMode.SingleRun
+        : BillingRunMode.Loop;
+
+    runOptions = new BillingRunOptions(mode, caseNumber, sessionNumber);
+}, caseNumberOption, sessionNumberOption);
+
+await rootCommand.InvokeAsync(args);
+
+if (runOptions is null) return;
 
 var builder = Host.CreateApplicationBuilder(args);
+builder.AddSharedInfrastructure();
 
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog();
-
-// --------------------
-// Config binding
-// --------------------
-builder.Services.AddSingleton<BillingSettings>(_ => new BillingSettings
-{
-    BatchSize = config.GetValue<int>("Billing:BatchSize", 100),
-    Mode = config.GetValue<string>("Billing:Mode") ?? "Default"
-});
-
-// --------------------
-// Core DI
-// --------------------
+builder.Services.AddSingleton(runOptions);
 builder.Services.AddSingleton<BillingRunner>();
 builder.Services.AddSingleton<BillingEngine>();
-
-builder.Services.AddSingleton<ISessionProvider>(sp =>
-    new SessionProvider(connectionString, sp.GetRequiredService<ILogger<SessionProvider>>()));
-
+builder.Services.AddSingleton<ISessionProvider, SessionProvider>();
 builder.Services.AddSingleton<IBillingCalculator, BillingCalculator>();
-builder.Services.AddSingleton<IBillingRepository>(_ => new SqlBillingRepository(connectionString));
-
+builder.Services.AddSingleton<IBillingRepository, SqlBillingRepository>();
 builder.Services.AddHostedService<BillingWorker>();
 
 var host = builder.Build();
-
-Log.Information("CaseManagement.SessionBillResolvers.V2 started");
-
+Log.Information("CaseManagement.SessionBillResolvers.V2 started. Mode: {Mode}", runOptions.Mode);
 await host.RunAsync();

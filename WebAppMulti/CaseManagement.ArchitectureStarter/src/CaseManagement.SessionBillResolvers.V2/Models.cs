@@ -1,5 +1,10 @@
 namespace CaseManagement.SessionBillResolvers.V2;
 
+public enum BillingRunMode { Loop, SingleRun }
+
+public record BillingRunOptions(BillingRunMode Mode, string? CaseNumber = null, int? SessionNumber = null);
+
+
 public class BillingSettings
 {
     public int BatchSize { get; set; } = 100;
