@@ -1,551 +1,1293 @@
-﻿C:\Users\mastronardif\source\repos\CaseMangement
+Folder PATH listing for volume Windows
+Volume serial number is 00000040 AC47:A725
+C:.
 +---.github
 |   \---workflows
 +---CaseManagementUI
+|   +---dist
+|   |   +---assets
+|   |   \---files
+|   +---node_modules
+|   |   +---.bin
+|   |   +---.vite
+|   |   |   \---deps
+|   |   +---.vite-temp
+|   |   +---@alloc
+|   |   |   \---quick-lru
+|   |   +---@babel
+|   |   |   +---code-frame
+|   |   |   |   \---lib
+|   |   |   +---compat-data
+|   |   |   |   \---data
+|   |   |   +---core
+|   |   |   |   +---lib
+|   |   |   |   |   +---config
+|   |   |   |   |   |   +---files
+|   |   |   |   |   |   +---helpers
+|   |   |   |   |   |   \---validation
+|   |   |   |   |   +---errors
+|   |   |   |   |   +---gensync-utils
+|   |   |   |   |   +---parser
+|   |   |   |   |   |   \---util
+|   |   |   |   |   +---tools
+|   |   |   |   |   +---transformation
+|   |   |   |   |   |   +---file
+|   |   |   |   |   |   \---util
+|   |   |   |   |   \---vendor
+|   |   |   |   \---src
+|   |   |   |       \---config
+|   |   |   |           \---files
+|   |   |   +---generator
+|   |   |   |   \---lib
+|   |   |   |       +---generators
+|   |   |   |       \---node
+|   |   |   +---helper-compilation-targets
+|   |   |   |   \---lib
+|   |   |   +---helper-globals
+|   |   |   |   \---data
+|   |   |   +---helper-module-imports
+|   |   |   |   \---lib
+|   |   |   +---helper-module-transforms
+|   |   |   |   \---lib
+|   |   |   +---helper-plugin-utils
+|   |   |   |   \---lib
+|   |   |   +---helper-string-parser
+|   |   |   |   \---lib
+|   |   |   +---helper-validator-identifier
+|   |   |   |   \---lib
+|   |   |   +---helper-validator-option
+|   |   |   |   \---lib
+|   |   |   +---helpers
+|   |   |   |   \---lib
+|   |   |   |       \---helpers
+|   |   |   +---parser
+|   |   |   |   +---bin
+|   |   |   |   +---lib
+|   |   |   |   \---typings
+|   |   |   +---plugin-transform-react-jsx-self
+|   |   |   |   \---lib
+|   |   |   +---plugin-transform-react-jsx-source
+|   |   |   |   \---lib
+|   |   |   +---template
+|   |   |   |   \---lib
+|   |   |   +---traverse
+|   |   |   |   \---lib
+|   |   |   |       +---path
+|   |   |   |       |   +---inference
+|   |   |   |       |   \---lib
+|   |   |   |       \---scope
+|   |   |   |           \---lib
+|   |   |   \---types
+|   |   |       \---lib
+|   |   |           +---asserts
+|   |   |           |   \---generated
+|   |   |           +---ast-types
+|   |   |           |   \---generated
+|   |   |           +---builders
+|   |   |           |   +---flow
+|   |   |           |   +---generated
+|   |   |           |   +---react
+|   |   |           |   \---typescript
+|   |   |           +---clone
+|   |   |           +---comments
+|   |   |           +---constants
+|   |   |           |   \---generated
+|   |   |           +---converters
+|   |   |           +---definitions
+|   |   |           +---modifications
+|   |   |           |   +---flow
+|   |   |           |   \---typescript
+|   |   |           +---retrievers
+|   |   |           +---traverse
+|   |   |           +---utils
+|   |   |           |   \---react
+|   |   |           \---validators
+|   |   |               +---generated
+|   |   |               \---react
+|   |   +---@esbuild
+|   |   |   \---win32-x64
+|   |   +---@eslint
+|   |   |   +---config-array
+|   |   |   |   \---dist
+|   |   |   |       +---cjs
+|   |   |   |       |   \---std__path
+|   |   |   |       \---esm
+|   |   |   |           \---std__path
+|   |   |   +---config-helpers
+|   |   |   |   \---dist
+|   |   |   |       +---cjs
+|   |   |   |       \---esm
+|   |   |   +---core
+|   |   |   |   \---dist
+|   |   |   |       +---cjs
+|   |   |   |       \---esm
+|   |   |   +---eslintrc
+|   |   |   |   +---conf
+|   |   |   |   +---dist
+|   |   |   |   +---lib
+|   |   |   |   |   +---config-array
+|   |   |   |   |   +---shared
+|   |   |   |   |   \---types
+|   |   |   |   \---node_modules
+|   |   |   |       \---globals
+|   |   |   +---js
+|   |   |   |   +---src
+|   |   |   |   |   \---configs
+|   |   |   |   \---types
+|   |   |   +---object-schema
+|   |   |   |   \---dist
+|   |   |   |       +---cjs
+|   |   |   |       \---esm
+|   |   |   \---plugin-kit
+|   |   |       \---dist
+|   |   |           +---cjs
+|   |   |           \---esm
+|   |   +---@eslint-community
+|   |   |   +---eslint-utils
+|   |   |   |   \---node_modules
+|   |   |   |       \---eslint-visitor-keys
+|   |   |   |           +---dist
+|   |   |   |           \---lib
+|   |   |   \---regexpp
+|   |   +---@humanfs
+|   |   |   +---core
+|   |   |   |   +---dist
+|   |   |   |   \---src
+|   |   |   \---node
+|   |   |       +---dist
+|   |   |       \---src
+|   |   +---@humanwhocodes
+|   |   |   +---module-importer
+|   |   |   |   +---dist
+|   |   |   |   \---src
+|   |   |   \---retry
+|   |   |       \---dist
+|   |   +---@isaacs
+|   |   |   \---fs-minipass
+|   |   |       \---dist
+|   |   |           +---commonjs
+|   |   |           \---esm
+|   |   +---@jridgewell
+|   |   |   +---gen-mapping
+|   |   |   |   +---dist
+|   |   |   |   |   \---types
+|   |   |   |   +---src
+|   |   |   |   \---types
+|   |   |   +---remapping
+|   |   |   |   +---dist
+|   |   |   |   +---src
+|   |   |   |   \---types
+|   |   |   +---resolve-uri
+|   |   |   |   \---dist
+|   |   |   |       \---types
+|   |   |   +---sourcemap-codec
+|   |   |   |   +---dist
+|   |   |   |   +---src
+|   |   |   |   \---types
+|   |   |   \---trace-mapping
+|   |   |       +---dist
+|   |   |       +---src
+|   |   |       \---types
+|   |   +---@rolldown
+|   |   |   \---pluginutils
+|   |   |       \---dist
+|   |   +---@rollup
+|   |   |   \---rollup-win32-x64-msvc
+|   |   +---@tailwindcss
+|   |   |   +---node
+|   |   |   |   \---dist
+|   |   |   +---oxide
+|   |   |   |   \---scripts
+|   |   |   +---oxide-win32-x64-msvc
+|   |   |   \---postcss
+|   |   |       \---dist
+|   |   +---@types
+|   |   |   +---babel__core
+|   |   |   +---babel__generator
+|   |   |   +---babel__template
+|   |   |   +---babel__traverse
+|   |   |   +---estree
+|   |   |   +---json-schema
+|   |   |   +---react
+|   |   |   |   \---ts5.0
+|   |   |   |       \---v18
+|   |   |   |           \---ts5.0
+|   |   |   \---react-dom
+|   |   |       \---test-utils
+|   |   +---@vitejs
+|   |   |   \---plugin-react
+|   |   |       \---dist
+|   |   +---acorn
+|   |   |   +---bin
+|   |   |   \---dist
+|   |   +---acorn-jsx
+|   |   +---ajv
+|   |   |   +---dist
+|   |   |   +---lib
+|   |   |   |   +---compile
+|   |   |   |   +---dot
+|   |   |   |   +---dotjs
+|   |   |   |   \---refs
+|   |   |   \---scripts
+|   |   +---ansi-styles
+|   |   +---argparse
+|   |   |   \---lib
+|   |   +---asynckit
+|   |   |   \---lib
+|   |   +---autoprefixer
+|   |   |   +---bin
+|   |   |   +---data
+|   |   |   \---lib
+|   |   |       \---hacks
+|   |   +---axios
+|   |   |   +---dist
+|   |   |   |   +---browser
+|   |   |   |   +---esm
+|   |   |   |   \---node
+|   |   |   \---lib
+|   |   |       +---adapters
+|   |   |       +---cancel
+|   |   |       +---core
+|   |   |       +---defaults
+|   |   |       +---env
+|   |   |       |   \---classes
+|   |   |       +---helpers
+|   |   |       \---platform
+|   |   |           +---browser
+|   |   |           |   \---classes
+|   |   |           +---common
+|   |   |           \---node
+|   |   |               \---classes
+|   |   +---balanced-match
+|   |   |   \---.github
+|   |   +---brace-expansion
+|   |   +---browserslist
+|   |   +---call-bind-apply-helpers
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---callsites
+|   |   +---caniuse-lite
+|   |   |   +---data
+|   |   |   |   +---features
+|   |   |   |   \---regions
+|   |   |   \---dist
+|   |   |       +---lib
+|   |   |       \---unpacker
+|   |   +---chalk
+|   |   |   \---source
+|   |   +---chownr
+|   |   |   \---dist
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---color-convert
+|   |   +---color-name
+|   |   +---combined-stream
+|   |   |   \---lib
+|   |   +---concat-map
+|   |   |   +---example
+|   |   |   \---test
+|   |   +---convert-source-map
+|   |   +---cookie
+|   |   |   \---dist
+|   |   +---cross-spawn
+|   |   |   \---lib
+|   |   |       \---util
+|   |   +---csstype
+|   |   +---date-fns
+|   |   |   +---docs
+|   |   |   +---fp
+|   |   |   |   \---_lib
+|   |   |   +---locale
+|   |   |   |   +---af
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ar
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ar-DZ
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ar-EG
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ar-MA
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ar-SA
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ar-TN
+|   |   |   |   |   \---_lib
+|   |   |   |   +---az
+|   |   |   |   |   \---_lib
+|   |   |   |   +---be
+|   |   |   |   |   \---_lib
+|   |   |   |   +---be-tarask
+|   |   |   |   |   \---_lib
+|   |   |   |   +---bg
+|   |   |   |   |   \---_lib
+|   |   |   |   +---bn
+|   |   |   |   |   \---_lib
+|   |   |   |   +---bs
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ca
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ckb
+|   |   |   |   |   \---_lib
+|   |   |   |   +---cs
+|   |   |   |   |   \---_lib
+|   |   |   |   +---cy
+|   |   |   |   |   \---_lib
+|   |   |   |   +---da
+|   |   |   |   |   \---_lib
+|   |   |   |   +---de
+|   |   |   |   |   \---_lib
+|   |   |   |   +---de-AT
+|   |   |   |   |   \---_lib
+|   |   |   |   +---el
+|   |   |   |   |   \---_lib
+|   |   |   |   +---en-AU
+|   |   |   |   |   \---_lib
+|   |   |   |   +---en-CA
+|   |   |   |   |   \---_lib
+|   |   |   |   +---en-GB
+|   |   |   |   |   \---_lib
+|   |   |   |   +---en-IE
+|   |   |   |   +---en-IN
+|   |   |   |   |   \---_lib
+|   |   |   |   +---en-NZ
+|   |   |   |   |   \---_lib
+|   |   |   |   +---en-US
+|   |   |   |   |   \---_lib
+|   |   |   |   +---en-ZA
+|   |   |   |   |   \---_lib
+|   |   |   |   +---eo
+|   |   |   |   |   \---_lib
+|   |   |   |   +---es
+|   |   |   |   |   \---_lib
+|   |   |   |   +---et
+|   |   |   |   |   \---_lib
+|   |   |   |   +---eu
+|   |   |   |   |   \---_lib
+|   |   |   |   +---fa-IR
+|   |   |   |   |   \---_lib
+|   |   |   |   +---fi
+|   |   |   |   |   \---_lib
+|   |   |   |   +---fr
+|   |   |   |   |   \---_lib
+|   |   |   |   +---fr-CA
+|   |   |   |   |   \---_lib
+|   |   |   |   +---fr-CH
+|   |   |   |   |   \---_lib
+|   |   |   |   +---fy
+|   |   |   |   |   \---_lib
+|   |   |   |   +---gd
+|   |   |   |   |   \---_lib
+|   |   |   |   +---gl
+|   |   |   |   |   \---_lib
+|   |   |   |   +---gu
+|   |   |   |   |   \---_lib
+|   |   |   |   +---he
+|   |   |   |   |   \---_lib
+|   |   |   |   +---hi
+|   |   |   |   |   \---_lib
+|   |   |   |   +---hr
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ht
+|   |   |   |   |   \---_lib
+|   |   |   |   +---hu
+|   |   |   |   |   \---_lib
+|   |   |   |   +---hy
+|   |   |   |   |   \---_lib
+|   |   |   |   +---id
+|   |   |   |   |   \---_lib
+|   |   |   |   +---is
+|   |   |   |   |   \---_lib
+|   |   |   |   +---it
+|   |   |   |   |   \---_lib
+|   |   |   |   +---it-CH
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ja
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ja-Hira
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ka
+|   |   |   |   |   \---_lib
+|   |   |   |   +---kk
+|   |   |   |   |   \---_lib
+|   |   |   |   +---km
+|   |   |   |   |   \---_lib
+|   |   |   |   +---kn
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ko
+|   |   |   |   |   \---_lib
+|   |   |   |   +---lb
+|   |   |   |   |   \---_lib
+|   |   |   |   +---lt
+|   |   |   |   |   \---_lib
+|   |   |   |   +---lv
+|   |   |   |   |   \---_lib
+|   |   |   |   +---mk
+|   |   |   |   |   \---_lib
+|   |   |   |   +---mn
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ms
+|   |   |   |   |   \---_lib
+|   |   |   |   +---mt
+|   |   |   |   |   \---_lib
+|   |   |   |   +---nb
+|   |   |   |   |   \---_lib
+|   |   |   |   +---nl
+|   |   |   |   |   \---_lib
+|   |   |   |   +---nl-BE
+|   |   |   |   |   \---_lib
+|   |   |   |   +---nn
+|   |   |   |   |   \---_lib
+|   |   |   |   +---oc
+|   |   |   |   |   \---_lib
+|   |   |   |   +---pl
+|   |   |   |   |   \---_lib
+|   |   |   |   +---pt
+|   |   |   |   |   \---_lib
+|   |   |   |   +---pt-BR
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ro
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ru
+|   |   |   |   |   \---_lib
+|   |   |   |   +---se
+|   |   |   |   |   \---_lib
+|   |   |   |   +---sk
+|   |   |   |   |   \---_lib
+|   |   |   |   +---sl
+|   |   |   |   |   \---_lib
+|   |   |   |   +---sq
+|   |   |   |   |   \---_lib
+|   |   |   |   +---sr
+|   |   |   |   |   \---_lib
+|   |   |   |   +---sr-Latn
+|   |   |   |   |   \---_lib
+|   |   |   |   +---sv
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ta
+|   |   |   |   |   \---_lib
+|   |   |   |   +---te
+|   |   |   |   |   \---_lib
+|   |   |   |   +---th
+|   |   |   |   |   \---_lib
+|   |   |   |   +---tr
+|   |   |   |   |   \---_lib
+|   |   |   |   +---ug
+|   |   |   |   |   \---_lib
+|   |   |   |   +---uk
+|   |   |   |   |   \---_lib
+|   |   |   |   +---uz
+|   |   |   |   |   \---_lib
+|   |   |   |   +---uz-Cyrl
+|   |   |   |   |   \---_lib
+|   |   |   |   +---vi
+|   |   |   |   |   \---_lib
+|   |   |   |   +---zh-CN
+|   |   |   |   |   \---_lib
+|   |   |   |   +---zh-HK
+|   |   |   |   |   \---_lib
+|   |   |   |   +---zh-TW
+|   |   |   |   |   \---_lib
+|   |   |   |   \---_lib
+|   |   |   +---parse
+|   |   |   |   \---_lib
+|   |   |   |       \---parsers
+|   |   |   \---_lib
+|   |   |       \---format
+|   |   +---debug
+|   |   |   \---src
+|   |   +---deep-is
+|   |   |   +---example
+|   |   |   \---test
+|   |   +---delayed-stream
+|   |   |   \---lib
+|   |   +---detect-libc
+|   |   |   \---lib
+|   |   +---dunder-proto
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---electron-to-chromium
+|   |   +---enhanced-resolve
+|   |   |   \---lib
+|   |   |       \---util
+|   |   +---es-define-property
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---es-errors
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---es-object-atoms
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---es-set-tostringtag
+|   |   |   \---test
+|   |   +---esbuild
+|   |   |   +---bin
+|   |   |   \---lib
+|   |   +---escalade
+|   |   |   +---dist
+|   |   |   \---sync
+|   |   +---escape-string-regexp
+|   |   +---eslint
+|   |   |   +---bin
+|   |   |   +---conf
+|   |   |   +---lib
+|   |   |   |   +---cli-engine
+|   |   |   |   |   \---formatters
+|   |   |   |   +---config
+|   |   |   |   +---eslint
+|   |   |   |   +---languages
+|   |   |   |   |   \---js
+|   |   |   |   |       \---source-code
+|   |   |   |   |           \---token-store
+|   |   |   |   +---linter
+|   |   |   |   |   \---code-path-analysis
+|   |   |   |   +---rule-tester
+|   |   |   |   +---rules
+|   |   |   |   |   \---utils
+|   |   |   |   |       \---unicode
+|   |   |   |   +---services
+|   |   |   |   +---shared
+|   |   |   |   \---types
+|   |   |   \---messages
+|   |   +---eslint-plugin-react-hooks
+|   |   |   \---cjs
+|   |   +---eslint-plugin-react-refresh
+|   |   +---eslint-scope
+|   |   |   +---dist
+|   |   |   \---lib
+|   |   +---eslint-visitor-keys
+|   |   |   +---dist
+|   |   |   \---lib
+|   |   +---espree
+|   |   |   +---dist
+|   |   |   \---lib
+|   |   +---esquery
+|   |   |   \---dist
+|   |   +---esrecurse
+|   |   +---estraverse
+|   |   +---esutils
+|   |   |   \---lib
+|   |   +---fast-deep-equal
+|   |   |   \---es6
+|   |   +---fast-json-stable-stringify
+|   |   |   +---.github
+|   |   |   +---benchmark
+|   |   |   +---example
+|   |   |   \---test
+|   |   +---fast-levenshtein
+|   |   +---fdir
+|   |   |   \---dist
+|   |   +---file-entry-cache
+|   |   +---file-saver
+|   |   |   +---dist
+|   |   |   \---src
+|   |   +---find-up
+|   |   +---flat-cache
+|   |   |   \---src
+|   |   +---flatted
+|   |   |   +---cjs
+|   |   |   +---esm
+|   |   |   +---php
+|   |   |   +---python
+|   |   |   \---types
+|   |   +---follow-redirects
+|   |   +---form-data
+|   |   |   \---lib
+|   |   +---fraction.js
+|   |   +---function-bind
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---gensync
+|   |   |   \---test
+|   |   +---get-intrinsic
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---get-proto
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---glob-parent
+|   |   +---globals
+|   |   +---gopd
+|   |   |   +---.github
+|   |   |   \---test
+|   |   +---graceful-fs
+|   |   +---has-flag
+|   |   +---has-symbols
+|   |   |   +---.github
+|   |   |   \---test
+|   |   |       \---shams
+|   |   +---has-tostringtag
+|   |   |   +---.github
+|   |   |   \---test
+|   |   |       \---shams
+|   |   +---hasown
+|   |   |   \---.github
+|   |   +---ignore
+|   |   +---import-fresh
+|   |   +---imurmurhash
+|   |   +---is-extglob
+|   |   +---is-glob
+|   |   +---isexe
+|   |   |   \---test
+|   |   +---jiti
+|   |   |   +---dist
+|   |   |   \---lib
+|   |   +---js-tokens
+|   |   +---js-yaml
+|   |   |   +---bin
+|   |   |   +---dist
+|   |   |   \---lib
+|   |   |       +---schema
+|   |   |       \---type
+|   |   +---jsesc
+|   |   |   +---bin
+|   |   |   \---man
+|   |   +---json-buffer
+|   |   |   \---test
+|   |   +---json-schema-traverse
+|   |   |   \---spec
+|   |   |       \---fixtures
+|   |   +---json-stable-stringify-without-jsonify
+|   |   |   +---example
+|   |   |   \---test
+|   |   +---json5
+|   |   |   +---dist
+|   |   |   \---lib
+|   |   +---keyv
+|   |   |   \---src
+|   |   +---levn
+|   |   |   \---lib
+|   |   +---lightningcss
+|   |   |   \---node
+|   |   +---lightningcss-win32-x64-msvc
+|   |   +---locate-path
+|   |   +---lodash.merge
+|   |   +---lru-cache
+|   |   +---magic-string
+|   |   |   \---dist
+|   |   +---math-intrinsics
+|   |   |   +---.github
+|   |   |   +---constants
+|   |   |   \---test
+|   |   +---mime-db
+|   |   +---mime-types
+|   |   +---minimatch
+|   |   +---minipass
+|   |   |   \---dist
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---minizlib
+|   |   |   \---dist
+|   |   |       +---commonjs
+|   |   |       \---esm
+|   |   +---mkdirp
+|   |   |   \---dist
+|   |   |       +---cjs
+|   |   |       |   \---src
+|   |   |       \---mjs
+|   |   +---ms
+|   |   +---nanoid
+|   |   |   +---async
+|   |   |   +---bin
+|   |   |   +---non-secure
+|   |   |   \---url-alphabet
+|   |   +---natural-compare
+|   |   +---node-releases
+|   |   |   \---data
+|   |   |       +---processed
+|   |   |       \---release-schedule
+|   |   +---normalize-range
+|   |   +---optionator
+|   |   |   \---lib
+|   |   +---p-limit
+|   |   +---p-locate
+|   |   +---parent-module
+|   |   +---path-exists
+|   |   +---path-key
+|   |   +---picocolors
+|   |   +---picomatch
+|   |   |   \---lib
+|   |   +---postcss
+|   |   |   \---lib
+|   |   +---postcss-value-parser
+|   |   |   \---lib
+|   |   +---prelude-ls
+|   |   |   \---lib
+|   |   +---proxy-from-env
+|   |   +---punycode
+|   |   +---react
+|   |   |   \---cjs
+|   |   +---react-dom
+|   |   |   \---cjs
+|   |   +---react-refresh
+|   |   |   \---cjs
+|   |   +---react-router
+|   |   |   \---dist
+|   |   |       +---development
+|   |   |       |   \---lib
+|   |   |       |       \---types
+|   |   |       \---production
+|   |   |           \---lib
+|   |   |               \---types
+|   |   +---react-router-dom
+|   |   |   \---dist
+|   |   +---resolve-from
+|   |   +---rollup
+|   |   |   \---dist
+|   |   |       +---bin
+|   |   |       +---es
+|   |   |       |   \---shared
+|   |   |       \---shared
+|   |   +---scheduler
+|   |   |   \---cjs
+|   |   +---semver
+|   |   |   \---bin
+|   |   +---set-cookie-parser
+|   |   |   \---lib
+|   |   +---shebang-command
+|   |   +---shebang-regex
+|   |   +---source-map-js
+|   |   |   \---lib
+|   |   +---strip-json-comments
+|   |   +---supports-color
+|   |   +---tailwindcss
+|   |   |   \---dist
+|   |   +---tapable
+|   |   |   \---lib
+|   |   +---tar
+|   |   |   +---dist
+|   |   |   |   +---commonjs
+|   |   |   |   \---esm
+|   |   |   \---node_modules
+|   |   |       \---yallist
+|   |   |           \---dist
+|   |   |               +---commonjs
+|   |   |               \---esm
+|   |   +---tinyglobby
+|   |   |   \---dist
+|   |   +---type-check
+|   |   |   \---lib
+|   |   +---update-browserslist-db
+|   |   +---uri-js
+|   |   |   \---dist
+|   |   |       +---es5
+|   |   |       \---esnext
+|   |   |           \---schemes
+|   |   +---vite
+|   |   |   +---bin
+|   |   |   +---dist
+|   |   |   |   +---client
+|   |   |   |   \---node
+|   |   |   |       \---chunks
+|   |   |   +---misc
+|   |   |   \---types
+|   |   |       \---internal
+|   |   +---which
+|   |   |   \---bin
+|   |   +---word-wrap
+|   |   +---yallist
+|   |   \---yocto-queue
 |   +---public
-|   |   +---files
-|   |   |   +---aba.html
-|   |   |   +---ABA_2_Hour_Session_Template.pdf
-|   |   |   +---ABA_Month1_7yo_fillable.html
-|   |   |   +---ABA_Month1_SessionPlan_7yo.pdf
-|   |   |   +---ABAIn-Home.txt
-|   |   |   +---buzcard.jpg
-|   |   |   +---calendar.html
-|   |   |   +---caseIntake.pdf
-|   |   |   +---index.json
-|   |   |   +---intake.html
-|   |   |   +---MonthOneABA.html
-|   |   |   +---MonthOneABA.txt
-|   |   |   +---rdiaba.svg
-|   |   |   +---session.909.aba_session_dashboard_mixed.svg
-|   |   |   +---session.dashboard.svg
-|   |   |   \---session.dashboard.svg1
-|   |   +---cases.json
-|   |   +---DynoMinds.svg
-|   |   \---vite.svg
+|   |   \---files
 |   +---src
 |   |   +---assets
-|   |   |   +---DynoMinds.ico
-|   |   |   +---DynoMinds.svg
-|   |   |   \---react.svg
 |   |   +---components
-|   |   |   +---ActionPage.jsx
-|   |   |   +---ActionRow.jsx
-|   |   |   +---ActionTable.jsx
-|   |   |   +---Calendar.jsx
-|   |   |   +---DataTable.jsx
-|   |   |   +---DataTable22.jsx
-|   |   |   +---Footer.jsx
-|   |   |   +---Navbar.jsx
-|   |   |   +---Sidebar.jsx
-|   |   |   +---Spinner.jsx
-|   |   |   \---TableActions.jsx
 |   |   +---context
-|   |   |   +---AuthContext.jsx
-|   |   |   +---GlobalContext.jsx
-|   |   |   \---GlobalStore.js
 |   |   +---pages
-|   |   |   +---BillingPage.jsx
-|   |   |   +---BillingTablePage.jsx
-|   |   |   +---CalendarPage.jsx
-|   |   |   +---CasePage.jsx
-|   |   |   +---CasesTablePage.jsx
-|   |   |   +---ChordChart.jsx
-|   |   |   +---CorqsTestPage.jsx
-|   |   |   +---DataPage.jsx
-|   |   |   +---DocumentViewerPage.jsx
-|   |   |   +---FilesTablePage.jsx
-|   |   |   +---FileViewerPage.jsx
-|   |   |   +---IframeView.jsx
-|   |   |   +---InvoiceDetailPage.jsx
-|   |   |   +---Login.jsx
-|   |   |   +---NotFound.jsx
-|   |   |   +---sessionDashboard.svg
-|   |   |   +---Settings.jsx
-|   |   |   +---TableFromUrl.jsx
-|   |   |   +---WorkbooksPage.jsx
-|   |   |   \---XyzTablePage.jsx
 |   |   +---services
-|   |   |   +---apiFetch.js
-|   |   |   +---billingService.js
-|   |   |   +---fileService.js
-|   |   |   +---http.js
-|   |   |   \---payerdocService.js
-|   |   +---utils
-|   |   |   +---connectionStore.js
-|   |   |   +---corqsreact.js
-|   |   |   +---routeToQuery.js
-|   |   |   \---tableActionStore.js
-|   |   +---App.css
-|   |   +---App.jsx
-|   |   +---index.css
-|   |   +---main.jsx
-|   |   +---routes.jsx
-|   |   \---vite-env.d.ts
-|   +---tools
-|   |   \---CaseManagement.ArchitectureStarter
-|   |       +---src
-|   |       |   +---CaseManagement.DocumentResolvers
-|   |       |   |   \---CaseManagement.DocumentResolvers.csproj
-|   |       |   +---CaseManagement.SessionBillResolvers.V2
-|   |       |   |   +---CaseManagement.SessionBillResolvers.V2.csproj
-|   |       |   |   \---Class1.cs
-|   |       |   +---CaseManagement.SessionResolvers
-|   |       |   |   +---CaseManagement.SessionResolvers.csproj
-|   |       |   |   \---Class1.cs
-|   |       |   +---CaseManagement.Shared
-|   |       |   |   +---CaseManagement.Shared.csproj
-|   |       |   |   \---Class1.cs
-|   |       |   \---CaseManagement.Tooling
-|   |       |       +---CaseManagement.Tooling.csproj
-|   |       |       \---Class1.cs
-|   |       +---.gitignore
-|   |       +---CaseManagement.sln
-|   |       +---create-sln.ps1
-|   |       \---README.md
-|   +---.env.development
-|   +---.env.production
-|   +---.env.test
-|   +---.gitignore
-|   +---config.ts
-|   +---deploy.py
-|   +---eslint.config.js
-|   +---index.html
-|   +---package.json
-|   +---package-lock.json
-|   +---postcss.config.cjs
-|   +---README.md
-|   +---tailwind.config.cjs
-|   +---tsconfig.json
-|   \---vite.config.js
+|   |   \---utils
+|   \---tools
+|       \---CaseManagement.ArchitectureStarter
+|           \---src
+|               +---CaseManagement.DocumentResolvers
+|               |   +---bin
+|               |   |   \---Debug
+|               |   |       \---net9.0
+|               |   \---obj
+|               |       \---Debug
+|               |           \---net9.0
+|               |               +---ref
+|               |               \---refint
+|               +---CaseManagement.SessionBillResolvers.V2
+|               |   +---bin
+|               |   |   \---Debug
+|               |   |       \---net9.0
+|               |   \---obj
+|               |       \---Debug
+|               |           \---net9.0
+|               |               +---ref
+|               |               \---refint
+|               +---CaseManagement.SessionResolvers
+|               |   +---bin
+|               |   |   \---Debug
+|               |   |       \---net9.0
+|               |   \---obj
+|               |       \---Debug
+|               |           \---net9.0
+|               |               +---ref
+|               |               \---refint
+|               +---CaseManagement.Shared
+|               |   +---bin
+|               |   |   \---Debug
+|               |   |       \---net9.0
+|               |   \---obj
+|               |       \---Debug
+|               |           \---net9.0
+|               |               +---ref
+|               |               \---refint
+|               \---CaseManagement.Tooling
+|                   +---bin
+|                   |   \---Debug
+|                   |       \---net9.0
+|                   \---obj
+|                       \---Debug
+|                           \---net9.0
+|                               +---ref
+|                               \---refint
++---Mytools
 +---Payer
-|   +---JsonTo837
-|   |   +---Workbooks
-|   |   |   +---claim837.json
-|   |   |   +---claim837.txt
-|   |   |   +---cr_essentials_curricula_templateTest.json
-|   |   |   +---data000.json
-|   |   |   +---mynotes.txt
-|   |   |   +---output000.csv
-|   |   |   +---output000.xlsx
-|   |   |   \---test000.xlsx
-|   |   +---.gitattributes
-|   |   +---.gitignore
-|   |   +---edi_guide.pdf
-|   |   +---JsonTo837.csproj
-|   |   +---JsonTo837.sln
-|   |   +---Program.cs
-|   |   \---ProgramsToCsv.cs
-|   +---Notes_Cigna.txt
-|   \---Sample_837P_Claim.edi.txt
-+---WebAppMulti
-|   +---.github
-|   |   \---workflows
-|   +---CaseManagement.ArchitectureStarter
-|   |   \---src
-|   |       +---CaseManagement
-|   |       |   +---modules
-|   |       |   |   \---CaseManagement.SessionBillResolvers.V2
-|   |       |   |       +---CaseManagement.SessionBillResolvers.V2.csproj
-|   |       |   |       \---Class1.cs
-|   |       |   +---src
-|   |       |   |   +---CaseManagement.Application
-|   |       |   |   |   +---CaseManagement.Application.csproj
-|   |       |   |   |   +---Class1.cs
-|   |       |   |   |   \---DependencyInjection.cs
-|   |       |   |   +---CaseManagement.Domain
-|   |       |   |   |   +---Entities
-|   |       |   |   |   |   \---Case.cs
-|   |       |   |   |   +---CaseManagement.Domain.csproj
-|   |       |   |   |   \---Class1.cs
-|   |       |   |   +---CaseManagement.Infrastructure
-|   |       |   |   |   +---CaseManagement.Infrastructure.csproj
-|   |       |   |   |   +---Class1.cs
-|   |       |   |   |   \---DependencyInjection.cs
-|   |       |   |   +---CaseManagement.Shared
-|   |       |   |   |   +---CaseManagement.Shared.csproj
-|   |       |   |   |   \---Class1.cs
-|   |       |   |   \---CaseManagement.Worker
-|   |       |   |       +---Properties
-|   |       |   |       |   \---launchSettings.json
-|   |       |   |       +---appsettings.Development.json
-|   |       |   |       +---appsettings.json
-|   |       |   |       +---CaseManagement.Worker.csproj
-|   |       |   |       +---Program.cs
-|   |       |   |       \---Worker.cs
-|   |       |   \---CaseManagement.sln
-|   |       +---CaseManagement.DocumentResolvers
-|   |       |   \---CaseManagement.DocumentResolvers.csproj
-|   |       +---CaseManagement.SessionBillResolvers.V2
-|   |       |   +---Configuration
-|   |       |   +---Engine
-|   |       |   +---Rules
-|   |       |   +---Runner
-|   |       |   +---Services
-|   |       |   +---Sql
-|   |       |   +---Workers
-|   |       |   |   \---BillingWorker.cs
-|   |       |   +---CaseManagement.SessionBillResolvers.V2.csproj
-|   |       |   \---Program.cs
-|   |       +---CaseManagement.SessionResolvers
-|   |       |   \---CaseManagement.SessionResolvers.csproj
-|   |       +---CaseManagement.Shared
-|   |       |   +---Configuration
-|   |       |   |   +---config
-|   |       |   |   |   +---appsettings.Development.json
-|   |       |   |   |   \---appsettings.json
-|   |       |   |   \---AppConfiguration.cs
-|   |       |   +---Constants
-|   |       |   +---Extensions
-|   |       |   +---Interfaces
-|   |       |   +---Models
-|   |       |   |   +---Options
-|   |       |   |   +---Session
-|   |       |   |   \---SessionContext.cs
-|   |       |   +---Services
-|   |       |   |   +---BillingEngine.cs
-|   |       |   |   \---BillingRunner.cs
-|   |       |   \---CaseManagement.Shared.csproj
-|   |       +---CaseManagement.Tooling
-|   |       |   \---CaseManagement.Tooling.csproj
-|   |       +---.gitignore
-|   |       +---CaseManagement.ArchitectureStarter.sln
-|   |       +---create-casemanagement.ps1
-|   |       +---create-sln.ps1
-|   |       \---README.md
-|   +---Configuration
-|   |   \---ApiDefinition.cs
-|   +---Controllers
-|   |   +---CaseManagement
-|   |   |   +---CalendarDemoControllerr.cs
-|   |   |   +---FormTemplateController .cs
-|   |   |   +---SessionController.cs
-|   |   |   \---SessionDocumentController .cs
-|   |   +---ADOController.cs
-|   |   +---AuthController.cs
-|   |   +---CgiController.cs
-|   |   +---CustomerController.cs
-|   |   +---DomainAdminController.cs
-|   |   +---EFdbController.cs
-|   |   +---EmployeesController.cs
-|   |   +---MultithreadingController.cs
-|   |   +---PayerDocsController.cs
-|   |   +---ProxyController.cs
-|   |   +---WeatherForecastController.cs
-|   |   \---WorkbooksController.cs
-|   +---Database
-|   |   +---Auth
-|   |   |   +---DummyAuthStore.cs
-|   |   |   +---IdentityUserStore.cs
-|   |   |   +---InMemoryUserStore.cs
-|   |   |   \---IUserStore.cs
-|   |   +---Configurations
-|   |   |   +---Class.cs
-|   |   |   +---DimCustomerConfig.cs
-|   |   |   +---DimGeographyConfig.cs
-|   |   |   \---EmployeeConfig.cs
-|   |   +---Dtos
-|   |   |   +---CustomerWithGeoDto.cs
-|   |   |   +---DocumentCreateDto.cs
-|   |   |   \---Dtos.cs
-|   |   +---Generators
-|   |   |   +---OpenApiGenerator.cs
-|   |   |   +---PostmanGenerator.cs
-|   |   |   \---ReactQueryMapGenerator.cs
-|   |   +---Models
-|   |   |   +---CaseManagement
-|   |   |   |   \---FormTemplate.cs
-|   |   |   +---Customer.cs
-|   |   |   +---DimCustomer.cs
-|   |   |   +---DimGeography.cs
-|   |   |   +---Employee.cs
-|   |   |   +---InventoryItem.cs
-|   |   |   +---Order.cs
-|   |   |   \---OrderLine.cs
-|   |   +---Repository
-|   |   |   +---DapperRepository.cs
-|   |   |   +---DapperResultNormalizercs.cs
-|   |   |   \---GenericRepository.cs
-|   |   +---Schema
-|   |   |   +---schema.json
-|   |   |   +---SchemaRegistry.cs
-|   |   |   \---script.sql
-|   |   +---Scripts
-|   |   |   +---CaseManagement.DocumentResolvers
-|   |   |   |   +---Properties
-|   |   |   |   |   \---launchSettings.json
-|   |   |   |   +---Resolvers
-|   |   |   |   |   \---PayerCsvResolver.cs
-|   |   |   |   +---appsettings.json
-|   |   |   |   +---CaseManagement.DocumentResolvers.csproj
-|   |   |   |   +---Program.cs
-|   |   |   |   \---Readme.MD
-|   |   |   +---CaseManagement.SessionBillResolvers
-|   |   |   |   +---Models
-|   |   |   |   +---Resolvers
-|   |   |   |   +---Services
-|   |   |   |   +---Sql
-|   |   |   |   |   +---usp_Claim_Upsert.sql
-|   |   |   |   |   +---usp_Invoice_Upsert.sql
-|   |   |   |   |   \---usp_Session_GetBillingContext.sql
-|   |   |   |   +---appsettings.json
-|   |   |   |   +---CaseManagement.SessionBillResolvers.csproj
-|   |   |   |   +---Program.cs
-|   |   |   |   \---Readme.MD
-|   |   |   +---CaseManagement.SessionResolvers
-|   |   |   |   +---converts
-|   |   |   |   |   \---JsonToHtmlConverter.cs
-|   |   |   |   +---appsettings.json
-|   |   |   |   +---CaseManagement.SessionResolvers.csproj
-|   |   |   |   +---DocumentFileFetcher.cs
-|   |   |   |   +---Program.cs
-|   |   |   |   +---readme.MD
-|   |   |   |   +---SessionImporter.cs
-|   |   |   |   +---SessionImportResolver.cs
-|   |   |   |   \---SessionRow.cs
-|   |   |   +---DbExporter
-|   |   |   |   +---DatabaseExportEngine.cs
-|   |   |   |   +---DbExporter.csproj
-|   |   |   |   +---DeployScriptBuilder.cs
-|   |   |   |   +---FunctionsExporter.cs
-|   |   |   |   +---IExporter.cs
-|   |   |   |   +---Program.cs
-|   |   |   |   +---StoredProcedureExporter.cs
-|   |   |   |   +---TableExporter.cs
-|   |   |   |   \---ViewsExporter.cs
-|   |   |   +---ImportDocs
-|   |   |   |   +---ImportedFiles
-|   |   |   |   +---logs
-|   |   |   |   |   \---import-20260509.log
-|   |   |   |   +---appsettings.json
-|   |   |   |   +---import - Copy.csv
-|   |   |   |   +---import.csv
-|   |   |   |   +---ImportDocs.csproj
-|   |   |   |   +---Program.cs
-|   |   |   |   \---readme.MD
-|   |   |   +---CaseManagement.Tools.sln.REMOVEthis
-|   |   |   +---export_sps.sql
-|   |   |   +---export_stored_procs.py
-|   |   |   +---InsertFormTemplate.py
-|   |   |   +---myimport.json.open.sql
-|   |   |   +---myimportjson.py
-|   |   |   \---README.md
-|   |   \---MyDbContext.cs
-|   +---Endpoints
-|   |   +---Corqs
-|   |   |   \---CorqsEndpoints.cs
-|   |   \---GetDocumentEndpoint.cs
-|   +---Extensions
-|   |   +---ApplicationBuilderExtensions.cs
-|   |   \---ServiceCollectionExtensions.cs
-|   +---Helpers
-|   |   +---MyMarker.cs
-|   |   +---SessionRenderer.cs
-|   |   \---StringExtensions.cs
-|   +---Middleware
-|   |   +---BeforeAfterMiddleware
-|   |   |   \---BeforeAfterMiddleware.cs
-|   |   +---DynamicApiMiddleware.cs
-|   |   \---RequestTimingMiddleware.cs
-|   +---Models
-|   |   \---Corqs
-|   |       +---ApiDefinition.cs
-|   |       +---CorqsRequest.cs
-|   |       +---CorqsResponse.cs
-|   |       +---DataRouteDefinition.cs
-|   |       +---ParameterDefinition.cs
-|   |       +---ProcedureDefinition.cs
-|   |       +---SchemaDefinition.cs
-|   |       \---SchemaRoot.cs
-|   +---ModelsPRE
-|   +---Modules
-|   |   +---Cases
-|   |   |   +---Commands
-|   |   |   +---Contracts
-|   |   |   +---Domain
-|   |   |   +---Queries
-|   |   |   |   \---SearchCases
-|   |   |   +---Sql
-|   |   |   |   \---usp_SearchCases.sql
-|   |   |   \---CasesEndpoints.cs
-|   |   \---RequestContext.cs
-|   +---Properties
-|   |   \---launchSettings.json
-|   +---Services
-|   |   +---CaseManagement
-|   |   |   +---FormTemplateService.cs
-|   |   |   +---ISessionDocumentService.cs
-|   |   |   +---SessionDocumentService.cs
-|   |   |   \---SessionService.cs
-|   |   +---Corqs
-|   |   |   +---Abstractions
-|   |   |   |   +---IApiExecutor.cs
-|   |   |   |   +---IHttpProxyExecutor.cs
-|   |   |   |   +---IRequestContextBuilder.cs
-|   |   |   |   +---ISqlExecutor.cs
-|   |   |   |   \---IStoredProcedureExecutor.cs
-|   |   |   +---Handlers
-|   |   |   |   +---GetBookHandler.cs
-|   |   |   |   +---GetBooksHandler.cs
-|   |   |   |   +---GetInvoiceDetailsHandler.cs
-|   |   |   |   \---ServerTimeHandler.cs
-|   |   |   +---Strategies
-|   |   |   |   +---HandlerStrategy.cs
-|   |   |   |   +---HttpExecutionStrategy.cs
-|   |   |   |   +---SqlExecutionStrategy.cs
-|   |   |   |   \---StoredProcedureStrategy.cs
-|   |   |   +---ApiExecutor.cs
-|   |   |   +---CorqsExecutor.cs
-|   |   |   +---HttpProxyExecutor.cs
-|   |   |   +---ICorqsExecutionStrategy.cs
-|   |   |   +---ICorqsHandler.cs
-|   |   |   +---RequestContextBuilder.cs
-|   |   |   +---SqlExecutor.cs
-|   |   |   \---StoredProcedureExecutor.cs
-|   |   +---OpenApi
-|   |   |   \---CorqsOpenApiService.cs
-|   |   +---SchemaService
-|   |   |   \---SchemaService.cs
-|   |   +---CustomerService.cs
-|   |   \---EFdbServie.cs
-|   +---Workbooks
-|   |   \---42
-|   |       +---ABA Service Agreement & Consent Form PL_files
-|   |       |   +---5e6b428acc8c4e222d1beb91.css
-|   |       |   +---actions.js.download
-|   |       |   +---errorNavigation.js.download
-|   |       |   +---form-common.css
-|   |       |   +---for-pdfimporter-patch.js.download
-|   |       |   +---for-sign-form-integration.js.download
-|   |       |   +---hipaa-badge-compliance.png
-|   |       |   +---jotform.forms.js.download
-|   |       |   +---jotform.signaturepad.new.js.download
-|   |       |   +---jquery-3.7.1.min.js.download
-|   |       |   +---jSignature.CompressorBase30.js.download
-|   |       |   +---jSignature.CompressorSVG.js.download
-|   |       |   +---jSignature.js.download
-|   |       |   +---jSignature.UndoButton.js.download
-|   |       |   +---Logo of Team Dynamic Minds.6825ed23e24948.13253575.png
-|   |       |   +---maskedinput_5.0.9.min.js.download
-|   |       |   +---payment_feature.css
-|   |       |   +---payment_styles.css
-|   |       |   +---prototype.forms.js.download
-|   |       |   +---saved_resource
-|   |       |   \---smoothscroll.min.js.download
-|   |       +---RDQ2018_files
-|   |       |   +---5e6b428acc8c4e222d1beb91.css
-|   |       |   +---best Logo of Team Dynamic Minds.689d3d39cba3e8.49421634.png
-|   |       |   +---errorNavigation.js.download
-|   |       |   +---for-formuser.js.download
-|   |       |   +---form-common.css
-|   |       |   +---for-pdfimporter-patch.js.download
-|   |       |   +---jotform.forms.js.download
-|   |       |   +---maskedinput_5.0.9.min.js.download
-|   |       |   +---payment_feature.css
-|   |       |   +---payment_styles.css
-|   |       |   +---prototype.forms.js.download
-|   |       |   +---saved_resource
-|   |       |   \---smoothscroll.min.js.download
-|   |       +---ABA Service Agreement & Consent Form PL.html
-|   |       +---aba.html
-|   |       +---aba_billing_statement (1).html
-|   |       +---Assessment.html
-|   |       +---AuBa_2026-05-11_CASP Protocol Modification 97155.pdf
-|   |       +---AvailityEssentials.txt
-|   |       +---blank_editable_session_note.html
-|   |       +---blank_editable_session_note.pdf
-|   |       +---claim837.json
-|   |       +---claim837.txt
-|   |       +---Claim837_Form - Copy.pdf
-|   |       +---claim837_form.html
-|   |       +---Claim837_Form.pdf
-|   |       +---claim837_form.txt
-|   |       +---CR Essentials.pdf
-|   |       +---dynamic_form_record.pdf
-|   |       +---ediavailabilitye.html
-|   |       +---intake - Copy.html
-|   |       +---intake.7159270227.html
-|   |       +---intake.7341693071.html
-|   |       +---intake.7524488575.html
-|   |       +---intake.7707656738.html
-|   |       +---intake.7891197561.html
-|   |       +---intake.CASE-7524488575.html
-|   |       +---intake.html
-|   |       +---MiAl_2026-05-12_CASP Direct Session Note 97153.pdf
-|   |       +---my_scanned_form.pdf
-|   |       +---my_scanned_form_scanned.pdf
-|   |       +---payer.txt.csv
-|   |       +---payerdoc.html
-|   |       +---payerdoc.txt
-|   |       +---RDQ2018.html
-|   |       +---Sample 1500_2012_02.pdf
-|   |       +---scrap - Copy.html
-|   |       +---scrap.txt
-|   |       +---session.0.1.html
-|   |       +---session.101.png
-|   |       +---session.111.CR Essentials.pdf
-|   |       +---session.124.aba_session_form.html
-|   |       +---session.127.aba_session_editable.pdf
-|   |       +---session.187.aba_session_editable.pdf
-|   |       +---session.909.aba_session_dashboard_mixed.svg
-|   |       +---session.dashboard.svg
-|   |       +---session.schedule.html
-|   |       +---SessionNote_82001.html
-|   |       +---SessionNote_parentTraining.html
-|   |       \---unnamed.jpg
-|   +---wwwroot
-|   |   +---assets
-|   |   |   +---index-DvJGIjl8.js
-|   |   |   \---index-yq3Fr6Xz.css
-|   |   +---files
-|   |   |   +---aba.html
-|   |   |   +---ABA_2_Hour_Session_Template.pdf
-|   |   |   +---ABA_Month1_7yo_fillable.html
-|   |   |   +---ABA_Month1_SessionPlan_7yo.pdf
-|   |   |   +---ABAIn-Home.txt
-|   |   |   +---buzcard.jpg
-|   |   |   +---calendar.html
-|   |   |   +---caseIntake.pdf
-|   |   |   +---intake.html
-|   |   |   +---MonthOneABA.html
-|   |   |   +---MonthOneABA.txt
-|   |   |   +---rdiaba.svg
-|   |   |   +---session.909.aba_session_dashboard_mixed.svg
-|   |   |   +---session.dashboard.svg
-|   |   |   \---session.dashboard.svg1
-|   |   +---cases.json
-|   |   +---DynoMinds.svg
-|   |   +---index.html
-|   |   \---vite.svg
-|   +---.dockerignore
-|   +---.gitignore
-|   +---appsettings.Development.json
-|   +---appsettings.json
-|   +---CaseManagement.ArchitectureStarter-structure.txt
-|   +---docker-compose - Copy.yml
-|   +---docker-compose.yml
-|   +---Dockerfile
-|   +---folder-structure.txt
-|   +---mynotes.txt
-|   +---nginx.conf
-|   +---nginx.conf.txt
-|   +---Program.cs
-|   +---README.md
-|   +---removecontainers.sh
-|   +---run-both.ps1
-|   +---run-local.ps1
-|   +---runngx.sh
-|   +---WeatherForecast.cs
-|   +---WebAppMulti.csproj
-|   +---WebAppMulti.http
-|   \---WebAppMulti.sln
-+---.filetreeignore
-+---.gitignore
-+---CaseManagement.ArchitectureStarter-structure.txt
-+---deploy.py
-+---folder-structure.txt
-+---readme.MD
-+---src-structure.txt
-+---sr-structure.txt
-+---tree-clean.ps1
-\---WebAppMulti-structure.txt
+|   \---JsonTo837
+|       +---bin
+|       |   \---Debug
+|       |       \---net9.0
+|       +---obj
+|       |   \---Debug
+|       |       \---net9.0
+|       |           +---ref
+|       |           \---refint
+|       \---Workbooks
+\---WebAppMulti
+    +---.github
+    |   \---workflows
+    +---bin
+    |   +---Debug
+    |   |   +---net8.0
+    |   |   |   +---cs
+    |   |   |   +---de
+    |   |   |   +---es
+    |   |   |   +---fr
+    |   |   |   +---it
+    |   |   |   +---ja
+    |   |   |   +---ko
+    |   |   |   +---pl
+    |   |   |   +---pt-BR
+    |   |   |   +---ru
+    |   |   |   +---runtimes
+    |   |   |   |   +---browser
+    |   |   |   |   |   \---lib
+    |   |   |   |   |       \---net8.0
+    |   |   |   |   +---unix
+    |   |   |   |   |   \---lib
+    |   |   |   |   |       \---net6.0
+    |   |   |   |   +---win
+    |   |   |   |   |   \---lib
+    |   |   |   |   |       \---net6.0
+    |   |   |   |   +---win-arm
+    |   |   |   |   |   \---native
+    |   |   |   |   +---win-arm64
+    |   |   |   |   |   \---native
+    |   |   |   |   +---win-x64
+    |   |   |   |   |   \---native
+    |   |   |   |   \---win-x86
+    |   |   |   |       \---native
+    |   |   |   +---tr
+    |   |   |   +---zh-Hans
+    |   |   |   \---zh-Hant
+    |   |   \---net9.0
+    |   |       +---cs
+    |   |       +---Database
+    |   |       |   \---Schema
+    |   |       +---de
+    |   |       +---es
+    |   |       +---fr
+    |   |       +---it
+    |   |       +---ja
+    |   |       +---ko
+    |   |       +---pl
+    |   |       +---pt-BR
+    |   |       +---ru
+    |   |       +---runtimes
+    |   |       |   +---browser
+    |   |       |   |   \---lib
+    |   |       |   |       \---net8.0
+    |   |       |   +---unix
+    |   |       |   |   \---lib
+    |   |       |   |       +---net6.0
+    |   |       |   |       +---net8.0
+    |   |       |   |       \---net9.0
+    |   |       |   +---win
+    |   |       |   |   \---lib
+    |   |       |   |       +---net6.0
+    |   |       |   |       +---net8.0
+    |   |       |   |       \---net9.0
+    |   |       |   +---win-arm
+    |   |       |   |   \---native
+    |   |       |   +---win-arm64
+    |   |       |   |   \---native
+    |   |       |   +---win-x64
+    |   |       |   |   \---native
+    |   |       |   \---win-x86
+    |   |       |       \---native
+    |   |       +---tr
+    |   |       +---Workbooks
+    |   |       |   \---42
+    |   |       +---zh-Hans
+    |   |       \---zh-Hant
+    |   \---Release
+    |       \---net9.0
+    +---CaseManagement.ArchitectureStarter
+    |   \---src
+    |       +---.claude
+    |       +---CaseManagement
+    |       |   +---modules
+    |       |   |   \---CaseManagement.SessionBillResolvers.V2
+    |       |   |       \---obj
+    |       |   \---src
+    |       |       +---CaseManagement.Application
+    |       |       |   \---obj
+    |       |       +---CaseManagement.Domain
+    |       |       |   +---Entities
+    |       |       |   \---obj
+    |       |       +---CaseManagement.Infrastructure
+    |       |       |   \---obj
+    |       |       +---CaseManagement.Shared
+    |       |       |   \---obj
+    |       |       \---CaseManagement.Worker
+    |       |           +---obj
+    |       |           \---Properties
+    |       +---CaseManagement.DocumentResolvers
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   \---obj
+    |       |       \---Debug
+    |       |           \---net9.0
+    |       |               +---ref
+    |       |               \---refint
+    |       +---CaseManagement.SessionBillResolvers.V2
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---cs
+    |       |   |           +---de
+    |       |   |           +---es
+    |       |   |           +---fr
+    |       |   |           +---it
+    |       |   |           +---ja
+    |       |   |           +---ko
+    |       |   |           +---logs
+    |       |   |           +---pl
+    |       |   |           +---pt-BR
+    |       |   |           +---ru
+    |       |   |           +---runtimes
+    |       |   |           |   +---unix
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win-arm64
+    |       |   |           |   |   \---native
+    |       |   |           |   +---win-x64
+    |       |   |           |   |   \---native
+    |       |   |           |   \---win-x86
+    |       |   |           |       \---native
+    |       |   |           +---tr
+    |       |   |           +---zh-Hans
+    |       |   |           \---zh-Hant
+    |       |   +---Calculators
+    |       |   +---Engine
+    |       |   +---obj
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---ref
+    |       |   |           \---refint
+    |       |   +---Providers
+    |       |   +---Repositories
+    |       |   +---Rules
+    |       |   +---Runner
+    |       |   +---Services
+    |       |   +---Sql
+    |       |   \---Workers
+    |       +---CaseManagement.SessionResolvers
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   \---obj
+    |       |       \---Debug
+    |       |           \---net9.0
+    |       |               +---ref
+    |       |               \---refint
+    |       +---CaseManagement.Shared
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   +---Configuration
+    |       |   |   \---config
+    |       |   +---Constants
+    |       |   +---Extensions
+    |       |   +---Interfaces
+    |       |   +---Models
+    |       |   |   \---Options
+    |       |   +---obj
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---ref
+    |       |   |           \---refint
+    |       |   \---Services
+    |       +---CaseManagement.Tooling
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   \---obj
+    |       |       \---Debug
+    |       |           \---net9.0
+    |       |               +---ref
+    |       |               \---refint
+    |       \---config
+    +---Configuration
+    +---Controllers
+    |   \---CaseManagement
+    +---Database
+    |   +---Auth
+    |   +---Configurations
+    |   +---Dtos
+    |   +---Generators
+    |   +---Models
+    |   |   \---CaseManagement
+    |   +---Repository
+    |   +---Schema
+    |   \---Scripts
+    |       +---CaseManagement.DocumentResolvers
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---cs
+    |       |   |           +---de
+    |       |   |           +---es
+    |       |   |           +---fr
+    |       |   |           +---it
+    |       |   |           +---ja
+    |       |   |           +---ko
+    |       |   |           +---pl
+    |       |   |           +---pt-BR
+    |       |   |           +---ru
+    |       |   |           +---runtimes
+    |       |   |           |   +---unix
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win-arm64
+    |       |   |           |   |   \---native
+    |       |   |           |   +---win-x64
+    |       |   |           |   |   \---native
+    |       |   |           |   \---win-x86
+    |       |   |           |       \---native
+    |       |   |           +---tr
+    |       |   |           +---zh-Hans
+    |       |   |           \---zh-Hant
+    |       |   +---obj
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---ref
+    |       |   |           \---refint
+    |       |   +---Properties
+    |       |   \---Resolvers
+    |       +---CaseManagement.SessionBillResolvers
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---cs
+    |       |   |           +---de
+    |       |   |           +---es
+    |       |   |           +---fr
+    |       |   |           +---it
+    |       |   |           +---ja
+    |       |   |           +---ko
+    |       |   |           +---pl
+    |       |   |           +---pt-BR
+    |       |   |           +---ru
+    |       |   |           +---runtimes
+    |       |   |           |   +---unix
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win-arm64
+    |       |   |           |   |   \---native
+    |       |   |           |   +---win-x64
+    |       |   |           |   |   \---native
+    |       |   |           |   \---win-x86
+    |       |   |           |       \---native
+    |       |   |           +---tr
+    |       |   |           +---zh-Hans
+    |       |   |           \---zh-Hant
+    |       |   +---Models
+    |       |   +---obj
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---ref
+    |       |   |           \---refint
+    |       |   +---Resolvers
+    |       |   +---Services
+    |       |   \---Sql
+    |       +---CaseManagement.SessionResolvers
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---cs
+    |       |   |           +---de
+    |       |   |           +---es
+    |       |   |           +---fr
+    |       |   |           +---it
+    |       |   |           +---ja
+    |       |   |           +---ko
+    |       |   |           +---pl
+    |       |   |           +---pt-BR
+    |       |   |           +---ru
+    |       |   |           +---runtimes
+    |       |   |           |   +---browser
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net8.0
+    |       |   |           |   +---unix
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win-arm64
+    |       |   |           |   |   \---native
+    |       |   |           |   +---win-x64
+    |       |   |           |   |   \---native
+    |       |   |           |   \---win-x86
+    |       |   |           |       \---native
+    |       |   |           +---staging
+    |       |   |           +---tr
+    |       |   |           +---zh-Hans
+    |       |   |           \---zh-Hant
+    |       |   +---converts
+    |       |   \---obj
+    |       |       \---Debug
+    |       |           \---net9.0
+    |       |               +---ref
+    |       |               \---refint
+    |       +---DbExporter
+    |       |   +---bin
+    |       |   |   \---Debug
+    |       |   |       \---net9.0
+    |       |   |           +---cs
+    |       |   |           +---de
+    |       |   |           +---es
+    |       |   |           +---fr
+    |       |   |           +---it
+    |       |   |           +---ja
+    |       |   |           +---ko
+    |       |   |           +---pl
+    |       |   |           +---pt-BR
+    |       |   |           +---ru
+    |       |   |           +---runtimes
+    |       |   |           |   +---unix
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win
+    |       |   |           |   |   \---lib
+    |       |   |           |   |       +---net8.0
+    |       |   |           |   |       \---net9.0
+    |       |   |           |   +---win-arm64
+    |       |   |           |   |   \---native
+    |       |   |           |   +---win-x64
+    |       |   |           |   |   \---native
+    |       |   |           |   \---win-x86
+    |       |   |           |       \---native
+    |       |   |           +---tr
+    |       |   |           +---zh-Hans
+    |       |   |           \---zh-Hant
+    |       |   \---obj
+    |       |       \---Debug
+    |       |           \---net9.0
+    |       |               +---ref
+    |       |               \---refint
+    |       \---ImportDocs
+    |           +---bin
+    |           |   \---Debug
+    |           |       \---net9.0
+    |           |           +---cs
+    |           |           +---de
+    |           |           +---es
+    |           |           +---fr
+    |           |           +---it
+    |           |           +---ja
+    |           |           +---ko
+    |           |           +---pl
+    |           |           +---pt-BR
+    |           |           +---ru
+    |           |           +---runtimes
+    |           |           |   +---browser
+    |           |           |   |   \---lib
+    |           |           |   |       \---net8.0
+    |           |           |   +---unix
+    |           |           |   |   \---lib
+    |           |           |   |       \---net9.0
+    |           |           |   +---win
+    |           |           |   |   \---lib
+    |           |           |   |       \---net9.0
+    |           |           |   +---win-arm64
+    |           |           |   |   \---native
+    |           |           |   +---win-x64
+    |           |           |   |   \---native
+    |           |           |   \---win-x86
+    |           |           |       \---native
+    |           |           +---tr
+    |           |           +---zh-Hans
+    |           |           \---zh-Hant
+    |           +---ImportedFiles
+    |           +---logs
+    |           \---obj
+    |               \---Debug
+    |                   \---net9.0
+    |                       +---ref
+    |                       \---refint
+    +---Endpoints
+    |   \---Corqs
+    +---Extensions
+    +---Helpers
+    +---Middleware
+    |   \---BeforeAfterMiddleware
+    +---Models
+    |   \---Corqs
+    +---ModelsPRE
+    +---Modules
+    |   \---Cases
+    |       +---Commands
+    |       +---Contracts
+    |       +---Domain
+    |       +---Queries
+    |       |   \---SearchCases
+    |       \---Sql
+    +---obj
+    |   \---Debug
+    |       \---net9.0
+    |           +---compressed
+    |           +---EndpointInfo
+    |           +---ref
+    |           +---refint
+    |           \---staticwebassets
+    +---Properties
+    +---Services
+    |   +---CaseManagement
+    |   +---Corqs
+    |   |   +---Abstractions
+    |   |   +---Handlers
+    |   |   \---Strategies
+    |   +---OpenApi
+    |   \---SchemaService
+    +---Workbooks
+    |   \---42
+    |       +---ABA Service Agreement & Consent Form PL_files
+    |       \---RDQ2018_files
+    \---wwwroot
+        +---assets
+        \---files

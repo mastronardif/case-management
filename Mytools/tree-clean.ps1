@@ -1,6 +1,5 @@
 # tree-clean.ps1 - ASCII directory tree respecting .filetreeignore
-# Usage: .\tree-clean.ps1              (scans repo root)
-#        .\tree-clean.ps1 WebAppMulti  (scans a subfolder)
+# Run from anywhere. Folder is relative to the repo root, or pass an absolute path.
 param(
     [string]$Folder = "",
     [switch]$Help
@@ -10,25 +9,24 @@ if ($Help -or -not $Folder) {
     Write-Host ""
     Write-Host "tree-clean.ps1 - Generate an ASCII directory tree, respecting .filetreeignore"
     Write-Host ""
-    Write-Host "USAGE:"
-    Write-Host "  .\tree-clean.ps1 .                      Scan repo root  -> folder-structure.txt"
-    Write-Host "  .\tree-clean.ps1 <Folder>               Scan subfolder  -> <leafname>-structure.txt"
-    Write-Host "  .\tree-clean.ps1 -Help                  Show this help"
+    Write-Host "USAGE (run from anywhere, including Mytools):"
+    Write-Host "  .\tree-clean.ps1 .                           Scan repo root"
+    Write-Host "  .\tree-clean.ps1 WebAppMulti                 Scan subfolder by name"
+    Write-Host "  .\tree-clean.ps1 C:\full\path\to\folder      Scan by absolute path"
+    Write-Host "  .\tree-clean.ps1 -Help                       Show this help"
     Write-Host ""
-    Write-Host "EXAMPLES:"
-    Write-Host "  .\tree-clean.ps1 ."
-    Write-Host "  .\tree-clean.ps1 WebAppMulti"
-    Write-Host "  .\tree-clean.ps1 WebAppMulti\CaseManagement.ArchitectureStarter"
-    Write-Host "  .\tree-clean.ps1 WebAppMulti\CaseManagement.ArchitectureStarter\src"
+    Write-Host "OUTPUT: written to current directory as <foldername>-structure.txt"
     Write-Host ""
-    Write-Host "IGNORE FILE:"
-    Write-Host "  Edit .filetreeignore at the repo root to exclude folders/files (same syntax as .gitignore)"
+    Write-Host "IGNORE FILE: .filetreeignore at repo root"
     Write-Host ""
     return
 }
 
-$repoRoot   = Get-Location
-$targetPath = if ($Folder) { (Resolve-Path (Join-Path $repoRoot $Folder)).Path } else { "$repoRoot" }
+$repoRoot   = Split-Path $PSScriptRoot -Parent
+$targetPath = if ($Folder) {
+    if ([System.IO.Path]::IsPathRooted($Folder)) { (Resolve-Path $Folder).Path }
+    else { (Resolve-Path (Join-Path $repoRoot $Folder)).Path }
+} else { "$repoRoot" }
 $leafName   = Split-Path $Folder -Leaf
 $outputFile = if ($Folder -and $Folder -ne '.') { "$leafName-structure.txt" } else { "folder-structure.txt" }
 $ignoreFile = Join-Path $repoRoot ".filetreeignore"
