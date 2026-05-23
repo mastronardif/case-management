@@ -1,0 +1,18 @@
+public class Session
+{
+    public int Id { get; set; }
+    public decimal Hours { get; set; }
+    public string PatientId { get; set; }
+    public bool IsBilled { get; set; }
+}
+
+public class Invoice
+{
+    public int SessionId { get; set; }
+    public decimal Amount { get; set; }
+}
+
+public class BillingResult
+{
+    public int InvoiceCount { get; set; }
+}

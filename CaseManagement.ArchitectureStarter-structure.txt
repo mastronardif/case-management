@@ -1,28 +1,72 @@
 ﻿C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\CaseManagement.ArchitectureStarter
 \---src
+    +---CaseManagement
+    |   +---modules
+    |   |   \---CaseManagement.SessionBillResolvers.V2
+    |   |       +---CaseManagement.SessionBillResolvers.V2.csproj
+    |   |       \---Class1.cs
+    |   +---src
+    |   |   +---CaseManagement.Application
+    |   |   |   +---CaseManagement.Application.csproj
+    |   |   |   +---Class1.cs
+    |   |   |   \---DependencyInjection.cs
+    |   |   +---CaseManagement.Domain
+    |   |   |   +---Entities
+    |   |   |   |   \---Case.cs
+    |   |   |   +---CaseManagement.Domain.csproj
+    |   |   |   \---Class1.cs
+    |   |   +---CaseManagement.Infrastructure
+    |   |   |   +---CaseManagement.Infrastructure.csproj
+    |   |   |   +---Class1.cs
+    |   |   |   \---DependencyInjection.cs
+    |   |   +---CaseManagement.Shared
+    |   |   |   +---CaseManagement.Shared.csproj
+    |   |   |   \---Class1.cs
+    |   |   \---CaseManagement.Worker
+    |   |       +---Properties
+    |   |       |   \---launchSettings.json
+    |   |       +---appsettings.Development.json
+    |   |       +---appsettings.json
+    |   |       +---CaseManagement.Worker.csproj
+    |   |       +---Program.cs
+    |   |       \---Worker.cs
+    |   \---CaseManagement.sln
     +---CaseManagement.DocumentResolvers
     |   \---CaseManagement.DocumentResolvers.csproj
     +---CaseManagement.SessionBillResolvers.V2
+    |   +---Configuration
     |   +---Engine
     |   +---Rules
+    |   +---Runner
     |   +---Services
     |   +---Sql
+    |   +---Workers
+    |   |   \---BillingWorker.cs
     |   +---CaseManagement.SessionBillResolvers.V2.csproj
     |   \---Program.cs
     +---CaseManagement.SessionResolvers
     |   \---CaseManagement.SessionResolvers.csproj
     +---CaseManagement.Shared
-    |   +---Config
+    |   +---Configuration
+    |   |   +---config
+    |   |   |   +---appsettings.Development.json
+    |   |   |   \---appsettings.json
+    |   |   \---AppConfiguration.cs
     |   +---Constants
     |   +---Extensions
     |   +---Interfaces
     |   +---Models
     |   |   +---Options
+    |   |   +---Session
     |   |   \---SessionContext.cs
+    |   +---Services
+    |   |   +---BillingEngine.cs
+    |   |   \---BillingRunner.cs
     |   \---CaseManagement.Shared.csproj
     +---CaseManagement.Tooling
     |   \---CaseManagement.Tooling.csproj
     +---.gitignore
     +---CaseManagement.ArchitectureStarter.sln
+    +---create-casemanagement.ps1
     +---create-sln.ps1
     \---README.md
