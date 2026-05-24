@@ -18,12 +18,18 @@ public class BillingEngine
 
     public async Task<BillingResult> ProcessAsync(CancellationToken ct)
     {
+        //var mockSessions = new List<SessionData>
+        //{
+        //    new SessionData { SessionId = 1, CaseNumber = "CASE123", DurationMinutes = 60 },
+        //    new SessionData { SessionId = 2, CaseNumber = "CASE456", DurationMinutes = 30 }
+        //};  
         var sessions = await _sessions.GetUnbilledSessionsAsync(ct);
 
         var count = 0;
 
         foreach (var session in sessions)
         {
+            Console.WriteLine($"Processing session {session.SessionId} for case {session.CaseNumber}");
             var invoice = _calculator.Calculate(session);
             await _repository.SaveInvoiceAsync(invoice, ct);
             count++;

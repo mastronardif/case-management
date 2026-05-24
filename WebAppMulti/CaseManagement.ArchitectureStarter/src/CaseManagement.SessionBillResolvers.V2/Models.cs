@@ -14,7 +14,10 @@ public class BillingSettings
 public class SessionData
 {
     public int SessionId { get; set; }
+    public int CaseId { get; set; }
+    public string CaseNumber { get; set; } = string.Empty;
     public string PatientName { get; set; } = string.Empty;
+    public int DurationMinutes { get; set; }
 }
 
 public class Invoice
