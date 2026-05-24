@@ -33,13 +33,13 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.AddSharedInfrastructure();
 
 builder.Services.AddSingleton(runOptions);
-builder.Services.AddSingleton<BillingRunner>();
-builder.Services.AddSingleton<BillingEngine>();
+builder.Services.AddSingleton<BillingProcessor>();
 builder.Services.AddSingleton<ISessionProvider, SessionProvider>();
 builder.Services.AddSingleton<IBillingCalculator, BillingCalculator>();
 builder.Services.AddSingleton<IBillingRepository, SqlBillingRepository>();
-builder.Services.AddHostedService<BillingWorker>();
 
 var host = builder.Build();
 Log.Information("CaseManagement.SessionBillResolvers.V2 started. Mode: {Mode}", runOptions.Mode);
-await host.RunAsync();
+
+var processor = host.Services.GetRequiredService<BillingProcessor>();
+await processor.RunAsync(runOptions, CancellationToken.None);
