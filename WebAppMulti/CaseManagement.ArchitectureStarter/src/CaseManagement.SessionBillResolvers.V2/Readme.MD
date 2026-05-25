@@ -13,3 +13,14 @@ Projection Definition JSON
 Projection Resolver
     ↓
 BillingProjection
+
+----------------------------
+Clinical Document
+    ↓
+Projection Engine
+    ↓
+Billing Projection
+    ↓
+Billing Rules
+    ↓
+Invoice
