@@ -35,8 +35,11 @@ public static class GetDocumentEndpoint
             if (!await reader.ReadAsync())
                 return Results.NotFound("No document found for the given context.");
 
-            var contentType = reader.GetString(reader.GetOrdinal("ContentType"));
-            var fileData    = (byte[])reader.GetValue(reader.GetOrdinal("FileData"));
+            var returnedDocumentId = reader.GetInt32(reader.GetOrdinal("DocumentId"));
+            var contentType        = reader.GetString(reader.GetOrdinal("ContentType"));
+            var fileData           = (byte[])reader.GetValue(reader.GetOrdinal("FileData"));
+
+            request.HttpContext.Response.Headers["X-Document-Id"] = returnedDocumentId.ToString();
 
             return Results.File(fileData, contentType);
         });

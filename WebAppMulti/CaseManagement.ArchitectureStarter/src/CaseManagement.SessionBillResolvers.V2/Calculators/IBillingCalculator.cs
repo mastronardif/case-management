@@ -2,5 +2,5 @@ namespace CaseManagement.SessionBillResolvers.V2;
 
 public interface IBillingCalculator
 {
-    Invoice Calculate(SessionData session);
+    string Calculate(string projectionDefinition, string billingRule, string sessionExtraction);
 }

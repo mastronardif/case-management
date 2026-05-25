@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dotnet build *)"
+      "Bash(dotnet build *)",
+      "Bash(find \"C:\\\\Users\\\\mastronardif\\\\source\\\\repos\\\\CaseMangement\\\\WebAppMulti\\\\Models\" -name \"*.cs\" -type f)",
+      "Read(//c/Users/mastronardif/source/repos/CaseMangement/WebAppMulti/Models/**)"
     ]
   }
 }

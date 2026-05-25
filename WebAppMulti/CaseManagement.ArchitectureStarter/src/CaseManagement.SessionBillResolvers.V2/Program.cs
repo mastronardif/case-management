@@ -34,9 +34,8 @@ builder.AddSharedInfrastructure();
 
 builder.Services.AddSingleton(runOptions);
 builder.Services.AddSingleton<BillingProcessor>();
-builder.Services.AddSingleton<ISessionProvider, SessionProvider>();
 builder.Services.AddSingleton<IBillingCalculator, BillingCalculator>();
-builder.Services.AddSingleton<IBillingRepository, SqlBillingRepository>();
+builder.Services.AddSingleton<ICaseManagementRepository, SqlCaseManagementRepository>();
 
 var host = builder.Build();
 Log.Information("CaseManagement.SessionBillResolvers.V2 started. Mode: {Mode}", runOptions.Mode);

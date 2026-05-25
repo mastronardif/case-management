@@ -4,6 +4,13 @@ public enum BillingRunMode { Loop, SingleRun }
 
 public record BillingRunOptions(BillingRunMode Mode, string? CaseNumber = null, int? SessionNumber = null);
 
+public record DocumentContext(
+    int? DocumentId   = null,
+    int? CaseId       = null,
+    int? WorkbookQId  = null,
+    int? SessionId    = null,
+    string? DocumentType = null);
+
 
 public class BillingSettings
 {
@@ -30,4 +37,23 @@ public class Invoice
 public class BillingResult
 {
     public int InvoiceCount { get; set; }
+}
+
+public class Document
+{
+    public int DocumentId { get; set; }
+    public Guid? VersionId { get; set; }
+    public int? CaseId { get; set; }
+    public int? WorkbookQId { get; set; }
+    public int? SessionId { get; set; }
+    public string? DocumentType { get; set; }
+    public string? Title { get; set; }
+    public string? FileName { get; set; }
+    public string? ContentType { get; set; }
+    public byte[] FileData { get; set; } = [];
+    public DateTime? CreatedDate { get; set; }
+    public string? CreatedBy { get; set; }
+    public bool IsActive { get; set; }
+
+    public string Content => System.Text.Encoding.UTF8.GetString(FileData);
 }

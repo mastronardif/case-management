@@ -4,20 +4,17 @@ namespace CaseManagement.SessionBillResolvers.V2;
 
 public class BillingProcessor
 {
-    private readonly ISessionProvider _sessions;
+    private readonly ICaseManagementRepository _repository;
     private readonly IBillingCalculator _calculator;
-    private readonly IBillingRepository _repository;
     private readonly ILogger<BillingProcessor> _logger;
 
     public BillingProcessor(
-        ISessionProvider sessions,
+        ICaseManagementRepository repository,
         IBillingCalculator calculator,
-        IBillingRepository repository,
         ILogger<BillingProcessor> logger)
     {
-        _sessions = sessions;
-        _calculator = calculator;
         _repository = repository;
+        _calculator = calculator;
         _logger = logger;
     }
 
@@ -25,28 +22,43 @@ public class BillingProcessor
     {
         if (options.Mode == BillingRunMode.SingleRun)
         {
-            await ProcessOnceAsync(ct);
+            await ProcessOnceAsync(options, ct);
             return;
         }
 
         _logger.LogInformation("Billing processor running in loop mode");
         while (!ct.IsCancellationRequested)
         {
-            await ProcessOnceAsync(ct);
+            await ProcessOnceAsync(options, ct);
             await Task.Delay(TimeSpan.FromMinutes(1), ct);
         }
     }
 
-    private async Task ProcessOnceAsync(CancellationToken ct)
+    private async Task ProcessOnceAsync(BillingRunOptions options, CancellationToken ct)
     {
         _logger.LogInformation("Billing cycle started");
-        var sessions = await _sessions.GetUnbilledSessionsAsync(ct);
+        var sessions = await _repository.GetUnbilledSessionsAsync(options, ct);
         var count = 0;
 
         foreach (var session in sessions)
         {
-            var invoice = _calculator.Calculate(session);
-            await _repository.SaveInvoiceAsync(invoice, ct);
+            // TODO: replace stub DocumentIds with real context lookup per session/case
+            var projectionDoc      = await _repository.GetDocumentAsync(new DocumentContext(DocumentId: 40), ct);
+            var billingRuleDoc     = await _repository.GetDocumentAsync(new DocumentContext(DocumentId: 38), ct);
+            var sessionExtractionDoc = await _repository.GetDocumentAsync(new DocumentContext(DocumentId: 39), ct);
+
+            var invoiceJson = _calculator.Calculate(
+                projectionDoc?.Content      ?? "",
+                billingRuleDoc?.Content     ?? "",
+                sessionExtractionDoc?.Content ?? "");
+
+            var saveContext = new DocumentContext(
+                DocumentId: sessionExtractionDoc?.DocumentId,
+                CaseId:     session.CaseId,
+                SessionId:  session.SessionId);
+
+            // TODO: save projection for audit purposes
+            await _repository.SaveInvoiceAsync(saveContext, invoiceJson, ct);
             count++;
         }
 
