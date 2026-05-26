@@ -1,0 +1,22 @@
+{
+  "sessionDoc": {
+    "runId": "20260525_120001",
+    "runAction": "billingProcess",
+    "inputDoc": 39,
+    "projectionDefinitionId": 40,
+    "billingRuleId": 38,
+    "case-number": 0,
+    "session-number": 0,
+    "createdDate": "2026-05-25T12:00:01Z"
+  },
+  "projector": {
+    "runId": "20260525_120001",
+    "runAction": "projectorProcess",
+    "inputDoc": 39,
+    "projectionDefinitionId": 40,
+    "billingRuleId": 38,
+    "case-number": 0,
+    "session-number": 0,
+    "createdDate": "2026-05-25T12:00:01Z"
+  }
+}

@@ -1,8 +1,24 @@
+using System.Text.Json.Serialization;
+
 namespace CaseManagement.SessionBillResolvers.V2;
 
 public enum BillingRunMode { Loop, SingleRun }
 
-public record BillingRunOptions(BillingRunMode Mode, string? CaseNumber = null, int? SessionNumber = null);
+public record RunInput(
+    string RunId,
+    string RunAction,
+    [property: JsonPropertyName("inputDoc")] int InputDoc,
+    int ProjectionDefinitionId,
+    int BillingRuleId,
+    [property: JsonPropertyName("case-number")] int? CaseNumber,
+    [property: JsonPropertyName("session-number")] int? SessionNumber,
+    DateTime CreatedDate);
+
+public record RunFile(
+    [property: JsonPropertyName("sessionDoc")] RunInput? SessionDoc,
+    [property: JsonPropertyName("projector")]  RunInput? Projector);
+
+public record BillingRunOptions(BillingRunMode Mode, string? CaseNumber = null, int? SessionNumber = null, RunInput? RunInput = null);
 
 public record DocumentContext(
     int? DocumentId   = null,
