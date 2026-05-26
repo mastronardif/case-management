@@ -9,9 +9,6 @@
 - CaseManagement.DocumentResolvers
 
 ## Quick Start
-
-```powershell
-./create-sln.ps1
 dotnet build
 ```
 
