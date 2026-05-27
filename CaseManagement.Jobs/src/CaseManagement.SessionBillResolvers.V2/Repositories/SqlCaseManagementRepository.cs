@@ -82,6 +82,41 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         };
     }
 
+    public async Task<int> SaveDocumentAsync(DocumentContext context, string content, string documentType, string fileName, CancellationToken ct)
+    {
+        _logger.LogInformation("Saving document. Type: {DocumentType}, CaseId: {CaseId}, SessionId: {SessionId}",
+            documentType, context.CaseId, context.SessionId);
+
+        await using var conn = new SqlConnection(_conn.DefaultConnection);
+        await conn.OpenAsync(ct);
+
+        using var cmd = new SqlCommand("[cases].[usp_Document_Save]", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        cmd.Parameters.AddWithValue("@CaseId",       (object?)context.CaseId      ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@SessionId",    (object?)context.SessionId   ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@WorkbookQId",  (object?)context.WorkbookQId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@CaseNumber",   DBNull.Value);
+        cmd.Parameters.AddWithValue("@DocumentType", documentType);
+        cmd.Parameters.AddWithValue("@Title",        (object?)fileName            ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@FileName",     (object?)fileName            ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@ContentType",  "application/json");
+        cmd.Parameters.AddWithValue("@FileData",     System.Text.Encoding.UTF8.GetBytes(content));
+        cmd.Parameters.AddWithValue("@CreatedBy",    "SessionBillResolvers.V2");
+
+        var docIdParam = new SqlParameter("@DocumentId", SqlDbType.Int)
+        {
+            Direction = ParameterDirection.Output
+        };
+        cmd.Parameters.Add(docIdParam);
+
+        await cmd.ExecuteNonQueryAsync(ct);
+
+        return (int)docIdParam.Value;
+    }
+
     public async Task SaveInvoiceAsync(DocumentContext context, string invoiceJson, CancellationToken ct)
     {
         _logger.LogInformation("Saving invoice");

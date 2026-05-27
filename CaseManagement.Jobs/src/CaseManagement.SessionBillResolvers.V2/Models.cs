@@ -28,6 +28,17 @@ public record DocumentContext(
     string? DocumentType = null);
 
 
+public record WorkflowStep(
+    string Id,
+    string Type,
+    IReadOnlyList<string> Input,
+    string Output);
+
+public record WorkflowDefinition(
+    string WorkflowId,
+    int Version,
+    IReadOnlyList<WorkflowStep> Steps);
+
 public class BillingSettings
 {
     public int BatchSize { get; set; } = 100;

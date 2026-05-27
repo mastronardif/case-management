@@ -9,25 +9,35 @@ using System.Text.Json;
 
 var jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
-var caseNumberOption  = new Option<string?>("--case-number",  "Case number to process");
-var sessionNumberOption = new Option<int?> ("--session-number", "Session number within the case");
-var auditFileOption   = new Option<string?>("--audit-file",   "Path to a run file (JSON with sessionDoc / projector sections)");
-var actionOption      = new Option<string?>("--action",       "Which section to run: 'billingProcess' or 'projectorProcess'");
+var caseNumberOption    = new Option<string?>("--case-number",    "Case number to process");
+var sessionNumberOption = new Option<int?>  ("--session-number", "Session number within the case");
+var auditFileOption     = new Option<string?>("--audit-file",    "Path to a run file (JSON with sessionDoc / projector sections)");
+var actionOption        = new Option<string?>("--action",        "Which section to run: 'billingProcess' or 'projectorProcess'");
+var workflowDocIdOption = new Option<int?>  ("--workflow",       "DocumentId of a workflow definition to execute");
 
 var rootCommand = new RootCommand("CaseManagement session billing resolver")
 {
     caseNumberOption,
     sessionNumberOption,
     auditFileOption,
-    actionOption
+    actionOption,
+    workflowDocIdOption
 };
 
-BillingRunOptions? runOptions    = null;
-RunInput?          selectedInput  = null;
-string?            auditOutputDir = null;
+BillingRunOptions? runOptions           = null;
+RunInput?          selectedInput        = null;
+string?            auditOutputDir       = null;
+int?               selectedWorkflowDocId = null;
 
-rootCommand.SetHandler((caseNumber, sessionNumber, auditFile, action) =>
+rootCommand.SetHandler((caseNumber, sessionNumber, auditFile, action, workflowDocId) =>
 {
+    if (workflowDocId is not null)
+    {
+        selectedWorkflowDocId = workflowDocId;
+        runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
+        return;
+    }
+
     if (auditFile is not null)
     {
         var json = File.ReadAllText(auditFile);
@@ -56,7 +66,7 @@ rootCommand.SetHandler((caseNumber, sessionNumber, auditFile, action) =>
         : BillingRunMode.Loop;
 
     runOptions = new BillingRunOptions(mode, caseNumber, sessionNumber);
-}, caseNumberOption, sessionNumberOption, auditFileOption, actionOption);
+}, caseNumberOption, sessionNumberOption, auditFileOption, actionOption, workflowDocIdOption);
 
 await rootCommand.InvokeAsync(args);
 
@@ -70,12 +80,22 @@ builder.Services.AddSingleton<BillingProcessor>();
 builder.Services.AddSingleton<IBillingCalculator, BillingCalculator>();
 builder.Services.AddSingleton<ICaseManagementRepository, SqlCaseManagementRepository>();
 builder.Services.AddSingleton<ProjectProcessor>();
+builder.Services.AddSingleton<IWorkflowStep, ProjectionStep>();
+builder.Services.AddSingleton<IWorkflowStep, BillingRuleStep>();
+builder.Services.AddSingleton<WorkflowEngine>();
 
 var host = builder.Build();
 
 Log.Information("Action: {Action} | RunId: {RunId}",
     selectedInput?.RunAction ?? "loop",
     selectedInput?.RunId     ?? "-");
+
+if (selectedWorkflowDocId is not null)
+{
+    var engine = host.Services.GetRequiredService<WorkflowEngine>();
+    await engine.RunAsync(selectedWorkflowDocId.Value, CancellationToken.None);
+    return;
+}
 
 if (selectedInput?.RunAction == "projectorProcess")
 {

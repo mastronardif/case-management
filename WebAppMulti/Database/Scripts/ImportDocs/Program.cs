@@ -109,105 +109,36 @@ class Program
 
             try
             {
-                using var cmd = new SqlCommand(@"
-INSERT INTO [cases].[Document]
-(
-    VersionId,
-    CaseNumber,
-    DocumentType,
-    Title,
-    FileName,
-    ContentType,
-    FileData,
-    CreatedDate,
-    CreatedBy,
-    IsActive
-)
-VALUES
-(
-    @VersionId,
-    @CaseNumber,
-    @DocumentType,
-    @Title,
-    @FileName,
-    @ContentType,
-    @FileData,
-    SYSUTCDATETIME(),
-    @CreatedBy,
-    1
-)", conn, transaction);
+                using var cmd = new SqlCommand("[cases].[usp_Document_Save]", conn, transaction)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-                cmd.Parameters
-                    .Add(
-                        "@VersionId",
-                        SqlDbType.UniqueIdentifier
-                    )
-                    .Value = Guid.NewGuid();
+                cmd.Parameters.Add("@CaseNumber",   SqlDbType.NVarChar,   50).Value  = DbValue(row.CaseNumber);
+                cmd.Parameters.Add("@DocumentType", SqlDbType.VarChar,    50).Value  = DbValue(row.DocumentType);
+                cmd.Parameters.Add("@Title",        SqlDbType.NVarChar,  200).Value  = DbValue(row.Title);
+                cmd.Parameters.Add("@FileName",     SqlDbType.NVarChar,  255).Value  = Path.GetFileName(row.FilePath);
+                cmd.Parameters.Add("@ContentType",  SqlDbType.VarChar,   100).Value  = DbValue(row.ContentType);
+                cmd.Parameters.Add("@FileData",     SqlDbType.VarBinary,  -1).Value  = fileBytes;
+                cmd.Parameters.Add("@CreatedBy",    SqlDbType.NVarChar,  100).Value  = "ImportDocs";
 
-                cmd.Parameters
-                    .Add(
-                        "@CaseNumber",
-                        SqlDbType.NVarChar,
-                        50
-                    )
-                    .Value = DbValue(row.CaseNumber);
-
-                cmd.Parameters
-                    .Add(
-                        "@DocumentType",
-                        SqlDbType.VarChar,
-                        50
-                    )
-                    .Value = DbValue(row.DocumentType);
-
-                cmd.Parameters
-                    .Add(
-                        "@Title",
-                        SqlDbType.NVarChar,
-                        200
-                    )
-                    .Value = DbValue(row.Title);
-
-                cmd.Parameters
-                    .Add(
-                        "@FileName",
-                        SqlDbType.NVarChar,
-                        255
-                    )
-                    .Value = Path.GetFileName(row.FilePath);
-
-                cmd.Parameters
-                    .Add(
-                        "@ContentType",
-                        SqlDbType.VarChar,
-                        100
-                    )
-                    .Value = DbValue(row.ContentType);
-
-                cmd.Parameters
-                    .Add(
-                        "@FileData",
-                        SqlDbType.VarBinary,
-                        -1
-                    )
-                    .Value = fileBytes;
-
-                cmd.Parameters
-                    .Add(
-                        "@CreatedBy",
-                        SqlDbType.NVarChar,
-                        100
-                    )
-                    .Value = "ImportDocs";
+                var docIdParam = new SqlParameter("@DocumentId", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                cmd.Parameters.Add(docIdParam);
 
                 cmd.ExecuteNonQuery();
+
+                var documentId = (int)docIdParam.Value;
 
                 transaction.Commit();
 
                 Log.Information(
-                    "Imported {File} for CaseNumber {CaseNumber}",
+                    "Imported {File} for CaseNumber {CaseNumber} → DocumentId {DocumentId}",
                     row.FilePath,
-                    row.CaseNumber
+                    row.CaseNumber,
+                    documentId
                 );
             }
             catch (Exception ex)
