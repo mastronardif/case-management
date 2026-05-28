@@ -8,12 +8,16 @@ public class WorkflowEngine(
     ICaseManagementRepository repository,
     ILogger<WorkflowEngine> logger)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+    private static readonly JsonSerializerOptions JsonOptions     = new() { PropertyNameCaseInsensitive = true };
+    private static readonly JsonSerializerOptions ManifestOptions = new() { WriteIndented = true, PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-    private readonly Dictionary<string, IWorkflowStep> _steps = steps.ToDictionary(s => s.StepType);
+    private readonly Dictionary<string, IWorkflowStep> _steps = steps.ToDictionary(s => s.Operator);
 
-    public async Task<int[]> RunAsync(int workflowDocId, CancellationToken ct)
+    public async Task<int[][]> RunAsync(int workflowDocId, CancellationToken ct)
     {
+        var runId     = Guid.NewGuid().ToString();
+        var startedAt = DateTime.UtcNow;
+
         var workflowDoc = await repository.GetDocumentAsync(new DocumentContext(DocumentId: workflowDocId), ct)
             ?? throw new InvalidOperationException($"Workflow doc {workflowDocId} not found");
 
@@ -23,38 +27,70 @@ public class WorkflowEngine(
         if (workflow.Steps is null || workflow.Steps.Count == 0)
             throw new InvalidOperationException($"Doc {workflowDocId} (type: {workflowDoc.DocumentType}) is not a workflow — no steps found. Import the workflow JSON first to get its DocumentId.");
 
-        logger.LogInformation("Workflow {WorkflowId} v{Version} started. Steps: {StepCount}",
-            workflow.WorkflowId, workflow.Version, workflow.Steps.Count);
+        logger.LogInformation("Workflow {WorkflowId} v{Version} started. RunId: {RunId}, Steps: {StepCount}",
+            workflow.WorkflowId, workflow.Version, runId, workflow.Steps.Count);
 
-        var stepOutputs = new int[workflow.Steps.Count];
+        var stepOutputs = new int[workflow.Steps.Count][];
+        var stepResults = new List<WorkflowStepResult>();
 
         for (int i = 0; i < workflow.Steps.Count; i++)
         {
             var step = workflow.Steps[i];
 
-            if (!_steps.TryGetValue(step.Type, out var handler))
-                throw new InvalidOperationException($"No handler registered for step type '{step.Type}'");
+            if (!_steps.TryGetValue(step.Operator, out var handler))
+                throw new InvalidOperationException($"No handler registered for operator '{step.Operator}'");
 
             var inputDocIds = step.Input
                 .Select(token => ResolveInput(token, stepOutputs, i))
                 .ToArray();
 
-            logger.LogInformation("Step [{Index}] {Id} ({Type}) inputs: [{Inputs}]",
-                i + 1, step.Id, step.Type, string.Join(", ", inputDocIds));
+            logger.LogInformation("Step [{Index}] {Id} ({Operator}) inputs: [{Inputs}]",
+                i + 1, step.Id, step.Operator, string.Join(", ", inputDocIds));
 
-            stepOutputs[i] = await handler.ExecuteAsync(inputDocIds, ct);
+            stepOutputs[i] = await handler.ExecuteAsync(inputDocIds, runId, ct);
 
-            logger.LogInformation("Step [{Index}] {Id} complete. OutputDocId: {DocId}",
-                i + 1, step.Id, stepOutputs[i]);
+            logger.LogInformation("Step [{Index}] {Id} complete. Outputs: [{DocIds}]",
+                i + 1, step.Id, string.Join(", ", stepOutputs[i]));
+
+            stepResults.Add(new WorkflowStepResult(
+                Id:              step.Id,
+                Operator:        step.Operator,
+                InputTokens:     step.Input,
+                OutputNames:     step.Output,
+                ResolvedInputs:  inputDocIds,
+                ResolvedOutputs: stepOutputs[i]));
         }
 
-        logger.LogInformation("Workflow {WorkflowId} complete. Outputs: [{Outputs}]",
-            workflow.WorkflowId, string.Join(", ", stepOutputs));
+        var completedAt = DateTime.UtcNow;
+
+        logger.LogInformation("Workflow {WorkflowId} complete. RunId: {RunId}, Outputs: [{Outputs}]",
+            workflow.WorkflowId, runId, string.Join(" | ", stepOutputs.Select(s => string.Join(", ", s))));
+
+        var manifest = new WorkflowRunManifest(
+            RunId:        runId,
+            WorkflowDocId: workflowDocId,
+            WorkflowId:   workflow.WorkflowId,
+            Version:      workflow.Version,
+            StartedAt:    startedAt,
+            CompletedAt:  completedAt,
+            Steps:        stepResults);
+
+        var manifestJson = JsonSerializer.Serialize(manifest, ManifestOptions);
+        var manifestDocId = await repository.SaveDocumentAsync(
+            new DocumentContext(),
+            manifestJson,
+            "workflowRun",
+            $"{runId}.workflowRun.json",
+            "application/json",
+            ct);
+
+        logger.LogInformation("Run manifest saved. DocId: {DocId}, RunId: {RunId}", manifestDocId, runId);
 
         return stepOutputs;
     }
 
-    private static int ResolveInput(string token, int[] stepOutputs, int currentStepIndex)
+    // D1 → primary output (index 0) of step 1. Literal number → doc ID as-is.
+    private static int ResolveInput(string token, int[][] stepOutputs, int currentStepIndex)
     {
         var key = token.Split(' ')[0];
 
@@ -63,7 +99,7 @@ public class WorkflowEngine(
             var stepIndex = int.Parse(key[1..]) - 1;
             if (stepIndex >= currentStepIndex)
                 throw new InvalidOperationException($"Step reference '{key}' refers to a step that hasn't completed yet");
-            return stepOutputs[stepIndex];
+            return stepOutputs[stepIndex][0];
         }
 
         return int.Parse(key);

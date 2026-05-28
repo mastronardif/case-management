@@ -24,3 +24,6 @@ Billing Projection
 Billing Rules
     ↓
 Invoice
+
+---------
+>dotnet run -- --workflow 43 --action projectorProcess

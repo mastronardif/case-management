@@ -82,7 +82,7 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         };
     }
 
-    public async Task<int> SaveDocumentAsync(DocumentContext context, string content, string documentType, string fileName, CancellationToken ct)
+    public async Task<int> SaveDocumentAsync(DocumentContext context, string content, string documentType, string fileName, string contentType, CancellationToken ct)
     {
         _logger.LogInformation("Saving document. Type: {DocumentType}, CaseId: {CaseId}, SessionId: {SessionId}",
             documentType, context.CaseId, context.SessionId);
@@ -99,10 +99,10 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         cmd.Parameters.AddWithValue("@SessionId",    (object?)context.SessionId   ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@WorkbookQId",  (object?)context.WorkbookQId ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@CaseNumber",   DBNull.Value);
-        cmd.Parameters.AddWithValue("@DocumentType", documentType);
-        cmd.Parameters.AddWithValue("@Title",        (object?)fileName            ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@DocumentType", "Other");
+        cmd.Parameters.AddWithValue("@Title",        documentType);
         cmd.Parameters.AddWithValue("@FileName",     (object?)fileName            ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("@ContentType",  "application/json");
+        cmd.Parameters.AddWithValue("@ContentType",  contentType);
         cmd.Parameters.AddWithValue("@FileData",     System.Text.Encoding.UTF8.GetBytes(content));
         cmd.Parameters.AddWithValue("@CreatedBy",    "SessionBillResolvers.V2");
 

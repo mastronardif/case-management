@@ -1,5 +1,6 @@
 using CaseManagement.SessionBillResolvers.V2;
 using CaseManagement.SessionBillResolvers.V2.Engine;
+using CaseManagement.SessionBillResolvers.V2.Engine.Steps;
 using CaseManagement.Shared.Bootstrapping;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -80,7 +81,8 @@ builder.Services.AddSingleton<BillingProcessor>();
 builder.Services.AddSingleton<IBillingCalculator, BillingCalculator>();
 builder.Services.AddSingleton<ICaseManagementRepository, SqlCaseManagementRepository>();
 builder.Services.AddSingleton<ProjectProcessor>();
-builder.Services.AddSingleton<IWorkflowStep, ProjectionStep>();
+builder.Services.AddSingleton<IWorkflowStep, ProjectorComparerStep>();
+builder.Services.AddSingleton<IWorkflowStep, ProjectorStep>();
 builder.Services.AddSingleton<IWorkflowStep, BillingRuleStep>();
 builder.Services.AddSingleton<WorkflowEngine>();
 

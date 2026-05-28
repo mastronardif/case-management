@@ -62,4 +62,6 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties database_4schema_4schema_1json__JsonSchema="https://acp-protocol.dev/schemas/v1/cache.schema.json" /></VisualStudio></ProjectExtensions>
+
 </Project>

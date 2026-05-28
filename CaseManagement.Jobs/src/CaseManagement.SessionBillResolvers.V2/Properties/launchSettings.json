@@ -2,7 +2,7 @@
   "profiles": {
     "CaseManagement.SessionBillResolvers.V2": {
       "commandName": "Project",
-      "commandLineArgs": " --audit-file C:\\temp\\projectionaudit.json --action billingProcess"
+      "commandLineArgs": "--workflow 43 \r\n--action projectorProcess"
     }
   }
 }

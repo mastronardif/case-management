@@ -30,14 +30,31 @@ public record DocumentContext(
 
 public record WorkflowStep(
     string Id,
-    string Type,
+    string Operator,
     IReadOnlyList<string> Input,
-    string Output);
+    IReadOnlyList<string> Output);
 
 public record WorkflowDefinition(
     string WorkflowId,
     int Version,
     IReadOnlyList<WorkflowStep> Steps);
+
+public record WorkflowStepResult(
+    string Id,
+    string Operator,
+    IReadOnlyList<string> InputTokens,
+    IReadOnlyList<string> OutputNames,
+    int[] ResolvedInputs,
+    int[] ResolvedOutputs);
+
+public record WorkflowRunManifest(
+    string RunId,
+    int WorkflowDocId,
+    string WorkflowId,
+    int Version,
+    DateTime StartedAt,
+    DateTime CompletedAt,
+    IReadOnlyList<WorkflowStepResult> Steps);
 
 public class BillingSettings
 {

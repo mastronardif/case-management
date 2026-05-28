@@ -1,13 +1,13 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-namespace CaseManagement.SessionBillResolvers.V2.Engine;
+namespace CaseManagement.SessionBillResolvers.V2.Engine.Steps;
 
-public class ProjectionStep(ICaseManagementRepository repository, ILogger<ProjectionStep> logger) : IWorkflowStep
+public class ProjectorStep(ICaseManagementRepository repository, ILogger<ProjectorStep> logger) : IWorkflowStep
 {
-    public string StepType => "projection";
+    public string Operator => "projector";
 
-    public async Task<int> ExecuteAsync(int[] inputDocIds, CancellationToken ct)
+    public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, CancellationToken ct)
     {
         var sessionDoc = await repository.GetDocumentAsync(new DocumentContext(DocumentId: inputDocIds[0]), ct)
             ?? throw new InvalidOperationException($"Session doc {inputDocIds[0]} not found");
@@ -19,9 +19,9 @@ public class ProjectionStep(ICaseManagementRepository repository, ILogger<Projec
         var projectionJson = projection.ToJsonString(new JsonSerializerOptions { WriteIndented = true });
 
         var context = new DocumentContext(CaseId: sessionDoc.CaseId, SessionId: sessionDoc.SessionId);
-        var docId = await repository.SaveDocumentAsync(context, projectionJson, "billingProjection", "billingProjection.json", ct);
+        var docId = await repository.SaveDocumentAsync(context, projectionJson, "billingProjection", "billingProjection.json", "application/json", ct);
 
-        logger.LogInformation("ProjectionStep complete. OutputDocId: {DocId}", docId);
-        return docId;
+        logger.LogInformation("Projector complete. OutputDocId: {DocId}", docId);
+        return new[] { docId };
     }
 }
