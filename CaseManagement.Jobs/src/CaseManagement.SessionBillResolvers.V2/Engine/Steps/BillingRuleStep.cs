@@ -14,8 +14,8 @@ public class BillingRuleStep(ICaseManagementRepository repository, ILogger<Billi
         var billingRuleDoc = await repository.GetDocumentAsync(new DocumentContext(DocumentId: inputDocIds[1]), ct)
             ?? throw new InvalidOperationException($"Billing rule doc {inputDocIds[1]} not found");
 
-        // TODO: apply billingRule to projection to produce invoice
-        var invoiceJson = projectionDoc.Content;
+        var evaluation  = BillingRuleEvaluator.Evaluate(projectionDoc.Content, billingRuleDoc.Content);
+        var invoiceJson = evaluation.Invoice.ToJsonString(new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
 
         var context = new DocumentContext(CaseId: projectionDoc.CaseId, SessionId: projectionDoc.SessionId);
         var docId = await repository.SaveDocumentAsync(context, invoiceJson, "billingResult", "billingResult.json", "application/json", ct);

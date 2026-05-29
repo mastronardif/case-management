@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\mastronardif\\\\source\\\\repos\\\\CaseMangement\\\\CaseManagement.Jobs\\\\src\\\\CaseManagement.SessionBillResolvers.V2\" -Recurse -Filter \"*.cs\")",
+      "Bash(Select-Object -ExpandProperty FullName)"
+    ]
+  }
+}
