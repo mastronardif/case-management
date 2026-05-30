@@ -10,7 +10,7 @@ export default function CasePage() {
   const caseData = state?.caseData;
   const { caseId } = useParams();
   const id = caseId ?? "new";
-  const pdfUrl = `/api/corqs/getDocumentByContext?caseId=${id}&documentType=IntakeForm`;
+  const pdfUrl = `/api/getDocument?caseId=${id}&documentType=IntakeForm`;
   // /api/corqs/getDocument?documentId=4
 
   const greyButtonClass =

@@ -133,16 +133,25 @@
       ]
     },
     {
-      "name": "getDocumentByContext",
+      "name": "getDocument",
       "type": "get",
-      "route": "/api/corqs/getDocumentByContext",
+      "route": "/api/getDocument",
       "returns": "file",
       "params": {
-        "documentId":   { "type": "int",    "required": false, "source": "query" },
+        "docId":        { "type": "int",    "required": false, "source": "query" },
         "caseId":       { "type": "string", "required": false, "source": "query" },
         "workbookQId":  { "type": "int",    "required": false, "source": "query" },
         "sessionId":    { "type": "int",    "required": false, "source": "query" },
         "documentType": { "type": "string", "required": false, "source": "query" }
+      }
+    },
+    {
+      "name": "wfRunReport",
+      "type": "get",
+      "route": "/api/wfRunReport",
+      "returns": "html",
+      "params": {
+        "docId": { "type": "int", "required": true, "source": "query" }
       }
     },
     {

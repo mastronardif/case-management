@@ -62,6 +62,14 @@ export const QUERY_MAP = [
         action: "initializeWorkbooks",
     },
     {
+        resource: "getDocumentList",
+        action: "getDocumentList",
+        routeParams: ["documentType", "caseId", "isActive"],
+        actions: [
+            { label: "Open", route: "/docviewer/{documentId}" },
+        ],
+    },
+    {
         resource: "getInvoiceDetails",
         action: "getInvoiceDetails",
         routeParams: ["invoiceId"],
@@ -78,9 +86,15 @@ export const QUERY_MAP = [
 
 export const DIRECT_ENDPOINTS = [
     {
-        name: "getDocumentByContext",
-        url: "/api/corqs/getDocumentByContext",
+        name: "getDocument",
+        url: "/api/getDocument",
         returns: "file",
-        params: ["documentId", "caseId", "workbookQId", "sessionId", "documentType"],
+        params: ["docId", "caseId", "workbookQId", "sessionId", "documentType"],
+    },
+    {
+        name: "wfRunReport",
+        url: "/api/wfRunReport",
+        returns: "html",
+        params: ["docId"],
     },
 ];

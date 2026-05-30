@@ -5,12 +5,12 @@ public static class GetDocumentEndpoint
 {
     public static void MapGetDocumentEndpoint(this WebApplication app)
     {
-        app.MapGet("/api/corqs/getDocumentByContext", async (
+        app.MapGet("/api/getDocument", async (
             HttpRequest request,
             IConfiguration config) =>
         {
             var q = request.Query;
-            var documentId   = q["documentId"].FirstOrDefault();
+            var documentId   = q["docId"].FirstOrDefault();
             var caseId       = q["caseId"].FirstOrDefault();
             var workbookQId  = q["workbookQId"].FirstOrDefault();
             var sessionId    = q["sessionId"].FirstOrDefault();

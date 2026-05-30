@@ -1,14 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { apiFetch } from "../services/apiFetch";
-import { DIRECT_ENDPOINTS, QUERY_MAP } from "../utils/corqsreact";
 
 const API_URL = "/api/corqs";
 
 export default function CorqsTestPage() {
+  const [queryMap, setQueryMap] = useState([]);
+  const [directEndpoints, setDirectEndpoints] = useState([]);
+  const [schemaError, setSchemaError] = useState(null);
   const [expanded, setExpanded] = useState(null);
   const [args, setArgs] = useState({});
   const [results, setResults] = useState({});
   const [loading, setLoading] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/react/queryMap.json")
+      .then((r) => r.json())
+      .then((data) => {
+        setQueryMap(data.queryMap ?? []);
+        setDirectEndpoints(data.directEndpoints ?? []);
+      })
+      .catch(() => setSchemaError("Could not load API schema from server."));
+  }, []);
 
   const toggleArgs = (key) =>
     setExpanded((prev) => (prev === key ? null : key));
@@ -77,12 +89,18 @@ export default function CorqsTestPage() {
     <div className="p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-6">CORQS API Test</h1>
 
+      {schemaError && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-300 text-red-700 text-sm rounded">
+          {schemaError}
+        </div>
+      )}
+
       {/* CORQS APIs */}
       <h2 className="text-lg font-semibold mb-2">CORQS APIs</h2>
       <table className="w-full border-collapse border border-gray-300 text-sm mb-8">
         {tableHeader}
         <tbody>
-          {QUERY_MAP.map((entry) => (
+          {queryMap.map((entry) => (
             <>
               <tr key={entry.resource} className="odd:bg-white even:bg-gray-50">
                 <td className="border border-gray-300 px-3 py-2 font-mono">{entry.resource}</td>
@@ -129,7 +147,7 @@ export default function CorqsTestPage() {
       <table className="w-full border-collapse border border-gray-300 text-sm">
         {tableHeader}
         <tbody>
-          {DIRECT_ENDPOINTS.map((entry) => (
+          {directEndpoints.map((entry) => (
             <>
               <tr key={entry.name} className="odd:bg-white even:bg-gray-50">
                 <td className="border border-gray-300 px-3 py-2 font-mono">{entry.name}</td>

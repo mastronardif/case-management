@@ -194,6 +194,7 @@ catch (Exception ex)
 
 app.MapCorqsEndpoints();
 app.MapGetDocumentEndpoint();
+app.MapWfRunReportEndpoint();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
@@ -279,6 +280,30 @@ api.MapGet("/react/queryMap.js", (SchemaService schema) =>
 {
     var generator = new ReactQueryMapGenerator();
     return Results.Content(generator.Generate(schema.Apis), "application/javascript");
+});
+
+api.MapGet("/react/queryMap.json", (SchemaService schema) =>
+{
+    var apis = schema.Apis;
+    var queryMap = apis
+        .Where(a => a.Type != "get")
+        .Select(a => new Dictionary<string, object?>
+        {
+            ["resource"]    = a.Name,
+            ["action"]      = a.Name,
+            ["routeParams"] = a.Params?.Keys.ToArray(),
+            ["actions"]     = a.Actions?.Select(x => new { label = x.Label, route = x.Route }).ToArray()
+        });
+    var directEndpoints = apis
+        .Where(a => a.Type == "get")
+        .Select(a => new Dictionary<string, object?>
+        {
+            ["name"]    = a.Name,
+            ["url"]     = a.Route,
+            ["returns"] = a.Returns ?? "json",
+            ["params"]  = a.Params?.Keys.ToArray()
+        });
+    return Results.Ok(new { queryMap, directEndpoints });
 });
 
 
