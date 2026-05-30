@@ -14,11 +14,11 @@ export default function App() {
     <GlobalProvider>
   
       <Router basename={import.meta.env.BASE_URL}>
-        <div className="flex h-screen w-screen overflow-hidden relative">
+        <div className="flex h-screen w-screen relative">
           <Sidebar open={sidebarOpen} toggle={() => setSidebarOpen(!sidebarOpen)} />
-          <div className="flex flex-col flex-1">
+          <div className="flex flex-col flex-1 overflow-hidden">
             <Header />
-            <main className="flex-1 bg-gray-50 overflow-auto p-4 relative">        
+            <main className="flex-1 min-h-0 bg-gray-50 overflow-auto p-4 relative" style={{ WebkitOverflowScrolling: "touch" }}>        
                            <Spinner /> 
               <Routes>
                 {routes.map((route, i) =>

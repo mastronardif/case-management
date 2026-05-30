@@ -10,10 +10,18 @@ export default function Sidebar({ open, toggle }) {
   };
 
   return (
+    <>
+      {open && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 sm:hidden"
+          onClick={toggle}
+        />
+      )}
     <aside
-      className={`bg-gray-800 text-white transition-all duration-300 flex flex-col h-full ${
-        open ? "w-44" : "w-12"
-      }`}
+      className={`bg-gray-800 text-white transition-all duration-300 flex flex-col h-full
+        fixed inset-y-0 left-0 z-40
+        sm:relative sm:z-auto sm:translate-x-0
+        ${open ? "w-44 translate-x-0" : "-translate-x-full sm:translate-x-0 sm:w-12"}`}
     >
       <button
         onClick={toggle}
@@ -49,5 +57,6 @@ export default function Sidebar({ open, toggle }) {
           ))}
       </nav>
     </aside>
+    </>
   );
 }
