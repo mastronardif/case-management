@@ -9,44 +9,43 @@ CREATE OR ALTER PROCEDURE [cases].[usp_Document_Save]
     @ContentType   VARCHAR(100),
     @FileData      VARBINARY(MAX),
     @CreatedBy     NVARCHAR(100)   = NULL,
-    @DocumentId    INT             OUTPUT
+    @DocumentId    INT             = NULL OUTPUT
 AS
 BEGIN
     SET NOCOUNT ON;
 
-    INSERT INTO [cases].[Document]
-    (
-        VersionId,
-        CaseId,
-        CaseNumber,
-        SessionId,
-        WorkbookQId,
-        DocumentType,
-        Title,
-        FileName,
-        ContentType,
-        FileData,
-        CreatedDate,
-        CreatedBy,
-        IsActive
-    )
-    VALUES
-    (
-        NEWID(),
-        @CaseId,
-        @CaseNumber,
-        @SessionId,
-        @WorkbookQId,
-        @DocumentType,
-        @Title,
-        @FileName,
-        @ContentType,
-        @FileData,
-        SYSUTCDATETIME(),
-        @CreatedBy,
-        1
-    );
+    IF @DocumentId IS NOT NULL
+       AND EXISTS (SELECT 1 FROM [cases].[Document] WHERE DocumentId = @DocumentId AND IsActive = 1)
+    BEGIN
+        UPDATE [cases].[Document]
+        SET
+            VersionId    = NEWID(),
+            DocumentType = @DocumentType,
+            Title        = @Title,
+            FileName     = @FileName,
+            ContentType  = @ContentType,
+            FileData     = @FileData,
+            CreatedDate  = SYSUTCDATETIME(),
+            CreatedBy    = @CreatedBy
+        WHERE DocumentId = @DocumentId;
+        -- @DocumentId is already set; OUTPUT returns it unchanged
+    END
+    ELSE
+    BEGIN
+        INSERT INTO [cases].[Document]
+        (
+            VersionId, CaseId, CaseNumber, SessionId, WorkbookQId,
+            DocumentType, Title, FileName, ContentType, FileData,
+            CreatedDate, CreatedBy, IsActive
+        )
+        VALUES
+        (
+            NEWID(), @CaseId, @CaseNumber, @SessionId, @WorkbookQId,
+            @DocumentType, @Title, @FileName, @ContentType, @FileData,
+            SYSUTCDATETIME(), @CreatedBy, 1
+        );
 
-    SET @DocumentId = SCOPE_IDENTITY();
+        SET @DocumentId = SCOPE_IDENTITY();
+    END
 END
 GO

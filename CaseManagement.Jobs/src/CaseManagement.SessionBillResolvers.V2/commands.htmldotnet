@@ -1,0 +1,25 @@
+Using launch settings from C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Properties\launchSettings.json...
+'run' was not matched. Did you mean one of the following?
+-h
+'--list' was not matched. Did you mean one of the following?
+--list
+'--html' was not matched. Did you mean one of the following?
+--html
+Description:
+  CaseManagement session billing resolver
+
+Usage:
+  CaseManagement.SessionBillResolvers.V2 [options]
+
+Options:
+  --case-number <case-number>        Case number to process
+  --session-number <session-number>  Session number within the case
+  --audit-file <audit-file>          Path to a run file (JSON with sessionDoc / projector sections)
+  --action <action>                  Which section to run: 'billingProcess' or 'projectorProcess'
+  --workflow <workflow>              DocumentId of a workflow definition to execute
+  --list                             Print available commands as JSON and exit
+  --html                             With --list: output as styled HTML instead of JSON
+  --version                          Show version information
+  -?, -h, --help                     Show help and usage information
+
+

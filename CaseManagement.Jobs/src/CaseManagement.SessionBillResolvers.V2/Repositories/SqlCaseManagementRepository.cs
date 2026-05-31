@@ -99,7 +99,7 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         cmd.Parameters.AddWithValue("@SessionId",    (object?)context.SessionId   ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@WorkbookQId",  (object?)context.WorkbookQId ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@CaseNumber",   DBNull.Value);
-        cmd.Parameters.AddWithValue("@DocumentType", "Other");
+        cmd.Parameters.AddWithValue("@DocumentType", documentType);
         cmd.Parameters.AddWithValue("@Title",        documentType);
         cmd.Parameters.AddWithValue("@FileName",     (object?)fileName            ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@ContentType",  contentType);
@@ -108,7 +108,8 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
 
         var docIdParam = new SqlParameter("@DocumentId", SqlDbType.Int)
         {
-            Direction = ParameterDirection.Output
+            Direction = ParameterDirection.InputOutput,
+            Value     = (object?)context.DocumentId ?? DBNull.Value
         };
         cmd.Parameters.Add(docIdParam);
 

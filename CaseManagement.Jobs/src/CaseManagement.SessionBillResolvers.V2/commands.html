@@ -1,0 +1,61 @@
+Using launch settings from C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Properties\launchSettings.json...
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>CaseManagement.Jobs — Commands</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: Consolas, monospace; background: #f0f2f5; margin: 0; padding: 2rem; color: #222; }
+    h1 { font-size: 1.2rem; margin: 0 0 0.25rem; }
+    .meta { font-size: 0.8rem; color: #888; margin-bottom: 2rem; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    th { background: #1e293b; color: #e2e8f0; text-align: left; padding: 0.6rem 1rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    td { padding: 0.65rem 1rem; font-size: 0.82rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+    .id { font-weight: bold; color: #1d4ed8; }
+    .desc { color: #555; }
+    .arg { display: inline-block; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0.15rem 0.45rem; margin: 0.1rem 0.1rem 0.1rem 0; font-size: 0.75rem; }
+    .arg .req { color: #dc2626; font-weight: bold; margin-left: 0.25rem; }
+    .example { color: #6b7280; font-size: 0.75rem; margin-top: 0.35rem; }
+    code { background: #1e293b; color: #86efac; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; }
+  </style>
+</head>
+<body>
+  <h1>CaseManagement.Jobs</h1>
+  <div class="meta">v1.0 &nbsp;·&nbsp; 4 commands</div>
+  <table>
+    <thead>
+      <tr><th>Command</th><th>Description</th><th>Args</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="id">runWorkflow</td>
+        <td class="desc">Execute a named workflow by document ID. Runs all steps and saves results to DB.</td>
+        <td><span class='arg'>--workflow<span class='req'>*</span></span></td>
+        <td><code>dotnet run -- --workflow 84</code></td>
+      </tr>
+      <tr>
+        <td class="id">billingLoop</td>
+        <td class="desc">Run billing for all unbilled sessions.</td>
+        <td><span style='color:#aaa'>—</span></td>
+        <td><code>dotnet run -- (no args)</code></td>
+      </tr>
+      <tr>
+        <td class="id">billingCase</td>
+        <td class="desc">Run billing for one specific case.</td>
+        <td><span class='arg'>--case-number<span class='req'>*</span></span></td>
+        <td><code>dotnet run -- --case-number CASE123</code></td>
+      </tr>
+      <tr>
+        <td class="id">projectorProcess</td>
+        <td class="desc">Run projector transform from an audit file.</td>
+        <td><span class='arg'>--audit-file<span class='req'>*</span></span><span class='arg'>--action<span class='req'>*</span></span></td>
+        <td><code>dotnet run -- --audit-file C:\temp\run.json --action projectorProcess</code></td>
+      </tr>
+    </tbody>
+  </table>
+</body>
+</html>
+

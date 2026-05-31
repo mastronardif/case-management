@@ -2,7 +2,8 @@
   "profiles": {
     "CaseManagement.SessionBillResolvers.V2": {
       "commandName": "Project",
-      "commandLineArgs": "--workflow 43 \r\n--action projectorProcess"
+      "commandLineArgs": "--workflow 43 \r\n--action projectorProcess",
+      "dotnetRunMessages": false
     }
   }
 }
