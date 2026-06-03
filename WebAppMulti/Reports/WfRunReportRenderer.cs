@@ -11,7 +11,7 @@ public static class WfRunReportRenderer
         var manifest      = JsonNode.Parse(manifestJson)!.AsObject();
         var runId         = manifest["runId"]?.GetValue<string>() ?? "?";
         var workflowId    = manifest["workflowId"]?.GetValue<string>() ?? "?";
-        var version       = manifest["version"]?.GetValue<int>() ?? 0;
+        var version       = manifest["version"]?.ToString() ?? "?";
         var workflowDocId = manifest["workflowDocId"]?.GetValue<int>() ?? 0;
         var startedAt     = manifest["startedAt"]?.GetValue<DateTime>() ?? DateTime.MinValue;
         var completedAt   = manifest["completedAt"]?.GetValue<DateTime>() ?? DateTime.MinValue;

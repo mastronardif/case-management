@@ -144,6 +144,7 @@ builder.Services.AddSingleton<ProjectProcessor>();
 builder.Services.AddSingleton<IWorkflowStep, ProjectorComparerStep>();
 builder.Services.AddSingleton<IWorkflowStep, ProjectorStep>();
 builder.Services.AddSingleton<IWorkflowStep, BillingRuleStep>();
+builder.Services.AddSingleton<IWorkflowStep, ZipStep>();
 builder.Services.AddSingleton<WorkflowEngine>();
 
 var host = builder.Build();
@@ -262,8 +263,33 @@ static string RenderManifestHtml(CmdManifest m)
     sb.AppendLine("""
             </tbody>
           </table>
+
+          <h2 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.06em;color:#999;margin:2rem 0 0.75rem;padding-bottom:0.4rem;border-bottom:1px solid #e2e8f0;">Web Tools</h2>
+          <table>
+            <thead>
+              <tr><th>Tool</th><th>Description</th><th>Open</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="id">pipelineCatalog</td>
+                <td class="desc">Browse available pipelines, fill params, and copy the workflow JSON.</td>
+                <td><button class='try-btn' onclick="window.open('/api/pipelineCatalog','_blank')">Open ↗</button></td>
+              </tr>
+              <tr>
+                <td class="id">wfRunReport</td>
+                <td class="desc">View a workflow run report by document ID.</td>
+                <td>
+                  <div class='try-row'>
+                    <input id='inp_wfRunReport' class='try-input' type='text' placeholder='docId' />
+                    <button class='try-btn' data-try='/api/wfRunReport?docId=' data-input='inp_wfRunReport'>Open ↗</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
           <script>
-          document.querySelectorAll('.try-btn').forEach(btn => {
+          document.querySelectorAll('.try-btn[data-try]').forEach(btn => {
             const input = document.getElementById(btn.dataset.input);
             btn.addEventListener('click', () => {
               const val = input.value.trim();

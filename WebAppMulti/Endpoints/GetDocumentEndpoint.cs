@@ -36,10 +36,17 @@ public static class GetDocumentEndpoint
                 return Results.NotFound("No document found for the given context.");
 
             var returnedDocumentId = reader.GetInt32(reader.GetOrdinal("DocumentId"));
+            var fileName           = reader.IsDBNull(reader.GetOrdinal("FileName")) ? null : reader.GetString(reader.GetOrdinal("FileName"));
             var contentType        = reader.GetString(reader.GetOrdinal("ContentType"));
             var fileData           = (byte[])reader.GetValue(reader.GetOrdinal("FileData"));
 
             request.HttpContext.Response.Headers["X-Document-Id"] = returnedDocumentId.ToString();
+
+            if (contentType == "application/zip")
+            {
+                var download = fileName ?? $"doc-{returnedDocumentId}.zip";
+                return Results.File(fileData, contentType, fileDownloadName: download);
+            }
 
             return Results.File(fileData, contentType);
         });

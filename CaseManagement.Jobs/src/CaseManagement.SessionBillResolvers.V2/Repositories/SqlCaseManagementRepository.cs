@@ -82,7 +82,10 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         };
     }
 
-    public async Task<int> SaveDocumentAsync(DocumentContext context, string content, string documentType, string fileName, string contentType, CancellationToken ct)
+    public Task<int> SaveDocumentAsync(DocumentContext context, string content, string documentType, string fileName, string contentType, CancellationToken ct)
+        => SaveDocumentAsync(context, System.Text.Encoding.UTF8.GetBytes(content), documentType, fileName, contentType, ct);
+
+    public async Task<int> SaveDocumentAsync(DocumentContext context, byte[] data, string documentType, string fileName, string contentType, CancellationToken ct)
     {
         _logger.LogInformation("Saving document. Type: {DocumentType}, CaseId: {CaseId}, SessionId: {SessionId}",
             documentType, context.CaseId, context.SessionId);
@@ -103,7 +106,7 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         cmd.Parameters.AddWithValue("@Title",        documentType);
         cmd.Parameters.AddWithValue("@FileName",     (object?)fileName            ?? DBNull.Value);
         cmd.Parameters.AddWithValue("@ContentType",  contentType);
-        cmd.Parameters.AddWithValue("@FileData",     System.Text.Encoding.UTF8.GetBytes(content));
+        cmd.Parameters.AddWithValue("@FileData",     data);
         cmd.Parameters.AddWithValue("@CreatedBy",    "SessionBillResolvers.V2");
 
         var docIdParam = new SqlParameter("@DocumentId", SqlDbType.Int)

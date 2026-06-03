@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace CaseManagement.SessionBillResolvers.V2;
@@ -31,13 +32,14 @@ public record DocumentContext(
 public record WorkflowStep(
     string Id,
     string Operator,
-    IReadOnlyList<string> Input,
+    IReadOnlyList<JsonElement> Input,
     IReadOnlyList<string> Output);
 
 public record WorkflowDefinition(
     string WorkflowId,
-    int Version,
-    IReadOnlyList<WorkflowStep> Steps);
+    string Version,
+    IReadOnlyList<WorkflowStep> Steps,
+    Dictionary<string, JsonElement>? Params = null);
 
 public record WorkflowStepResult(
     string Id,
@@ -51,7 +53,7 @@ public record WorkflowRunManifest(
     string RunId,
     int WorkflowDocId,
     string WorkflowId,
-    int Version,
+    string Version,
     DateTime StartedAt,
     DateTime CompletedAt,
     IReadOnlyList<WorkflowStepResult> Steps);

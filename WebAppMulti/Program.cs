@@ -195,6 +195,7 @@ catch (Exception ex)
 app.MapCorqsEndpoints();
 app.MapGetDocumentEndpoint();
 app.MapWfRunReportEndpoint();
+app.MapPipelineCatalogEndpoint();
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

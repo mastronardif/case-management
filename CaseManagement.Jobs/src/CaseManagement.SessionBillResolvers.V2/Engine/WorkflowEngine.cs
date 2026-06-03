@@ -44,10 +44,11 @@ public class WorkflowEngine(
                 .Select(token => ResolveInput(token, stepOutputs, i))
                 .ToArray();
 
+
             logger.LogInformation("Step [{Index}] {Id} ({Operator}) inputs: [{Inputs}]",
                 i + 1, step.Id, step.Operator, string.Join(", ", inputDocIds));
 
-            stepOutputs[i] = await handler.ExecuteAsync(inputDocIds, runId, ct);
+            stepOutputs[i] = await handler.ExecuteAsync(inputDocIds, runId, workflow.Params, ct);
 
             logger.LogInformation("Step [{Index}] {Id} complete. Outputs: [{DocIds}]",
                 i + 1, step.Id, string.Join(", ", stepOutputs[i]));
@@ -55,7 +56,7 @@ public class WorkflowEngine(
             stepResults.Add(new WorkflowStepResult(
                 Id:              step.Id,
                 Operator:        step.Operator,
-                InputTokens:     step.Input,
+                InputTokens:     step.Input.Select(TokenString).ToArray(),
                 OutputNames:     step.Output,
                 ResolvedInputs:  inputDocIds,
                 ResolvedOutputs: stepOutputs[i]));
@@ -89,10 +90,13 @@ public class WorkflowEngine(
         return stepOutputs;
     }
 
-    // D1 → primary output (index 0) of step 1. Literal number → doc ID as-is.
-    private static int ResolveInput(string token, int[][] stepOutputs, int currentStepIndex)
+    // Integer JSON element → direct docId. String → D1 step-ref or literal int.
+    private static int ResolveInput(System.Text.Json.JsonElement token, int[][] stepOutputs, int currentStepIndex)
     {
-        var key = token.Split(' ')[0];
+        if (token.ValueKind == System.Text.Json.JsonValueKind.Number)
+            return token.GetInt32();
+
+        var key = (token.GetString() ?? "").Split(' ')[0];
 
         if (key.StartsWith("D", StringComparison.OrdinalIgnoreCase))
         {
@@ -104,4 +108,7 @@ public class WorkflowEngine(
 
         return int.Parse(key);
     }
+
+    private static string TokenString(System.Text.Json.JsonElement t) =>
+        t.ValueKind == System.Text.Json.JsonValueKind.Number ? t.GetInt32().ToString() : (t.GetString() ?? "");
 }

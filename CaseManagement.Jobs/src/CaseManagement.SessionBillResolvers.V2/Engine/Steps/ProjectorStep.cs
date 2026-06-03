@@ -7,7 +7,7 @@ public class ProjectorStep(ICaseManagementRepository repository, ILogger<Project
 {
     public string Operator => "projector";
 
-    public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, CancellationToken ct)
+    public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, System.Text.Json.JsonElement>? wfParams, CancellationToken ct)
     {
         var sessionDoc = await repository.GetDocumentAsync(new DocumentContext(DocumentId: inputDocIds[0]), ct)
             ?? throw new InvalidOperationException($"Session doc {inputDocIds[0]} not found");
