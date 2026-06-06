@@ -6,6 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Help;
+using System.CommandLine.Parsing;
 using System.Text.Json;
 
 var jsonOptions     = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -109,7 +112,22 @@ rootCommand.SetHandler((caseNumber, sessionNumber, auditFile, action, workflowDo
     runOptions = new BillingRunOptions(mode, caseNumber, sessionNumber);
 }, caseNumberOption, sessionNumberOption, auditFileOption, actionOption, workflowDocIdOption, listOption, htmlOption);
 
-await rootCommand.InvokeAsync(args);
+await new CommandLineBuilder(rootCommand)
+    .UseDefaults()
+    .UseHelp(ctx =>
+    {
+        ctx.HelpBuilder.CustomizeLayout(
+            _ => HelpBuilder.Default.GetLayout()
+                .Append(hc =>
+                {
+                    hc.Output.WriteLine();
+                    hc.Output.WriteLine("Helpers:");
+                    hc.Output.WriteLine($"  {"http://localhost:5173/api/pipelineCatalog",-54} Pipeline Catalog");
+                    hc.Output.WriteLine($"  {"http://localhost:5173/api/getdocument?docId=106",-54} CaseManagement.Jobs");
+                }));
+    })
+    .Build()
+    .InvokeAsync(args);
 
 if (saveManifestHtml)
 {
@@ -145,6 +163,7 @@ builder.Services.AddSingleton<IWorkflowStep, ProjectorComparerStep>();
 builder.Services.AddSingleton<IWorkflowStep, ProjectorStep>();
 builder.Services.AddSingleton<IWorkflowStep, BillingRuleStep>();
 builder.Services.AddSingleton<IWorkflowStep, ZipStep>();
+builder.Services.AddSingleton<IWorkflowStep, Claim837PStep>();
 builder.Services.AddSingleton<WorkflowEngine>();
 
 var host = builder.Build();

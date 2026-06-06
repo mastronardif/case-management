@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
 namespace CaseManagement.SessionBillResolvers.V2;
@@ -79,6 +80,15 @@ public class Invoice
     public string PatientName { get; set; } = string.Empty;
     public decimal Amount { get; set; }
 }
+
+public record Claim837PData(
+    JsonObject?              Session,
+    JsonObject?              Case,
+    IReadOnlyList<JsonObject> Coverage,
+    IReadOnlyList<JsonObject> Authorization,
+    IReadOnlyList<JsonObject> Diagnoses,
+    IReadOnlyList<JsonObject> Provider,
+    JsonNode?                Definition);
 
 public class BillingResult
 {

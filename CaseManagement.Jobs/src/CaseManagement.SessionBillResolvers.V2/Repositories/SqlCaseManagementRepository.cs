@@ -1,4 +1,6 @@
 using System.Data;
+using System.Text;
+using System.Text.Json.Nodes;
 using CaseManagement.Shared;
 using Dapper;
 using Microsoft.Data.SqlClient;
@@ -120,6 +122,111 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
 
         return (int)docIdParam.Value;
     }
+
+    public async Task<Claim837PData> Get837PDataAsync(int caseId, int sessionId, CancellationToken ct)
+    {
+        _logger.LogInformation("Fetching 837P data. CaseId={CaseId}, SessionId={SessionId}", caseId, sessionId);
+
+        await using var conn = new SqlConnection(_conn.DefaultConnection);
+        await conn.OpenAsync(ct);
+
+        using var cmd = new SqlCommand("[cases].[usp_Get837P]", conn)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+        cmd.Parameters.AddWithValue("@CaseId",    caseId);
+        cmd.Parameters.AddWithValue("@SessionId", sessionId);
+
+        using var r = await cmd.ExecuteReaderAsync(ct);
+
+        var session       = await ReadSingleAsync(r, ct);   // RS1 Session
+        await r.NextResultAsync(ct);
+        var caseRow       = await ReadSingleAsync(r, ct);   // RS2 Case
+        await r.NextResultAsync(ct);
+        var coverage      = await ReadAllAsync(r, ct);      // RS3 InsuranceCoverage + Payer
+        await r.NextResultAsync(ct);
+        var authorization = await ReadAllAsync(r, ct);      // RS4 Authorization
+        await r.NextResultAsync(ct);
+        var diagnoses     = await ReadAllAsync(r, ct);      // RS5 Diagnosis
+        await r.NextResultAsync(ct);
+        var provider      = await ReadAllAsync(r, ct);      // RS6 Provider
+        await r.NextResultAsync(ct);
+
+        // RS7: definition doc — FileData bytes from cases.Document where DocumentId = 174
+        JsonNode? definition = null;
+        if (await r.ReadAsync(ct))
+        {
+            var fdIdx = r.GetOrdinal("FileData");
+            if (!r.IsDBNull(fdIdx))
+            {
+                var bytes = (byte[])r.GetValue(fdIdx);
+                try   { definition = JsonNode.Parse(Encoding.UTF8.GetString(bytes)); }
+                catch (Exception ex) { _logger.LogWarning(ex, "Failed to parse 837P definition FileData"); }
+            }
+        }
+
+        return new Claim837PData(session, caseRow, coverage, authorization, diagnoses, provider, definition);
+    }
+
+    private static async Task<JsonObject?> ReadSingleAsync(SqlDataReader r, CancellationToken ct)
+        => await r.ReadAsync(ct) ? RowToJson(r) : null;
+
+    private static async Task<IReadOnlyList<JsonObject>> ReadAllAsync(SqlDataReader r, CancellationToken ct)
+    {
+        var list = new List<JsonObject>();
+        while (await r.ReadAsync(ct))
+            list.Add(RowToJson(r));
+        return list;
+    }
+
+    private static JsonObject RowToJson(SqlDataReader r)
+    {
+        var obj     = new JsonObject();
+        JsonNode? docNode = null;
+
+        for (int i = 0; i < r.FieldCount; i++)
+        {
+            if (r.IsDBNull(i)) continue;
+            var col = r.GetName(i);
+
+            if (col.Equals("DocumentJson", StringComparison.OrdinalIgnoreCase))
+            {
+                try { docNode = JsonNode.Parse(r.GetString(i)); }
+                catch { /* skip malformed */ }
+                continue;
+            }
+            if (col.Equals("FileData", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var node = ColumnToNode(r.GetValue(i));
+            if (node is not null)
+                obj[ToCamelCase(col)] = node;
+        }
+
+        if (docNode is not null)
+            obj["doc"] = docNode;
+
+        return obj;
+    }
+
+    private static JsonNode? ColumnToNode(object value) => value switch
+    {
+        int i       => JsonValue.Create(i),
+        long l      => JsonValue.Create(l),
+        short s     => JsonValue.Create((int)s),
+        byte b      => JsonValue.Create((int)b),
+        bool bl     => JsonValue.Create(bl),
+        string s    => JsonValue.Create(s),
+        decimal d   => JsonValue.Create(d),
+        double d    => JsonValue.Create(d),
+        float f     => JsonValue.Create((double)f),
+        DateTime dt => JsonValue.Create(dt.ToString("O")),
+        Guid g      => JsonValue.Create(g.ToString()),
+        _           => JsonValue.Create(value.ToString())
+    };
+
+    private static string ToCamelCase(string s) =>
+        s.Length == 0 ? s : char.ToLowerInvariant(s[0]) + s[1..];
 
     public async Task SaveInvoiceAsync(DocumentContext context, string invoiceJson, CancellationToken ct)
     {

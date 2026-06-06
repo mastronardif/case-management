@@ -7,4 +7,5 @@ public interface ICaseManagementRepository
     Task SaveInvoiceAsync(DocumentContext context, string invoiceJson, CancellationToken ct);
     Task<int> SaveDocumentAsync(DocumentContext context, string content, string documentType, string fileName, string contentType, CancellationToken ct);
     Task<int> SaveDocumentAsync(DocumentContext context, byte[] data, string documentType, string fileName, string contentType, CancellationToken ct);
+    Task<Claim837PData> Get837PDataAsync(int caseId, int sessionId, CancellationToken ct);
 }
