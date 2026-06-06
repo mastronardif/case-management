@@ -43,30 +43,27 @@ public class Claim837PStep(ICaseManagementRepository repository, ILogger<Claim83
     {
         var obj = new JsonObject
         {
-            ["runId"]       = runId,
-            ["generatedAt"] = DateTime.UtcNow.ToString("O"),
-            ["caseId"]      = caseId,
-            ["sessionId"]   = sessionId,
+            ["runId"]         = runId,
+            ["generatedAt"]   = DateTime.UtcNow.ToString("O"),
+            ["caseId"]        = caseId,
+            ["sessionId"]     = sessionId,
+            ["session"]       = ToJsonArray(data.Session),
+            ["case"]          = ToJsonArray(data.Case),
+            ["coverage"]      = ToJsonArray(data.Coverage),
+            ["authorization"] = ToJsonArray(data.Authorization),
+            ["diagnoses"]     = ToJsonArray(data.Diagnoses),
+            ["provider"]      = ToJsonArray(data.Provider),
+            ["definition"]    = data.Definition,
         };
-
-        if (data.Session is not null) obj["session"] = data.Session.DeepClone().AsObject();
-        if (data.Case    is not null) obj["case"]    = data.Case.DeepClone().AsObject();
-
-        obj["coverage"]      = CloneArray(data.Coverage);
-        obj["authorization"] = CloneArray(data.Authorization);
-        obj["diagnoses"]     = CloneArray(data.Diagnoses);
-        obj["provider"]      = CloneArray(data.Provider);
-
-        if (data.Definition is not null) obj["definition"] = data.Definition.DeepClone();
 
         return obj;
     }
 
-    private static JsonArray CloneArray(IReadOnlyList<JsonObject> rows)
+    private static JsonArray ToJsonArray(IReadOnlyList<JsonObject> rows)
     {
         var arr = new JsonArray();
         foreach (var row in rows)
-            arr.Add(row.DeepClone());
+            arr.Add(row);
         return arr;
     }
 }

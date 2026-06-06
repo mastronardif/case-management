@@ -82,13 +82,13 @@ public class Invoice
 }
 
 public record Claim837PData(
-    JsonObject?              Session,
-    JsonObject?              Case,
+    IReadOnlyList<JsonObject> Session,
+    IReadOnlyList<JsonObject> Case,
     IReadOnlyList<JsonObject> Coverage,
     IReadOnlyList<JsonObject> Authorization,
     IReadOnlyList<JsonObject> Diagnoses,
     IReadOnlyList<JsonObject> Provider,
-    JsonNode?                Definition);
+    JsonNode?                 Definition);
 
 public class BillingResult
 {

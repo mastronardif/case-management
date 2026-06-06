@@ -139,9 +139,9 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
 
         using var r = await cmd.ExecuteReaderAsync(ct);
 
-        var session       = await ReadSingleAsync(r, ct);   // RS1 Session
+        var session       = await ReadAllAsync(r, ct);      // RS1 Session
         await r.NextResultAsync(ct);
-        var caseRow       = await ReadSingleAsync(r, ct);   // RS2 Case
+        var caseRow       = await ReadAllAsync(r, ct);      // RS2 Case
         await r.NextResultAsync(ct);
         var coverage      = await ReadAllAsync(r, ct);      // RS3 InsuranceCoverage + Payer
         await r.NextResultAsync(ct);
@@ -167,9 +167,6 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
 
         return new Claim837PData(session, caseRow, coverage, authorization, diagnoses, provider, definition);
     }
-
-    private static async Task<JsonObject?> ReadSingleAsync(SqlDataReader r, CancellationToken ct)
-        => await r.ReadAsync(ct) ? RowToJson(r) : null;
 
     private static async Task<IReadOnlyList<JsonObject>> ReadAllAsync(SqlDataReader r, CancellationToken ct)
     {

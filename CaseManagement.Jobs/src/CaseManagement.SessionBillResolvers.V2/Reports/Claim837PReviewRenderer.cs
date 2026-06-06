@@ -15,8 +15,8 @@ public static class Claim837PReviewRenderer
         var sessionId = claim["sessionId"]?.GetValue<int>() ?? 0;
         var genAt     = claim["generatedAt"]?.GetValue<string>() ?? "";
 
-        var session       = claim["session"]?.AsObject();
-        var caseRow       = claim["case"]?.AsObject();
+        var session       = claim["session"]?.AsArray()       ?? [];
+        var caseRow       = claim["case"]?.AsArray()          ?? [];
         var coverage      = claim["coverage"]?.AsArray()      ?? [];
         var authorization = claim["authorization"]?.AsArray() ?? [];
         var diagnoses     = claim["diagnoses"]?.AsArray()     ?? [];
@@ -30,8 +30,8 @@ public static class Claim837PReviewRenderer
 
         var checks = new (string Label, bool Ok, string Note)[]
         {
-            ("Session",            session is not null,       ""),
-            ("Patient / Case",     caseRow is not null,       ""),
+            ("Session",            session.Count > 0,         session.Count > 0 ? $"{session.Count} row(s)" : "missing"),
+            ("Patient / Case",     caseRow.Count > 0,         caseRow.Count > 0 ? $"{caseRow.Count} row(s)" : "missing"),
             ("Coverage",           coverage.Count > 0,       coverage.Count > 0 ? $"{coverage.Count} record(s)" : "missing"),
             ("Authorization",      authorization.Count > 0,  authorization.Count > 0 ? $"{authorization.Count} active" : "no active authorization"),
             ("Diagnoses",          diagnoses.Count > 0,      diagnoses.Count > 0 ? $"{diagnoses.Count} code(s)" : "missing"),
@@ -99,8 +99,8 @@ public static class Claim837PReviewRenderer
         sb.AppendLine("</div>");
 
         sb.AppendLine("<h2>Data</h2>");
-        AppendObjectSection(sb, "Session",         session,       open: true);
-        AppendObjectSection(sb, "Patient / Case",  caseRow,       open: true);
+        AppendArraySection(sb,  "Session",         session,       open: true);
+        AppendArraySection(sb,  "Patient / Case",  caseRow,       open: true);
         AppendArraySection(sb,  "Coverage",        coverage,      open: true);
         AppendArraySection(sb,  "Authorization",   authorization, open: true);
         AppendArraySection(sb,  "Diagnoses",       diagnoses,     open: true);
@@ -109,15 +109,6 @@ public static class Claim837PReviewRenderer
 
         sb.AppendLine("</body></html>");
         return sb.ToString();
-    }
-
-    private static void AppendObjectSection(StringBuilder sb, string label, JsonObject? obj, bool open)
-    {
-        sb.AppendLine($"<details{(open ? " open" : "")}><summary><span class=\"sec-lbl\">{HE(label)}</span></summary>");
-        sb.AppendLine("<div class=\"sec-body\">");
-        if (obj is null) sb.AppendLine("<div class=\"no-data\">No data</div>");
-        else             AppendRow(sb, obj);
-        sb.AppendLine("</div></details>");
     }
 
     private static void AppendArraySection(StringBuilder sb, string label, JsonArray arr, bool open)
