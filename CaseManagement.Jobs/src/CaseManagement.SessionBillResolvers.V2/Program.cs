@@ -273,7 +273,7 @@ static string RenderManifestHtml(CmdManifest m)
               <tr>
                 <td class="id">pipelineCatalog</td>
                 <td class="desc">Browse available pipelines, fill params, and copy the workflow JSON.</td>
-                <td><button class='try-btn' onclick="window.open('/api/pipelineCatalog','_blank')">Open ↗</button></td>
+                <td><a href='/api/pipelineCatalog' target='_blank' class='try-btn' style='text-decoration:none;display:inline-block'>Open ↗</a></td>
               </tr>
               <tr>
                 <td class="id">wfRunReport</td>
