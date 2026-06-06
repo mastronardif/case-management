@@ -44,19 +44,21 @@ export default function DocumentViewerPage() {
   }, [documentId]);
 
   const renderContent = () => {
-    if (loading) return <p className="text-gray-500">Loading...</p>;
-    if (error)   return <p className="text-red-500">{error}</p>;
-    if (!blobUrl) return null;
+    if (error) return <p className="text-red-500">{error}</p>;
 
-    if (mimeType?.startsWith("text/")) {
+    // For HTML serve directly so relative links and scripts work
+    if (!loading && mimeType?.includes("html")) {
       return (
         <iframe
-          src={blobUrl}
+          src={`/api/getDocument?docId=${documentId}`}
           title="Document"
           className="w-full h-full border-0"
         />
       );
     }
+
+    if (loading) return <p className="text-gray-500">Loading...</p>;
+    if (!blobUrl) return null;
 
     if (mimeType?.startsWith("image/")) {
       return (
@@ -68,7 +70,7 @@ export default function DocumentViewerPage() {
       );
     }
 
-    // PDF, HTML, everything else
+    // PDF, zip, everything else — blob works fine
     return (
       <iframe
         src={blobUrl}
