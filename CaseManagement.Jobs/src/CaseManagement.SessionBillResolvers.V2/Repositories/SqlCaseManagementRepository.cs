@@ -151,8 +151,10 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         await r.NextResultAsync(ct);
         var provider      = await ReadAllAsync(r, ct);      // RS6 Provider
         await r.NextResultAsync(ct);
+        var assessment    = await ReadAllAsync(r, ct);      // RS7 Assessment
+        await r.NextResultAsync(ct);
 
-        // RS7: definition doc — FileData bytes from cases.Document where DocumentId = 174
+        // RS8: definition doc — FileData bytes from cases.Document where DocumentId = 174
         JsonNode? definition = null;
         if (await r.ReadAsync(ct))
         {
@@ -165,7 +167,7 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
             }
         }
 
-        return new Claim837PData(session, caseRow, coverage, authorization, diagnoses, provider, definition);
+        return new Claim837PData(session, caseRow, coverage, authorization, diagnoses, provider, assessment, definition);
     }
 
     private static async Task<IReadOnlyList<JsonObject>> ReadAllAsync(SqlDataReader r, CancellationToken ct)

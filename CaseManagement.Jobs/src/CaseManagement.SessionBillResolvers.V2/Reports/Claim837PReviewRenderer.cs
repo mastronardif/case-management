@@ -21,6 +21,7 @@ public static class Claim837PReviewRenderer
         var authorization = claim["authorization"]?.AsArray() ?? [];
         var diagnoses     = claim["diagnoses"]?.AsArray()     ?? [];
         var provider      = claim["provider"]?.AsArray()      ?? [];
+        var assessment    = claim["assessment"]?.AsArray()   ?? [];
         var definition    = claim["definition"];
 
         var hasPrimary = diagnoses.Any(n =>
@@ -37,6 +38,7 @@ public static class Claim837PReviewRenderer
             ("Diagnoses",          diagnoses.Count > 0,      diagnoses.Count > 0 ? $"{diagnoses.Count} code(s)" : "missing"),
             ("Primary Diagnosis",  hasPrimary,               ""),
             ("Billing Provider",   provider.Count > 0,       provider.Count > 0 ? $"{provider.Count} record(s)" : "missing"),
+            ("Assessment",         assessment.Count > 0,     assessment.Count > 0 ? $"{assessment.Count} record(s)" : "missing"),
             ("837P Definition",    definition is not null,   ""),
         };
 
@@ -105,6 +107,7 @@ public static class Claim837PReviewRenderer
         AppendArraySection(sb,  "Authorization",   authorization, open: true);
         AppendArraySection(sb,  "Diagnoses",       diagnoses,     open: true);
         AppendArraySection(sb,  "Provider",        provider,      open: true);
+        AppendArraySection(sb,  "Assessment",      assessment,    open: true);
         AppendNodeSection(sb,   "837P Definition", definition,    open: false);
 
         sb.AppendLine("</body></html>");

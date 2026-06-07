@@ -88,6 +88,7 @@ public record Claim837PData(
     IReadOnlyList<JsonObject> Authorization,
     IReadOnlyList<JsonObject> Diagnoses,
     IReadOnlyList<JsonObject> Provider,
+    IReadOnlyList<JsonObject> Assessment,
     JsonNode?                 Definition);
 
 public class BillingResult

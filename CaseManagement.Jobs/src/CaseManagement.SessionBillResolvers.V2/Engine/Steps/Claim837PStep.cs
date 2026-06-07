@@ -53,6 +53,7 @@ public class Claim837PStep(ICaseManagementRepository repository, ILogger<Claim83
             ["authorization"] = ToJsonArray(data.Authorization),
             ["diagnoses"]     = ToJsonArray(data.Diagnoses),
             ["provider"]      = ToJsonArray(data.Provider),
+            ["assessment"]    = ToJsonArray(data.Assessment),
             ["definition"]    = data.Definition,
         };
 
