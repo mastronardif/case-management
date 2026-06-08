@@ -227,6 +227,30 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
     private static string ToCamelCase(string s) =>
         s.Length == 0 ? s : char.ToLowerInvariant(s[0]) + s[1..];
 
+    public async Task ResolveDocAsync(int docId, string spName, int caseId, int? sessionId, int? srcDocId, CancellationToken ct)
+    {
+        if (!System.Text.RegularExpressions.Regex.IsMatch(spName, @"^[A-Za-z0-9_]+$"))
+            throw new InvalidOperationException($"Invalid SP name '{spName}' — only letters, digits, and underscores allowed.");
+
+        _logger.LogInformation("Calling {SpName}. DocId={DocId} CaseId={CaseId} SessionId={SessionId} SrcDocId={SrcDocId}",
+            spName, docId, caseId, sessionId, srcDocId);
+
+        await using var conn = new SqlConnection(_conn.DefaultConnection);
+        await conn.OpenAsync(ct);
+
+        using var cmd = new SqlCommand($"[cases].[{spName}]", conn)
+        {
+            CommandType = System.Data.CommandType.StoredProcedure
+        };
+        cmd.Parameters.AddWithValue("@DocId",     docId);
+        cmd.Parameters.AddWithValue("@CaseId",    caseId);
+        cmd.Parameters.AddWithValue("@SessionId", (object?)sessionId ?? DBNull.Value);
+        if (srcDocId is not null)
+            cmd.Parameters.AddWithValue("@SrcDocId", srcDocId.Value);
+
+        await cmd.ExecuteNonQueryAsync(ct);
+    }
+
     public async Task SaveInvoiceAsync(DocumentContext context, string invoiceJson, CancellationToken ct)
     {
         _logger.LogInformation("Saving invoice");

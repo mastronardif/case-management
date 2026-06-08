@@ -38,7 +38,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
 
         var result     = Project(sessionDoc.Content, ruleDoc.Content);
         var auditJson  = RenderAuditJson(input, result);
-        var reviewHtml = RenderReviewHtml(sessionDoc.Content, ruleDoc.Content, result);
+        var reviewHtml = RenderReviewHtml(sessionDoc.Content, ruleDoc.Content, result, sessionDoc.DocumentId);
 
         var auditPath  = Path.Combine(outputDirectory, $"{input.RunId}.audit.json");
         var reviewPath = Path.Combine(outputDirectory, $"{input.RunId}.review.html");
@@ -101,7 +101,10 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
 
     // Produces a 4-column HTML review doc: Field | Extracted Value | Rule | Corrected Value.
     // Mapped (rule-referenced) fields are highlighted; validation failures appear in a summary banner.
-    public string RenderReviewHtml(string sessionJson, string ruleJson, ProjectionResult result)
+    // sourceDocId is embedded in the page so the Save button knows which doc to update.
+    // spName/resolveParamCaseId: when present, a "Save & Resolve" button calls the SP directly from the page.
+    public string RenderReviewHtml(string sessionJson, string ruleJson, ProjectionResult result,
+        int sourceDocId = 0, string? spName = null, int? resolveParamCaseId = null, int? resolveParamSessionId = null)
     {
         var session = JsonNode.Parse(sessionJson)!.AsObject();
 
@@ -112,7 +115,13 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
 
         var sb = new StringBuilder();
         AppendHeader(sb);
-        sb.AppendLine("<h1>Session Projection Review</h1>");
+        sb.AppendLine("<h1>--- Projection Review</h1>");
+        sb.AppendLine("<div class=\"save-bar\">");
+        sb.AppendLine("  <button id=\"saveBtn\" class=\"save-btn\">Save Corrected JSON</button>");
+        if (spName is not null && resolveParamCaseId is not null)
+            sb.AppendLine("  <button id=\"resolveBtn\" class=\"save-btn resolve-btn\">Save &amp; Resolve</button>");
+        sb.AppendLine("  <span id=\"saveStatus\"></span>");
+        sb.AppendLine("</div>");
 
         if (result.ValidationIssues.Count > 0)
         {
@@ -138,7 +147,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         foreach (var p in session.Where(p => !IsLeaf(p.Value)))
             RenderNode(sb, p.Key, p.Value!, p.Key, ruleMap);
 
-        AppendFooter(sb);
+        AppendFooter(sb, sourceDocId, spName, resolveParamCaseId, resolveParamSessionId);
         return sb.ToString();
     }
 
@@ -210,7 +219,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         sb.AppendLine($"  <td>{E(field)}</td>");
         sb.AppendLine($"  <td>{displayValue}</td>");
         sb.AppendLine($"  <td>{ruleCell}</td>");
-        sb.AppendLine($"  <td><input type=\"text\" value=\"{displayValue}\"></td>");
+        sb.AppendLine($"  <td><input type=\"text\" data-path=\"{E(path)}\" value=\"{displayValue}\"></td>");
         sb.AppendLine("</tr>");
     }
 
@@ -231,13 +240,24 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
 
     private static string E(string? s) => WebUtility.HtmlEncode(s ?? "");
 
-    private static JsonNode? GetValueByPath(JsonObject source, string path)
+    private static JsonNode? GetValueByPath(JsonNode? current, string path)
     {
-        JsonNode? current = source;
-        foreach (var part in path.Split('.'))
+        foreach (var segment in path.Split('.'))
         {
-            current = current?[part];
-            if (current == null) return null;
+            if (current is null) return null;
+
+            var b = segment.IndexOf('[');
+            if (b < 0)
+            {
+                current = current[segment];
+            }
+            else
+            {
+                var key = segment[..b];
+                var idx = int.Parse(segment[(b + 1)..segment.IndexOf(']')]);
+                var arr = string.IsNullOrEmpty(key) ? current : current[key];
+                current = arr?[idx];
+            }
         }
         return current;
     }
@@ -250,7 +270,15 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
             <title>Projection Review</title>
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
-                h1 { margin-bottom: 30px; }
+                h1 { margin-bottom: 16px; }
+                .save-bar { position: sticky; top: 0; background: #fff; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.12); z-index: 100; }
+                .save-btn { background: #1d4ed8; color: #fff; border: none; border-radius: 6px; padding: 8px 20px; font-size: 0.88rem; cursor: pointer; font-family: inherit; }
+                .save-btn:hover { background: #1e40af; }
+                .save-btn:disabled { background: #93c5fd; cursor: default; }
+                .resolve-btn { background: #16a34a; }
+                .resolve-btn:hover { background: #15803d; }
+                .status-ok  { color: #16a34a; font-size: 0.85rem; }
+                .status-err { color: #dc2626; font-size: 0.85rem; }
                 .section { background: white; border-radius: 8px; padding: 16px; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
                 .section h2 { margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
                 .nested { margin-left: 20px; margin-top: 10px; }
@@ -268,5 +296,101 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         <body>
         """);
 
-    private static void AppendFooter(StringBuilder sb) => sb.AppendLine("</body></html>");
+    private static void AppendFooter(StringBuilder sb, int sourceDocId,
+        string? spName = null, int? caseId = null, int? sessionId = null)
+    {
+        var jsSpName    = spName    is not null ? "'" + spName + "'"        : "null";
+        var jsCaseId    = caseId    is not null ? caseId.Value.ToString()   : "null";
+        var jsSessionId = sessionId is not null ? sessionId.Value.ToString(): "null";
+
+        sb.AppendLine($$"""
+            <script>
+            const SOURCE_DOC_ID = {{sourceDocId}};
+            const SP_NAME    = {{jsSpName}};
+            const CASE_ID    = {{jsCaseId}};
+            const SESSION_ID = {{jsSessionId}};
+
+            function parsePath(path) {
+              return path.replace(/\[(\d+)\]/g, '.$1').split('.').map(p => /^\d+$/.test(p) ? +p : p);
+            }
+
+            function setByPath(obj, path, value) {
+              const parts = parsePath(path);
+              let cur = obj;
+              for (let i = 0; i < parts.length - 1; i++) {
+                const part = parts[i];
+                const next = parts[i + 1];
+                if (cur[part] == null) cur[part] = typeof next === 'number' ? [] : {};
+                cur = cur[part];
+              }
+              cur[parts[parts.length - 1]] = value;
+            }
+
+            function collectCorrected() {
+              const corrected = {};
+              document.querySelectorAll('input[data-path]').forEach(input => {
+                setByPath(corrected, input.dataset.path, input.value);
+              });
+              return corrected;
+            }
+
+            async function saveJson() {
+              const corrected = collectCorrected();
+              const resp = await fetch('/api/saveDocument', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sourceDocId: SOURCE_DOC_ID, json: JSON.stringify(corrected, null, 2) })
+              });
+              if (!resp.ok) throw new Error(await resp.text());
+              return (await resp.json()).docId;
+            }
+
+            const status = document.getElementById('saveStatus');
+
+            document.getElementById('saveBtn').addEventListener('click', async () => {
+              const btn = document.getElementById('saveBtn');
+              btn.disabled = true;
+              status.textContent = 'Saving…';
+              status.className = '';
+              try {
+                const docId = await saveJson();
+                status.textContent = `Saved ✓  docId: ${docId}`;
+                status.className = 'status-ok';
+              } catch (err) {
+                status.textContent = `Error: ${err.message}`;
+                status.className = 'status-err';
+              } finally {
+                btn.disabled = false;
+              }
+            });
+
+            const resolveBtn = document.getElementById('resolveBtn');
+            if (resolveBtn) {
+              resolveBtn.addEventListener('click', async () => {
+                resolveBtn.disabled = true;
+                status.textContent = 'Saving…';
+                status.className = '';
+                try {
+                  const docId = await saveJson();
+                  status.textContent = `Saved docId: ${docId} — Resolving…`;
+                  const resp = await fetch('/api/resolveDoc', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ docId, spName: SP_NAME, caseId: CASE_ID, sessionId: SESSION_ID })
+                  });
+                  if (!resp.ok) throw new Error(await resp.text());
+                  status.textContent = `Resolved ✓  docId: ${docId}`;
+                  status.className = 'status-ok';
+                } catch (err) {
+                  status.textContent = `Error: ${err.message}`;
+                  status.className = 'status-err';
+                } finally {
+                  resolveBtn.disabled = false;
+                }
+              });
+            }
+            </script>
+            </body></html>
+            """);
+    }
 }

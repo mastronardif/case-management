@@ -56,10 +56,18 @@ public static class PipelineCatalogRenderer
 
                 /* JSON preview */
                 .json-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; }
+                .btn-row { display: flex; gap: 0.4rem; align-items: center; }
                 .copy-btn { background: #1d4ed8; color: #fff; border: none; border-radius: 4px; padding: 0.25rem 0.75rem; font-size: 0.72rem; cursor: pointer; font-family: inherit; }
                 .copy-btn:hover { background: #1e40af; }
                 .copy-btn.copied { background: #16a34a; }
+                .save-wf-btn { background: #16a34a; color: #fff; border: none; border-radius: 4px; padding: 0.25rem 0.75rem; font-size: 0.72rem; cursor: pointer; font-family: inherit; }
+                .save-wf-btn:hover { background: #15803d; }
+                .save-wf-btn:disabled { background: #86efac; cursor: default; }
                 pre.json-code { background: #1e293b; color: #86efac; padding: 1rem; border-radius: 6px; font-size: 0.75rem; line-height: 1.6; overflow-x: auto; white-space: pre; margin: 0; }
+                .wf-saved { background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.78rem; display: none; }
+                .wf-saved .docid { font-weight: bold; color: #15803d; }
+                .wf-saved .run-cmd { background: #1e293b; color: #86efac; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.73rem; cursor: pointer; }
+                .wf-error { color: #dc2626; font-size: 0.75rem; }
               </style>
             </head>
             <body>
@@ -80,9 +88,17 @@ public static class PipelineCatalogRenderer
                     <div>
                       <div class="json-header">
                         <span class="section-label" style="margin:0;border:none">Workflow JSON</span>
-                        <button class="copy-btn" id="copy-btn" onclick="copyJson()">Copy</button>
+                        <div class="btn-row">
+                          <button class="copy-btn" id="copy-btn" onclick="copyJson()">Copy</button>
+                          <button class="save-wf-btn" id="save-wf-btn" onclick="saveWorkflow()">Save Workflow</button>
+                        </div>
                       </div>
                       <pre class="json-code" id="json-preview"></pre>
+                      <div class="wf-saved" id="wf-saved">
+                        Saved ✓ &nbsp; docId: <span class="docid" id="wf-docid"></span>
+                        &nbsp;&mdash;&nbsp;
+                        <span class="run-cmd" id="wf-cmd" title="Click to copy" onclick="copyCmd()"></span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -190,6 +206,45 @@ public static class PipelineCatalogRenderer
                   btn.textContent = 'Copied ✓';
                   btn.classList.add('copied');
                   setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+                });
+              }
+
+              async function saveWorkflow() {
+                const json = document.getElementById('json-preview').textContent.trim();
+                if (!json) return;
+                const btn = document.getElementById('save-wf-btn');
+                const saved = document.getElementById('wf-saved');
+                btn.disabled = true;
+                btn.textContent = 'Saving…';
+                saved.style.display = 'none';
+                try {
+                  const resp = await fetch('/api/saveWorkflow', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ json, name: current?.name ?? 'workflow' })
+                  });
+                  if (!resp.ok) throw new Error(await resp.text());
+                  const data = await resp.json();
+                  document.getElementById('wf-docid').textContent = data.docId;
+                  const cmd = `dotnet run -- --workflow ${data.docId}`;
+                  document.getElementById('wf-cmd').textContent = cmd;
+                  saved.style.display = 'block';
+                } catch (err) {
+                  saved.innerHTML = `<span class="wf-error">Error: ${err.message}</span>`;
+                  saved.style.display = 'block';
+                } finally {
+                  btn.disabled = false;
+                  btn.textContent = 'Save Workflow';
+                }
+              }
+
+              function copyCmd() {
+                const text = document.getElementById('wf-cmd').textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                  const el = document.getElementById('wf-cmd');
+                  const orig = el.textContent;
+                  el.textContent = 'copied!';
+                  setTimeout(() => el.textContent = orig, 1200);
                 });
               }
               </script>

@@ -91,4 +91,81 @@ VALUES (
 ]',
     'system'
 );
+INSERT INTO [cases].[Pipeline] (Name, Description, TemplateJson, ParamsSchema, CreatedBy)
+VALUES (
+    'docValidate',
+    'Validate an uploaded JSON doc against projection rules. Produces comparison.json + review.html for human review.',
+    '{
+  "workflowId": "docValidate",
+  "version": "1.0",
+  "params": { "caseId": {caseId} },
+  "steps": [
+    {
+      "id": "validate",
+      "operator": "projectorComparer",
+      "input": ["{docId} source.json", "{ruleDocId} projectionRule.json"],
+      "output": ["comparison.json", "review.html"]
+    }
+  ]
+}',
+    '[
+  {"name":"docId",    "type":"int","required":true,"label":"Uploaded Doc ID"},
+  {"name":"ruleDocId","type":"int","required":true,"label":"Projection Rule Doc ID"},
+  {"name":"caseId",   "type":"int","required":true,"label":"Case ID"}
+]',
+    'system'
+);
+
+INSERT INTO [cases].[Pipeline] (Name, Description, TemplateJson, ParamsSchema, CreatedBy)
+VALUES (
+    'docContextPack',
+    'Bundle source doc + projection rule + past examples into a ZIP for AI-assisted JSON extraction. Download the ZIP, feed the folder to AI, get the JSON back.',
+    '{
+  "workflowId": "docContextPack",
+  "version": "1.0",
+  "params": { "caseId": {caseId} },
+  "steps": [
+    {
+      "id": "pack",
+      "operator": "zip",
+      "input": [{contextDocIds}],
+      "output": ["context-pack.zip"]
+    }
+  ]
+}',
+    '[
+  {"name":"caseId",        "type":"int","required":true, "label":"Case ID"},
+  {"name":"contextDocIds", "type":"raw","required":true, "label":"Doc IDs — source doc, rule, examples (e.g. 164, 206, 120)"}
+]',
+    'system'
+);
+
+INSERT INTO [cases].[Pipeline] (Name, Description, TemplateJson, ParamsSchema, CreatedBy)
+VALUES (
+    'docResolve_Assessment',
+    'Resolve an uploaded assessment JSON doc into cases.Assessment. Copy and rename for other doc types.',
+    '{
+  "workflowId": "docResolve_Assessment",
+  "version": "1.0",
+  "params": {
+    "spName": "usp_Assessment_Resolve",
+    "caseId": {caseId},
+    "srcDocId": {srcDocId}
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "operator": "docResolve",
+      "input": ["{docId} source.json"],
+      "output": ["confirm.json"]
+    }
+  ]
+}',
+    '[
+  {"name":"docId",    "type":"int","required":true, "label":"JSON Doc ID (extracted)"},
+  {"name":"caseId",   "type":"int","required":true, "label":"Case ID"},
+  {"name":"srcDocId", "type":"int","required":false,"label":"Source Doc ID (original PDF/scan)"}
+]',
+    'system'
+);
 GO

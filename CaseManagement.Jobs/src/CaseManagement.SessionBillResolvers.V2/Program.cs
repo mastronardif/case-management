@@ -164,6 +164,7 @@ builder.Services.AddSingleton<IWorkflowStep, ProjectorStep>();
 builder.Services.AddSingleton<IWorkflowStep, BillingRuleStep>();
 builder.Services.AddSingleton<IWorkflowStep, ZipStep>();
 builder.Services.AddSingleton<IWorkflowStep, Claim837PStep>();
+builder.Services.AddSingleton<IWorkflowStep, DocResolveStep>();
 builder.Services.AddSingleton<WorkflowEngine>();
 
 var host = builder.Build();
@@ -174,8 +175,14 @@ Log.Information("Action: {Action} | RunId: {RunId}",
 
 if (selectedWorkflowDocId is not null)
 {
-    var engine = host.Services.GetRequiredService<WorkflowEngine>();
-    await engine.RunAsync(selectedWorkflowDocId.Value, CancellationToken.None);
+    var engine  = host.Services.GetRequiredService<WorkflowEngine>();
+    var outputs = await engine.RunAsync(selectedWorkflowDocId.Value, CancellationToken.None);
+    Console.WriteLine();
+    Console.WriteLine("── Outputs ──────────────────────────────────────────────────────────");
+    for (int si = 0; si < outputs.Length; si++)
+        foreach (var docId in outputs[si])
+            Console.WriteLine($"  step {si + 1}  docId {docId,-6}  http://localhost:5173/api/getDocument?docId={docId}");
+    Console.WriteLine();
     return;
 }
 

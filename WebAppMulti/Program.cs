@@ -194,6 +194,11 @@ catch (Exception ex)
 
 app.MapCorqsEndpoints();
 app.MapGetDocumentEndpoint();
+app.MapSaveDocumentEndpoint();
+app.MapResolveDocEndpoint();
+app.MapUploadDocumentEndpoint();
+app.MapSaveWorkflowEndpoint();
+app.MapDocWorkbenchEndpoint();
 app.MapWfRunReportEndpoint();
 app.MapPipelineCatalogEndpoint();
 

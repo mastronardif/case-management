@@ -1,71 +1,497 @@
-﻿C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\CaseManagement.ArchitectureStarter\src
-+---CaseManagement
-|   +---modules
-|   |   \---CaseManagement.SessionBillResolvers.V2
-|   |       +---CaseManagement.SessionBillResolvers.V2.csproj
-|   |       \---Class1.cs
-|   +---src
-|   |   +---CaseManagement.Application
-|   |   |   +---CaseManagement.Application.csproj
-|   |   |   +---Class1.cs
-|   |   |   \---DependencyInjection.cs
-|   |   +---CaseManagement.Domain
-|   |   |   +---Entities
-|   |   |   |   \---Case.cs
-|   |   |   +---CaseManagement.Domain.csproj
-|   |   |   \---Class1.cs
-|   |   +---CaseManagement.Infrastructure
-|   |   |   +---CaseManagement.Infrastructure.csproj
-|   |   |   +---Class1.cs
-|   |   |   \---DependencyInjection.cs
-|   |   +---CaseManagement.Shared
-|   |   |   +---CaseManagement.Shared.csproj
-|   |   |   \---Class1.cs
-|   |   \---CaseManagement.Worker
-|   |       +---Properties
-|   |       |   \---launchSettings.json
-|   |       +---appsettings.Development.json
-|   |       +---appsettings.json
-|   |       +---CaseManagement.Worker.csproj
-|   |       +---Program.cs
-|   |       \---Worker.cs
-|   \---CaseManagement.sln
-+---CaseManagement.DocumentResolvers
-|   \---CaseManagement.DocumentResolvers.csproj
-+---CaseManagement.SessionBillResolvers.V2
-|   +---Configuration
-|   +---Engine
-|   +---Rules
-|   +---Runner
-|   +---Services
-|   +---Sql
-|   +---Workers
-|   |   \---BillingWorker.cs
-|   +---CaseManagement.SessionBillResolvers.V2.csproj
-|   \---Program.cs
-+---CaseManagement.SessionResolvers
-|   \---CaseManagement.SessionResolvers.csproj
-+---CaseManagement.Shared
-|   +---Configuration
-|   |   +---config
-|   |   |   +---appsettings.Development.json
-|   |   |   \---appsettings.json
-|   |   \---AppConfiguration.cs
-|   +---Constants
-|   +---Extensions
-|   +---Interfaces
-|   +---Models
-|   |   +---Options
-|   |   +---Session
-|   |   \---SessionContext.cs
-|   +---Services
-|   |   +---BillingEngine.cs
-|   |   \---BillingRunner.cs
-|   \---CaseManagement.Shared.csproj
-+---CaseManagement.Tooling
-|   \---CaseManagement.Tooling.csproj
-+---.gitignore
-+---CaseManagement.ArchitectureStarter.sln
-+---create-casemanagement.ps1
-+---create-sln.ps1
-\---README.md
+﻿
+
+not sure if i have the rules/projection docs for assessment.  I think I dont.
+
+I want to use the same technique i did when creating an invoice.
+this is how i did it in the past a POC.  
+
+I project the json on to what i want
+I use the Rule to make sure the needed fields are their.
+fix any missing information manually
+Now i have the json of the doc.
+
+can you see if i have a the projection and the rule.
+Do you need anything?
+can you create the missing files projection and the Rule.  I will upload them to the DB
+
+
+--------------------------------
+what is the pipeline for this.  that will initiate the process.
+
+I go to the catalog
+do you remember:
+I want to explain more to u. from a user perspective.
+I want create the json from the doc.
+I use AI, manual intervention.
+I upload the json.
+
+Now for the the AI, manual.
+I need more context  the rule, the doc, samples of what was done before.
+I am going to ask AI give me the json for said doc and the other stuff in my folder.
+I will eyball the json with the comparere page.
+Save the json - and upload it.
+
+
+---------------------------------------
+OK better.  we are getting their.
+I want to explain more to u. from a user perspective.
+I want create the json from the doc.
+I use AI, manual intervention.
+I upload the json.
+
+Now for the the AI, manual.
+I need more context  the rule, the doc, samples of what was done before.
+I am going to ask AI give me the json for said doc and the other stuff in my folder.
+I will eyball the json with the comparere page.
+Save the json - and upload it.
+
+
+-----------------------------------------
+where is the pipeline that downloads or link refrences the docs.
+the user will bring up the doc and get the json of it. (manual using AI, humane interation)
+then save the .json of said doc
+then upload it
+
+---------------------------------
+Lets go over the process. im confused.
+user 
+uploads doc to the db.
+then runs a pipeline to get the json from the doc.  manual interaction (AI, humane)
+
+here is the pipeline i will use.  the user runs said pipeline and creates the extraction then uses says extraction for the json version of it.
+
+{
+  "workflowId": "docResolve_Assessment",
+  "version": "1.0",
+  "params": {
+    "spName": "usp_Assessment_Resolve",
+    "caseId": 7
+  },
+  "steps": [
+    {
+      "id": "resolve",
+      "operator": "docResolve",
+      "input": ["164 source.json"],
+      "output": ["confirm.json"]
+    }
+  ]
+}
+
+-------------------------
+http://localhost:5173/api/getDocument?docId=209
+i dont see the save json button
+
+Session Projection Review
+needs a save json button to save the json which is the AI/Humane fix
+
+------------------------------------------------
+One question on DocumentData — is it:
+
+A) Just the same FileData bytes (UTF-8 JSON) — duplicate of what's already in cases.Document, kept for convenience
+B) The original PDF/source bytes (a different doc — the original file before AI extraction)
+
+if not their i will add another col for source doc.
+Just the same FileData bytes (UTF-8 JSON) — duplicate of what's already in cases.Document, kept for convenience.  may remove in the future.
+B) The original PDF/source bytes (a different doc — the original file before AI extraction)
+
+Confirm DocumentData (A or B), and confirm the upsert key for the entity table — is it CaseId only for Assessment, or CaseId + SessionId?
+ "sessionId": {sessionId},   ← user fills not all tables have a session id.  so that can be null or optional
+lets go with option B
+
+
+-----------------------------------
+
+dont write anything till we are clear.
+Two questions before writing:
+
+1. The upsert target — when the SP upserts into cases.Assessment, what's the key? CaseId only, or CaseId + SessionId? And what columns does it set — just DocumentJson + DocumentId, or does it also extract/index specific fields from the JSON?
+No.  all docs go to the document table.
+and the other table refrences the docID, and possible has a col Doc data.  which is the doc in bytes. Right now its a json body, i want to have a byte data also.  maybe both.
+
+2. The pipeline params — for the validate step, ruleDocId (the projection definition) also needs to come in. Is that a fixed docId per doc type (baked into the pipeline template), or a runtime param the user fills in each time from the catalog?
+Yes like we did for the other one. Pretty sure tht how it was done.  What do you think is best
+
+
+-----------------------------------
+2. Human + AI converts each file (PDF/TXT/etc.) → JSON
+its one docment for now.
+3. Human uploads JSON via existing upload process → gets docId
+I wanted the humane to fix any bad data in the json locally. then upload doc. its a local process.
+
+your thought is upload the json. and run the validate pipeline.  Not sure if this is better or not.
+
+6. Run RESOLVE pipeline:
+	one SP.  they all do the same action to table.
+      call SP (e.g. usp_doct_Resolve(@DocId, @tablename, @caseid , ...))
+
+ correct me on these:
+Validate and resolve are two separate pipeline runs — human checkpoint between them — not one pipeline that does both automatically. Correct?
+I think it should be one. its a local process. not sure what do you think.?
+
+The generic resolve step — one IWorkflowStep with operator "docResolve", wfParam "spName" tells it which SP to call. Or do you prefer a specific step per doc type? one SP see above.
+
+The SPs — do they already exist (usp_Assessment_Resolve, etc.), or does that also need to be built? And do they follow a standard signature: exec usp_Xyz_Resolve @DocId = N?
+NO. need to create one.
+
+Step 2 (PDF → JSON conversion) — 
+
+
+-----------------------------------------------------
+OK. Lets talk this out so we are on the same page.
+ I was doing this phsedo semi automatic, manual.  Now i want to make it a pipeline.
+The kicker Its done locally. user working out of that folder with the unzipped contents.
+I will use the example of assessment doc ==> assessment table.
+
+{
+download a rpt zip.
+	0. a humane with AI will unzip and 
+	  1. convert doc pdf, txt, whatever to .json
+	  2. compare against projector rules for said doc type session note, assessment.pdf ..... 
+	  eye ball with the xyzReview.html
+	  manual repair results if the original supports it.  if the original doc is in a bad state ask for a new doc from the BCA.
+	3. If extracted data is good upload the doc.  I will use my upload doc process.
+
+	4. call the SP to resolve the doc => update the table for example assessment with the json body(docid)
+	5. END
+
+}
+
+id: 
+-----------------------
+I add Assessment Codes
+I started to update the code can you review and fix
+
+----------------------------
+for some reason tyou not treating session as  json object
+fix.  do you need anything
+
+    private static JsonObject BuildClaimJson(Claim837PData data, int caseId, int sessionId, string runId)
+    {
+        var obj = new JsonObject
+        {
+            ["runId"]       = runId,
+            ["generatedAt"] = DateTime.UtcNow.ToString("O"),
+            ["caseId"]      = caseId,
+            ["sessionId"]   = sessionId,
+        };
+
+        if (data.Session is not null) obj["session"] = data.Session.DeepClone().AsObject();
+        if (data.Case    is not null) obj["case"]    = data.Case.DeepClone().AsObject();
+
+        obj["coverage"]      = CloneArray(data.Coverage);
+        obj["authorization"] = CloneArray(data.Authorization);
+        obj["diagnoses"]     = CloneArray(data.Diagnoses);
+        obj["provider"]      = CloneArray(data.Provider);
+
+        if (data.Definition is not null) obj["definition"] = data.Definition.DeepClone();
+
+        return obj;
+    }
+
+I want A. 
+the RS 
+for example
+    SELECT *
+    FROM [cases].[Authorization]
+returns the index cols, and the json
+so c# will do something like.
+{cols1:val, cols2: val,
+
+doc: {jsonDoc}}
+* these json doc will have been pre approved by AI /humane.  Missing info will be caught/fixed.  New info that is missing that's another issue for later.
+
+--------------
+most of the tables have a json doc [DocumentJson] if data coming from a doc coming from somewhere insurance company, etc, from a an assesement, etc.
+some cols are pre extracted.   I want u to use the doc json.  that is the truth.  I am not having a bunch of duplicated stuf.
+what do you think
+
+
+
+Payer Requirements (changes occasionally)
+Clearinghouse Rules (changes more often)
+Claims start rejecting.
+Do B: for now.  right now i am assuming i have all that is needed for a claim.  there will be a rule xyz that enforces.  dont have now.
+B) Populated claim data + a validation panel that flags known issues inline (e.g., "⚠ Authorization Number missing", "⚠ Rendering Provider NPI not set") based on what the SP returned
+
+name it 837PPipeline
+
+
+
+
+RS7 (SP fetches doc 174 internally) — should I drop that SELECT from the SP, since the step will read it from the input? NO.
+Or leave the SP as-is and just skip RS7 in C#?
+The C# handler should handle the bytes.
+It needs to stay in the SP and not move the business logic to the C#. the db is the business stuff. the other is mostly passthrough cleanup, json etc stuff.
+
+The  doc 174 the 837P spec . HIPAA 837P Standard (rarely changes).  I am going to assume its constant.
+
+other things can and do change.  i will catch that in my review of the seed files and shold be able to update whats missing.
+all accept the same 837 but have different edits. you dont have to worry about that now.
+for example the below can change from the upstream systems.
+Authorization Number is now required
+Taxonomy Code is required
+Modifier is required
+Diagnosis ordering changed
+Missing Authorization Number
+Invalid Subscriber Information
+Rendering Provider NPI Missing
+
+
+
+The commented-out sections (RenderingProvider, ServiceCodes, Assessment) — do you want those active for phase 1, or stay commented out?
+
+Mapping fidelity — for the HTML review, are you thinking a human-readable summary ("Patient: John Doe, Payer: Cigna, Auth: A1234, Diagnoses: F84.0, CPT: 97153 x 2 units") or a full EDI preview of the 837P segments?
+
+we going to have more questions before u write code.
+can you see the sP here C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+usp_Get837P  returns n Rs's
+Also start withe a pipline def.  I want to see the crumbs left behind.  also the C# converts the databyte to json.
+need more info?
+
+usp_Get837P  returns n Rs's
+then the C# layer make that a json.
+you can suggest.  likely left: {}, right:{}
+http://localhost:5173/api/getDocument?docId=174 used by SP.
+its the data byte json.  
+all docs come from the doc database table.
+review let me know if you have anymore questions.  
+also this will be a pipeline tbd name.
+all these pipeline are batch driven.
+
+
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+ [cases].[usp_Get837P]  @CaseId  = 7, @SessionId = tbd
+  
+
+question: talk so we are on the sampe page.
+you no the app is a case management aka doc management system with auditing.
+
+Before we did the mvp invoice billing. now i want  the mvp for the standard 837P - a document i sftp to Cigna or some other provider. 
+I want it to work like the the other invoice in behavior.
+
+I have an SP that returns the data.  basically left side and right side the data needed for 837P.
+For phase mvp 1 i want to create the doc that shows the left guided by the right.  a .json and .html  then i will work backwards 
+and add the droppiings along the way.
+
+do you need anymore info?
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+ [cases].[usp_Get837P]  @CaseId  = 7, @SessionId = tbd
+  
+
+FROM [CaseManagement].[cases].[Session]
+
+
+I have the following tables.
+session 
+cases
+payer
+
+can you give me the others and i will import the data for said tables.
+
+
+
+
+can you add these two the help
+./api/pipelineCatalog
+./api/wfRunReport?docId=134
+
+Tools: secions
+
+Description:
+  CaseManagement session billing resolver
+
+Usage:
+  CaseManagement.SessionBillResolvers.V2 [options]
+
+Options:
+  --case-number <case-number>        Case number to process
+  --session-number <session-number>  Session number within the case
+  --audit-file <audit-file>          Path to a run file (JSON with sessionDoc / projector sections)
+  --action <action>                  Which section to run: 'billingProcess' or 'projectorProcess'
+  --workflow <workflow>              DocumentId of a workflow definition to execute
+  --list                             Print available commands as JSON and exit
+  --html                             With --list: output as styled HTML instead of JSON
+  --version                          Show version information
+  -?, -h, --help                     Show help and usage information
+
+
+Full Legal Name: Frank Mastronardi
+Current Location: Westfield, NJ 07090
+Visa Status: US Citizen
+DOB(MM/DD): 08/31
+LinkedIn: https://www.linkedin.com/in/frank-mastronardi-944506/
+Last 4 Digit of SSN: 9838
+Full Education with Year: BSEE 1986
+
+Ok its going to be a wf that gathers and zips the docs. Save to doc to db.  
+
+Then the BCA can click on it will download the .zip. 
+The user can  AI generate he report, edit and save the report back to the doc database.
+
+
+
+ok lets talk.
+
+I think you know what i am doing with this case management system.
+I have another workflow works like the other workflows.  
+
+workflow report.
+it does the following.
+
+gather all the docs associated with case and a date range.
+session notes,
+parent training,
+assesement.
+other tbd.
+
+
+uses AI to generate a report (a humane and data and AI) this generates the report
+Approve by BCA supervisor.
+
+saves report to db.
+
+end
+
+
+
+
+
+[cases].[Document](
+	[DocumentId] [int] IDENTITY(1,1) NOT NULL,
+	[VersionId] [uniqueidentifier] NOT NULL,
+	[CaseId] [int] NULL,
+	[SessionId] [int] NULL,
+	[WorkbookQId] [int] NULL,
+	[DocumentType] [varchar](50) NOT NULL,
+	[Title] [nvarchar](200) NULL,
+	[FileName] [nvarchar](255) NULL,
+	[ContentType] [varchar](100) NOT NULL,
+	[FileData] [varbinary](max) NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[CreatedBy] [nvarchar](100) NULL,
+	[IsActive] [bit] NOT NULL,
+	[CaseNumber] [nvarchar](50) NULL,
+
+
+Progress Report, 
+Treatment Progress Report, or 
+Clinical Analysis Report.
+
+
+DocumentDefinition
+    AnalysisReport
+
+WorkflowDefinition
+    Draft
+    Clinical Review
+    Approved
+    Generated
+    Archived
+
+DocumentInstance
+    AnalysisReport #123
+
+------------------------------------
+
+Session Notes
+      ↓
+Report Generator
+      ↓
+Draft Analysis Report
+      ↓
+Clinical Review
+      ↓
+Approved
+      ↓
+PDF
+
+i refrence those to systems to get an idea of the amount of pople using such a thing.  I am not doing enterporse, payrol, or any of that.  Maybe later if the need is there.  have to see how this turns out.
+
+I am targeting small practices priced per practice.  Not sure why the number of users would change the price.  I know sending fiels to clearing house is per item not sure if that has anyting to do with users.
+
+Also my system is will also provide the serviece of validating audits and making sure the all data that is need for a 837P is there.  Litlle AI/humanes.
+
+A solo BCBA?
+A 5-person ABA practice?
+dotnet run -- --workflow 175
+
+-----------------
+sessionId is a known value.  also i have two rows in the table
+i ned sessionId not to be the identity [Id] [int] IDENTITY(1,1) NOT NULL,
+i need a new identity 
+[SessionId] [int] IDENTITY(1,1) NOT NULL,
+------------------------
+
+give me dummy select  to satisfy this
+
+  --  SELECT
+  --      ic.*,
+  --      p.*
+  --  FROM [cases].[InsuranceCoverage] ic 
+		--INNER JOIN [cases].[Payer] p ON p.PayerId = ic.PayerId
+  --  WHERE ic.CaseId = @CaseId;
+
+InsuranceCoverage is empty and i may not use have/use this table.  TBD.
+use p.payerId = 3
+
+----------------------
+
+Projection Rule Doc ID *
+
+I need a projection rule json for the Assessment.
+The data i am going to get from the pdf.
+
+{
+  "patient": {
+    "name": "Austin Ball",
+    "dob": "2020-02-25",
+    "memberId": "U84908585",
+    "address": "768 Springfield Ave Apt B9 Summit NJ 07901"
+  },
+  "parents": [
+    "Nanzhu Li",
+    "Michael Ball"
+  ],
+  "diagnoses": [
+    {
+      "code": "F84.0",
+      "description": "Autism Spectrum Disorder"
+    }
+  ],
+  "assessmentDate": "2025-10-20",
+  "assessmentPeriod": {
+    "start": "2025-09-29",
+    "end": "2025-10-20"
+  },
+  "provider": {
+    "name": "Kristine Mastronardi",
+    "credential": "BCBA,LBA",
+    "npi": "1942894340"
+  }
+}
+
+projection something like this for Assessment. {
+"projectionType": "Billing",
+"version": 1,
+"fields": [
+{
+"target": "procedureCode",
+"source": "service.code"
+},
+{
+"target": "modifier",
+"source": "service.modifier"
+},
+{
+"target": "date_of_service",
+"source": "session.date"
+},
+{
+"target": "startTime",
+"source": "session.startTime"
+},
+{
+"target": "endTime",
+"source": "session.endTime"
+}
+]

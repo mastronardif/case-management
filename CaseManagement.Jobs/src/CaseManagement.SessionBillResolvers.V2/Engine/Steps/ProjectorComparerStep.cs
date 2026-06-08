@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
 namespace CaseManagement.SessionBillResolvers.V2.Engine.Steps;
@@ -9,7 +10,7 @@ public class ProjectorComparerStep(
 {
     public string Operator => "projectorComparer";
 
-    public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, System.Text.Json.JsonElement>? wfParams, CancellationToken ct)
+    public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, JsonElement>? wfParams, CancellationToken ct)
     {
         var sessionDoc = await repository.GetDocumentAsync(new DocumentContext(DocumentId: inputDocIds[0]), ct)
             ?? throw new InvalidOperationException($"Session doc {inputDocIds[0]} not found");
@@ -29,9 +30,13 @@ public class ProjectorComparerStep(
             SessionNumber:          sessionDoc.SessionId,
             CreatedDate:            DateTime.UtcNow);
 
+        var spName    = wfParams?.TryGetValue("spName",    out var sp)  == true ? sp.GetString()   : null;
+        var caseId    = wfParams?.TryGetValue("caseId",    out var ci)  == true && ci.ValueKind  == JsonValueKind.Number ? ci.GetInt32()  : (int?)null;
+        var sessionId = wfParams?.TryGetValue("sessionId", out var sid) == true && sid.ValueKind == JsonValueKind.Number ? sid.GetInt32() : (int?)null;
+
         // JSON [0] = primary/machine-readable, HTML [1] = human review
         var auditJson  = ProjectProcessor.RenderAuditJson(runInput, result);
-        var reviewHtml = processor.RenderReviewHtml(sessionDoc.Content, projDefDoc.Content, result);
+        var reviewHtml = processor.RenderReviewHtml(sessionDoc.Content, projDefDoc.Content, result, inputDocIds[0], spName, caseId, sessionId);
 
         var context = new DocumentContext(CaseId: sessionDoc.CaseId, SessionId: sessionDoc.SessionId);
 
