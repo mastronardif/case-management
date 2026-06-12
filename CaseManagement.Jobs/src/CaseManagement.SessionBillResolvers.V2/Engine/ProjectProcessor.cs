@@ -104,7 +104,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
     // sourceDocId is embedded in the page so the Save button knows which doc to update.
     // spName/resolveParamCaseId: when present, a "Save & Resolve" button calls the SP directly from the page.
     public string RenderReviewHtml(string sessionJson, string ruleJson, ProjectionResult result,
-        int sourceDocId = 0, string? spName = null, int? resolveParamCaseId = null, int? resolveParamSessionId = null)
+        int sourceDocId = 0, string? spName = null, int? resolveParamCaseId = null, int? resolveParamSessionId = null, int? resolveParamSrcDocId = null)
     {
         var session = JsonNode.Parse(sessionJson)!.AsObject();
 
@@ -147,7 +147,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         foreach (var p in session.Where(p => !IsLeaf(p.Value)))
             RenderNode(sb, p.Key, p.Value!, p.Key, ruleMap);
 
-        AppendFooter(sb, sourceDocId, spName, resolveParamCaseId, resolveParamSessionId);
+        AppendFooter(sb, sourceDocId, spName, resolveParamCaseId, resolveParamSessionId, resolveParamSrcDocId);
         return sb.ToString();
     }
 
@@ -256,7 +256,8 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
                 var key = segment[..b];
                 var idx = int.Parse(segment[(b + 1)..segment.IndexOf(']')]);
                 var arr = string.IsNullOrEmpty(key) ? current : current[key];
-                current = arr?[idx];
+                if (arr is not JsonArray ja || idx >= ja.Count) return null;
+                current = ja[idx];
             }
         }
         return current;
@@ -297,11 +298,12 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         """);
 
     private static void AppendFooter(StringBuilder sb, int sourceDocId,
-        string? spName = null, int? caseId = null, int? sessionId = null)
+        string? spName = null, int? caseId = null, int? sessionId = null, int? srcDocId = null)
     {
         var jsSpName    = spName    is not null ? "'" + spName + "'"        : "null";
         var jsCaseId    = caseId    is not null ? caseId.Value.ToString()   : "null";
         var jsSessionId = sessionId is not null ? sessionId.Value.ToString(): "null";
+        var jsSrcDocId  = srcDocId  is not null ? srcDocId.Value.ToString() : "null";
 
         sb.AppendLine($$"""
             <script>
@@ -309,6 +311,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
             const SP_NAME    = {{jsSpName}};
             const CASE_ID    = {{jsCaseId}};
             const SESSION_ID = {{jsSessionId}};
+            const SRC_DOC_ID = {{jsSrcDocId}};
 
             function parsePath(path) {
               return path.replace(/\[(\d+)\]/g, '.$1').split('.').map(p => /^\d+$/.test(p) ? +p : p);
@@ -376,7 +379,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
                   const resp = await fetch('/api/resolveDoc', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ docId, spName: SP_NAME, caseId: CASE_ID, sessionId: SESSION_ID })
+                    body: JSON.stringify({ docId, spName: SP_NAME, caseId: CASE_ID, sessionId: SESSION_ID, srcDocId: SRC_DOC_ID })
                   });
                   if (!resp.ok) throw new Error(await resp.text());
                   status.textContent = `Resolved ✓  docId: ${docId}`;

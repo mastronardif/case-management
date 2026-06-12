@@ -142,8 +142,37 @@ VALUES (
 
 INSERT INTO [cases].[Pipeline] (Name, Description, TemplateJson, ParamsSchema, CreatedBy)
 VALUES (
-    'docResolve_Assessment',
-    'Resolve an uploaded assessment JSON doc into cases.Assessment. Copy and rename for other doc types.',
+    'docValidate_Assessment',
+    'Validate extracted assessment JSON against projection rules. Produces review page with Save & Resolve button.',
+    '{
+  "workflowId": "docValidate_Assessment",
+  "version": "1.0",
+  "params": {
+    "caseId": {caseId},
+    "spName": "usp_Assessment_Resolve",
+    "srcDocId": {srcDocId}
+  },
+  "steps": [
+    {
+      "id": "validate",
+      "operator": "projectorComparer",
+      "input": ["{docId} source.json", "206 rule.json"],
+      "output": ["comparison.json", "review.html"]
+    }
+  ]
+}',
+    '[
+  {"name":"docId",    "type":"int","required":true, "label":"JSON Doc ID (extracted)"},
+  {"name":"caseId",   "type":"int","required":true, "label":"Case ID"},
+  {"name":"srcDocId", "type":"int","required":false,"label":"Source Doc ID (original PDF/scan)"}
+]',
+    'system'
+);
+
+INSERT INTO [cases].[Pipeline] (Name, Description, TemplateJson, ParamsSchema, CreatedBy)
+VALUES (
+    'docResolve_Assessment_REMOVE_ME',
+    'DEPRECATED — use docValidate_Assessment instead.',
     '{
   "workflowId": "docResolve_Assessment",
   "version": "1.0",

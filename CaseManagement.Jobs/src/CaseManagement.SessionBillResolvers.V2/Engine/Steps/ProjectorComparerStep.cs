@@ -33,10 +33,11 @@ public class ProjectorComparerStep(
         var spName    = wfParams?.TryGetValue("spName",    out var sp)  == true ? sp.GetString()   : null;
         var caseId    = wfParams?.TryGetValue("caseId",    out var ci)  == true && ci.ValueKind  == JsonValueKind.Number ? ci.GetInt32()  : (int?)null;
         var sessionId = wfParams?.TryGetValue("sessionId", out var sid) == true && sid.ValueKind == JsonValueKind.Number ? sid.GetInt32() : (int?)null;
+        var srcDocId  = wfParams?.TryGetValue("srcDocId",  out var sd)  == true && sd.ValueKind  == JsonValueKind.Number ? sd.GetInt32()  : (int?)null;
 
         // JSON [0] = primary/machine-readable, HTML [1] = human review
         var auditJson  = ProjectProcessor.RenderAuditJson(runInput, result);
-        var reviewHtml = processor.RenderReviewHtml(sessionDoc.Content, projDefDoc.Content, result, inputDocIds[0], spName, caseId, sessionId);
+        var reviewHtml = processor.RenderReviewHtml(sessionDoc.Content, projDefDoc.Content, result, inputDocIds[0], spName, caseId, sessionId, srcDocId);
 
         var context = new DocumentContext(CaseId: sessionDoc.CaseId, SessionId: sessionDoc.SessionId);
 
