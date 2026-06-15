@@ -102,9 +102,9 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
     // Produces a 4-column HTML review doc: Field | Extracted Value | Rule | Corrected Value.
     // Mapped (rule-referenced) fields are highlighted; validation failures appear in a summary banner.
     // sourceDocId is embedded in the page so the Save button knows which doc to update.
-    // spName/resolveParamCaseId: when present, a "Save & Resolve" button calls the SP directly from the page.
+    // tableName/resolveParamCaseId: when present, a "Save & Resolve" button calls the generic resolve SP directly from the page.
     public string RenderReviewHtml(string sessionJson, string ruleJson, ProjectionResult result,
-        int sourceDocId = 0, string? spName = null, int? resolveParamCaseId = null, int? resolveParamSessionId = null, int? resolveParamSrcDocId = null)
+        int sourceDocId = 0, string? tableName = null, int? resolveParamCaseId = null, int? resolveParamSrcDocId = null)
     {
         var session = JsonNode.Parse(sessionJson)!.AsObject();
 
@@ -118,7 +118,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         sb.AppendLine("<h1>--- Projection Review</h1>");
         sb.AppendLine("<div class=\"save-bar\">");
         sb.AppendLine("  <button id=\"saveBtn\" class=\"save-btn\">Save Corrected JSON</button>");
-        if (spName is not null && resolveParamCaseId is not null)
+        if (tableName is not null && resolveParamCaseId is not null)
             sb.AppendLine("  <button id=\"resolveBtn\" class=\"save-btn resolve-btn\">Save &amp; Resolve</button>");
         sb.AppendLine("  <span id=\"saveStatus\"></span>");
         sb.AppendLine("</div>");
@@ -147,7 +147,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         foreach (var p in session.Where(p => !IsLeaf(p.Value)))
             RenderNode(sb, p.Key, p.Value!, p.Key, ruleMap);
 
-        AppendFooter(sb, sourceDocId, spName, resolveParamCaseId, resolveParamSessionId, resolveParamSrcDocId);
+        AppendFooter(sb, sourceDocId, tableName, resolveParamCaseId, resolveParamSrcDocId);
         return sb.ToString();
     }
 
@@ -298,19 +298,17 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         """);
 
     private static void AppendFooter(StringBuilder sb, int sourceDocId,
-        string? spName = null, int? caseId = null, int? sessionId = null, int? srcDocId = null)
+        string? tableName = null, int? caseId = null, int? srcDocId = null)
     {
-        var jsSpName    = spName    is not null ? "'" + spName + "'"        : "null";
+        var jsTableName = tableName is not null ? "'" + tableName + "'"     : "null";
         var jsCaseId    = caseId    is not null ? caseId.Value.ToString()   : "null";
-        var jsSessionId = sessionId is not null ? sessionId.Value.ToString(): "null";
         var jsSrcDocId  = srcDocId  is not null ? srcDocId.Value.ToString() : "null";
 
         sb.AppendLine($$"""
             <script>
             const SOURCE_DOC_ID = {{sourceDocId}};
-            const SP_NAME    = {{jsSpName}};
+            const TABLE_NAME = {{jsTableName}};
             const CASE_ID    = {{jsCaseId}};
-            const SESSION_ID = {{jsSessionId}};
             const SRC_DOC_ID = {{jsSrcDocId}};
 
             function parsePath(path) {
@@ -379,7 +377,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
                   const resp = await fetch('/api/resolveDoc', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ docId, spName: SP_NAME, caseId: CASE_ID, sessionId: SESSION_ID, srcDocId: SRC_DOC_ID })
+                    body: JSON.stringify({ docId, tableName: TABLE_NAME, caseId: CASE_ID, srcDocId: SRC_DOC_ID })
                   });
                   if (!resp.ok) throw new Error(await resp.text());
                   status.textContent = `Resolved ✓  docId: ${docId}`;

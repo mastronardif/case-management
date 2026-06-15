@@ -298,7 +298,8 @@ api.MapGet("/react/queryMap.json", (SchemaService schema) =>
             ["resource"]    = a.Name,
             ["action"]      = a.Name,
             ["routeParams"] = a.Params?.Keys.ToArray(),
-            ["actions"]     = a.Actions?.Select(x => new { label = x.Label, route = x.Route }).ToArray()
+            ["actions"]     = a.Actions?.Select(x => new { label = x.Label, route = x.Route }).ToArray(),
+            ["enrichments"] = a.Enrichments?.Select(x => new { column = x.Column, sourceColumn = x.SourceColumn, path = x.Path }).ToArray()
         });
     var directEndpoints = apis
         .Where(a => a.Type == "get")

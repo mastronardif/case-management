@@ -8,8 +8,8 @@ public static class ResolveDocEndpoint
     {
         app.MapPost("/api/resolveDoc", async (ResolveDocRequest req, IConfiguration config) =>
         {
-            if (!Regex.IsMatch(req.SpName ?? "", @"^[A-Za-z0-9_]+$"))
-                return Results.BadRequest($"Invalid SP name '{req.SpName}'");
+            if (!Regex.IsMatch(req.TableName ?? "", @"^[A-Za-z0-9_]+$"))
+                return Results.BadRequest($"Invalid table name '{req.TableName}'");
 
             if (req.DocId <= 0 || req.CaseId <= 0)
                 return Results.BadRequest("docId and caseId are required");
@@ -18,21 +18,20 @@ public static class ResolveDocEndpoint
             await using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
 
-            using var cmd = new SqlCommand($"[cases].[{req.SpName}]", conn)
+            using var cmd = new SqlCommand("[cases].[usp_CaseTable_Resolve]", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
+            cmd.Parameters.AddWithValue("@TableName", req.TableName);
             cmd.Parameters.AddWithValue("@DocId",     req.DocId);
             cmd.Parameters.AddWithValue("@CaseId",    req.CaseId);
-            cmd.Parameters.AddWithValue("@SessionId", (object?)req.SessionId ?? DBNull.Value);
-            if (req.SrcDocId is not null)
-                cmd.Parameters.AddWithValue("@SrcDocId", req.SrcDocId.Value);
+            cmd.Parameters.AddWithValue("@SrcDocId",  (object?)req.SrcDocId ?? DBNull.Value);
 
             await cmd.ExecuteNonQueryAsync();
 
-            return Results.Ok(new { resolved = true, spName = req.SpName, docId = req.DocId, caseId = req.CaseId, srcDocId = req.SrcDocId });
+            return Results.Ok(new { resolved = true, tableName = req.TableName, docId = req.DocId, caseId = req.CaseId, srcDocId = req.SrcDocId });
         });
     }
 }
 
-public record ResolveDocRequest(int DocId, string SpName, int CaseId, int? SessionId = null, int? SrcDocId = null);
+public record ResolveDocRequest(int DocId, string TableName, int CaseId, int? SrcDocId = null);

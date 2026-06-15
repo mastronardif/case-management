@@ -13,24 +13,21 @@ public class DocResolveStep(ICaseManagementRepository repository, ILogger<DocRes
         IReadOnlyDictionary<string, JsonElement>? wfParams, CancellationToken ct)
     {
         var docId     = inputDocIds[0];
-        var spName    = wfParams!["spName"].GetString()!;
+        var tableName = wfParams!["tableName"].GetString()!;
         var caseId    = wfParams!["caseId"].GetInt32();
-        int? sessionId = wfParams.TryGetValue("sessionId", out var sv) && sv.ValueKind != JsonValueKind.Null
-            ? sv.GetInt32() : null;
         int? srcDocId  = wfParams.TryGetValue("srcDocId",  out var sd) && sd.ValueKind != JsonValueKind.Null
             ? sd.GetInt32() : null;
 
-        logger.LogInformation("DocResolve. sp={SpName} docId={DocId} caseId={CaseId} sessionId={SessionId} srcDocId={SrcDocId}",
-            spName, docId, caseId, sessionId, srcDocId);
+        logger.LogInformation("DocResolve. table={TableName} docId={DocId} caseId={CaseId} srcDocId={SrcDocId}",
+            tableName, docId, caseId, srcDocId);
 
-        await repository.ResolveDocAsync(docId, spName, caseId, sessionId, srcDocId, ct);
+        await repository.ResolveDocAsync(docId, tableName, caseId, srcDocId, ct);
 
         var confirm = JsonSerializer.Serialize(new
         {
             resolved   = true,
-            spName,
+            tableName,
             caseId,
-            sessionId,
             docId,
             runId,
             resolvedAt = DateTime.UtcNow.ToString("O")

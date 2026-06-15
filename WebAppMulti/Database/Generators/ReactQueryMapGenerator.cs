@@ -28,6 +28,14 @@ public class ReactQueryMapGenerator
                 sb.AppendLine("    ],");
             }
 
+            if (api.Enrichments != null && api.Enrichments.Any())
+            {
+                sb.AppendLine("    enrichments: [");
+                foreach (var enrichment in api.Enrichments)
+                    sb.AppendLine($"      {{ column: \"{enrichment.Column}\", sourceColumn: \"{enrichment.SourceColumn}\", path: \"{enrichment.Path}\" }},");
+                sb.AppendLine("    ],");
+            }
+
             sb.AppendLine("  },");
         }
         sb.AppendLine("];");

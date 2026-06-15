@@ -8,6 +8,7 @@ using Serilog;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Help;
+using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using System.Text.Json;
 
@@ -22,6 +23,12 @@ var workflowDocIdOption = new Option<int?>  ("--workflow",       "DocumentId of 
 var listOption          = new Option<bool>  ("--list",           "Print available commands as JSON and exit");
 var htmlOption          = new Option<bool>  ("--html",           "With --list: output as styled HTML instead of JSON");
 
+var jsonDocIdOption = new Option<int?>   ("--json-doc-id", "DocumentId of the extracted JSON to validate/resolve (workflow param $jsonDocId)");
+var ruleDocIdOption = new Option<int?>   ("--rule-doc-id", "DocumentId of the projection rule (workflow param $ruleDocId)");
+var srcDocIdOption  = new Option<int?>   ("--src-doc-id",  "DocumentId of the original source document (workflow param srcDocId)");
+var tableNameOption = new Option<string?>("--table-name",  "Target [cases] table name (workflow param tableName)");
+var caseIdOption    = new Option<int?>   ("--case-id",     "CaseId (workflow param caseId)");
+
 var rootCommand = new RootCommand("CaseManagement session billing resolver")
 {
     caseNumberOption,
@@ -30,7 +37,12 @@ var rootCommand = new RootCommand("CaseManagement session billing resolver")
     actionOption,
     workflowDocIdOption,
     listOption,
-    htmlOption
+    htmlOption,
+    jsonDocIdOption,
+    ruleDocIdOption,
+    srcDocIdOption,
+    tableNameOption,
+    caseIdOption
 };
 
 // Command manifest — add entries here as new jobs are built
@@ -38,8 +50,15 @@ var manifest = new CmdManifest("CaseManagement.Jobs", "1.0",
 [
     new CmdInfo("runWorkflow", "Run Workflow",
         "Execute a named workflow by document ID. Runs all steps and saves results to DB.",
-        [new CmdArg("--workflow", "int", true, "DocumentId of the workflow definition", "/api/wfRunReport?docId=")],
-        "--workflow 84"),
+        [
+            new CmdArg("--workflow",     "int",    true,  "DocumentId of the workflow definition", "/api/wfRunReport?docId="),
+            new CmdArg("--json-doc-id",  "int",    false, "Extracted JSON doc to validate/resolve ($jsonDocId)"),
+            new CmdArg("--rule-doc-id",  "int",    false, "Projection rule doc ($ruleDocId)"),
+            new CmdArg("--src-doc-id",   "int",    false, "Original source document (srcDocId param)"),
+            new CmdArg("--table-name",   "string", false, "Target [cases] table name (tableName param)"),
+            new CmdArg("--case-id",      "int",    false, "CaseId (caseId param)")
+        ],
+        "--workflow 84 --json-doc-id 319 --rule-doc-id 250 --table-name Authorization --case-id 12 --src-doc-id 291"),
 
     new CmdInfo("billingLoop", "Billing Loop",
         "Run billing for all unbilled sessions.",
@@ -60,14 +79,28 @@ var manifest = new CmdManifest("CaseManagement.Jobs", "1.0",
         "--audit-file C:\\temp\\run.json --action projectorProcess"),
 ]);
 
-BillingRunOptions? runOptions            = null;
-RunInput?          selectedInput         = null;
-string?            auditOutputDir        = null;
-int?               selectedWorkflowDocId = null;
-bool               saveManifestHtml      = false;
+BillingRunOptions?              runOptions            = null;
+RunInput?                        selectedInput         = null;
+string?                          auditOutputDir        = null;
+int?                             selectedWorkflowDocId = null;
+bool                             saveManifestHtml      = false;
+Dictionary<string, JsonElement>? workflowParamOverrides = null;
 
-rootCommand.SetHandler((caseNumber, sessionNumber, auditFile, action, workflowDocId, list, html) =>
+void HandleRoot(InvocationContext context)
 {
+    var caseNumber    = context.ParseResult.GetValueForOption(caseNumberOption);
+    var sessionNumber = context.ParseResult.GetValueForOption(sessionNumberOption);
+    var auditFile     = context.ParseResult.GetValueForOption(auditFileOption);
+    var action        = context.ParseResult.GetValueForOption(actionOption);
+    var workflowDocId = context.ParseResult.GetValueForOption(workflowDocIdOption);
+    var list          = context.ParseResult.GetValueForOption(listOption);
+    var html          = context.ParseResult.GetValueForOption(htmlOption);
+    var jsonDocId     = context.ParseResult.GetValueForOption(jsonDocIdOption);
+    var ruleDocId     = context.ParseResult.GetValueForOption(ruleDocIdOption);
+    var srcDocId      = context.ParseResult.GetValueForOption(srcDocIdOption);
+    var tableName     = context.ParseResult.GetValueForOption(tableNameOption);
+    var caseId        = context.ParseResult.GetValueForOption(caseIdOption);
+
     if (list)
     {
         if (!html) { Console.WriteLine(JsonSerializer.Serialize(manifest, manifestOptions)); return; }
@@ -79,6 +112,15 @@ rootCommand.SetHandler((caseNumber, sessionNumber, auditFile, action, workflowDo
     {
         selectedWorkflowDocId = workflowDocId;
         runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
+
+        var overrides = new Dictionary<string, JsonElement>();
+        if (jsonDocId is not null) overrides["jsonDocId"] = JsonSerializer.SerializeToElement(jsonDocId.Value);
+        if (ruleDocId is not null) overrides["ruleDocId"] = JsonSerializer.SerializeToElement(ruleDocId.Value);
+        if (srcDocId  is not null) overrides["srcDocId"]  = JsonSerializer.SerializeToElement(srcDocId.Value);
+        if (tableName is not null) overrides["tableName"] = JsonSerializer.SerializeToElement(tableName);
+        if (caseId    is not null) overrides["caseId"]    = JsonSerializer.SerializeToElement(caseId.Value);
+        if (overrides.Count > 0) workflowParamOverrides = overrides;
+
         return;
     }
 
@@ -110,7 +152,9 @@ rootCommand.SetHandler((caseNumber, sessionNumber, auditFile, action, workflowDo
         : BillingRunMode.Loop;
 
     runOptions = new BillingRunOptions(mode, caseNumber, sessionNumber);
-}, caseNumberOption, sessionNumberOption, auditFileOption, actionOption, workflowDocIdOption, listOption, htmlOption);
+}
+
+rootCommand.SetHandler(HandleRoot);
 
 await new CommandLineBuilder(rootCommand)
     .UseDefaults()
@@ -176,7 +220,7 @@ Log.Information("Action: {Action} | RunId: {RunId}",
 if (selectedWorkflowDocId is not null)
 {
     var engine  = host.Services.GetRequiredService<WorkflowEngine>();
-    var outputs = await engine.RunAsync(selectedWorkflowDocId.Value, CancellationToken.None);
+    var outputs = await engine.RunAsync(selectedWorkflowDocId.Value, workflowParamOverrides, CancellationToken.None);
     Console.WriteLine();
     Console.WriteLine("── Outputs ──────────────────────────────────────────────────────────");
     for (int si = 0; si < outputs.Length; si++)

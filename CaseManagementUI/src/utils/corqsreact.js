@@ -6,6 +6,9 @@ export const QUERY_MAP = [
         actions: [
             { label: "Open", route: "/cases/{caseId}" },
         ],
+        enrichments: [
+            { column: "patientName", sourceColumn: "jsonDocumentId", path: "patient.name" },
+        ],
     },
     {
         resource: "Case_GetDocuments",

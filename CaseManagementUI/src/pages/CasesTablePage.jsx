@@ -5,7 +5,10 @@ import DataTable22 from "../components/DataTable22";
 import { useGlobalStore } from "../context/GlobalStore";
 import { apiFetch } from "../services/apiFetch";
 import { QUERY_MAP } from "../utils/corqsreact";
+import { enrichRows } from "../utils/documentEnrichment";
 
+
+const schemaEntry = QUERY_MAP.find((e) => e.resource === "searchCases");
 
 export default function CasesTablePage() {
   const { urlCases } = useGlobalStore();
@@ -19,7 +22,7 @@ export default function CasesTablePage() {
     if (!urlCases) return;
     setLoading(true);
     try {
-      setError(null);      
+      setError(null);
       // const res = await api.get(urlCases);
       const body = {
         "action": "searchCases",
@@ -27,7 +30,7 @@ export default function CasesTablePage() {
         };
       const res = await apiFetch(urlCases, body);
 
-      setRows(res ?? []); // always safe
+      setRows(await enrichRows(res ?? [], schemaEntry?.enrichments)); // always safe
 
     } catch (err) {
       console.error("Error fetching cases:", err);
@@ -54,7 +57,6 @@ export default function CasesTablePage() {
     navigate("/cases/new");
   };
 
-  const schemaEntry = QUERY_MAP.find((e) => e.resource === "searchCases");
   const actions = (schemaEntry?.actions ?? []).map((action) => ({
     label: action.label,
     onClick: (row) =>

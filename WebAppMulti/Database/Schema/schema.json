@@ -11,6 +11,13 @@
           "label": "Open",
           "route": "/cases/{caseId}"
         }
+      ],
+      "enrichments": [
+        {
+          "column": "patientName",
+          "sourceColumn": "jsonDocumentId",
+          "path": "patient.name"
+        }
       ]
     },
     {

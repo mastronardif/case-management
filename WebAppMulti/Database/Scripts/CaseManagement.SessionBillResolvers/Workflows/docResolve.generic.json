@@ -1,0 +1,13 @@
+{
+  "workflowId": "docResolve",
+  "version": "1",
+  "params": {},
+  "steps": [
+    {
+      "id": "resolve",
+      "operator": "docResolve",
+      "input": ["$jsonDocId"],
+      "output": ["confirm"]
+    }
+  ]
+}

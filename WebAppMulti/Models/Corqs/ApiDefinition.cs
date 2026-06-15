@@ -18,6 +18,13 @@ public class ActionDefinition
     public string Route { get; set; } = string.Empty;
 }
 
+public class EnrichmentDefinition
+{
+    public string Column { get; set; } = string.Empty;
+    public string SourceColumn { get; set; } = string.Empty;
+    public string Path { get; set; } = string.Empty;
+}
+
 public class ApiDefinition
 {
     public string Name { get; set; } = string.Empty;
@@ -31,6 +38,7 @@ public class ApiDefinition
     public Dictionary<string, ParamDefinition> Params { get; set; }
     public DataRouteDefinition? DataRoute { get; set; }
     public List<ActionDefinition>? Actions { get; set; }
+    public List<EnrichmentDefinition>? Enrichments { get; set; }
     public string? Returns { get; set; }
 }
 

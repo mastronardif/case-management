@@ -1,4 +1,198 @@
-﻿
+﻿You mentioned you orignail was thinking invoice.
+I think we should keep it a the authorization verbiage.
+Can you update the projection.
+
+----------------------------
+
+Question will the can i use the same proections for the other providers. 
+--------------------
+
+Chatty can you give me the json of this xyz give the the rules, projection and what you have done like Assessment
+
+
+----------------------------
+What you said is true.  and if i need more or less cols i cange the SP.
+
+you can invoke this api and see the results.
+POST /api/corqs HTTP/1.1
+Host: localhost:44344
+Content-Type: application/json
+Content-Length: 52
+
+{
+  "action": "searchCases",
+  "params": {
+  }
+}
+
+for now its patient.name, there will be other similar things in the future.  I do like what you said return the list somehow.  and adding to the schema.  I want it simple. Also in the future some columns will be masked for hipa and pi compliance.  
+The SP - RS based.  Now if i pollute that its no so basic anymore.  That is another problem i don't want and possible resolve.
+
+PROCEDURE [cases].[usp_Case_GetDocuments]
+(
+    @CaseId INT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        d.DocumentId,
+        d.CaseId,
+		d.CaseNumber,
+        --d.WorkbookQId,
+        --d.SessionId,
+		d.Title,
+        d.DocumentType,
+       
+        --d.FileName,
+        --d.ContentType,
+        d.CreatedDate
+        --d.CreatedBy
+    FROM cases.Document d
+    WHERE d.CaseId = @CaseId
+      AND d.IsActive = 1
+    ORDER BY d.CreatedDate DESC;
+END
+
+
+
+----------------------------
+just talk andsuggest if you have s better best practice.
+OK i want to work on another area .
+As you may know this application works on docs(json).  the DB is not js json friendly.  So all that will be done in C#, or react js.
+
+Parts of this is still in progress.
+like the list case screen.
+i return a list and it displays it very basic and i want to keep it that way. BUT 
+there is an additional coloumn i am adding patient name
+"patient": {
+"name": "Gaurav Reddy Adapa",
+shich is in the json aka jsonDocumentId(308)
+I dont want to do json in the SP.
+I dont want to do it in the C#.
+I was thinking do it as another service helper in the .js side.
+What do you think?  
+
+----------------------------
+
+----------------------------
+you can  powershell cm invoke .... to run the http
+put that in your memeory bank.
+----------------------------
+
+http://localhost:5173/api/pipelineCatalog
+which ones can i remove?
+
+Review and approve
+Open the review HTML link from the output.
+Eyeball the fields, correct anything off.
+Click Save & Resolve.
+
+can you give me those steps.
+
+dotnet run -- --workflow 299
+  step 1  docId 301     http://localhost:5173/api/getDocument?docId=301
+
+Do you need anything else. We are going around in circles.
+
+----------------------------
+
+
+running pipeline to geive me the manual fixer. getting the below.
+
+>dotnet run -- --workflow 299
+Using launch settings from C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Properties\launchSettings.json...
+[14:38:45 INF] Action: loop | RunId: -
+[14:38:45 INF] Fetching document. DocumentId: 299, SessionId: null, CaseId: null, DocumentType: null
+[14:38:46 INF] Workflow docValidate v1.0 started. RunId: 610c0daa-ebe8-4a96-a810-e7f538123087, Steps: 1
+[14:38:46 INF] Step [1] validate (projectorComparer) inputs: [297, 206]
+[14:38:46 INF] Fetching document. DocumentId: 297, SessionId: null, CaseId: null, DocumentType: null
+[14:38:46 INF] Fetching document. DocumentId: 206, SessionId: null, CaseId: null, DocumentType: null
+Unhandled exception. System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at System.Text.Json.Nodes.JsonArray.GetItem(Int32 index)
+   at System.Text.Json.Nodes.JsonNode.get_Item(Int32 index)
+   at CaseManagement.SessionBillResolvers.V2.Engine.ProjectProcessor.GetValueByPath(JsonNode current, String path) in C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Engine\ProjectProcessor.cs:line 259
+   at CaseManagement.SessionBillResolvers.V2.Engine.ProjectProcessor.Project(String sessionJson, String ruleJson) in C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Engine\ProjectProcessor.cs:line 68
+   at CaseManagement.SessionBillResolvers.V2.Engine.Steps.ProjectorComparerStep.ExecuteAsync(Int32[] inputDocIds, String runId, IReadOnlyDictionary`2 wfParams, CancellationToken ct) in C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Engine\Steps\ProjectorComparerStep.cs:line 21
+   at CaseManagement.SessionBillResolvers.V2.Engine.WorkflowEngine.RunAsync(Int32 workflowDocId, CancellationToken ct) in C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Engine\WorkflowEngine.cs:line 51
+   at Program.<Main>$(String[] args) in C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Program.cs:line 179
+   at Program.<Main>(String[] args)
+
+----------------------------
+
+8459587510
+
+-----------------
+i ran the wrong one
+can you rename 'docResolve_Assessment_REMOVE_ME
+to docValidate_Assessment
+-------
+http://localhost:5173/api/getDocument?docId=268
+ not show 'Click Save & Resolve → writes to cases.Assessment with both docIds
+
+---------------------------------------------------
+is there a way to see a word docx in my viewer
+
+application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+-----------------------
+
+OK.  this is a bit confusing.  for now i will keep it.
+can you tell me the process.
+what pipelines and actions do a run for a doc to json run
+
+---------------------
+
+Just talk.
+I want another col srcDocId.  now the row is complete original doc, the json of said doc.
+what do you think.
+
+
+
+
+-----------------------------
+Ok a few things can you add a save workflow button to the pipeline Catalog.
+http://localhost:5173/api/pipelineCatalog
+
+This is very procedural.  But for now
+
+----------------------
+dotnet run -- --workflow 224
+
+----------------------------
+Is this enough to do what want?
+projection (206)
+rule(223)
+side question can you do http://localhost:5173/api/getDocument?docId=223
+ok give my the pipeline json 
+is that enough info can i use the pipeline:
+
+{
+  "workflowId": "docContextPack",
+  "version": "1.0",
+  "params": { "caseId": 7 },
+  "steps": [
+    {
+      "id": "pack",
+      "operator": "zip",
+      "input": [164, 206, 223],
+      "output": ["context-pack.zip"]
+    }
+  ]
+}
+
+----------------------------
+I have the two see:
+it should follow what we were doing before.  All the projection / rules follow the same process.  Invoice happens to be more specific rules.
+
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\projection.Assessment.json
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\rule.Assessment.json
+
+what do you think is that enough to do what we planned?
+
+-----------------------------
 
 not sure if i have the rules/projection docs for assessment.  I think I dont.
 
@@ -441,57 +635,112 @@ Projection Rule Doc ID *
 I need a projection rule json for the Assessment.
 The data i am going to get from the pdf.
 
-{
-  "patient": {
-    "name": "Austin Ball",
-    "dob": "2020-02-25",
-    "memberId": "U84908585",
-    "address": "768 Springfield Ave Apt B9 Summit NJ 07901"
-  },
-  "parents": [
-    "Nanzhu Li",
-    "Michael Ball"
-  ],
-  "diagnoses": [
-    {
-      "code": "F84.0",
-      "description": "Autism Spectrum Disorder"
-    }
-  ],
-  "assessmentDate": "2025-10-20",
-  "assessmentPeriod": {
-    "start": "2025-09-29",
-    "end": "2025-10-20"
-  },
-  "provider": {
-    "name": "Kristine Mastronardi",
-    "credential": "BCBA,LBA",
-    "npi": "1942894340"
-  }
-}
+---------------------------
+Talk only
+I am trying to do the pdf to json process.
+what pipeline  updates the table assessment.
+---------------------------
+OK.  in this case i was doing an Authorization.  and i want the end result to update [cases].[Authorization].
+Functionally its the same.  You mentioned that a sp for each table instead of general SP.
+I dont want a pipeline for each 'doc to json' 
+Lets talk so we are on the same page.
 
-projection something like this for Assessment. {
-"projectionType": "Billing",
-"version": 1,
-"fields": [
-{
-"target": "procedureCode",
-"source": "service.code"
-},
-{
-"target": "modifier",
-"source": "service.modifier"
-},
-{
-"target": "date_of_service",
-"source": "session.date"
-},
-{
-"target": "startTime",
-"source": "session.startTime"
-},
-{
-"target": "endTime",
-"source": "session.endTime"
-}
-]
+---------------------------
+OK the config technique.  I also added another table explain how that works and looks.
+Also the steps to get the doc => json are hard to follow.  
+--------------------------
+the sp name thing looks like possible sql injection.  Im ok with what you want to do.
+Do you need anymore info from me.  Do you need to review the code.
+Do that any tell me what you plan on doing.
+
+--------------------------
+No.
+The process is doc => json = table.
+the projector , rule, AI is the same for all docs authorization, assessment, ...
+I am doing two docs now.  Imagine if i had n docs.
+can you think of it that way.  its getting over engineered
+
+
+-----------------------------------
+So before we were specific.
+Can you make a general SP I am upserting n tables
+
+ PROCEDURE [cases].[usp_Assessment_Resolve]
+(
+    @DocId     INT,
+    @CaseId    INT,
+    @SessionId INT = NULL,
+    @SrcDocId  INT = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF NOT EXISTS (SELECT 1 FROM [cases].[Document] WHERE DocumentId = @DocId AND IsActive = 1)
+        THROW 50001, 'JSON document not found or inactive.', 1;
+
+    IF EXISTS (SELECT 1 FROM [cases].[Assessment] WHERE CaseId = @CaseId)
+    BEGIN
+        UPDATE [cases].[Assessment]
+        SET JsonDocumentId    = @DocId,
+            SourceDocumentId  = @SrcDocId
+        WHERE CaseId = @CaseId;
+    END
+    ELSE
+    BEGIN
+        INSERT INTO [cases].[Assessment] (CaseId, JsonDocumentId, SourceDocumentId)
+        VALUES (@CaseId, @DocId, @SrcDocId);
+    END
+END
+
+---------------------------------
+
+SELECT TOP (1000) [ProjectorRuleId]
+      ,[Name]
+      ,[Version]
+      ,[Description]
+      ,[ProjectionDocumentId]
+      ,[RuleDocumentId]
+      ,[IsActive]
+      ,[CreatedDate]
+      ,[CreatedBy]
+  FROM [CaseManagement].[cases].[ProjectorRule]
+
+----------------
+http://localhost:5173/api/getDocument?docId=353
+Shouldnt that have save to json to DB?
+
+------
+
+should i have a general 
+ "workflowId": "docValidate_Assessment"
+pipelines
+Name
+reportPipeline
+billingPipeline837
+837PPipeline
+docValidate
+docResolve_Assessment_REMOVE_ME
+docContextPack
+docResolve_Assessment_REMOVE_ME_v2
+docValidate_Assessment
+
+# review first
+dotnet run -- --workflow 355 --json-doc-id 319 --rule-doc-id 350 --table-name Authorization --case-id 12 --src-doc-id 163
+
+# or skip review and write directly
+dotnet run -- --workflow <docResolveId> --json-doc-id 319 --table-name Authorization --case-id 12 --src-doc-id 291
+
+
+
+dotnet run -- --workflow 355 --json-doc-id 319 --rule-doc-id 350 --table-name Authorization --case-id 12 --src-doc-id 163
+
+── Outputs ──────────────────────────────────────────────────────────
+  step 1  docId 357     http://localhost:5173/api/getDocument?docId=357
+  *step 1  docId 358     http://localhost:5173/api/getDocument?docId=358
+
+
+
+
+
+

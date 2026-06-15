@@ -1,0 +1,13 @@
+{
+  "workflowId": "docValidate",
+  "version": "1",
+  "params": {},
+  "steps": [
+    {
+      "id": "compare",
+      "operator": "projectorComparer",
+      "input": ["$jsonDocId", "$ruleDocId"],
+      "output": ["audit", "review"]
+    }
+  ]
+}
