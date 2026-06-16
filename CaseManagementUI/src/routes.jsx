@@ -3,6 +3,7 @@ import BillingPage from "./pages/BillingPage";
 import BillingTablePage from "./pages/BillingTablePage";
 import InvoiceDetailPage from "./pages/InvoiceDetailPage";
 import CalendarPage from "./pages/CalendarPage";
+import CaseDocumentsPage from "./pages/CaseDocumentsPage";
 import CasePage from "./pages/CasePage";
 import CasesTablePage from "./pages/CasesTablePage";
 import CorqsTestPage from "./pages/CorqsTestPage";
@@ -50,6 +51,7 @@ const routes = [
   //     ),
   //   },
   // },
+  { path: "/data/Case_GetDocuments/caseId/:caseId", element: <CaseDocumentsPage />, hideFromNav: true },
   { path: "/templates", element: <FilesTablePage />, label: "Templates" },
   { path: "/calendar", element: <CalendarPage />, label: "Calendar" },
   

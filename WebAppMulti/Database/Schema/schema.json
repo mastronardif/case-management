@@ -120,8 +120,12 @@
           "source": "body"
         }
       },
-      "dataRoute": { "resource": "getBook", "typeParam": "fileName", "idParam": "caseId" }
-        },
+      "dataRoute": {
+        "resource": "getBook",
+        "typeParam": "fileName",
+        "idParam": "caseId"
+      }
+    },
 
     {
       "name": "getWorkbooksByCase",
@@ -136,7 +140,10 @@
         }
       },
       "actions": [
-        { "label": "Open", "route": "/data/getBook/{fileName}/{caseId}" }
+        {
+          "label": "Open",
+          "route": "/data/getBook/{fileName}/{caseId}"
+        }
       ]
     },
     {
@@ -145,11 +152,31 @@
       "route": "/api/getDocument",
       "returns": "file",
       "params": {
-        "docId":        { "type": "int",    "required": false, "source": "query" },
-        "caseId":       { "type": "string", "required": false, "source": "query" },
-        "workbookQId":  { "type": "int",    "required": false, "source": "query" },
-        "sessionId":    { "type": "int",    "required": false, "source": "query" },
-        "documentType": { "type": "string", "required": false, "source": "query" }
+        "docId": {
+          "type": "int",
+          "required": false,
+          "source": "query"
+        },
+        "caseId": {
+          "type": "string",
+          "required": false,
+          "source": "query"
+        },
+        "workbookQId": {
+          "type": "int",
+          "required": false,
+          "source": "query"
+        },
+        "sessionId": {
+          "type": "int",
+          "required": false,
+          "source": "query"
+        },
+        "documentType": {
+          "type": "string",
+          "required": false,
+          "source": "query"
+        }
       }
     },
     {
@@ -158,7 +185,11 @@
       "route": "/api/wfRunReport",
       "returns": "html",
       "params": {
-        "docId": { "type": "int", "required": true, "source": "query" }
+        "docId": {
+          "type": "int",
+          "required": true,
+          "source": "query"
+        }
       }
     },
     {
@@ -174,12 +205,52 @@
       "route": "/api/corqs/getDocumentList",
       "dataRoute": { "resource": "getDocumentList" },
       "params": {
-        "documentType": { "type": "string", "required": false, "source": "body" },
-        "caseId":       { "type": "int",    "required": false, "source": "body" },
-        "isActive":     { "type": "bit",    "required": false, "source": "body" }
+        "documentType": {
+          "type": "string",
+          "required": false,
+          "source": "body"
+        },
+        "caseId": {
+          "type": "int",
+          "required": false,
+          "source": "body"
+        },
+        "isActive": {
+          "type": "bit",
+          "required": false,
+          "source": "body"
+        }
       },
       "actions": [
-        { "label": "Open", "route": "/docviewer/{documentId}" }
+        {
+          "label": "Open",
+          "route": "/docviewer/{documentId}"
+        }
+      ]
+    },
+    {
+      "name": "getSessionList",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_Session_List",
+      "route": "/api/corqs/getSessionList",
+      "dataRoute": { "resource": "getSessionList" },
+      "params": {
+        "documentType": {
+          "type": "string",
+          "required": false,
+          "source": "body"
+        },
+        "caseId": {
+          "type": "int",
+          "required": false,
+          "source": "body"
+        }
+      },
+      "actions": [
+        {
+          "label": "Open",
+          "route": "/docviewer/{documentId}"
+        }
       ]
     },
     {
@@ -188,7 +259,11 @@
       "handler": "GetInvoiceDetails",
       "dataRoute": { "resource": "getInvoiceDetails" },
       "params": {
-        "invoiceId": { "type": "int", "required": true, "source": "body" }
+        "invoiceId": {
+          "type": "int",
+          "required": true,
+          "source": "body"
+        }
       }
     },
     {
@@ -198,14 +273,37 @@
       "route": "/api/corqs/getInvoices",
       "dataRoute": { "resource": "getInvoices" },
       "params": {
-        "caseId":    { "type": "int",    "required": false, "source": "body" },
-        "status":    { "type": "string", "required": false, "source": "body" },
-        "fromDate":  { "type": "date",   "required": false, "source": "body" },
-        "toDate":    { "type": "date",   "required": false, "source": "body" },
-        "sessionId": { "type": "int",    "required": false, "source": "body" }
+        "caseId": {
+          "type": "int",
+          "required": false,
+          "source": "body"
+        },
+        "status": {
+          "type": "string",
+          "required": false,
+          "source": "body"
+        },
+        "fromDate": {
+          "type": "date",
+          "required": false,
+          "source": "body"
+        },
+        "toDate": {
+          "type": "date",
+          "required": false,
+          "source": "body"
+        },
+        "sessionId": {
+          "type": "int",
+          "required": false,
+          "source": "body"
+        }
       },
       "actions": [
-        { "label": "Open", "route": "/invoice/{invoiceId}" }
+        {
+          "label": "Open",
+          "route": "/invoice/{invoiceId}"
+        }
       ]
     }
 

@@ -85,6 +85,14 @@ export const QUERY_MAP = [
             { label: "Open", route: "/invoice/{invoiceId}" },
         ],
     },
+    {
+        resource: "getSessionList",
+        action: "getSessionList",
+        routeParams: ["documentType", "caseId"],
+        actions: [
+            { label: "Open", route: "/docviewer/{documentId}" },
+        ],
+    },
 ];
 
 export const DIRECT_ENDPOINTS = [
