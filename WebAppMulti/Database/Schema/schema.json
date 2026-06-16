@@ -251,6 +251,9 @@
           "label": "Open",
           "route": "/docviewer/{documentId}"
         }
+      ],
+      "enrichments": [
+        { "column": "clientName", "sourceColumn": "jsonDocumentId", "path": "client.name" }
       ]
     },
     {

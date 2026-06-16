@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiFetch } from "../services/apiFetch";
+import { QUERY_MAP } from "../utils/corqsreact";
+import { enrichDocIdLinks } from "../utils/docIdLinks";
+import { enrichRows } from "../utils/documentEnrichment";
 import XyzTablePage from "./XyzTablePage";
+
+const SESSION_SCHEMA = QUERY_MAP.find((e) => e.resource === "getSessionList");
 
 const RowActions = ({ row, actions }) => (
   <div className="flex gap-1">
@@ -16,27 +21,6 @@ const RowActions = ({ row, actions }) => (
     ))}
   </div>
 );
-
-const DOC_ID_COLS = ["sourceDocumentId", "jsonDocumentId"];
-
-function enrichDocIdLinks(rows, navigate) {
-  return rows.map((row) => {
-    const patched = { ...row };
-    for (const col of DOC_ID_COLS) {
-      const id = patched[col];
-      if (id != null)
-        patched[col] = (
-          <button
-            onClick={() => navigate(`/docviewer/${id}`)}
-            className="text-blue-600 underline hover:text-blue-800"
-          >
-            {id}
-          </button>
-        );
-    }
-    return patched;
-  });
-}
 
 export default function CaseDocumentsPage() {
   const { caseId } = useParams();
@@ -71,7 +55,8 @@ export default function CaseDocumentsPage() {
     try {
       const res = await apiFetch("/api/corqs", { action: "getSessionList", params: { caseId: Number(caseId) } });
       const raw = Array.isArray(res) ? res : res?.data ?? [];
-      setSessionRows(enrichDocIdLinks(raw, navigate));
+      const enriched = await enrichRows(raw, SESSION_SCHEMA?.enrichments);
+      setSessionRows(enrichDocIdLinks(enriched, navigate));
     } catch {
       setSessionError("Failed to fetch sessions.");
       setSessionRows([]);

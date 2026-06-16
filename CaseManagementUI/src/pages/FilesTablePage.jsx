@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGlobalStore } from "../context/GlobalStore";
 import { apiFetch } from "../services/apiFetch";
+import { enrichDocIdLinks } from "../utils/docIdLinks";
 import { fetchFileList } from "../services/fileService";
 import XyzTablePage from "./XyzTablePage";
 
@@ -57,7 +58,8 @@ export default function FilesTablePage() {
     setDocError(null);
     try {
       const res = await apiFetch(urlCases, { action: "getDocumentList", params: { documentType: "Other" } });
-      setDocRows(Array.isArray(res) ? res : []);
+      const raw = Array.isArray(res) ? res : [];
+      setDocRows(enrichDocIdLinks(raw, navigate));
     } catch (err) {
       console.error("Error fetching documents:", err);
       setDocRows([]);

@@ -92,6 +92,9 @@ export const QUERY_MAP = [
         actions: [
             { label: "Open", route: "/docviewer/{documentId}" },
         ],
+        enrichments: [
+            { column: "clientName", sourceColumn: "jsonDocumentId", path: "client.name" },
+        ],
     },
 ];
 
