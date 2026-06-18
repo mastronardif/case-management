@@ -15,3 +15,6 @@ nt --title "CaseManagementUI" `
    --tabColor "#FF69B4" `
    -d "$root\CaseManagementUI" `
    pwsh
+ 
+# put path on a newline 
+#prompt $P$_$G
