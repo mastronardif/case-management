@@ -1,7 +1,6 @@
 // routes.js
 import BillingPage from "./pages/BillingPage";
 import BillingTablePage from "./pages/BillingTablePage";
-import InvoiceDetailPage from "./pages/InvoiceDetailPage";
 import CalendarPage from "./pages/CalendarPage";
 import CaseDocumentsPage from "./pages/CaseDocumentsPage";
 import CasePage from "./pages/CasePage";
@@ -12,6 +11,7 @@ import DocumentViewerPage from "./pages/DocumentViewerPage";
 import FilesTablePage from "./pages/FilesTablePage";
 import FileViewerPage from "./pages/FileViewerPage";
 import IframeView from "./pages/IframeView";
+import InvoiceDetailPage from "./pages/InvoiceDetailPage";
 import Login from "./pages/Login";
 import Settings from "./pages/Settings";
 import TableFromUrl from "./pages/TableFromUrl";
@@ -31,12 +31,6 @@ const routes = [
   // ========================
   { path: "/cases/:caseId/workbooks/:workbookId/data", element: <DataPage />, hideFromNav: true },
   // { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Calendar", link: "/data/calendar/month/1001" },
-
-
-
-//   /data/workbooks            → all workbooks
-// /data/workbooks/case/5     → workbooks by case
-// /data/cases                → search cases
 
   { path: "/viewer", element: <FileViewerPage />, hideFromNav: true },
   { path: "/docviewer/:documentId", element: <DocumentViewerPage />, hideFromNav: true },

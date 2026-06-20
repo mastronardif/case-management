@@ -5,6 +5,7 @@ import DataTable22 from "../components/DataTable22";
 import { useGlobalStore } from "../context/GlobalStore";
 import { apiFetch } from "../services/apiFetch";
 import { QUERY_MAP } from "../utils/corqsreact";
+import { enrichDocIdLinks } from "../utils/docIdLinks";
 import { enrichRows } from "../utils/documentEnrichment";
 
 
@@ -30,7 +31,8 @@ export default function CasesTablePage() {
         };
       const res = await apiFetch(urlCases, body);
 
-      setRows(await enrichRows(res ?? [], schemaEntry?.enrichments)); // always safe
+      const enriched = await enrichRows(res ?? [], schemaEntry?.enrichments);
+      setRows(enrichDocIdLinks(enriched, navigate));
 
     } catch (err) {
       console.error("Error fetching cases:", err);
@@ -59,11 +61,15 @@ export default function CasesTablePage() {
 
   const actions = (schemaEntry?.actions ?? []).map((action) => ({
     label: action.label,
-    onClick: (row) =>
+    onClick: (row) => {
+      const safeRow = Object.fromEntries(
+        Object.entries(row).filter(([, v]) => !(v && v.$$typeof))
+      );
       navigate(
-        action.route.replace(/\{(\w+)\}/g, (_, key) => row[key] ?? ""),
-        { state: { caseData: row } }
-      ),
+        action.route.replace(/\{(\w+)\}/g, (_, key) => safeRow[key] ?? ""),
+        { state: { caseData: safeRow } }
+      );
+    },
   }));
 
   const filteredRows = rows.filter((row) =>

@@ -51,10 +51,14 @@ export default function DataTable22({ rows = [], actions = [] }) {
           {rows.map((row, i) => (
             <tr key={i} className="odd:bg-white even:bg-gray-50 hover:bg-blue-50">
               {columns.map((col) => {
-                const val = String(renderValue(row[col]) ?? "");
+                const rendered = renderValue(row[col]);
+                const isElement = rendered && typeof rendered === "object" && rendered.$$typeof;
+                const strVal = isElement ? "" : String(rendered ?? "");
                 return (
                   <td key={col} className="border border-gray-300 px-2 py-1 overflow-hidden">
-                    <div className="truncate" title={val}>{val}</div>
+                    {isElement
+                      ? rendered
+                      : <div className="truncate" title={strVal}>{strVal}</div>}
                   </td>
                 );
               })}

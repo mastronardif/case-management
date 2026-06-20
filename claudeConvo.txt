@@ -1,0 +1,355 @@
+
+----------------------
+i think you made a mistake.  the content is gotten by 
+http://localhost:5173/api/getDocument?docId=444
+and 444 can be gotten from 
+  FROM [CaseManagement].[cases].[TableFieldMap] where tablename = _______ .  session in this case.
+
+
+  DECLARE @mappingContent NVARCHAR(MAX);
+    SELECT @mappingContent = Content
+    FROM   [cases].[Document]
+    WHERE  DocumentId = @MappingDocId AND IsActive = 1;
+
+does this make sence??????
+--------------------
+
+i have the table in the db
+ [CaseManagement].[cases].[TableFieldMap]
+Id	TableName	JsonDocId	Version	CreatedDate	ModifiedDate
+1	Session	444	101	2026-06-17 20:23:59.2242956	NULL
+
+the field mapping
+http://localhost:5173/api/getDocument?docId=444
+
+I think you have everything.
+
+
+
+------------------------------
+PK column name on domain tables
+Ill make it Id
+
+dbMapSession.json
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Workbooks\42\dbMapSession.json
+
+What do you think about datatype???
+not all used not finalized time will probalble be time.
+TABLE [cases].[Session](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[SessionId] [int] NULL,
+	[CaseId] [int] NOT NULL,
+	[SessionDate] [date] NULL,
+	[ProviderId] [int] NULL,
+	[Location] [nvarchar](200) NULL,
+	[NotesSummary] [nvarchar](max) NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[CreatedBy] [nvarchar](100) NULL,
+	[StartTime] [datetime2](7) NULL,
+	[EndTime] [datetime2](7) NULL,
+	[CPTCode] [nvarchar](20) NULL,
+	[CPTModifier1] [nvarchar](10) NULL,
+	[CPTModifier2] [nvarchar](10) NULL,
+	[Units] [decimal](10, 2) NULL,
+	[DurationMinutes] [int] NULL,
+	[BillingStatus] [nvarchar](50) NULL,
+	[SessionStatus] [nvarchar](50) NULL,
+	[ApprovedBy] [nvarchar](100) NULL,
+	[ApprovedDate] [datetime2](0) NULL,
+	[InvoiceId] [int] NULL,
+	[AuthorizationNumber] [nvarchar](100) NULL,
+	[PlaceOfServiceCode] [nvarchar](10) NULL,
+	[SourceDocumentId] [int] NULL,
+	[RawExtractionJson_REMOVEME] [nvarchar](max) NULL,
+	[ExtractionStatus_REMOVEME] [nvarchar](50) NULL,
+	[ReviewedBy] [nvarchar](100) NULL,
+	[ReviewedDate] [datetime2](0) NULL,
+	[JsonDocumentId] [int] NULL,
+
+--------------------
+1. single
+For now keep it simple with the version.  Later on for audit i will pass the version somehow.
+
+2. dynamic column update. PROCEDURE [cases].[usp_CaseTable_Resolve]
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+keep the pattern.  Also i modified the SP its not an UPSERT its a insert.  I have no real identifiable session id info in the original doc.
+
+3. Null handling: 
+write null.  keep it with how json world does it.
+
+I like the usp_TableFieldMap_Apply. Like the enrichment pattern.  And i general pattern i prefer layering.
+
+ tell me before you do anything
+
+------------------
+
+i have a table. note the JsonDocId -  thats json doc with the maping
+what do you propose for the sql db part.
+ TABLE [cases].[TableFieldMap](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	  [TableName] [sysname] NOT NULL,
+	  [JsonDocId] [int] NOT NULL, -- the dest col, src path json blob.
+	[Version] [int] NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[ModifiedDate] [datetime2](7) NULL)
+
+------------------
+
+ok.  we agree.
+more talking.
+I was going to write an SP. or new pipeline that did what you said.
+i was going to put the dbmaps in a table cols = table, dbMapJson, ...
+The enrichment i think should be in the DB. 
+what do you think
+
+-------------
+just talk. 
+Question:  like you did enrichment.  I want to do a similar thing at the DB.
+for example i have a session table - holds the session data.
+the main content srcdocid, jsondoid, then it has a few identifiable fields that aid the sql folks.  for example it has the session date, etc.
+I was going to use a dbMap and populate said cols from the json.
+Given me your best practice. Dont write anything talk
+
+
+_________________
+dotnet run -- --workflow 355 --json-doc-id 370 --rule-doc-id 367 --table-name Session --case-id 5 --src-doc-id 370
+
+
+-------------
+just talk.  ihave s similar situation we did before patientName for the cases table.
+http://localhost:5173/data/Case_GetDocuments/caseId/5
+has two tables all docs for said case
+and sessions from the session table.
+now for the similarity and this comes up a lot so far.  my list has the json doc which has the data.  I sometimes want another col
+that can get some identifialble fields from the Jason .  for example in this case the sessin.sessiondate.
+I dont ant to update the db table much at this point in the MVP.
+i may have a dbMap table that could get the data from the table.  I prefer to do everything in json/C# if possible.
+What are your thoughts.
+do you need anymore info
+
+
+---------------
+the two cols sourceDocuemtnId, jsonDoumentID
+can you make the numbers clikckable and when clicked  view the doc like the table open button above.
+-----------------
+http://172.25.112.1:5174/templates
+
+
+
+Add another section Sesssions. see: http://172.25.112.1:5174/data/Case_GetDocuments/caseId/5.
+Similar to what you did for /templates
+
+I added SP and schema C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\schema.json
+"name": "getSessionList"
+
+Do you need anymore info.
+Please explain what you plan on doing before you doit.
+
+--------------------
+ok
+write me an SP
+usp_CaseTableRow_Resolve
+    @TableName SYSNAME,
+    @CaseId    INT,
+    @RowId
+
+usp_resolveRow(table, dbmapping)
+
+
+------------------------------------
+Any suggestions.  the table has the json and pdf of the session.
+"session": {
+"date": "2026-06-01",
+"startTime": "16:00",
+"endTime": "18:00",
+
+now I have a few few identifiable cols for example sessionDate, startdate, enddate
+I want to update a row cols by rule. and json data.
+"session": {
+"date": "2026-06-01",
+"startTime": "16:00",
+"endTime": "18:00",
+
+
+
+
+------------------------------------
+
+USE [CaseManagement]
+GO
+
+UPDATE [cases].[Document]
+   SET 
+      [CaseNumber] = 'CASE-7341693071'
+ WHERE documentId in (370, 371)
+GO
+
+
+------------------
+I want to update documents
+set CaseId = ss.CaseId
+
+from 
+session ss cols SourceDocumentId, JsonDocumentId
+ where id = 4
+ where documentId in  (SourceDocumentId, JsonDocumentId)
+
+-------------------
+give me the tsql to update [CaseManagement].[cases].[Document] where id = ____
+[SourceDocumentId] = __________
+[JsonDocumentId] = ____________
+
+from
+[CaseManagement].[cases].[Session]
+ ,[SourceDocumentId],[JsonDocumentId]
+
+
+-------------------
+
+give me the projection for this session. 
+
+
+-----------------------------------
+Give me the projection for authorization.
+
+then give me the rule ___________.  the rule is simple same as projection.
+
+----------------------------------
+
+OK back. 
+I want a table that contains the projecter and the rule.
+something like below.  Do you need any more info.
+
+TABLE [cases].[ProjecterRule]( 
+
+	[ProjectRuleId] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](100) NOT NULL,
+	[Description] [nvarchar](500) NULL,
+
+	--Projecter
+	[DocumentId] [int] NULL,
+	[TemplateJson] [nvarchar](max) NOT NULL,
+	[ParamsSchema] [nvarchar](max) NOT NULL,
+
+	-- Rule
+	[DocumentId] [int] NULL,
+	[TemplateJson] [nvarchar](max) NOT NULL,
+	[ParamsSchema] [nvarchar](max) NOT NULL,
+
+	[IsActive] [bit] NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[CreatedBy] [nvarchar](100) NULL,
+
+ CONSTRAINT [PK_Pipeline] PRIMARY KEY CLUSTERED 
+
+(
+
+	[PipelineId] ASC
+
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+-----------------------------
+
+
+
+TABLE [cases].[ProjectRule](
+	[ProjectRuleId] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](100) NOT NULL,
+	[Description] [nvarchar](500) NULL,
+
+	--Projecter
+	[DocumentId] [int] NULL,
+	[TemplateJson] [nvarchar](max) NOT NULL,
+	[ParamsSchema] [nvarchar](max) NOT NULL,
+
+	-- Rule
+	[DocumentId] [int] NULL,
+	[TemplateJson] [nvarchar](max) NOT NULL,
+	[ParamsSchema] [nvarchar](max) NOT NULL,
+
+
+	[IsActive] [bit] NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[CreatedBy] [nvarchar](100) NULL,
+ CONSTRAINT [PK_Pipeline] PRIMARY KEY CLUSTERED 
+(
+	[PipelineId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+
+E TABLE [cases].[ProjectRule](
+	[ProjectRuleAuthorizationId] [int] IDENTITY(1,1) NOT NULL,
+	[CaseId] [int] NOT NULL,
+	[PayerId] [int] NOT NULL,
+	[AuthorizationNumber] [varchar](100) NOT NULL,
+
+	[EndDate] [date] NOT NULL,
+	[AuthorizedUnits] [int] NULL,
+	[Notes] [nvarchar](max) NULL,
+	[DocumentId] [int] NULL,
+	[DocumentJson] [nvarchar](max) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[AuthorizationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+
+
+
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Scripts\ImportDocs\Program.cs
+
+"target": "memberId",
+      "source": "patient.memberId",
+      "extractedValue": "U8771342503",
+
+CASE-U8771342503
+
+
+ Quick Guide Navigating SSDI & SSI 
+Social Security Disability Insurance (SSDI) for People With Cancer | American Cancer Society 
+Cancer and Careers | The Top Resource for Working People With Cancer 
+ 
+
+
+I Frank Mastronardi  authorize Wise Equation Solutions Inc to submit my resume for the role of Senior .NET / Angular Integration Developer - New York, NY (Remote) for the client Randstad/Con Edison at $55/hr on W2 without benefits, as of today, i.e, 06/10/2026.
+
+Built enterprise integrations using Microsoft BizTalk Server, APIs, ETL processes, SQL Server, Oracle, and EDI transactions.
+Integrated healthcare HIPAA data exchanges and business-critical job processing systems between enterprise platforms.
+
+
+Built enterprise integrations using APIs, BizTalk Server, ETL processes, SQL Server, Oracle, EDI, and middleware technologies.
+
+Initial Treatment Plan
+
+
+BizTalk, ETL, SSIS, ADF
+
+ Oracle, PL/SQL
+
+C#, .NET 8, ASP.NET Web API, Angular 15-20
+REST APIs, Microservices, Enterprise Integration
+SQL Server, Oracle, PL/SQL
+BizTalk, ETL, SSIS, ADF
+Azure DevOps, CI/CD, Git, Docker
+Swagger/OpenAPI, Postman
+
+CORE SKILLS
+
+Angular 15–20, TypeScript, JavaScript,
+C#, .NET Core, ASP.NET Web API, REST APIs, Microservices,
+SQL Server, Oracle, PL/SQL, Dapper,
+Enterprise Integrations, BizTalk, ETL, SSIS, Azure Data Factory (ADF),
+Swagger/OpenAPI, Postman,
+Azure DevOps, CI/CD, Git, Docker,
+Dynatrace, Elasticsearch
+
+Delivered enterprise systems for Wells Fargo, Bank of America, Verizon, Merck, BB&T, Fidelity, and others.
+
+Developed .NET applications, Oracle PL/SQL stored procedures, and production monitoring dashboards for large-scale enterprise environments.
+
+Built enterprise integrations using APIs, ETL processes, SQL Server, Oracle, and middleware technologies.
+
+Led migrations from legacy platforms to modern .NET and cloud architectures.
