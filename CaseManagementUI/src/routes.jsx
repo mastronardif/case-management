@@ -55,15 +55,15 @@ const routes = [
 
   { path: "*", element: <div>Not Found</div>, hideFromNav: true },
 
-  { path: "/table", element: <TableFromUrl />, label: "Table" },
-  { path: "/settings", element: <Settings />, label: "Settings" },
-  { path: "/login", element: <Login />, label: "Login" },
+  { path: "/table", element: <TableFromUrl />, label: "Table", navGroup: "Experimental" },
+  { path: "/settings", element: <Settings />, label: "Settings", navGroup: "Experimental" },
+  { path: "/login", element: <Login />, label: "Login", hideFromNav: true },
 
-  { path: "/corqs", element: <CorqsTestPage />, label: "CORQS" },
+  { path: "/corqs", element: <CorqsTestPage />, label: "CORQS", navGroup: "Experimental" },
 
    // { path: "/test", element: <DataPage />, label: "Test" },
    //{ path: "/data/cases", element: <DataPage />, label: "Test" },
-  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Test", link: "/data/cases" },
+  { path: "/data/:resource/:type?/:id?", element: <DataPage />, label: "Test", link: "/data/cases", navGroup: "Experimental" },
 
 
   // IframeView examples
@@ -74,6 +74,7 @@ const routes = [
     defaultParams: {
       vvv: encodeURIComponent("https://vexflow.com/vexchords/index.html"),
     },
+    navGroup: "Experimental",
   },
 ];
 

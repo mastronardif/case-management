@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ActionTable from "../components/ActionTable";
-import DataTable22 from "../components/DataTable22";
+import DataTable from "../components/DataTable";
 import { apiFetch } from "../services/apiFetch";
 import { QUERY_MAP } from "../utils/corqsreact";
 import { buildQuery } from "../utils/routeToQuery";
@@ -20,19 +20,22 @@ export default function DataPage({
   const navigate = useNavigate();
   const { resource, type, id } = useParams();
   const { state } = useLocation();
+  const dataTableRef = useRef(null);
 
   const allTableActions = [...getTableActions(resource), ...tableActions];
-
   const schemaEntry = QUERY_MAP.find((e) => e.resource === resource);
-  const urlContext = type && id ? { [type]: id } : {};
-  const actions = (schemaEntry?.actions ?? []).map((action) => ({
-    label: action.label,
-    onClick: (row) =>
-      navigate(
-        action.route.replace(/\{(\w+)\}/g, (_, key) => row[key] ?? urlContext[key] ?? ""),
-        { state: { ...row, ...urlContext, caseData: row } }
-      ),
-  }));
+
+  const actions = useMemo(() => {
+    const urlContext = type && id ? { [type]: id } : {};
+    return (schemaEntry?.actions ?? []).map((action) => ({
+      label: action.label,
+      onClick: (row) =>
+        navigate(
+          action.route.replace(/\{(\w+)\}/g, (_, key) => row[key] ?? urlContext[key] ?? ""),
+          { state: { ...row, ...urlContext, caseData: row } }
+        ),
+    }));
+  }, [schemaEntry, navigate, type, id]);
 
   const resolvedRequest = useMemo(() => {
     if (request) return request;
@@ -46,15 +49,18 @@ export default function DataPage({
       console.warn("No request available");
       return;
     }
+
     setLoading(true);
+    setError(null);
+
     try {
-      setError(null);
       const body = resolvedRequest?.action
         ? { action: resolvedRequest.action, params: resolvedRequest.params || {} }
         : resolvedRequest?.body || null;
+
       const result = await apiFetch(resolvedRequest.url, body);
-      const data = result?.data ?? result ?? [];
-      setRows(Array.isArray(data) ? data : [data]);
+      const normalized = Array.isArray(result) ? result : result ? [result] : [];
+      setRows(normalized);
     } catch (err) {
       console.error("DataPage error:", err);
       setRows([]);
@@ -69,28 +75,29 @@ export default function DataPage({
   }, [fetchData]);
 
   const handleExport = () => {
-    if (!rows.length) return;
-    const cols = Object.keys(rows[0]);
-    const csv = [cols.join(","), ...rows.map((r) =>
-      cols.map((c) => {
-        const v = r[c] ?? "";
-        const s = typeof v === "object" ? JSON.stringify(v) : String(v);
-        return s.includes(",") || s.includes('"') ? `"${s.replace(/"/g, '""')}"` : s;
-      }).join(",")
-    )].join("\n");
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
-    a.download = `${resource ?? "export"}.csv`;
-    a.click();
+    dataTableRef.current?.exportCSV?.();
   };
 
-  const resolvedTitle = title ?? `${resource ?? ""}${type ? ` / ${type}` : ""}${id ? ` / ${id}` : ""}`;
+  const resolvedTitle =
+    title ?? `${resource ?? ""}${type ? ` / ${type}` : ""}${id ? ` / ${id}` : ""}`;
 
-  const filteredRows = rows.filter((row) =>
-    JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredRows = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+    if (!normalizedSearch) return rows;
 
-  const btnClass = "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-150 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed";
+    return rows.filter((row) =>
+      Object.values(row ?? {}).some((value) => {
+        if (value === null || value === undefined) return false;
+        if (typeof value === "object" && !React.isValidElement(value)) {
+          return JSON.stringify(value).toLowerCase().includes(normalizedSearch);
+        }
+        return String(value).toLowerCase().includes(normalizedSearch);
+      })
+    );
+  }, [rows, search]);
+
+  const btnClass =
+    "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-150 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed";
 
   return (
     <div className="p-6">
@@ -112,10 +119,17 @@ export default function DataPage({
 
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
-      {filteredRows.length > 0 ? (
-        <DataTable22 rows={filteredRows} actions={actions} />
+      {loading && rows.length === 0 ? (
+        <p>Loading...</p>
+      ) : filteredRows.length > 0 ? (
+        <DataTable
+          ref={dataTableRef}
+          rows={filteredRows}
+          actions={actions}
+          emptyMessage={"No data found."}
+        />
       ) : (
-        <p>{loading ? "Loading..." : "No data found."}</p>
+        <p>No data found.</p>
       )}
 
       <div className="mt-4 text-sm text-gray-500">{rows.length} rows</div>

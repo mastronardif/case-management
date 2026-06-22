@@ -1,108 +1,87 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import ActionTable from "../components/ActionTable";
+import DataTable from "../components/DataTable";
 import { useGlobalStore } from "../context/GlobalStore";
 import { apiFetch } from "../services/apiFetch";
-
-
-
-
-const renderValue = (val) => {
-  if (val === null || val === undefined) return "";
-  if (typeof val === "object") {
-    return Object.entries(val)
-      .map(([k, v]) => `${k}: ${renderValue(v)}`)
-      .join(", ");
-  }
-  return val.toString();
-};
 
 export default function TableFromUrl() {
   const { url, body } = useGlobalStore();
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const dataTableRef = useRef(null);
+  const fetchPromiseRef = useRef(null);
 
-const fetchPromiseRef = useRef(null);
+  const fetchData = useCallback(async () => {
+    if (!url) return;
+    if (fetchPromiseRef.current) return fetchPromiseRef.current;
 
-const fetchData = useCallback(async () => {
-  if (!url) return;
+    setLoading(true);
 
-  if (fetchPromiseRef.current) return fetchPromiseRef.current;
+    fetchPromiseRef.current = (async () => {
+      try {
+        setError(null);
+        const result = body ? await apiFetch(url, body) : await apiFetch(url);
+        setRows(Array.isArray(result) ? result : result ? [result] : []);
+      } catch (err) {
+        console.error(err);
+        setRows([]);
+        setError("Failed to fetch data.");
+      } finally {
+        fetchPromiseRef.current = null;
+        setLoading(false);
+      }
+    })();
 
-  setLoading(true);
+    return fetchPromiseRef.current;
+  }, [url, body]);
 
-  fetchPromiseRef.current = (async () => {
-    try {
-      setError(null);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-      const result = body
-        ? await apiFetch(url, body)
-        : await apiFetch(url);
+  const handleExport = () => {
+    dataTableRef.current?.exportCSV?.();
+  };
 
-      setRows(result);
-    } catch (err) {
-      console.error(err);
-      setRows([]);
-      setError("Failed to fetch data.");
-    } finally {
-      fetchPromiseRef.current = null;
-      setLoading(false);
-    }
-  })();
+  const filteredRows = rows.filter((row) => {
+    const normalizedSearch = search.trim().toLowerCase();
+    if (!normalizedSearch) return true;
 
-  return fetchPromiseRef.current;
-}, [url, body]);
-
-
-
-useEffect(() => {
-  fetchData();
-}, [url, body]);
-
+    return Object.values(row ?? {}).some((value) => {
+      if (value === null || value === undefined) return false;
+      if (typeof value === "object") {
+        return JSON.stringify(value).toLowerCase().includes(normalizedSearch);
+      }
+      return String(value).toLowerCase().includes(normalizedSearch);
+    });
+  });
 
   return (
-    <div>
-      <h1 className="text-xl font-bold mb-4">Data Table</h1>
-      <p className="mb-2">
-        Fetching from: <strong>{url}</strong>
-      </p>
-
-      <button
-        onClick={fetchData}
-        disabled={loading}
-        className={`px-3 py-1 rounded mb-4 hover:bg-blue-600 ${
-          loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 text-white"
-        }`}
-      >
-        {loading ? "Loading..." : "Reload"}
-      </button>
+    <div className="p-6">
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
+        <ActionTable
+          title={url ? `Data Table (${url})` : "Data Table"}
+          onReload={fetchData}
+          onExport={handleExport}
+          onSearch={setSearch}
+          loading={loading}
+        />
+      </div>
 
       {error && <p className="text-red-500 mb-2">{error}</p>}
 
-      {rows.length > 0 ? (
-        <table className="table-auto border-collapse border border-gray-300 w-full">
-          <thead>
-            <tr>
-              {Object.keys(rows[0]).map((key) => (
-                <th key={key} className="border border-gray-300 px-2 py-1 text-left">
-                  {key}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, i) => (
-              <tr key={i} className="odd:bg-white even:bg-gray-100">
-                {Object.values(row).map((val, j) => (
-                  <td key={j} className="border border-gray-300 px-2 py-1">
-                    {renderValue(val)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      {loading && rows.length === 0 ? (
+        <p>Loading data...</p>
+      ) : filteredRows.length > 0 ? (
+        <DataTable
+          ref={dataTableRef}
+          rows={filteredRows}
+          emptyMessage="No data loaded yet."
+        />
       ) : (
-        <p>{loading ? "Loading data..." : "No data loaded yet."}</p>
+        <p>No data loaded yet.</p>
       )}
     </div>
   );

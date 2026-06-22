@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ActionTable from "../components/ActionTable";
-import DataTable22 from "../components/DataTable22";
+import DataTable from "../components/DataTable";
 import { useGlobalStore } from "../context/GlobalStore";
 import { apiFetch } from "../services/apiFetch";
 import { QUERY_MAP } from "../utils/corqsreact";
@@ -16,6 +16,7 @@ export default function BillingTablePage() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const dataTableRef = useRef(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -36,6 +37,10 @@ export default function BillingTablePage() {
     fetchData();
   }, [fetchData]);
 
+  const handleExport = () => {
+    dataTableRef.current?.exportCSV?.();
+  };
+
   const schemaEntry = QUERY_MAP.find((e) => e.resource === "getInvoices");
   const actions = (schemaEntry?.actions ?? []).map((action) => ({
     label: action.label,
@@ -46,18 +51,27 @@ export default function BillingTablePage() {
       ),
   }));
 
-  const filteredRows = rows.filter((row) =>
-    JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredRows = rows.filter((row) => {
+    const normalizedSearch = search.trim().toLowerCase();
+    if (!normalizedSearch) return true;
+
+    return Object.values(row ?? {}).some((value) => {
+      if (value === null || value === undefined) return false;
+      if (typeof value === "object" && !value.$$typeof) {
+        return JSON.stringify(value).toLowerCase().includes(normalizedSearch);
+      }
+      return String(value).toLowerCase().includes(normalizedSearch);
+    });
+  });
 
   return (
     <div className="relative min-h-screen p-6 flex justify-center">
       <div className="relative w-full max-w-6xl p-6 rounded shadow bg-white">
-
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           <ActionTable
             title="Billing"
             onReload={fetchData}
+            onExport={handleExport}
             loading={loading}
             onSearch={setSearch}
             buttonClass={greyBtn}
@@ -70,11 +84,15 @@ export default function BillingTablePage() {
         {error && <p className="text-red-500 mb-2">{error}</p>}
 
         {filteredRows.length > 0 ? (
-          <DataTable22 rows={filteredRows} actions={actions} />
+          <DataTable
+            ref={dataTableRef}
+            rows={filteredRows}
+            actions={actions}
+            emptyMessage="No invoices found."
+          />
         ) : (
           <p>{loading ? "Loading invoices..." : "No invoices found."}</p>
         )}
-
       </div>
     </div>
   );

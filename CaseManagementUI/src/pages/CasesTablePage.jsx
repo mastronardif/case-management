@@ -1,13 +1,12 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ActionTable from "../components/ActionTable";
-import DataTable22 from "../components/DataTable22";
+import DataTable from "../components/DataTable";
 import { useGlobalStore } from "../context/GlobalStore";
 import { apiFetch } from "../services/apiFetch";
 import { QUERY_MAP } from "../utils/corqsreact";
 import { enrichDocIdLinks } from "../utils/docIdLinks";
 import { enrichRows } from "../utils/documentEnrichment";
-
 
 const schemaEntry = QUERY_MAP.find((e) => e.resource === "searchCases");
 
@@ -18,22 +17,21 @@ export default function CasesTablePage() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const dataTableRef = useRef(null);
 
   const fetchData = useCallback(async () => {
     if (!urlCases) return;
     setLoading(true);
     try {
       setError(null);
-      // const res = await api.get(urlCases);
       const body = {
-        "action": "searchCases",
-        "params": { }
-        };
+        action: "searchCases",
+        params: {},
+      };
       const res = await apiFetch(urlCases, body);
 
       const enriched = await enrichRows(res ?? [], schemaEntry?.enrichments);
       setRows(enrichDocIdLinks(enriched, navigate));
-
     } catch (err) {
       console.error("Error fetching cases:", err);
       setRows([]);
@@ -41,21 +39,17 @@ export default function CasesTablePage() {
     } finally {
       setLoading(false);
     }
-  }, [urlCases]);
+  }, [navigate, urlCases]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   const handleExport = () => {
-    console.log("Export clicked");
-    // TODO: implement CSV/Excel export
-    alert("Export CSV not implemented yet");
+    dataTableRef.current?.exportCSV?.();
   };
 
   const handleNew = () => {
-    console.log("New clicked");
-    // TODO: navigate to new case form
     navigate("/cases/new");
   };
 
@@ -72,9 +66,18 @@ export default function CasesTablePage() {
     },
   }));
 
-  const filteredRows = rows.filter((row) =>
-    JSON.stringify(row).toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredRows = rows.filter((row) => {
+    const normalizedSearch = search.trim().toLowerCase();
+    if (!normalizedSearch) return true;
+
+    return Object.values(row ?? {}).some((value) => {
+      if (value === null || value === undefined) return false;
+      if (typeof value === "object" && !value.$$typeof) {
+        return JSON.stringify(value).toLowerCase().includes(normalizedSearch);
+      }
+      return String(value).toLowerCase().includes(normalizedSearch);
+    });
+  });
 
   return (
     <div className="relative min-h-screen p-6 flex justify-center">
@@ -91,7 +94,12 @@ export default function CasesTablePage() {
         {error && <p className="text-red-500 mb-2">{error}</p>}
 
         {filteredRows.length > 0 ? (
-          <DataTable22 rows={filteredRows} actions={actions} />
+          <DataTable
+            ref={dataTableRef}
+            rows={filteredRows}
+            actions={actions}
+            emptyMessage="No cases found."
+          />
         ) : (
           <p>{loading ? "Loading cases..." : "No cases found."}</p>
         )}
