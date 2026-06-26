@@ -78,6 +78,15 @@ export default function CaseDocumentsPage() {
 
   return (
     <div>
+            <XyzTablePage
+        title={`Sessions — Case ${caseId}`}
+        rows={sessionRows}
+        ActionRowComponent={RowActions}
+        rowActions={sessionRowActions}
+        tableActions={sessionTableActions}
+      />
+      {sessionError && <p className="text-red-500 mt-2 px-6">{sessionError}</p>}
+
       <XyzTablePage
         title={`Documents — Case ${caseId}`}
         rows={docRows}
@@ -86,15 +95,6 @@ export default function CaseDocumentsPage() {
         tableActions={docTableActions}
       />
       {docError && <p className="text-red-500 mt-2 px-6">{docError}</p>}
-
-      <XyzTablePage
-        title={`Sessions — Case ${caseId}`}
-        rows={sessionRows}
-        ActionRowComponent={RowActions}
-        rowActions={sessionRowActions}
-        tableActions={sessionTableActions}
-      />
-      {sessionError && <p className="text-red-500 mt-2 px-6">{sessionError}</p>}
     </div>
   );
 }

@@ -1,3 +1,65 @@
+-----------------------------------------------
+6.23.26
+Talk I want to make sure you understand.
+now i want to cleanup my billing invoice process. 
+All the work is done at the mothership using docId's.  My UI will list the sessionDocid's and any other infoIs'
+I propose the following. 
+
+a new pipeline generate 837P.
+1. package all docs from a list of session(s)
+2. generate invoices (837p)
+
+
+-------------------
+6/22/26
+the session date is not populating.  I suspect i messed up the projection.  Do you need to see anything.
+giventhe mapping is 
+"fields": [
+{
+"column": "SessionDate",
+"path": "$.session.date",
+"datatype": "date"
+},
+
+what should the project be.
+
+    {
+      "target": "sessionDate",
+      "source": "session.sessionDate"
+    },
+
+
+dotnet run -- --workflow 355 --json-doc-id 464 --rule-doc-id 514 --table-name Session --case-id 5 --src-doc-id 25
+session not 
+6/21/26
+
+Almost all the data is Audited from source docs.  
+I have pipelines that enforce data integrity, and those screens(dayta) (entities like session, case, authorization, ..) 
+they can inserted / update via pipelines.  Do you remember that convo?
+i.e. a case gets entered via docs, sessions get entered via docs, 
+invoices/biliing gets generated via batches.
+Do you understand????
+
+
+------------------------
+
+OK.  talk only
+lets do some cleanup.
+I an going to add another route /ProviderStaff which is going to list the ProviderStaff similar to cases, etc.
+i see DataPage.jsx, DataTable.jsx,  DataTable22.jsx
+
+assume you are going to add n data pages that basically call an api that list the data
+
+
+--------------------------------
+http://localhost:5173/cases
+the open button is not woking when it has sourcedocId, jsonId
+works otherwise when the tow cols are empty
+
+____________
+make http://localhost:5173/cases
+  { path: "/cases", element: <CasesTablePage />, label: "Cases" },
+I want the two docId's to be clickablelike the other pages you did
 
 ----------------------
 i think you made a mistake.  the content is gotten by 

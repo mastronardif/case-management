@@ -19,7 +19,9 @@ public class ZipStep(ICaseManagementRepository repository, ILogger<ZipStep> logg
                 var doc = await repository.GetDocumentAsync(new DocumentContext(DocumentId: id), ct)
                     ?? throw new InvalidOperationException($"Document {id} not found");
 
-                var entryName = doc.FileName ?? $"doc-{id}.bin";
+                //var entryName = doc.FileName ?? $"doc-{id}.bin";
+                var entryName = $"{id}." + (doc.FileName ?? $"doc-{id}.bin");
+
                 var entry     = archive.CreateEntry(entryName, CompressionLevel.Optimal);
 
                 await using var entryStream = entry.Open();

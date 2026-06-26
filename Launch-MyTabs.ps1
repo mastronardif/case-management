@@ -18,3 +18,5 @@ nt --title "CaseManagementUI" `
  
 # put path on a newline 
 #prompt $P$_$G
+
+#pwsh -NoExit -Command "function prompt { ""$PWD`n> "" }"
