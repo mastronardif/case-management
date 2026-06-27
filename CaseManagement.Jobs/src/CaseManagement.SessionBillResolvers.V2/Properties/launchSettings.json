@@ -2,7 +2,7 @@
   "profiles": {
     "CaseManagement.SessionBillResolvers.V2": {
       "commandName": "Project",
-      "commandLineArgs": "--workflow 556",
+      "commandLineArgs": "--workflow 567",
       "dotnetRunMessages": false
     }
   }
