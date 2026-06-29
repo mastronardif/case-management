@@ -91,6 +91,15 @@ public record Claim837PData(
     IReadOnlyList<JsonObject> Assessment,
     JsonNode?                 Definition);
 
+public record OperatorParam(string Name, string Type, bool Required, string Description);
+
+public record OperatorInfo(
+    string Operator,
+    string Description,
+    string[] InputLabels,
+    string[] OutputLabels,
+    OperatorParam[] Params);
+
 public class BillingResult
 {
     public int InvoiceCount { get; set; }

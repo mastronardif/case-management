@@ -8,6 +8,17 @@ namespace CaseManagement.SessionBillResolvers.V2.Engine.Steps;
 public class Claim837PStep(ICaseManagementRepository repository, ILogger<Claim837PStep> logger) : IWorkflowStep
 {
     public string Operator => "claim837P";
+    public OperatorInfo Info => Meta;
+    public static OperatorInfo Meta { get; } = new(
+        Operator:     "claim837P",
+        Description:  "Builds a HIPAA 837P claim from session, case, coverage, authorization, diagnoses, provider, and assessment data. Produces a claim JSON and an HTML review doc.",
+        InputLabels:  [],
+        OutputLabels: ["claim837P.json", "claim837P-review.html"],
+        Params:
+        [
+            new("caseId",    "int", true, "CaseId to pull claim data for"),
+            new("sessionId", "int", true, "SessionId to pull claim data for")
+        ]);
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId,
         IReadOnlyDictionary<string, JsonElement>? wfParams, CancellationToken ct)

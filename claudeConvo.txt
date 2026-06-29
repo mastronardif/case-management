@@ -1,4 +1,27 @@
+--------------------
+6/28/26
+
+--------------------
+talk more.  I want to add the opperators to http://localhost:5173/api/pipelineCatalog
+and --list-opperators
+
+How you going to get the list form C#?  I dont want any funky stuff.
+I can have a table in the DB called Opperator like i have one called pipeline OR i can have a docId opps.json
+
+
+--------------------
+C:\Users\mastronardif\source\repos\CaseMangement
+my project consists of three parts
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti C# SQL server
+C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs batch jobs Console app V2
+C:\Users\mastronardif\source\repos\CaseMangement\CaseManagementUI react.js UI
+
+I doit in this vs code project where claude works.
+do you need any more info.  I want to bring you up to speed.
+C:\Users\mastronardif\source\repos\CaseMangement\claudeConvo.txt
+
 -----------------------------------------------
+
 6.23.26
 Talk I want to make sure you understand.
 now i want to cleanup my billing invoice process. 

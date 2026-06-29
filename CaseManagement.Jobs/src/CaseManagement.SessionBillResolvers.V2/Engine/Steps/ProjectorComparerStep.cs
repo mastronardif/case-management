@@ -9,6 +9,18 @@ public class ProjectorComparerStep(
     ILogger<ProjectorComparerStep> logger) : IWorkflowStep
 {
     public string Operator => "projectorComparer";
+    public OperatorInfo Info => Meta;
+    public static OperatorInfo Meta { get; } = new(
+        Operator:     "projectorComparer",
+        Description:  "Validates a session extraction doc against a projection definition. Produces a field-by-field audit JSON and a human-readable HTML review.",
+        InputLabels:  ["sessionDoc", "projectionDefinition"],
+        OutputLabels: ["sessionAudit.json", "sessionReview.html"],
+        Params:
+        [
+            new("tableName", "string", false, "Target [cases] table name"),
+            new("caseId",    "int",    false, "CaseId for document context"),
+            new("srcDocId",  "int",    false, "Original source document id")
+        ]);
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, JsonElement>? wfParams, CancellationToken ct)
     {

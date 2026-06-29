@@ -6,6 +6,16 @@ namespace CaseManagement.SessionBillResolvers.V2.Engine.Steps;
 public class ZipStep(ICaseManagementRepository repository, ILogger<ZipStep> logger) : IWorkflowStep
 {
     public string Operator => "zip";
+    public OperatorInfo Info => Meta;
+    public static OperatorInfo Meta { get; } = new(
+        Operator:     "zip",
+        Description:  "Packages any number of input documents into a single ZIP archive.",
+        InputLabels:  ["doc1 … docN (variable)"],
+        OutputLabels: ["report.zip"],
+        Params:
+        [
+            new("caseId", "int", false, "CaseId for document context")
+        ]);
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, System.Text.Json.JsonElement>? wfParams, CancellationToken ct)
     {

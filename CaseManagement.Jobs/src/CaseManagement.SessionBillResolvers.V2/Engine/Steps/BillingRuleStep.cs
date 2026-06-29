@@ -5,6 +5,13 @@ namespace CaseManagement.SessionBillResolvers.V2.Engine.Steps;
 public class BillingRuleStep(ICaseManagementRepository repository, ILogger<BillingRuleStep> logger) : IWorkflowStep
 {
     public string Operator => "billingRule";
+    public OperatorInfo Info => Meta;
+    public static OperatorInfo Meta { get; } = new(
+        Operator:     "billingRule",
+        Description:  "Applies a billing rule to a billing projection and produces an invoice (billing result).",
+        InputLabels:  ["billingProjection", "billingRule"],
+        OutputLabels: ["billingResult.json"],
+        Params:       []);
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, System.Text.Json.JsonElement>? wfParams, CancellationToken ct)
     {

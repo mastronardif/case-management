@@ -10,14 +10,11 @@ public static class PipelineCatalogEndpoint
         {
             var connStr = config.GetConnectionString("DefaultConnection");
             using var conn = new SqlConnection(connStr);
-            using var cmd  = new SqlCommand("cases.usp_Pipeline_GetAll", conn)
-            {
-                CommandType = CommandType.StoredProcedure
-            };
-
             await conn.OpenAsync();
-            using var reader = await cmd.ExecuteReaderAsync();
 
+            // Pipelines
+            using var pipeCmd = new SqlCommand("cases.usp_Pipeline_GetAll", conn) { CommandType = CommandType.StoredProcedure };
+            using var reader  = await pipeCmd.ExecuteReaderAsync();
             var pipelines = new List<PipelineInfo>();
             while (await reader.ReadAsync())
             {
@@ -29,8 +26,25 @@ public static class PipelineCatalogEndpoint
                     ParamsSchema: reader.GetString(reader.GetOrdinal("ParamsSchema"))
                 ));
             }
+            await reader.CloseAsync();
 
-            var html = PipelineCatalogRenderer.Render(pipelines);
+            // Operators catalog (saved by: dotnet run -- --list-operators --html)
+            string? operatorsJson = null;
+            using var opCmd = new SqlCommand("cases.usp_Document_GetByContext", conn) { CommandType = CommandType.StoredProcedure };
+            opCmd.Parameters.AddWithValue("@DocumentId",   DBNull.Value);
+            opCmd.Parameters.AddWithValue("@CaseId",       DBNull.Value);
+            opCmd.Parameters.AddWithValue("@WorkbookQId",  DBNull.Value);
+            opCmd.Parameters.AddWithValue("@SessionId",    DBNull.Value);
+            opCmd.Parameters.AddWithValue("@DocumentType", "operators-catalog");
+            using var opReader = await opCmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
+            if (await opReader.ReadAsync())
+            {
+                var fileData = (byte[])opReader.GetValue(opReader.GetOrdinal("FileData"));
+                operatorsJson = System.Text.Encoding.UTF8.GetString(fileData);
+            }
+            await opReader.CloseAsync();
+
+            var html = PipelineCatalogRenderer.Render(pipelines, operatorsJson);
             return Results.Content(html, "text/html; charset=utf-8");
         });
     }

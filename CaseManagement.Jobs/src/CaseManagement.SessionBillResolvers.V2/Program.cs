@@ -20,8 +20,9 @@ var sessionNumberOption = new Option<int?>  ("--session-number", "Session number
 var auditFileOption     = new Option<string?>("--audit-file",    "Path to a run file (JSON with sessionDoc / projector sections)");
 var actionOption        = new Option<string?>("--action",        "Which section to run: 'billingProcess' or 'projectorProcess'");
 var workflowDocIdOption = new Option<int?>  ("--workflow",       "DocumentId of a workflow definition to execute");
-var listOption          = new Option<bool>  ("--list",           "Print available commands as JSON and exit");
-var htmlOption          = new Option<bool>  ("--html",           "With --list: output as styled HTML instead of JSON");
+var listOption              = new Option<bool>("--list",           "Print available commands as JSON and exit");
+var listOperatorsOption     = new Option<bool>("--list-operators", "Print available workflow operators as JSON and exit");
+var htmlOption              = new Option<bool>("--html",           "With --list or --list-operators: save as styled HTML doc to DB");
 
 var jsonDocIdOption = new Option<int?>   ("--json-doc-id", "DocumentId of the extracted JSON to validate/resolve (workflow param $jsonDocId)");
 var ruleDocIdOption = new Option<int?>   ("--rule-doc-id", "DocumentId of the projection rule (workflow param $ruleDocId)");
@@ -37,12 +38,24 @@ var rootCommand = new RootCommand("CaseManagement session billing resolver")
     actionOption,
     workflowDocIdOption,
     listOption,
+    listOperatorsOption,
     htmlOption,
     jsonDocIdOption,
     ruleDocIdOption,
     srcDocIdOption,
     tableNameOption,
     caseIdOption
+};
+
+// All registered operators — add new entries here alongside the DI registrations below.
+var operatorInfos = new[]
+{
+    ProjectorComparerStep.Meta,
+    ProjectorStep.Meta,
+    BillingRuleStep.Meta,
+    Claim837PStep.Meta,
+    DocResolveStep.Meta,
+    ZipStep.Meta,
 };
 
 // Command manifest — add entries here as new jobs are built
@@ -79,11 +92,12 @@ var manifest = new CmdManifest("CaseManagement.Jobs", "1.0",
         "--audit-file C:\\temp\\run.json --action projectorProcess"),
 ]);
 
-BillingRunOptions?              runOptions            = null;
-RunInput?                        selectedInput         = null;
-string?                          auditOutputDir        = null;
-int?                             selectedWorkflowDocId = null;
-bool                             saveManifestHtml      = false;
+BillingRunOptions?              runOptions             = null;
+RunInput?                        selectedInput          = null;
+string?                          auditOutputDir         = null;
+int?                             selectedWorkflowDocId  = null;
+bool                             saveManifestHtml       = false;
+bool                             saveOperatorsCatalog   = false;
 Dictionary<string, JsonElement>? workflowParamOverrides = null;
 
 void HandleRoot(InvocationContext context)
@@ -94,6 +108,7 @@ void HandleRoot(InvocationContext context)
     var action        = context.ParseResult.GetValueForOption(actionOption);
     var workflowDocId = context.ParseResult.GetValueForOption(workflowDocIdOption);
     var list          = context.ParseResult.GetValueForOption(listOption);
+    var listOperators = context.ParseResult.GetValueForOption(listOperatorsOption);
     var html          = context.ParseResult.GetValueForOption(htmlOption);
     var jsonDocId     = context.ParseResult.GetValueForOption(jsonDocIdOption);
     var ruleDocId     = context.ParseResult.GetValueForOption(ruleDocIdOption);
@@ -105,6 +120,13 @@ void HandleRoot(InvocationContext context)
     {
         if (!html) { Console.WriteLine(JsonSerializer.Serialize(manifest, manifestOptions)); return; }
         saveManifestHtml = true;
+        return;
+    }
+
+    if (listOperators)
+    {
+        if (!html) { Console.WriteLine(JsonSerializer.Serialize(operatorInfos, manifestOptions)); return; }
+        saveOperatorsCatalog = true;
         return;
     }
 
@@ -190,6 +212,32 @@ if (saveManifestHtml)
 
     Console.WriteLine($"Saved  → docId: {docId}");
     Console.WriteLine($"Open:    http://localhost:5173/docviewer/{docId}");
+    return;
+}
+
+if (saveOperatorsCatalog)
+{
+    var opBuilder = Host.CreateApplicationBuilder(args);
+    opBuilder.AddSharedInfrastructure();
+    opBuilder.Services.AddSingleton<ICaseManagementRepository, SqlCaseManagementRepository>();
+    var opHost = opBuilder.Build();
+    var repo   = opHost.Services.GetRequiredService<ICaseManagementRepository>();
+    var ct     = CancellationToken.None;
+
+    var opsJson    = JsonSerializer.Serialize(operatorInfos, manifestOptions);
+    var existingOp = await repo.GetDocumentAsync(new DocumentContext(DocumentType: "operators-catalog"), ct);
+    var jsonDocId  = await repo.SaveDocumentAsync(
+        new DocumentContext(DocumentId: existingOp?.DocumentId),
+        opsJson, "operators-catalog", "operators-catalog.json", "application/json", ct);
+
+    var opsHtml   = RenderOperatorsHtml(operatorInfos);
+    var htmlDocId = await repo.SaveDocumentAsync(
+        new DocumentContext(),
+        opsHtml, "operators-catalog-html", "operators-catalog.html", "text/html", ct);
+
+    Console.WriteLine($"Saved JSON → docId: {jsonDocId}  (read by /api/pipelineCatalog)");
+    Console.WriteLine($"Saved HTML → docId: {htmlDocId}");
+    Console.WriteLine($"Open:    http://localhost:5173/docviewer/{htmlDocId}");
     return;
 }
 
@@ -371,6 +419,75 @@ static string RenderManifestHtml(CmdManifest m)
             input.addEventListener('input',   () => { input.style.borderColor = ''; });
           });
           </script>
+        </body>
+        </html>
+        """);
+
+    return sb.ToString();
+}
+
+static string RenderOperatorsHtml(IEnumerable<OperatorInfo> operators)
+{
+    var list = operators.ToList();
+    var sb   = new System.Text.StringBuilder();
+    sb.AppendLine($$"""
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8"/>
+          <title>Operator Catalog</title>
+          <style>
+            *, *::before, *::after { box-sizing: border-box; }
+            body { font-family: Consolas, monospace; background: #f0f2f5; margin: 0; padding: 2rem; color: #222; }
+            h1 { font-size: 1.2rem; margin: 0 0 0.25rem; }
+            .meta { font-size: 0.8rem; color: #888; margin-bottom: 2rem; }
+            table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+            th { background: #1e293b; color: #e2e8f0; text-align: left; padding: 0.6rem 1rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+            td { padding: 0.65rem 1rem; font-size: 0.82rem; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+            tr:last-child td { border-bottom: none; }
+            tr:hover td { background: #f8fafc; }
+            .op { font-weight: bold; color: #1d4ed8; }
+            .desc { color: #555; }
+            .badge { display: inline-block; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 0.15rem 0.45rem; margin: 0.1rem; font-size: 0.75rem; }
+            .req { color: #dc2626; font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <h1>Operator Catalog</h1>
+          <div class="meta">{{list.Count}} operator{{(list.Count == 1 ? "" : "s")}}</div>
+          <table>
+            <thead>
+              <tr><th>Operator</th><th>Description</th><th>Inputs</th><th>Outputs</th><th>Params</th></tr>
+            </thead>
+            <tbody>
+        """);
+
+    foreach (var op in list)
+    {
+        var inputs  = op.InputLabels.Length  == 0 ? "<span style='color:#aaa'>—</span>"
+                    : string.Concat(op.InputLabels.Select(l  => $"<span class='badge'>{System.Net.WebUtility.HtmlEncode(l)}</span>"));
+        var outputs = op.OutputLabels.Length == 0 ? "<span style='color:#aaa'>—</span>"
+                    : string.Concat(op.OutputLabels.Select(l => $"<span class='badge'>{System.Net.WebUtility.HtmlEncode(l)}</span>"));
+        var parms   = op.Params.Length       == 0 ? "<span style='color:#aaa'>—</span>"
+                    : string.Concat(op.Params.Select(p =>
+                        $"<span class='badge'>{System.Net.WebUtility.HtmlEncode(p.Name)}" +
+                        $" <span style='color:#888'>{System.Net.WebUtility.HtmlEncode(p.Type)}</span>" +
+                        $"{(p.Required ? "<span class='req'>*</span>" : "")}</span>"));
+
+        sb.AppendLine($"""
+                  <tr>
+                    <td class="op">{System.Net.WebUtility.HtmlEncode(op.Operator)}</td>
+                    <td class="desc">{System.Net.WebUtility.HtmlEncode(op.Description)}</td>
+                    <td>{inputs}</td>
+                    <td>{outputs}</td>
+                    <td>{parms}</td>
+                  </tr>
+            """);
+    }
+
+    sb.AppendLine("""
+            </tbody>
+          </table>
         </body>
         </html>
         """);
