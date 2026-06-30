@@ -12,23 +12,48 @@ public static class PipelineCatalogEndpoint
             using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
 
-            // Pipelines
+            // Pipelines — base rows only; template + paramsSchema live in the document at DocumentId
             using var pipeCmd = new SqlCommand("cases.usp_Pipeline_GetAll", conn) { CommandType = CommandType.StoredProcedure };
             using var reader  = await pipeCmd.ExecuteReaderAsync();
-            var pipelines = new List<PipelineInfo>();
+            var baseRows = new List<(int PipelineId, string Name, string? Description, int? DocId)>();
             while (await reader.ReadAsync())
             {
                 var docIdOrdinal = reader.GetOrdinal("DocumentId");
-                pipelines.Add(new PipelineInfo(
-                    PipelineId:   reader.GetInt32(reader.GetOrdinal("PipelineId")),
-                    Name:         reader.GetString(reader.GetOrdinal("Name")),
-                    Description:  reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                    // TemplateJson: reader.GetString(reader.GetOrdinal("TemplateJson")),
-                    // ParamsSchema: reader.GetString(reader.GetOrdinal("ParamsSchema")),
-                    DocId:        reader.IsDBNull(docIdOrdinal) ? null : reader.GetInt32(docIdOrdinal)
+                baseRows.Add((
+                    PipelineId:  reader.GetInt32(reader.GetOrdinal("PipelineId")),
+                    Name:        reader.GetString(reader.GetOrdinal("Name")),
+                    Description: reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
+                    DocId:       reader.IsDBNull(docIdOrdinal) ? null : reader.GetInt32(docIdOrdinal)
                 ));
             }
             await reader.CloseAsync();
+
+            var pipelines = new List<PipelineInfo>();
+            foreach (var row in baseRows)
+            {
+                string? template = null, paramsSchemaJson = null;
+
+                if (row.DocId is int docId)
+                {
+                    using var docCmd = new SqlCommand("cases.usp_Document_GetByContext", conn) { CommandType = CommandType.StoredProcedure };
+                    docCmd.Parameters.AddWithValue("@DocumentId",   docId);
+                    docCmd.Parameters.AddWithValue("@CaseId",       DBNull.Value);
+                    docCmd.Parameters.AddWithValue("@WorkbookQId",  DBNull.Value);
+                    docCmd.Parameters.AddWithValue("@SessionId",    DBNull.Value);
+                    docCmd.Parameters.AddWithValue("@DocumentType", DBNull.Value);
+                    using var docReader = await docCmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
+                    if (await docReader.ReadAsync())
+                    {
+                        var fileData = (byte[])docReader.GetValue(docReader.GetOrdinal("FileData"));
+                        var content  = System.Text.Encoding.UTF8.GetString(fileData);
+                        template          = PipelineCatalogRenderer.ExtractJsonValue(content, "template");
+                        paramsSchemaJson  = PipelineCatalogRenderer.ExtractJsonValue(content, "paramsSchema");
+                    }
+                    await docReader.CloseAsync();
+                }
+
+                pipelines.Add(new PipelineInfo(row.PipelineId, row.Name, row.Description, row.DocId, template, paramsSchemaJson));
+            }
 
             // Operators catalog (saved by: dotnet run -- --list-operators --html)
             string? operatorsJson = null;

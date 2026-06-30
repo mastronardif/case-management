@@ -1,0 +1,13 @@
+{
+  "workflowId": "docContextPack",
+  "version": "1.0",
+  "params": { "caseId": 2 },
+  "steps": [
+    {
+      "id": "pack",
+      "operator": "zip",
+      "input": [605,606,607],
+      "output": ["context-pack.zip"]
+    }
+  ]
+}

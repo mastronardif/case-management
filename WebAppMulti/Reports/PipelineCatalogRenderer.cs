@@ -4,13 +4,67 @@ using System.Text.Json;
 
 namespace WebAppMulti.Reports;
 
-public record PipelineInfo(int PipelineId, string Name, string? Description, string TemplateJson, string ParamsSchema, int? DocId = null);
+public record PipelineInfo(int PipelineId, string Name, string? Description, int? DocId, string? Template, string? ParamsSchemaJson);
 
 public record OperatorParamInfo(string Name, string Type, bool Required, string Description);
 public record OperatorCatalogItem(string Operator, string Description, string[] InputLabels, string[] OutputLabels, OperatorParamInfo[] Params);
 
 public static class PipelineCatalogRenderer
 {
+    private static JsonElement TryParseSchema(string? json)
+    {
+        if (string.IsNullOrWhiteSpace(json)) return JsonSerializer.Deserialize<JsonElement>("[]");
+        try { return JsonSerializer.Deserialize<JsonElement>(json); }
+        catch { return JsonSerializer.Deserialize<JsonElement>("[]"); }
+    }
+
+    // Extracts the raw substring for a top-level "propertyName" value from a JSON-shaped document
+    // without fully parsing it — needed because pipeline templates can contain unquoted {placeholder}
+    // tokens that make the document technically invalid JSON until the catalog form fills them in.
+    // Brace/bracket balance still holds (every {placeholder} is self-closing), so a string-aware
+    // depth counter finds the correct boundaries even though JsonDocument.Parse would throw.
+    public static string? ExtractJsonValue(string json, string propertyName)
+    {
+        var keyPattern = $"\"{propertyName}\"";
+        var keyIdx = json.IndexOf(keyPattern, StringComparison.Ordinal);
+        if (keyIdx < 0) return null;
+
+        var idx = keyIdx + keyPattern.Length;
+        while (idx < json.Length && (char.IsWhiteSpace(json[idx]) || json[idx] == ':')) idx++;
+        if (idx >= json.Length) return null;
+
+        var start     = idx;
+        var openChar  = json[idx];
+        if (openChar != '{' && openChar != '[') return null;
+        var closeChar = openChar == '{' ? '}' : ']';
+
+        var depth    = 0;
+        var inString = false;
+        var escaped  = false;
+
+        for (; idx < json.Length; idx++)
+        {
+            var c = json[idx];
+            if (inString)
+            {
+                if (escaped) escaped = false;
+                else if (c == '\\') escaped = true;
+                else if (c == '"') inString = false;
+                continue;
+            }
+
+            if (c == '"') { inString = true; continue; }
+            if (c == openChar) depth++;
+            else if (c == closeChar)
+            {
+                depth--;
+                if (depth == 0) { idx++; break; }
+            }
+        }
+
+        return json[start..idx];
+    }
+
     public static string Render(IEnumerable<PipelineInfo> pipelines, string? operatorsJson = null)
     {
         List<OperatorCatalogItem>? operators = null;
@@ -26,9 +80,9 @@ public static class PipelineCatalogRenderer
         {
             id          = p.PipelineId,
             name        = p.Name,
-            // description = p.Description ?? "",
-            // template    = p.TemplateJson,
-            schema      = JsonSerializer.Deserialize<JsonElement>(p.ParamsSchema),
+            description = p.Description ?? "",
+            template    = p.Template ?? "",
+            schema      = TryParseSchema(p.ParamsSchemaJson),
             docId       = p.DocId
         }));
 
@@ -279,10 +333,11 @@ public static class PipelineCatalogRenderer
             """);
 
         sb.AppendLine($$"""
-              <div style="padding:1.5rem;border-top:1px solid #e2e8f0;background:#f8fafc">
-                <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;margin-bottom:0.75rem">
-                  Operators &nbsp;<span style="color:#94a3b8">({{operators?.Count ?? 0}})</span>
+              <div style="border-top:1px solid #e2e8f0;background:#f8fafc;flex-shrink:0">
+                <div id="ops-header" onclick="toggleOperators()" style="cursor:pointer;user-select:none;padding:0.6rem 1.5rem;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.08em;color:#64748b;display:flex;align-items:center;gap:0.4rem">
+                  <span id="ops-chevron">▸</span> Operators &nbsp;<span style="color:#94a3b8">({{operators?.Count ?? 0}})</span>
                 </div>
+                <div id="ops-content" style="display:none;resize:vertical;overflow:auto;height:260px;max-height:75vh;min-height:80px;padding:0 1.5rem 1.5rem">
             """);
 
         if (operators is { Count: > 0 })
@@ -346,6 +401,16 @@ public static class PipelineCatalogRenderer
 
         sb.AppendLine("""
                 </div>
+              </div>
+              <script>
+              function toggleOperators() {
+                const content = document.getElementById('ops-content');
+                const chevron = document.getElementById('ops-chevron');
+                const show = content.style.display === 'none';
+                content.style.display = show ? 'block' : 'none';
+                chevron.textContent = show ? '▾' : '▸';
+              }
+              </script>
             </body>
             </html>
             """);
