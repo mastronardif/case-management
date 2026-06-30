@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace WebAppMulti.Reports;
 
-public record PipelineInfo(int PipelineId, string Name, string? Description, string TemplateJson, string ParamsSchema);
+public record PipelineInfo(int PipelineId, string Name, string? Description, string TemplateJson, string ParamsSchema, int? DocId = null);
 
 public record OperatorParamInfo(string Name, string Type, bool Required, string Description);
 public record OperatorCatalogItem(string Operator, string Description, string[] InputLabels, string[] OutputLabels, OperatorParamInfo[] Params);
@@ -26,9 +26,10 @@ public static class PipelineCatalogRenderer
         {
             id          = p.PipelineId,
             name        = p.Name,
-            description = p.Description ?? "",
-            template    = p.TemplateJson,
-            schema      = JsonSerializer.Deserialize<JsonElement>(p.ParamsSchema)
+            // description = p.Description ?? "",
+            // template    = p.TemplateJson,
+            schema      = JsonSerializer.Deserialize<JsonElement>(p.ParamsSchema),
+            docId       = p.DocId
         }));
 
         var sb = new StringBuilder();
@@ -130,8 +131,25 @@ public static class PipelineCatalogRenderer
               pipelines.forEach(p => {
                 const item = document.createElement('div');
                 item.className = 'pipeline-item';
-                item.textContent = p.name;
                 item.dataset.id = p.id;
+
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = p.name;
+                item.appendChild(nameSpan);
+
+                if (p.docId) {
+                  const link = document.createElement('a');
+                  link.href = '/api/getDocument?docId=' + p.docId;
+                  link.target = '_blank';
+                  link.textContent = ' (' + p.docId + ' ↗)';
+                  link.style.color = '#60a5fa';
+                  link.style.fontSize = '0.72rem';
+                  link.style.textDecoration = 'none';
+                  link.title = 'View pipeline definition doc';
+                  link.addEventListener('click', e => e.stopPropagation());
+                  item.appendChild(link);
+                }
+
                 item.addEventListener('click', () => select(p.id));
                 listEl.appendChild(item);
               });

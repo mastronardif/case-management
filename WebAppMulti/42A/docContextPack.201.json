@@ -1,0 +1,19 @@
+{
+  "template": {
+  "workflowId": "docContextPack",
+  "version": "1.0",
+  "params": { "caseId": {caseId} },
+  "steps": [
+    {
+      "id": "pack",
+      "operator": "zip",
+      "input": [{contextDocIds}],
+      "output": ["context-pack.zip"]
+    }
+  ]
+},
+  "paramsSchema": [
+  {"name":"caseId",        "type":"int","required":true, "label":"Case ID"},
+  {"name":"contextDocIds", "type":"raw","required":true, "label":"Doc IDs — source doc, rule, examples (e.g. 164, 206, 120)"}
+]
+}

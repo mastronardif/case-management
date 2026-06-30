@@ -1,0 +1,23 @@
+{
+  "template": {
+  "workflowId": "docValidate_Assessment",
+  "version": "1.0",
+  "params": {
+    "caseId": {caseId},
+    "srcDocId": {srcDocId}
+  },
+  "steps": [
+    {
+      "id": "validate",
+      "operator": "projectorComparer",
+      "input": ["{docId} source.json", "206 rule.json"],
+      "output": ["comparison.json", "review.html"]
+    }
+  ]
+},
+  "paramsSchema": [
+  {"name":"docId",    "type":"int","required":true, "label":"JSON Doc ID (extracted)"},
+  {"name":"caseId",   "type":"int","required":true, "label":"Case ID"},
+  {"name":"srcDocId", "type":"int","required":false,"label":"Source Doc ID (original PDF/scan)"}
+]
+}

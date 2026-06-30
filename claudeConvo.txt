@@ -1,5 +1,80 @@
+6/29/2026
+
+-------------------------------------------------
+i Updated the DB data
+for the pipelineCatalog
+have the label and next to it the docId i.e. pipelineCatalog(docId) a link to the doc.  is that OK?
+an on demand thing.
+
+-----------
+I will update the db.
+give me the json for  
+837PPipeline
+I will add that doc to the db and update the table data.
+
+--------------------------
+for the pipelineCatalog
+have the label and next to it the docId i.e. pipelineCatalog(docId) a link to the doc.  is that OK?
+an on demand thing.
+
+-----------------
+Hold off on this for now.
+I want to cleanup [CaseManagement].[cases].[Pipeline]
+      ,[TemplateJsonId]
+      ,[ParamsSchemaId]  ?? is this used.??
+i want to combined the two. 
+and i am going to add a new column docId which like everything else will load the doc from the document db.
+what do you think ? do you have better idea?
+
+ [PipelineId]
+      ,[Name]
+      ,[Description]
+      ,[TemplateJson]
+      ,[ParamsSchema]
+I understand the goal — catch bad inputs before the workflow runs rather than failing mid-pipeline.
+
+Here's what I'd do. When --workflow is provided, before calling engine.RunAsync:
+
+Load the workflow doc from DB
+Scan the step inputs for $paramName tokens — those are the required params
+Compare against what was actually provided via CLI (--json-doc-id, --case-id, etc.) plus whatever defaults are in the workflow's own Params block
+If anything is missing or mismatched — print a clear error and exit before running a single step
+
+
+---------------------
+just talk!
+if one is doing a pipeline i want the json to match the pipeline def if possible.
+for example 
+dotnet run -- --workflow 576 bad imput
+dotnet run -- --workflow 567 good input
+do you need any more info.
+
+
+---------------------
+this threw an exception.  it looks like it was not logged.
+C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Engine\WorkflowEngine.cs
+            var inputDocIds = step.Input
+                .Select(token => ResolveInput(token, stepOutputs, i, mergedParams))
+                .ToArray();
 --------------------
 6/28/26
+
+should i do this let you know about my project which is three projects.
+Step 1: Let Claude Code learn your project
+Open your project directory and run `claude`.
+
+
+
+> /init
+-----------------------
+
+Option C — C# is the source of truth (what I'd recommend)
+Not funky. You already do this with CmdManifest in Program.cs — you hand-declare the manifest right there. Same pattern:
+Extend IWorkflowStep with one more property:
+
+Add metadata to IWorkflowStep (description, input count, required params, output names)
+Add --list-operators to the CLI (plain JSON + HTML like --list)
+Save it as a doc in the DB accessible via the UI
 
 --------------------
 talk more.  I want to add the opperators to http://localhost:5173/api/pipelineCatalog

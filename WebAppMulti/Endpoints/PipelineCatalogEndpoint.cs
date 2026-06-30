@@ -18,12 +18,14 @@ public static class PipelineCatalogEndpoint
             var pipelines = new List<PipelineInfo>();
             while (await reader.ReadAsync())
             {
+                var docIdOrdinal = reader.GetOrdinal("DocumentId");
                 pipelines.Add(new PipelineInfo(
                     PipelineId:   reader.GetInt32(reader.GetOrdinal("PipelineId")),
                     Name:         reader.GetString(reader.GetOrdinal("Name")),
                     Description:  reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                    TemplateJson: reader.GetString(reader.GetOrdinal("TemplateJson")),
-                    ParamsSchema: reader.GetString(reader.GetOrdinal("ParamsSchema"))
+                    // TemplateJson: reader.GetString(reader.GetOrdinal("TemplateJson")),
+                    // ParamsSchema: reader.GetString(reader.GetOrdinal("ParamsSchema")),
+                    DocId:        reader.IsDBNull(docIdOrdinal) ? null : reader.GetInt32(docIdOrdinal)
                 ));
             }
             await reader.CloseAsync();

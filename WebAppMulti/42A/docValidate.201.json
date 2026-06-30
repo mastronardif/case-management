@@ -1,0 +1,20 @@
+{
+  "template": {
+  "workflowId": "docValidate",
+  "version": "1.0",
+  "params": { "caseId": {caseId} },
+  "steps": [
+    {
+      "id": "validate",
+      "operator": "projectorComparer",
+      "input": ["{docId} source.json", "{ruleDocId} projectionRule.json"],
+      "output": ["comparison.json", "review.html"]
+    }
+  ]
+},
+  "paramsSchema": [
+  {"name":"docId",    "type":"int","required":true,"label":"Uploaded Doc ID"},
+  {"name":"ruleDocId","type":"int","required":true,"label":"Projection Rule Doc ID"},
+  {"name":"caseId",   "type":"int","required":true,"label":"Case ID"}
+]
+}

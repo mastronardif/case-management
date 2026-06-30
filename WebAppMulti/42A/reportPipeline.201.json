@@ -1,0 +1,19 @@
+{
+  "template": {
+    "workflowId": "reportPipeline",
+    "version": "1",
+    "params": { "caseId": "{caseId}" },
+    "steps": [
+      {
+        "id": "zip",
+        "operator": "zip",
+        "input": [{docIds}],
+        "output": ["report.zip"]
+      }
+    ]
+  },
+  "paramsSchema": [
+    { "name": "caseId",  "type": "int", "required": true, "label": "Case ID"               },
+    { "name": "docIds",  "type": "raw", "required": true, "label": "Doc IDs (e.g. 39, 40)" }
+  ]
+}

@@ -267,8 +267,18 @@ Log.Information("Action: {Action} | RunId: {RunId}",
 
 if (selectedWorkflowDocId is not null)
 {
-    var engine  = host.Services.GetRequiredService<WorkflowEngine>();
-    var outputs = await engine.RunAsync(selectedWorkflowDocId.Value, workflowParamOverrides, CancellationToken.None);
+    var engine = host.Services.GetRequiredService<WorkflowEngine>();
+    int[][] outputs;
+    try
+    {
+        outputs = await engine.RunAsync(selectedWorkflowDocId.Value, workflowParamOverrides, CancellationToken.None);
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Workflow {WorkflowDocId} failed", selectedWorkflowDocId.Value);
+        Log.CloseAndFlush();
+        return;
+    }
     Console.WriteLine();
     Console.WriteLine("── Outputs ──────────────────────────────────────────────────────────");
     for (int si = 0; si < outputs.Length; si++)

@@ -30,10 +30,25 @@ public class WorkflowEngine(
         if (workflow.Steps is null || workflow.Steps.Count == 0)
             throw new InvalidOperationException($"Doc {workflowDocId} (type: {workflowDoc.DocumentType}) is not a workflow — no steps found. Import the workflow JSON first to get its DocumentId.");
 
+        for (int si = 0; si < workflow.Steps.Count; si++)
+        {
+            var s = workflow.Steps[si];
+            if (s.Input is null || s.Output is null || string.IsNullOrEmpty(s.Operator) || string.IsNullOrEmpty(s.Id))
+                throw new InvalidOperationException(
+                    $"Doc {workflowDocId} (type: {workflowDoc.DocumentType}) is not a valid workflow definition — step {si + 1} is missing 'id', 'operator', 'input', or 'output'. " +
+                    "If this doc was produced by a previous run, it's a 'workflowRun' manifest (uses 'inputTokens'/'outputNames'), not a runnable workflow definition (uses 'input'/'output') — pass the original workflow docId instead.");
+        }
+
         var mergedParams = new Dictionary<string, JsonElement>(workflow.Params ?? new());
         if (paramOverrides is not null)
             foreach (var (key, value) in paramOverrides)
                 mergedParams[key] = value;
+
+        var validationErrors = await ValidateAsync(workflow, mergedParams, ct);
+        if (validationErrors.Count > 0)
+            throw new InvalidOperationException(
+                $"Workflow {workflowDocId} ({workflow.WorkflowId}) failed pre-run validation:\n" +
+                string.Join("\n", validationErrors.Select(e => "  - " + e)));
 
         logger.LogInformation("Workflow {WorkflowId} v{Version} started. RunId: {RunId}, Steps: {StepCount}",
             workflow.WorkflowId, workflow.Version, runId, workflow.Steps.Count);
@@ -96,6 +111,70 @@ public class WorkflowEngine(
         logger.LogInformation("Run manifest saved. DocId: {DocId}, RunId: {RunId}", manifestDocId, runId);
 
         return stepOutputs;
+    }
+
+    // Checks every step's required params, $param refs, D-step refs, and doc inputs before any step executes.
+    // Collects all issues across all steps so a bad run gets one full report instead of failing wherever it happens to crash.
+    private async Task<List<string>> ValidateAsync(WorkflowDefinition workflow, IReadOnlyDictionary<string, JsonElement> mergedParams, CancellationToken ct)
+    {
+        var errors = new List<string>();
+
+        for (int i = 0; i < workflow.Steps.Count; i++)
+        {
+            var step = workflow.Steps[i];
+
+            if (!_steps.TryGetValue(step.Operator, out var handler))
+            {
+                errors.Add($"Step '{step.Id}': no handler registered for operator '{step.Operator}'");
+                continue;
+            }
+
+            foreach (var p in handler.Info.Params.Where(p => p.Required))
+                if (!mergedParams.ContainsKey(p.Name))
+                    errors.Add($"Step '{step.Id}' ({step.Operator}): missing required param '{p.Name}' ({p.Type}) — {p.Description}");
+
+            foreach (var token in step.Input)
+            {
+                if (token.ValueKind == JsonValueKind.Number)
+                {
+                    await CheckDocExistsAsync(token.GetInt32(), step.Id, errors, ct);
+                    continue;
+                }
+
+                var key = (token.GetString() ?? "").Split(' ')[0];
+
+                if (key.StartsWith("$"))
+                {
+                    var paramName = key[1..];
+                    if (!mergedParams.TryGetValue(paramName, out var paramValue))
+                        errors.Add($"Step '{step.Id}' ({step.Operator}): input references '${paramName}' which was not provided");
+                    else if (paramValue.ValueKind == JsonValueKind.Number)
+                        await CheckDocExistsAsync(paramValue.GetInt32(), step.Id, errors, ct);
+                    continue;
+                }
+
+                if (key.StartsWith("D", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!int.TryParse(key[1..], out var stepNum) || stepNum - 1 < 0 || stepNum - 1 >= i)
+                        errors.Add($"Step '{step.Id}' ({step.Operator}): input reference '{key}' is invalid or refers to a step that hasn't run yet");
+                    continue;
+                }
+
+                if (int.TryParse(key, out var literalDocId))
+                    await CheckDocExistsAsync(literalDocId, step.Id, errors, ct);
+                else
+                    errors.Add($"Step '{step.Id}' ({step.Operator}): input token '{key}' is not a valid docId, $param, or step reference");
+            }
+        }
+
+        return errors;
+    }
+
+    private async Task CheckDocExistsAsync(int docId, string stepId, List<string> errors, CancellationToken ct)
+    {
+        var doc = await repository.GetDocumentAsync(new DocumentContext(DocumentId: docId), ct);
+        if (doc is null)
+            errors.Add($"Step '{stepId}': input docId {docId} does not exist");
     }
 
     // Integer JSON element → direct docId. String → D1 step-ref, $paramName lookup, or literal int.

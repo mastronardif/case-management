@@ -1,0 +1,40 @@
+{
+  "template": {
+    "workflowId": "billingPipeline837",
+    "version": "1.0",
+    "steps": [
+      {
+        "id": "compare",
+        "operator": "projectorComparer",
+        "input": [
+          "{sessionDocId} sessionExtraction.json",
+          "{projectionDefinitionDocId} projectionDefinition.json"
+        ],
+        "output": ["sessionAudit.json", "sessionReview.html"]
+      },
+      {
+        "id": "project",
+        "operator": "projector",
+        "input": [
+          "{sessionDocId} sessionExtraction.json",
+          "{projectionDefinitionDocId} projectionDefinition.json"
+        ],
+        "output": ["billingProjection.json"]
+      },
+      {
+        "id": "bill",
+        "operator": "billingRule",
+        "input": [
+          "D2 billingProjection.json",
+          "{billingRuleDocId} billingRule837"
+        ],
+        "output": ["billingResult.json"]
+      }
+    ]
+  },
+  "paramsSchema": [
+    { "name": "sessionDocId",              "type": "int", "required": true, "label": "Session Extraction Doc ID"    },
+    { "name": "projectionDefinitionDocId", "type": "int", "required": true, "label": "Projection Definition Doc ID" },
+    { "name": "billingRuleDocId",          "type": "int", "required": true, "label": "Billing Rule Doc ID"          }
+  ]
+}

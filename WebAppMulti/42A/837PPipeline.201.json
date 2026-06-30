@@ -1,0 +1,22 @@
+{
+  "template": {
+    "workflowId": "837PPipeline",
+    "version": "1.0",
+    "params": {
+      "caseId": "{caseId}",
+      "sessionId": "{sessionId}"
+    },
+    "steps": [
+      {
+        "id": "buildClaim",
+        "operator": "claim837P",
+        "input": [],
+        "output": ["claim837P.json", "claim837P-review.html"]
+      }
+    ]
+  },
+  "paramsSchema": [
+    { "name": "caseId",    "type": "int", "required": true, "label": "Case ID"    },
+    { "name": "sessionId", "type": "int", "required": true, "label": "Session ID" }
+  ]
+}
