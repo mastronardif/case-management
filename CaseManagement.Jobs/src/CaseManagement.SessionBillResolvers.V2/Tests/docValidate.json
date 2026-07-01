@@ -1,0 +1,15 @@
+{
+  "workflowId": "docValidate",
+  "version": "1.0",
+  "params": {
+    "caseId": 2
+  },
+  "steps": [
+    {
+      "id": "validate",
+      "operator": "projectorComparer",
+      "input": ["464 source.json", "525 projectionRule.json"],
+      "output": ["comparison.json", "review.html"]
+    }
+  ]
+}

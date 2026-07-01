@@ -1,0 +1,16 @@
+{
+  "workflowId": "837PPipeline",
+  "version": "1.0",
+  "params": {
+    "caseId": 2,
+    "sessionId": 234
+  },
+  "steps": [
+    {
+      "id": "buildClaim",
+      "operator": "claim837P",
+      "input": [],
+      "output": ["claim837P.json", "claim837P-review.html"]
+    }
+  ]
+}
