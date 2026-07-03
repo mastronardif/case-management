@@ -1,7 +1,2 @@
 CaseNumber,DocumentType,Title,ContentType,FilePath
-,Other,837PPipeline.201.json,          application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\837PPipeline.201.json
-,Other,billingPipeline837.201.json,    application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\billingPipeline837.201.json
-,Other,docContextPack.201.json,        application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\docContextPack.201.json
-,Other,docValidate.201.json,           application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\docValidate.201.json
-,Other,docValidate_Assessment.201.json,application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\docValidate_Assessment.201.json
-,Other,reportPipeline.201.json,        application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\reportPipeline.201.json
+CASE-U8771342503,Other,Session Note_2026-06-17_97153.json, application/json,"C:\Users\mastronardif\Downloads\Case9-CASE-Gaurav\New folder\Date of Session Jun 17, 2026\New Text Document.txt.json"

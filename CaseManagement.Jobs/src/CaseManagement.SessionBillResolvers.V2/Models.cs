@@ -98,7 +98,10 @@ public record OperatorInfo(
     string Description,
     string[] InputLabels,
     string[] OutputLabels,
-    OperatorParam[] Params);
+    OperatorParam[] Params,
+    string? AlgebraExample = null,
+    string? CliExample     = null,
+    string? Token          = null);
 
 public class BillingResult
 {

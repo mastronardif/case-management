@@ -1,0 +1,49 @@
+{
+  "name": "Operators",
+  "version": "2.0",
+  "description": "DSL Operators used in workflows.",
+  "tokens": [
+    {
+      "token": "P",
+      "operator": "projector",
+      "readsAs": "project",
+      "algebraExample": "(P)  →  A(P)B  — A projected through B",
+      "cliExample": "--expression '$jsonDocId (P) $ruleDocId' --json-doc-id 403 --rule-doc-id 514"
+    },
+    {
+      "token": "V",
+      "operator": "projectorComparer",
+      "readsAs": "validate",
+      "algebraExample": "(V)  →  A(V)B  — A validated against B",
+      "cliExample": "--expression '$jsonDocId (V) $ruleDocId' --json-doc-id 403 --rule-doc-id 514 --case-id 5 --table-name Session --src-doc-id 369"
+    },
+    {
+      "token": "R",
+      "operator": "billingRule",
+      "readsAs": "apply rule",
+      "algebraExample": "(R)  →  A(P)B(R)C  — project A through B then apply rule C",
+      "cliExample": "--expression '$jsonDocId (P) $ruleDocId (R) $srcDocId' --json-doc-id 403 --rule-doc-id 514 --src-doc-id 369"
+    },
+    {
+      "token": "C",
+      "operator": "claim837P",
+      "readsAs": "build claim",
+      "algebraExample": "(C)  →  (C)  — build claim from context params",
+      "cliExample": "--expression '(C)' --case-id 5"
+    },
+    {
+      "token": "D",
+      "operator": "docResolve",
+      "readsAs": "resolve to DB",
+      "algebraExample": "(D)  →  A(D)  — resolve A into domain table",
+      "cliExample": "--expression '$jsonDocId (D)' --json-doc-id 403 --table-name Session --case-id 5 --src-doc-id 369"
+    },
+    {
+      "token": "Z",
+      "operator": "zip",
+      "readsAs": "bundle",
+      "algebraExample": "(Z)  →  (Z)[A,B,C]  — bundle A, B, C into archive",
+      "cliExample": "--expression '(Z)[$jsonDocId, $ruleDocId, 206]' --json-doc-id 403 --rule-doc-id 514"
+    }
+  ]
+}

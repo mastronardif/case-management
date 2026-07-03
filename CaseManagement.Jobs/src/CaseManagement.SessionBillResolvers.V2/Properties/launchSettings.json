@@ -2,7 +2,7 @@
   "profiles": {
     "CaseManagement.SessionBillResolvers.V2": {
       "commandName": "Project",
-      "commandLineArgs": "--workflow 630",
+      "commandLineArgs": " --expression \"$jsonDocId (P) $ruleDocId\" --json-doc-id 403 --rule-doc-id 514 --case-id 5\r\n",
       "dotnetRunMessages": false
     }
   }

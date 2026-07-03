@@ -1,5 +1,6 @@
 using CaseManagement.SessionBillResolvers.V2;
 using CaseManagement.SessionBillResolvers.V2.Engine;
+using CaseManagement.SessionBillResolvers.V2.Engine.Dsl;
 using CaseManagement.SessionBillResolvers.V2.Engine.Steps;
 using CaseManagement.Shared.Bootstrapping;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,8 @@ var caseNumberOption    = new Option<string?>("--case-number",    "Case number t
 var sessionNumberOption = new Option<int?>  ("--session-number", "Session number within the case");
 var auditFileOption     = new Option<string?>("--audit-file",    "Path to a run file (JSON with sessionDoc / projector sections)");
 var actionOption        = new Option<string?>("--action",        "Which section to run: 'billingProcess' or 'projectorProcess'");
-var workflowDocIdOption = new Option<int?>  ("--workflow",       "DocumentId of a workflow definition to execute");
+var workflowDocIdOption  = new Option<int?>   ("--workflow",    "DocumentId of a workflow definition to execute");
+var expressionOption     = new Option<string?>("--expression", "Pipeline DSL expression to compile and run (e.g. \"$jsonDocId (P) $ruleDocId\")");
 var listOption              = new Option<bool>("--list",           "Print available commands as JSON and exit");
 var listOperatorsOption     = new Option<bool>("--list-operators", "Print available workflow operators as JSON and exit");
 var htmlOption              = new Option<bool>("--html",           "With --list or --list-operators: save as styled HTML doc to DB");
@@ -37,6 +39,7 @@ var rootCommand = new RootCommand("CaseManagement session billing resolver")
     auditFileOption,
     actionOption,
     workflowDocIdOption,
+    expressionOption,
     listOption,
     listOperatorsOption,
     htmlOption,
@@ -98,6 +101,7 @@ string?                          auditOutputDir         = null;
 int?                             selectedWorkflowDocId  = null;
 bool                             saveManifestHtml       = false;
 bool                             saveOperatorsCatalog   = false;
+string?                          selectedExpression     = null;
 Dictionary<string, JsonElement>? workflowParamOverrides = null;
 
 void HandleRoot(InvocationContext context)
@@ -106,8 +110,9 @@ void HandleRoot(InvocationContext context)
     var sessionNumber = context.ParseResult.GetValueForOption(sessionNumberOption);
     var auditFile     = context.ParseResult.GetValueForOption(auditFileOption);
     var action        = context.ParseResult.GetValueForOption(actionOption);
-    var workflowDocId = context.ParseResult.GetValueForOption(workflowDocIdOption);
-    var list          = context.ParseResult.GetValueForOption(listOption);
+    var workflowDocId  = context.ParseResult.GetValueForOption(workflowDocIdOption);
+    var expression     = context.ParseResult.GetValueForOption(expressionOption);
+    var list           = context.ParseResult.GetValueForOption(listOption);
     var listOperators = context.ParseResult.GetValueForOption(listOperatorsOption);
     var html          = context.ParseResult.GetValueForOption(htmlOption);
     var jsonDocId     = context.ParseResult.GetValueForOption(jsonDocIdOption);
@@ -133,6 +138,22 @@ void HandleRoot(InvocationContext context)
     if (workflowDocId is not null)
     {
         selectedWorkflowDocId = workflowDocId;
+        runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
+
+        var overrides = new Dictionary<string, JsonElement>();
+        if (jsonDocId is not null) overrides["jsonDocId"] = JsonSerializer.SerializeToElement(jsonDocId.Value);
+        if (ruleDocId is not null) overrides["ruleDocId"] = JsonSerializer.SerializeToElement(ruleDocId.Value);
+        if (srcDocId  is not null) overrides["srcDocId"]  = JsonSerializer.SerializeToElement(srcDocId.Value);
+        if (tableName is not null) overrides["tableName"] = JsonSerializer.SerializeToElement(tableName);
+        if (caseId    is not null) overrides["caseId"]    = JsonSerializer.SerializeToElement(caseId.Value);
+        if (overrides.Count > 0) workflowParamOverrides = overrides;
+
+        return;
+    }
+
+    if (expression is not null)
+    {
+        selectedExpression = expression;
         runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
 
         var overrides = new Dictionary<string, JsonElement>();
@@ -279,6 +300,43 @@ if (selectedWorkflowDocId is not null)
         Log.CloseAndFlush();
         return;
     }
+    Console.WriteLine();
+    Console.WriteLine("── Outputs ──────────────────────────────────────────────────────────");
+    for (int si = 0; si < outputs.Length; si++)
+        foreach (var docId in outputs[si])
+            Console.WriteLine($"  step {si + 1}  docId {docId,-6}  http://localhost:5173/api/getDocument?docId={docId}");
+    Console.WriteLine();
+    return;
+}
+
+if (selectedExpression is not null)
+{
+    var ct   = CancellationToken.None;
+    var repo = host.Services.GetRequiredService<ICaseManagementRepository>();
+
+    var operatorsDocId = await repo.GetConstantAsync("Operators", ct)
+        ?? throw new InvalidOperationException("MyConstants key 'Operators' not found — add a row with the operators registry docId");
+
+    var operatorsDoc = await repo.GetDocumentAsync(new DocumentContext(DocumentId: operatorsDocId), ct)
+        ?? throw new InvalidOperationException($"Operators registry doc {operatorsDocId} not found");
+
+    var registry  = OperatorRegistry.FromJson(operatorsDoc.Content);
+    var ast       = PipelineParser.Parse(selectedExpression, registry);
+    var workflow  = PipelineCompiler.Compile(ast);
+
+    var engine = host.Services.GetRequiredService<WorkflowEngine>();
+    int[][] outputs;
+    try
+    {
+        outputs = await engine.RunAsync(workflow, workflowParamOverrides, ct);
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Expression pipeline failed: {Expression}", selectedExpression);
+        Log.CloseAndFlush();
+        return;
+    }
+
     Console.WriteLine();
     Console.WriteLine("── Outputs ──────────────────────────────────────────────────────────");
     for (int si = 0; si < outputs.Length; si++)
@@ -467,7 +525,7 @@ static string RenderOperatorsHtml(IEnumerable<OperatorInfo> operators)
           <div class="meta">{{list.Count}} operator{{(list.Count == 1 ? "" : "s")}}</div>
           <table>
             <thead>
-              <tr><th>Operator</th><th>Description</th><th>Inputs</th><th>Outputs</th><th>Params</th></tr>
+              <tr><th>Operator</th><th>Description</th><th>Algebra</th><th>CLI Example</th><th>Inputs</th><th>Outputs</th><th>Params</th></tr>
             </thead>
             <tbody>
         """);
@@ -484,10 +542,15 @@ static string RenderOperatorsHtml(IEnumerable<OperatorInfo> operators)
                         $" <span style='color:#888'>{System.Net.WebUtility.HtmlEncode(p.Type)}</span>" +
                         $"{(p.Required ? "<span class='req'>*</span>" : "")}</span>"));
 
+        var algebra = string.IsNullOrWhiteSpace(op.AlgebraExample) ? "<span style='color:#aaa'>—</span>" : $"<code>{System.Net.WebUtility.HtmlEncode(op.AlgebraExample)}</code>";
+        var cli     = string.IsNullOrWhiteSpace(op.CliExample)     ? "<span style='color:#aaa'>—</span>" : $"<code style='background:#1e293b;color:#86efac;padding:0.15rem 0.35rem;border-radius:3px;font-size:0.73rem'>{System.Net.WebUtility.HtmlEncode(op.CliExample)}</code>";
+
         sb.AppendLine($"""
                   <tr>
                     <td class="op">{System.Net.WebUtility.HtmlEncode(op.Operator)}</td>
                     <td class="desc">{System.Net.WebUtility.HtmlEncode(op.Description)}</td>
+                    <td>{algebra}</td>
+                    <td>{cli}</td>
                     <td>{inputs}</td>
                     <td>{outputs}</td>
                     <td>{parms}</td>

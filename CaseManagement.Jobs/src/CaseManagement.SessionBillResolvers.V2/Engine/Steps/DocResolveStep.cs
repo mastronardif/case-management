@@ -8,16 +8,19 @@ public class DocResolveStep(ICaseManagementRepository repository, ILogger<DocRes
     public string Operator => "docResolve";
     public OperatorInfo Info => Meta;
     public static OperatorInfo Meta { get; } = new(
-        Operator:     "docResolve",
-        Description:  "Resolves a JSON document into a target [cases] table row using the field mapping for that table.",
-        InputLabels:  ["jsonDoc"],
-        OutputLabels: ["confirm.json"],
+        Operator:       "docResolve",
+        Description:    "Resolves a JSON document into a target [cases] table row using the field mapping for that table.",
+        InputLabels:    ["jsonDoc"],
+        OutputLabels:   ["confirm.json"],
         Params:
         [
             new("tableName", "string", true,  "Target [cases] table name"),
             new("caseId",    "int",    true,  "CaseId for the resolved row"),
             new("srcDocId",  "int",    false, "Original source document id")
-        ]);
+        ],
+        AlgebraExample: "(D)  →  A(D)  — resolve A into domain table",
+        CliExample:     "--expression '$jsonDocId (D)' --json-doc-id 403 --table-name Session --case-id 5 --src-doc-id 369",
+        Token:          "D");
 
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 

@@ -13,14 +13,12 @@ public class WorkflowEngine(
 
     private readonly Dictionary<string, IWorkflowStep> _steps = steps.ToDictionary(s => s.Operator);
 
+    // Existing entry points — load workflow from DB by docId (unchanged signatures)
     public async Task<int[][]> RunAsync(int workflowDocId, CancellationToken ct)
         => await RunAsync(workflowDocId, null, ct);
 
     public async Task<int[][]> RunAsync(int workflowDocId, IReadOnlyDictionary<string, JsonElement>? paramOverrides, CancellationToken ct)
     {
-        var runId     = Guid.NewGuid().ToString();
-        var startedAt = DateTime.UtcNow;
-
         var workflowDoc = await repository.GetDocumentAsync(new DocumentContext(DocumentId: workflowDocId), ct)
             ?? throw new InvalidOperationException($"Workflow doc {workflowDocId} not found");
 
@@ -38,6 +36,19 @@ public class WorkflowEngine(
                     $"Doc {workflowDocId} (type: {workflowDoc.DocumentType}) is not a valid workflow definition — step {si + 1} is missing 'id', 'operator', 'input', or 'output'. " +
                     "If this doc was produced by a previous run, it's a 'workflowRun' manifest (uses 'inputTokens'/'outputNames'), not a runnable workflow definition (uses 'input'/'output') — pass the original workflow docId instead.");
         }
+
+        return await ExecuteAsync(workflowDocId, workflow, paramOverrides, ct);
+    }
+
+    // New DSL entry point — accepts a pre-compiled WorkflowDefinition directly
+    public async Task<int[][]> RunAsync(WorkflowDefinition workflow, IReadOnlyDictionary<string, JsonElement>? paramOverrides, CancellationToken ct)
+        => await ExecuteAsync(0, workflow, paramOverrides, ct);
+
+    // Core execution — shared by both entry points
+    private async Task<int[][]> ExecuteAsync(int workflowDocId, WorkflowDefinition workflow, IReadOnlyDictionary<string, JsonElement>? paramOverrides, CancellationToken ct)
+    {
+        var runId     = Guid.NewGuid().ToString();
+        var startedAt = DateTime.UtcNow;
 
         var mergedParams = new Dictionary<string, JsonElement>(workflow.Params ?? new());
         if (paramOverrides is not null)
@@ -67,7 +78,6 @@ public class WorkflowEngine(
                 .Select(token => ResolveInput(token, stepOutputs, i, mergedParams))
                 .ToArray();
 
-
             logger.LogInformation("Step [{Index}] {Id} ({Operator}) inputs: [{Inputs}]",
                 i + 1, step.Id, step.Operator, string.Join(", ", inputDocIds));
 
@@ -91,15 +101,15 @@ public class WorkflowEngine(
             workflow.WorkflowId, runId, string.Join(" | ", stepOutputs.Select(s => string.Join(", ", s))));
 
         var manifest = new WorkflowRunManifest(
-            RunId:        runId,
+            RunId:         runId,
             WorkflowDocId: workflowDocId,
-            WorkflowId:   workflow.WorkflowId,
-            Version:      workflow.Version,
-            StartedAt:    startedAt,
-            CompletedAt:  completedAt,
-            Steps:        stepResults);
+            WorkflowId:    workflow.WorkflowId,
+            Version:       workflow.Version,
+            StartedAt:     startedAt,
+            CompletedAt:   completedAt,
+            Steps:         stepResults);
 
-        var manifestJson = JsonSerializer.Serialize(manifest, ManifestOptions);
+        var manifestJson  = JsonSerializer.Serialize(manifest, ManifestOptions);
         var manifestDocId = await repository.SaveDocumentAsync(
             new DocumentContext(),
             manifestJson,

@@ -10,15 +10,18 @@ public class Claim837PStep(ICaseManagementRepository repository, ILogger<Claim83
     public string Operator => "claim837P";
     public OperatorInfo Info => Meta;
     public static OperatorInfo Meta { get; } = new(
-        Operator:     "claim837P",
-        Description:  "Builds a HIPAA 837P claim from session, case, coverage, authorization, diagnoses, provider, and assessment data. Produces a claim JSON and an HTML review doc.",
-        InputLabels:  [],
-        OutputLabels: ["claim837P.json", "claim837P-review.html"],
+        Operator:       "claim837P",
+        Description:    "Builds a HIPAA 837P claim from session, case, coverage, authorization, diagnoses, provider, and assessment data. Produces a claim JSON and an HTML review doc.",
+        InputLabels:    [],
+        OutputLabels:   ["claim837P.json", "claim837P-review.html"],
         Params:
         [
             new("caseId",    "int", true, "CaseId to pull claim data for"),
             new("sessionId", "int", true, "SessionId to pull claim data for")
-        ]);
+        ],
+        AlgebraExample: "(C)  →  (C)  — build claim from context params",
+        CliExample:     "--expression '(C)' --case-id 5",
+        Token:          "C");
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId,
         IReadOnlyDictionary<string, JsonElement>? wfParams, CancellationToken ct)

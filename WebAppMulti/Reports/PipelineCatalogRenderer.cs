@@ -7,7 +7,7 @@ namespace WebAppMulti.Reports;
 public record PipelineInfo(int PipelineId, string Name, string? Description, int? DocId, string? Template, string? ParamsSchemaJson);
 
 public record OperatorParamInfo(string Name, string Type, bool Required, string Description);
-public record OperatorCatalogItem(string Operator, string Description, string[] InputLabels, string[] OutputLabels, OperatorParamInfo[] Params);
+public record OperatorCatalogItem(string Operator, string Description, string[] InputLabels, string[] OutputLabels, OperatorParamInfo[] Params, string? AlgebraExample = null, string? CliExample = null);
 
 public static class PipelineCatalogRenderer
 {
@@ -349,6 +349,8 @@ public static class PipelineCatalogRenderer
                         <tr>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Operator</th>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Description</th>
+                          <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Algebra</th>
+                          <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">CLI Example</th>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Inputs</th>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Outputs</th>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Params</th>
@@ -370,10 +372,15 @@ public static class PipelineCatalogRenderer
                                 $"{WebUtility.HtmlEncode(p.Name)} <span style='color:#888'>{WebUtility.HtmlEncode(p.Type)}</span>" +
                                 $"{(p.Required ? "<span style='color:#dc2626;font-weight:bold'>*</span>" : "")}</span>"));
 
+                var algebra = string.IsNullOrWhiteSpace(op.AlgebraExample) ? "<span style='color:#aaa'>—</span>" : $"<code style='font-size:0.73rem'>{WebUtility.HtmlEncode(op.AlgebraExample)}</code>";
+                var cli     = string.IsNullOrWhiteSpace(op.CliExample)     ? "<span style='color:#aaa'>—</span>" : $"<code style='font-size:0.7rem;color:#86efac;background:#1e293b;padding:0.15rem 0.35rem;border-radius:3px'>{WebUtility.HtmlEncode(op.CliExample)}</code>";
+
                 sb.AppendLine($"""
                             <tr>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9;font-weight:bold;color:#1d4ed8">{WebUtility.HtmlEncode(op.Operator)}</td>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9;color:#555">{WebUtility.HtmlEncode(op.Description)}</td>
+                              <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9">{algebra}</td>
+                              <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9">{cli}</td>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9">{inputs}</td>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9">{outputs}</td>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9">{parms}</td>

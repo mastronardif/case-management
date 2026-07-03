@@ -9,4 +9,5 @@ public interface ICaseManagementRepository
     Task<int> SaveDocumentAsync(DocumentContext context, byte[] data, string documentType, string fileName, string contentType, CancellationToken ct);
     Task<Claim837PData> Get837PDataAsync(int caseId, int sessionId, CancellationToken ct);
     Task ResolveDocAsync(int docId, string tableName, int caseId, int? srcDocId, CancellationToken ct);
+    Task<int?> GetConstantAsync(string key, CancellationToken ct);
 }

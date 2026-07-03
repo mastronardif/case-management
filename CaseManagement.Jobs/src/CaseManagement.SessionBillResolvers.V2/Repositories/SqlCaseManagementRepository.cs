@@ -250,6 +250,17 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         await cmd.ExecuteNonQueryAsync(ct);
     }
 
+    public async Task<int?> GetConstantAsync(string key, CancellationToken ct)
+    {
+        await using var conn = new SqlConnection(_conn.DefaultConnection);
+        await conn.OpenAsync(ct);
+        using var cmd = new SqlCommand(
+            "SELECT Value FROM [cases].[MyConstants] WHERE [Key] = @Key AND [Type] = 'int'", conn);
+        cmd.Parameters.AddWithValue("@Key", key);
+        var result = await cmd.ExecuteScalarAsync(ct);
+        return result is null or DBNull ? null : Convert.ToInt32(result);
+    }
+
     public async Task SaveInvoiceAsync(DocumentContext context, string invoiceJson, CancellationToken ct)
     {
         _logger.LogInformation("Saving invoice");

@@ -120,6 +120,8 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         sb.AppendLine("  <button id=\"saveBtn\" class=\"save-btn\">Save Corrected JSON</button>");
         if (tableName is not null && resolveParamCaseId is not null)
             sb.AppendLine("  <button id=\"resolveBtn\" class=\"save-btn resolve-btn\">Save &amp; Resolve</button>");
+        if (resolveParamSrcDocId is not null)
+            sb.AppendLine($"  <a href=\"/api/getDocument?docId={resolveParamSrcDocId}\" target=\"_blank\" class=\"src-link\">src {resolveParamSrcDocId} ↗</a>");
         sb.AppendLine("  <span id=\"saveStatus\"></span>");
         sb.AppendLine("</div>");
 
@@ -280,6 +282,8 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
                 .resolve-btn:hover { background: #15803d; }
                 .status-ok  { color: #16a34a; font-size: 0.85rem; }
                 .status-err { color: #dc2626; font-size: 0.85rem; }
+                .src-link   { font-size: 0.82rem; color: #1d4ed8; text-decoration: none; margin-left: 4px; }
+                .src-link:hover { text-decoration: underline; }
                 .section { background: white; border-radius: 8px; padding: 16px; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
                 .section h2 { margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
                 .nested { margin-left: 20px; margin-top: 10px; }
@@ -348,17 +352,21 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
 
             const status = document.getElementById('saveStatus');
 
+            function docLink(docId) {
+              return `<a href="/api/getDocument?docId=${docId}" target="_blank" style="color:#1d4ed8;font-weight:bold">${docId} ↗</a>`;
+            }
+
             document.getElementById('saveBtn').addEventListener('click', async () => {
               const btn = document.getElementById('saveBtn');
               btn.disabled = true;
-              status.textContent = 'Saving…';
+              status.innerHTML = 'Saving…';
               status.className = '';
               try {
                 const docId = await saveJson();
-                status.textContent = `Saved ✓  docId: ${docId}`;
+                status.innerHTML = `Saved ✓  docId: ${docLink(docId)}`;
                 status.className = 'status-ok';
               } catch (err) {
-                status.textContent = `Error: ${err.message}`;
+                status.innerHTML = `Error: ${err.message}`;
                 status.className = 'status-err';
               } finally {
                 btn.disabled = false;
@@ -369,21 +377,21 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
             if (resolveBtn) {
               resolveBtn.addEventListener('click', async () => {
                 resolveBtn.disabled = true;
-                status.textContent = 'Saving…';
+                status.innerHTML = 'Saving…';
                 status.className = '';
                 try {
                   const docId = await saveJson();
-                  status.textContent = `Saved docId: ${docId} — Resolving…`;
+                  status.innerHTML = `Saved ${docLink(docId)} — Resolving…`;
                   const resp = await fetch('/api/resolveDoc', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ docId, tableName: TABLE_NAME, caseId: CASE_ID, srcDocId: SRC_DOC_ID })
                   });
                   if (!resp.ok) throw new Error(await resp.text());
-                  status.textContent = `Resolved ✓  docId: ${docId}`;
+                  status.innerHTML = `Resolved ✓  docId: ${docLink(docId)}`;
                   status.className = 'status-ok';
                 } catch (err) {
-                  status.textContent = `Error: ${err.message}`;
+                  status.innerHTML = `Error: ${err.message}`;
                   status.className = 'status-err';
                 } finally {
                   resolveBtn.disabled = false;
