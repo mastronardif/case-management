@@ -1,4 +1,2 @@
 CaseNumber,DocumentType,Title,ContentType,FilePath
-,Other,Authorization837P.projection, application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\Authorization837P.projection.json
-,Other,Provider837P.projection,       application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\Provider837P.projection.json
-,Other,Patient837P.projection,       application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\Patient837P.projection.json
+,Other,837P_LoopsSegments_X12, application/json,C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\837P_LoopsSegments_X12.json

@@ -1,4 +1,8 @@
 {
+  "name": "837P_LoopsSegments_X12",
+  "version": "1.0",
+  "description": "837P_LoopsSegments_X12",
+
   "loops": {
     "1000A": {},
     "1000B": {},
