@@ -1,0 +1,24 @@
+{
+  "projectionType": "Authorization837P",
+  "targetDocument": "837P_LoopsSegments_X12",
+  "version": "1.0.0",
+
+  "fields": [
+
+    {
+      "target": "loops.2300.REF_G1.REF02",
+      "source": "authorization.number"
+    },
+
+    {
+      "target": "loops.2300.HI.HI01_2",
+      "source": "authorization.diagnosisCode"
+    },
+
+    {
+      "target": "loops.2300.CLM.CLM01",
+      "source": "claim.claimNumber"
+    }
+
+  ]
+}

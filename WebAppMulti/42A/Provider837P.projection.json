@@ -1,0 +1,79 @@
+{
+  "projectionType": "Provider837P",
+  "targetDocument": "837P_LoopsSegments_X12",
+  "version": "1.0.0",
+
+  "fields": [
+
+    {
+      "target": "loops.2010AA.NM1.NM103",
+      "source": "provider.organizationName"
+    },
+
+    {
+      "target": "loops.2010AA.NM1.NM108",
+      "source": "provider.idQualifier"
+    },
+
+    {
+      "target": "loops.2010AA.NM1.NM109",
+      "source": "provider.npi"
+    },
+
+    {
+      "target": "loops.2010AA.N3.N301",
+      "source": "provider.address1"
+    },
+
+    {
+      "target": "loops.2010AA.N3.N302",
+      "source": "provider.address2"
+    },
+
+    {
+      "target": "loops.2010AA.N4.N401",
+      "source": "provider.city"
+    },
+
+    {
+      "target": "loops.2010AA.N4.N402",
+      "source": "provider.state"
+    },
+
+    {
+      "target": "loops.2010AA.N4.N403",
+      "source": "provider.zip"
+    },
+
+    {
+      "target": "loops.2010AA.REF_EI.REF02",
+      "source": "provider.taxId"
+    },
+
+    {
+      "target": "loops.2310B.NM1.NM103",
+      "source": "renderingProvider.lastName"
+    },
+
+    {
+      "target": "loops.2310B.NM1.NM104",
+      "source": "renderingProvider.firstName"
+    },
+
+    {
+      "target": "loops.2310B.NM1.NM108",
+      "source": "renderingProvider.idQualifier"
+    },
+
+    {
+      "target": "loops.2310B.NM1.NM109",
+      "source": "renderingProvider.npi"
+    },
+
+    {
+      "target": "loops.2310B.PRV.PRV03",
+      "source": "renderingProvider.taxonomyCode"
+    }
+
+  ]
+}

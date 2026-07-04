@@ -1,0 +1,54 @@
+{
+  "projectionType": "Patient837P",
+  "targetDocument": "837P_LoopsSegments_X12",
+  "version": "1.0.0",
+
+  "fields": [
+
+    {
+      "target": "loops.2010BA.NM1.NM103",
+      "source": "subscriber.lastName"
+    },
+
+    {
+      "target": "loops.2010BA.NM1.NM104",
+      "source": "subscriber.firstName"
+    },
+
+    {
+      "target": "loops.2010BA.NM1.NM109",
+      "source": "subscriber.memberId"
+    },
+
+    {
+      "target": "loops.2010BA.DMG.DMG02",
+      "source": "subscriber.dob"
+    },
+
+    {
+      "target": "loops.2010BA.DMG.DMG03",
+      "source": "subscriber.gender"
+    },
+
+    {
+      "target": "loops.2010BA.N3.N301",
+      "source": "subscriber.address1"
+    },
+
+    {
+      "target": "loops.2010BA.N4.N401",
+      "source": "subscriber.city"
+    },
+
+    {
+      "target": "loops.2010BA.N4.N402",
+      "source": "subscriber.state"
+    },
+
+    {
+      "target": "loops.2010BA.N4.N403",
+      "source": "subscriber.zip"
+    }
+
+  ]
+}

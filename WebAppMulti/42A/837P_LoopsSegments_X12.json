@@ -1,119 +1,15 @@
 {
-  "name": "837P_LoopsSegments_X12",
-  "version": "005010X222A1",
-  "description": "Cross-reference mapping between internal claim fields, CMS-1500 boxes, and ANSI X12 837 Professional (837P) loops, segments, and elements.",
-  "purpose": "Used by Claim Review UI, CMS-1500 rendering, 837P generation, validation, auditing, and field mapping.",
-  "claimType": "Professional",
-  "standard": "X12 837P",
-  "maintainedBy": "CaseManagement",
-  "lastUpdated": "2026-05-12",
-
-  "claimHeader": [
-    {
-      "source": "ClaimNumber",
-      "cms1500Box": null,
-      "loop": "2300",
-      "segment": "CLM",
-      "element": "CLM01",
-      "description": "Patient Control Number"
-    },
-    {
-      "source": "TotalCharge",
-      "cms1500Box": "28",
-      "loop": "2300",
-      "segment": "CLM",
-      "element": "CLM02",
-      "description": "Total Claim Charge Amount"
-    }
-  ],
-
-  "subscriber": [
-    {
-      "source": "SubscriberId",
-      "cms1500Box": "1A",
-      "loop": "2010BA",
-      "segment": "NM1",
-      "element": "NM109",
-      "description": "Subscriber Identifier"
-    }
-  ],
-
-  "patient": [
-    {
-      "source": "PatientLastName",
-      "cms1500Box": "2",
-      "loop": "2010CA",
-      "segment": "NM1",
-      "element": "NM103",
-      "description": "Patient Last Name"
-    },
-    {
-      "source": "PatientFirstName",
-      "cms1500Box": "2",
-      "loop": "2010CA",
-      "segment": "NM1",
-      "element": "NM104",
-      "description": "Patient First Name"
-    }
-  ],
-
-  "serviceLine": [
-    {
-      "source": "DOS",
-      "cms1500Box": "24A",
-      "loop": "2400",
-      "segment": "DTP",
-      "element": "DTP03",
-      "qualifier": "472",
-      "description": "Date of Service"
-    },
-    {
-      "source": "CPT",
-      "cms1500Box": "24D",
-      "loop": "2400",
-      "segment": "SV1",
-      "element": "SV101-2",
-      "description": "Procedure Code"
-    },
-    {
-      "source": "Modifier1",
-      "cms1500Box": "24D",
-      "loop": "2400",
-      "segment": "SV1",
-      "element": "SV101-3",
-      "description": "Procedure Modifier 1"
-    },
-    {
-      "source": "Modifier2",
-      "cms1500Box": "24D",
-      "loop": "2400",
-      "segment": "SV1",
-      "element": "SV101-4",
-      "description": "Procedure Modifier 2"
-    },
-    {
-      "source": "ChargeAmount",
-      "cms1500Box": "24F",
-      "loop": "2400",
-      "segment": "SV1",
-      "element": "SV102",
-      "description": "Line Charge Amount"
-    },
-    {
-      "source": "Units",
-      "cms1500Box": "24G",
-      "loop": "2400",
-      "segment": "SV1",
-      "element": "SV104",
-      "description": "Service Units"
-    },
-    {
-      "source": "DiagnosisPointer",
-      "cms1500Box": "24E",
-      "loop": "2400",
-      "segment": "SV1",
-      "element": "SV107",
-      "description": "Diagnosis Pointer"
-    }
-  ]
+  "loops": {
+    "1000A": {},
+    "1000B": {},
+    "2000A": {},
+    "2010AA": {},
+    "2000B": {},
+    "2010BA": {},
+    "2010BB": {},
+    "2300": {},
+    "2310A": {},
+    "2310B": {},
+    "2400": []
+  }
 }

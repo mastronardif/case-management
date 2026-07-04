@@ -1,0 +1,58 @@
+{
+  "ruleType": "Session837P",
+  "version": "1.0.0",
+
+  "description": "Calculates derived billing values from a session prior to projection into the 837P working document.",
+
+  "constants": {
+    "minutesPerUnit": 15,
+    "defaultUnitRate": 65.00,
+    "maxUnitsPerDay": 32
+  },
+
+  "requiredFields": [
+    "session.date",
+    "session.startTime",
+    "session.endTime",
+    "service.code"
+  ],
+
+  "rules": [
+
+    {
+      "field": "billing.minutes",
+      "expression": "minutes(session.startTime, session.endTime)"
+    },
+
+    {
+      "field": "billing.units",
+      "expression": "ceiling(billing.minutes / constants.minutesPerUnit)"
+    },
+
+    {
+      "field": "billing.hours",
+      "expression": "billing.minutes / 60"
+    },
+
+    {
+      "field": "billing.unitRate",
+      "expression": "constants.defaultUnitRate"
+    },
+
+    {
+      "field": "billing.amount",
+      "expression": "billing.units * billing.unitRate"
+    },
+
+    {
+      "field": "billing.fromDate",
+      "expression": "session.date"
+    },
+
+    {
+      "field": "billing.toDate",
+      "expression": "session.date"
+    }
+
+  ]
+}

@@ -2,6 +2,62 @@ pick #:  prp1317861830
 
 
 ----------------
+07/04/2026
+this is the direction end game of what i am trying to accomplish.  with my operators.
+Will the loops make the code simplier.  Do you know what i mean????
+
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\837P_LoopsSegments_X12.json
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\results.837P_LoopsSegments_X12.json
+this makes the below.
+Locate the matching 2400 element by sessionId or documentId.
+Remove or replace just that service line.
+Recalculate claim totals (e.g., CLM02).
+Leave all the other service lines untouched.
+
+That makes rebuilding or correcting claims much more efficient and fits well with the document-centric architecture you've been designing.
+
+-----------------------
+see: C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\Session837P.projection.json
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A
+this is where i am going.  works like everything else we have been doing?
+does this makes sence?
+
+-----------------------------------------------------------
+$invoice  +=  $session     ← accumulate session into invoice
+$invoice  m=  $authData    ← override auth fields specifically
+
+change of plans i want to create a new json
+Authorization (M) invoice => does the session mege with invoice creates a new invoice.
+session (AM) invoice      => does the session Add or merge with invoice creates a new invoice.
+
+ 
+-----------------------
+m= is a merge is field level overide.
++= is merge or append.  for example when you += a session it will append the hours or update the hours.
+----------------
+I need operators.
+ append (+=)
+ merge (m=)
+i plan on doing building the 837. i am goingto append the session notes.  
+and add the other info where i have the option of updating thats merge operation.
+
+
+## Projection onto 837fP 
+Session JSON
+        \
+         --> Projector --------\
+Authorization JSON             \
+        \                       \
+         --> Projector -----------> 837P_LoopsSegments_X12.json
+Provider JSON                  /
+        \                     /
+         --> Projector ------/
+Patient JSON                 /
+        \                   /
+         --> Projector ----/
+---
+
+----------------
 07/03/2026
 
 Make 718 a link like you did for src 701.
