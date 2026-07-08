@@ -1,43 +1,20 @@
 {
   "projectionType": "Session837P",
   "targetDocument": "837P_LoopsSegments_X12",
-  "version": "1.0.0",
+  "version": "2.0.0",
 
   "fields": [
     {
-      "target": "claim.serviceLines[0].serviceDate",
+      "target": "loops.2400[0].DTP472.DTP03",
       "source": "session.date"
     },
-
     {
-      "target": "claim.serviceLines[0].fromTime",
-      "source": "session.startTime"
-    },
-
-    {
-      "target": "claim.serviceLines[0].toTime",
-      "source": "session.endTime"
-    },
-
-    {
-      "target": "claim.serviceLines[0].procedureCode",
-      "target22": "Loop2400.SV101.procedureCode",
+      "target": "loops.2400[0].SV1.SV101_2",
       "source": "service.code"
     },
-
     {
-      "target": "claim.serviceLines[0].modifier",
+      "target": "loops.2400[0].SV1.SV101_3",
       "source": "service.modifier"
-    },
-
-    {
-      "target": "claim.serviceLines[0].units",
-      "source": "billing.units"
-    },
-
-    {
-      "target": "claim.serviceLines[0].chargeAmount",
-      "source": "billing.amount"
     }
   ]
 }

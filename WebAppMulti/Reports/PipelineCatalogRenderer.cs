@@ -7,7 +7,16 @@ namespace WebAppMulti.Reports;
 public record PipelineInfo(int PipelineId, string Name, string? Description, int? DocId, string? Template, string? ParamsSchemaJson);
 
 public record OperatorParamInfo(string Name, string Type, bool Required, string Description);
-public record OperatorCatalogItem(string Operator, string Description, string[] InputLabels, string[] OutputLabels, OperatorParamInfo[] Params, string? AlgebraExample = null, string? CliExample = null);
+public record OperatorCatalogItem(
+    string Token,
+    string Operator,
+    string ReadsAs,
+    string? Description    = null,
+    string[]? InputLabels  = null,
+    string[]? OutputLabels = null,
+    string? AlgebraExample = null,
+    string? CliExample     = null,
+    OperatorParamInfo[]? Params = null);
 
 public static class PipelineCatalogRenderer
 {
@@ -70,7 +79,15 @@ public static class PipelineCatalogRenderer
         List<OperatorCatalogItem>? operators = null;
         if (!string.IsNullOrWhiteSpace(operatorsJson))
         {
-            try { operators = JsonSerializer.Deserialize<List<OperatorCatalogItem>>(operatorsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }); }
+            try
+            {
+                var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                using var doc  = JsonDocument.Parse(operatorsJson);
+                var root = doc.RootElement;
+                // Registry JSON has a {tokens:[...]} wrapper; bare array also supported
+                var arr  = root.ValueKind == JsonValueKind.Array ? root : root.GetProperty("tokens");
+                operators = JsonSerializer.Deserialize<List<OperatorCatalogItem>>(arr.GetRawText(), opts);
+            }
             catch { /* operators section omitted if JSON is malformed */ }
         }
 
@@ -347,7 +364,9 @@ public static class PipelineCatalogRenderer
                     <table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08)">
                       <thead>
                         <tr>
+                          <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Token</th>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Operator</th>
+                          <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Reads As</th>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Description</th>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">Algebra</th>
                           <th style="background:#1e293b;color:#e2e8f0;text-align:left;padding:0.5rem 0.9rem;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em">CLI Example</th>
@@ -364,9 +383,9 @@ public static class PipelineCatalogRenderer
                 string Badge(string text) =>
                     $"<span style='display:inline-block;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:0.1rem 0.35rem;margin:0.1rem;font-size:0.73rem'>{WebUtility.HtmlEncode(text)}</span>";
 
-                var inputs  = op.InputLabels.Length  == 0 ? "<span style='color:#aaa'>—</span>" : string.Concat(op.InputLabels.Select(Badge));
-                var outputs = op.OutputLabels.Length == 0 ? "<span style='color:#aaa'>—</span>" : string.Concat(op.OutputLabels.Select(Badge));
-                var parms   = op.Params.Length       == 0 ? "<span style='color:#aaa'>—</span>"
+                var inputs  = op.InputLabels  is not { Length: > 0 } ? "<span style='color:#aaa'>—</span>" : string.Concat(op.InputLabels.Select(Badge));
+                var outputs = op.OutputLabels is not { Length: > 0 } ? "<span style='color:#aaa'>—</span>" : string.Concat(op.OutputLabels.Select(Badge));
+                var parms   = op.Params       is not { Length: > 0 } ? "<span style='color:#aaa'>—</span>"
                             : string.Concat(op.Params.Select(p =>
                                 $"<span style='display:inline-block;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:4px;padding:0.1rem 0.35rem;margin:0.1rem;font-size:0.73rem'>" +
                                 $"{WebUtility.HtmlEncode(p.Name)} <span style='color:#888'>{WebUtility.HtmlEncode(p.Type)}</span>" +
@@ -377,8 +396,10 @@ public static class PipelineCatalogRenderer
 
                 sb.AppendLine($"""
                             <tr>
+                              <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9;font-weight:bold;color:#1d4ed8;font-family:monospace">{WebUtility.HtmlEncode("(" + op.Token + ")")}</td>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9;font-weight:bold;color:#1d4ed8">{WebUtility.HtmlEncode(op.Operator)}</td>
-                              <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9;color:#555">{WebUtility.HtmlEncode(op.Description)}</td>
+                              <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9;color:#64748b">{WebUtility.HtmlEncode(op.ReadsAs)}</td>
+                              <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9;color:#555">{WebUtility.HtmlEncode(op.Description ?? "")}</td>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9">{algebra}</td>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9">{cli}</td>
                               <td style="padding:0.55rem 0.9rem;font-size:0.8rem;border-bottom:1px solid #f1f5f9">{inputs}</td>
@@ -398,10 +419,7 @@ public static class PipelineCatalogRenderer
         {
             sb.AppendLine("""
                     <div style="background:#fff;border-radius:8px;padding:1rem 1.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.08);font-size:0.82rem;color:#64748b">
-                      Operators not loaded. Run the following command then refresh:
-                      <div style="margin-top:0.5rem;background:#1e293b;color:#86efac;padding:0.4rem 0.75rem;border-radius:4px;font-size:0.78rem;display:inline-block">
-                        dotnet run -- --list-operators --html
-                      </div>
+                      Operators not loaded. Save <code>operator-registry.json</code> to the DB and ensure <code>MyConstants.Operators</code> points to its docId, then refresh.
                     </div>
                 """);
         }

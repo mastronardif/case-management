@@ -1,6 +1,229 @@
-pick #:  prp1317861830
+
+-------------------
+
+07/07/26
+--------------------
+
+Two options to fix:
+
+Option A — PS1 script builds and merges it at the end. After all AM steps, the script constructs the metadata JSON from the spec, saves it as a small doc via /api/saveDocument, then (M) merges it into the final invoice. No code changes needed.
+
+Option B — AddMergeStep auto-populates metadata. Add a sourceType wfParam (session, provider, patient, authorization). AddMergeStep reads it and appends to metadata.sources.* automatically. Small code change — but cleaner since metadata stays in sync with every merge step.
+
+Option B is the right long-term answer — when this moves into the Jobs app, the workflow definition just declares sourceType per step and metadata builds itself. Option A is fine for now as an external script.
+
+Which do you want?
+you have the info in the invoice-build.json
+can you replace meta data with that.
+
+______________________
+
+"NM102": "" should be "NM102": "2"
+--------------------
+will come back to that.
+question: I am working on the payer projection.
+This proection has a constant that does not come from the source but it applied in the end of the to the 837P
+what is the best way to handle constants like this?
+
+--------------------
+
+why is the meta data empty for 
+"metadata": {
+"claimNumber": "",
+"caseId": 0,
+"patientId": 0,
+"pipelineRunId": "",
+"sources": {
+"provider": 0,
+"authorization": 0,
+"patient": 0,
+"payer": 0,
+"sessions": []
+}
+}
+
+for run with
+{
+  "caseId": 9,
+  "blankDocId": 749,
+  "projectors": {
+    "session":       731,
+    "provider":      734,
+    "authorization": 733,
+    "patient":       735
+  },
+  "sources": {
+    "sessions":      [418, 403],
+    "provider":      759,
+    "authorization": null,
+    "patient":       793
+  }
+}
 
 
+resutls:
+=== Build 837P Invoice ===
+  Spec     : .\invoice-build.json
+  CaseId   : 9  |  Blank: 749
+
+
+Session 1 (418) : 418 (P) 731 (AM) 749
+  [18:08:15 INF] Workflow dsl-pipeline complete. RunId: 277ad8f3-2a6f-4fc3-aed1-b74d61e45d67, Outputs: [794 | 795]
+  [18:08:15 INF] Saving document. Type: workflowRun, CaseId: null, SessionId: null
+  [18:08:15 INF] Run manifest saved. DocId: 796, RunId: 277ad8f3-2a6f-4fc3-aed1-b74d61e45d67
+  ΓöÇΓöÇ Outputs ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    step 1  docId 794     http://localhost:5173/api/getDocument?docId=794
+    step 2  docId 795     http://localhost:5173/api/getDocument?docId=795
+  => docId: 795
+
+Session 2 (403) : 403 (P) 731 (AM) 795
+  [18:08:18 INF] Workflow dsl-pipeline complete. RunId: ae4d0017-0cc0-4bc4-9595-f6a41d536fcf, Outputs: [797 | 798]
+  [18:08:18 INF] Saving document. Type: workflowRun, CaseId: null, SessionId: null
+  [18:08:18 INF] Run manifest saved. DocId: 799, RunId: ae4d0017-0cc0-4bc4-9595-f6a41d536fcf
+  ΓöÇΓöÇ Outputs ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    step 1  docId 797     http://localhost:5173/api/getDocument?docId=797
+    step 2  docId 798     http://localhost:5173/api/getDocument?docId=798
+  => docId: 798
+
+Provider : 759 (P) 734 (AM) 798
+  [18:08:21 INF] Workflow dsl-pipeline complete. RunId: b35aadf4-a5d9-4ad2-a9ab-318cda4145b0, Outputs: [800 | 801]
+  [18:08:21 INF] Saving document. Type: workflowRun, CaseId: null, SessionId: null
+  [18:08:21 INF] Run manifest saved. DocId: 802, RunId: b35aadf4-a5d9-4ad2-a9ab-318cda4145b0
+  ΓöÇΓöÇ Outputs ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    step 1  docId 800     http://localhost:5173/api/getDocument?docId=800
+    step 2  docId 801     http://localhost:5173/api/getDocument?docId=801
+  => docId: 801
+
+Patient : 793 (P) 735 (AM) 801
+  [18:08:26 INF] Workflow dsl-pipeline complete. RunId: 36ed597a-6932-4451-9d77-4d2dff9ae613, Outputs: [803 | 804]
+  [18:08:26 INF] Saving document. Type: workflowRun, CaseId: null, SessionId: null
+  [18:08:26 INF] Run manifest saved. DocId: 805, RunId: 36ed597a-6932-4451-9d77-4d2dff9ae613
+  ΓöÇΓöÇ Outputs ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+    step 1  docId 803     http://localhost:5173/api/getDocument?docId=803
+    step 2  docId 804     http://localhost:5173/api/getDocument?docId=804
+  => docId: 804
+-------------------
+I want to make a better tests.  Should it be a .ps1 or a fragment off my jobs project?
+should i keep as an outside thing for now?  I will for now. then move it into the project.
+update the ___________.ps1
+to read from a file which is a .json.
+contains a data  for a invoice.
+json
+{
+sessions: [],
+provider 
+Authorization
+Provider
+}
+
+-------------------
+
+do you think source as
+
+
+-------------------------
+{
+  "projectionType": "CMS1500_BoxesProjection",
+  "sourceDocument": "837P_LoopsSegments_X12",
+  "targetDocument": "CMS1500_Boxes",
+
+  "fields": [
+
+    {
+      "target": "boxes.box1a",
+      "source": "loops.2010BA.NM1.NM109"
+    },
+
+    {
+      "target": "boxes.box2",
+      "type": "concat",
+      "sources": [
+        "loops.2010BA.NM1.NM103",
+        "loops.2010BA.NM1.NM104"
+      ],
+      "separator": ", "
+    },
+
+    {
+      "target": "boxes.box24",
+      "type": "array",
+      "source": "loops.2400"
+    },
+
+    {
+      "target": "boxes.box31",
+      "type": "concat",
+      "sources": [
+        "loops.2310B.NM1.NM103",
+        "loops.2310B.NM1.NM104"
+      ],
+      "separator": ", "
+    }
+  ]
+}
+
+-------------------
+can you do the below pojection.  
+This projection has a special loop case can you accomidate that without breaking the existing stratthourhg projections.
+Give me you best suggestion. 
+Perhaps an instruction.
+
+    {
+      "comment": "Loop special case for each service line boxes. box24[0] is the first service line, box24[1] is the second service line, etc.",
+      "target": "boxes.box24",
+      "source": "loops.2400"
+    },
+source:     http://localhost:5173/api/getDocument?docId=777
+projection: http://localhost:5173/api/getDocument?docId=779
+
+---------------
+7/6/26
+
+give me a .ps1 script
+to do:
+start with two sessions [418, 403] then a provider [759] build the invoice
+
+session1 (P) sessionProj (AM) blank     → invoice1 (docId A)
+session2 (P) sessionProj (AM) A         → invoice2 (docId B)
+provider (P) providerProj (AM) B        → invoice3 (docId C)
+-------------------
+I want the following:
+session into invoice use the loop 
+payer info into invoice, etc see fan
+via addmerge 
+rember the fan?
+Session JSON
+            \
+Authorization \
+Provider -------> 837P_LoopsSegments_X12.json
+Patient       /
+Case         /
+Payer       /
+------------------
+
+07/05/26
+'providerDocId (M) 725 (P) 731 (AM) 749'
+'759 (M) 725 (P) 731 (AM) 749'
+-----------------------
+i have a [CaseManagement].[cases].[Provider] table will be like the other tables srcDocId, jsonDocId 
+
+---------------------------
+oK i did two sessions this is the  results from
+dotnet run -- --expression '725 (P) 731 (AM) 749' --case-id 9
+dotnet run -- --expression '697 (P) 731 (AM) 751' --case-id 9
+this is the results
+http://localhost:5173/api/getDocument?docId=757
+
+--------------------------
+testing invoice 
+thinking this does 
+AM session1 to 740
+AM session2 to 741
+746 should contain both session data.
+
+--expression '725 (AM) 740' --case-id 9
+--expression '743 (AM) 741' --case-id 9 =>746
+-------------------
 ----------------
 07/04/2026
 this is the direction end game of what i am trying to accomplish.  with my operators.

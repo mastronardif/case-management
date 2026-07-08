@@ -1,0 +1,51 @@
+{
+  "documentType": "Provider",
+  "version": "1.1.0",
+
+  "provider": {
+    "id": 1,
+
+    "organizationName": "Dynamic Minds Corp",
+    "providerName": "Kristine Mastronardi, M.S., BCBA, LBA",
+
+    "npi": "1234567890",
+
+    "taxId": "12-3456789",
+
+    "address1": "311 Lenox Ave.",
+
+    "address2": "",
+
+    "city": "Westfield",
+
+    "state": "NJ",
+
+    "zip": "07090",
+
+    "phone": "908-555-1212",
+
+    "email": "billing@dynamicminds.com"
+  },
+
+  "renderingProvider": {
+    "id": 7,
+
+    "staffCode": "RBT0007",
+
+    "firstName": "Jocelyn",
+
+    "lastName": "Rosel",
+
+    "providerType": "RBT",
+
+    "credential": "RBT",
+
+    "npi": "1112223334",
+
+    "taxonomyCode": "251B00000X",
+
+    "phone": "908-555-2211",
+
+    "email": "jrosel@dynamicminds.com"
+  }
+}

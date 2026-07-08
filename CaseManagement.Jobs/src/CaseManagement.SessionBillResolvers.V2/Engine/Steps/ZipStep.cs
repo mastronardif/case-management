@@ -7,18 +7,10 @@ public class ZipStep(ICaseManagementRepository repository, ILogger<ZipStep> logg
 {
     public string Operator => "zip";
     public OperatorInfo Info => Meta;
-    public static OperatorInfo Meta { get; } = new(
-        Operator:       "zip",
-        Description:    "Packages any number of input documents into a single ZIP archive.",
-        InputLabels:    ["doc1 … docN (variable)"],
-        OutputLabels:   ["report.zip"],
-        Params:
+    public static OperatorInfo Meta { get; } = new("zip",
         [
             new("caseId", "int", false, "CaseId for document context")
-        ],
-        AlgebraExample: "(Z)  →  (Z)[A,B,C]  — bundle A, B, C into archive",
-        CliExample:     "--expression '(Z)[$jsonDocId, $ruleDocId, 206]' --json-doc-id 403 --rule-doc-id 514",
-        Token:          "Z");
+        ]);
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, System.Text.Json.JsonElement>? wfParams, CancellationToken ct)
     {

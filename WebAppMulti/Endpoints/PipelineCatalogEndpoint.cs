@@ -55,21 +55,28 @@ public static class PipelineCatalogEndpoint
                 pipelines.Add(new PipelineInfo(row.PipelineId, row.Name, row.Description, row.DocId, template, paramsSchemaJson));
             }
 
-            // Operators catalog (saved by: dotnet run -- --list-operators --html)
+            // Operators — read from MyConstants "Operators" → docId → registry JSON (source of truth)
             string? operatorsJson = null;
-            using var opCmd = new SqlCommand("cases.usp_Document_GetByContext", conn) { CommandType = CommandType.StoredProcedure };
-            opCmd.Parameters.AddWithValue("@DocumentId",   DBNull.Value);
-            opCmd.Parameters.AddWithValue("@CaseId",       DBNull.Value);
-            opCmd.Parameters.AddWithValue("@WorkbookQId",  DBNull.Value);
-            opCmd.Parameters.AddWithValue("@SessionId",    DBNull.Value);
-            opCmd.Parameters.AddWithValue("@DocumentType", "operators-catalog");
-            using var opReader = await opCmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
-            if (await opReader.ReadAsync())
+            using var constCmd = new SqlCommand(
+                "SELECT Value FROM [cases].[MyConstants] WHERE [Key] = 'Operators' AND [Type] = 'int'", conn);
+            var constVal = await constCmd.ExecuteScalarAsync();
+            if (constVal is not null and not DBNull)
             {
-                var fileData = (byte[])opReader.GetValue(opReader.GetOrdinal("FileData"));
-                operatorsJson = System.Text.Encoding.UTF8.GetString(fileData);
+                var opDocId = Convert.ToInt32(constVal);
+                using var opCmd = new SqlCommand("cases.usp_Document_GetByContext", conn) { CommandType = CommandType.StoredProcedure };
+                opCmd.Parameters.AddWithValue("@DocumentId",   opDocId);
+                opCmd.Parameters.AddWithValue("@CaseId",       DBNull.Value);
+                opCmd.Parameters.AddWithValue("@WorkbookQId",  DBNull.Value);
+                opCmd.Parameters.AddWithValue("@SessionId",    DBNull.Value);
+                opCmd.Parameters.AddWithValue("@DocumentType", DBNull.Value);
+                using var opReader = await opCmd.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
+                if (await opReader.ReadAsync())
+                {
+                    var fileData = (byte[])opReader.GetValue(opReader.GetOrdinal("FileData"));
+                    operatorsJson = System.Text.Encoding.UTF8.GetString(fileData);
+                }
+                await opReader.CloseAsync();
             }
-            await opReader.CloseAsync();
 
             var html = PipelineCatalogRenderer.Render(pipelines, operatorsJson);
             return Results.Content(html, "text/html; charset=utf-8");

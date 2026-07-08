@@ -7,15 +7,7 @@ public class ProjectorStep(ICaseManagementRepository repository, ILogger<Project
 {
     public string Operator => "projector";
     public OperatorInfo Info => Meta;
-    public static OperatorInfo Meta { get; } = new(
-        Operator:       "projector",
-        Description:    "Transforms a session extraction doc using a projection definition into a billing projection.",
-        InputLabels:    ["sessionDoc", "projectionDefinition"],
-        OutputLabels:   ["billingProjection.json"],
-        Params:         [],
-        AlgebraExample: "(P)  →  A(P)B  — A projected through B",
-        CliExample:     "--expression '$jsonDocId (P) $ruleDocId' --json-doc-id 403 --rule-doc-id 514",
-        Token:          "P");
+    public static OperatorInfo Meta { get; } = new("projector", []);
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, System.Text.Json.JsonElement>? wfParams, CancellationToken ct)
     {

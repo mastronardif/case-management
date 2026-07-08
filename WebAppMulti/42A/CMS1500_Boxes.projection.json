@@ -1,0 +1,99 @@
+{
+  "projectionType": "CMS1500_BoxesProjection",
+  "sourceDocument": "837P_LoopsSegments_X12",
+  "targetDocument": "CMS1500_Boxes",
+  "version": "1.1.0",
+
+  "fields": [
+    {
+      "target": "boxes.box1",
+      "source": "loops.2000B.SBR.SBR09"
+    },
+
+    {
+      "target": "boxes.box1a",
+      "source": "loops.2010BA.NM1.NM109"
+    },
+
+    {
+      "target": "boxes.box2",
+      "source": ["loops.2010BA.NM1.NM103", "loops.2010BA.NM1.NM104"],
+      "type": "concat",
+      "separator": ", "
+    },
+
+    {
+      "target": "boxes.box3",
+      "source": "loops.2010BA.DMG.DMG02"
+    },
+
+    {
+      "target": "boxes.box4",
+      "source": "loops.2010BB.NM1.NM103"
+    },
+
+    {
+      "target": "boxes.box21[0]",
+      "source": "loops.2300.HI.HI01_2"
+    },
+
+    {
+      "target": "boxes.box23",
+      "source": "loops.2300.REF_G1.REF02"
+    },
+
+    {
+      "comment": "One Box24 row is created for each Loop2400 service line.",
+      "target": "boxes.box24",
+      "source": "loops.2400",
+      "type": "array"
+    },
+
+    {
+      "target": "boxes.box25",
+      "source": "loops.2010AA.REF_EI.REF02"
+    },
+
+    {
+      "target": "boxes.box28",
+      "source": "loops.2300.CLM.CLM02"
+    },
+
+    {
+      "target": "boxes.box31",
+      "source": ["loops.2310B.NM1.NM103", "loops.2310B.NM1.NM104"],
+      "type": "concat",
+      "separator": ", "
+    },
+
+    {
+      "target": "boxes.box33.name",
+      "source": "loops.2010AA.NM1.NM103"
+    },
+
+    {
+      "target": "boxes.box33.address1",
+      "source": "loops.2010AA.N3.N301"
+    },
+
+    {
+      "target": "boxes.box33.city",
+      "source": "loops.2010AA.N4.N401"
+    },
+
+    {
+      "target": "boxes.box33.state",
+      "source": "loops.2010AA.N4.N402"
+    },
+
+    {
+      "target": "boxes.box33.zip",
+      "source": "loops.2010AA.N4.N403"
+    },
+
+    {
+      "target": "boxes.box33a",
+      "source": "loops.2010AA.NM1.NM109"
+    }
+  ]
+}

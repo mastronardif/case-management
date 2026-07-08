@@ -6,15 +6,7 @@ public class BillingRuleStep(ICaseManagementRepository repository, ILogger<Billi
 {
     public string Operator => "billingRule";
     public OperatorInfo Info => Meta;
-    public static OperatorInfo Meta { get; } = new(
-        Operator:       "billingRule",
-        Description:    "Applies a billing rule to a billing projection and produces an invoice (billing result).",
-        InputLabels:    ["billingProjection", "billingRule"],
-        OutputLabels:   ["billingResult.json"],
-        Params:         [],
-        AlgebraExample: "(R)  →  A(P)B(R)C  — project A through B then apply rule C",
-        CliExample:     "--expression '$jsonDocId (P) $ruleDocId (R) $srcDocId' --json-doc-id 403 --rule-doc-id 514 --src-doc-id 369",
-        Token:          "R");
+    public static OperatorInfo Meta { get; } = new("billingRule", []);
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, System.Text.Json.JsonElement>? wfParams, CancellationToken ct)
     {

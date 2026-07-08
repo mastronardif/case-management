@@ -1,0 +1,27 @@
+{
+  "documentType": "Payer",
+  "version": "1.0.0",
+
+  "payer": {
+
+    "name": "Horizon Blue Cross Blue Shield",
+
+    "payerId": "12345",
+
+    "idQualifier": "PI",
+
+    "insuranceSequence": "P",
+
+    "planType": "CI",
+
+    "address1": "3 Penn Plaza East",
+
+    "city": "Newark",
+
+    "state": "NJ",
+
+    "zip": "07105",
+
+    "phone": "800-355-2583"
+  }
+}

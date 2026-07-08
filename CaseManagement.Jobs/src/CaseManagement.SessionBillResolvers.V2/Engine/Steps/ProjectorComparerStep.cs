@@ -10,20 +10,12 @@ public class ProjectorComparerStep(
 {
     public string Operator => "projectorComparer";
     public OperatorInfo Info => Meta;
-    public static OperatorInfo Meta { get; } = new(
-        Operator:       "projectorComparer",
-        Description:    "Validates a session extraction doc against a projection definition. Produces a field-by-field audit JSON and a human-readable HTML review.",
-        InputLabels:    ["sessionDoc", "projectionDefinition"],
-        OutputLabels:   ["sessionAudit.json", "sessionReview.html"],
-        Params:
+    public static OperatorInfo Meta { get; } = new("projectorComparer",
         [
             new("tableName", "string", false, "Target [cases] table name"),
             new("caseId",    "int",    false, "CaseId for document context"),
             new("srcDocId",  "int",    false, "Original source document id")
-        ],
-        AlgebraExample: "(V)  →  A(V)B  — A validated against B",
-        CliExample:     "--expression '$jsonDocId (V) $ruleDocId' --json-doc-id 403 --rule-doc-id 514 --case-id 5 --table-name Session --src-doc-id 369",
-        Token:          "V");
+        ]);
 
     public async Task<int[]> ExecuteAsync(int[] inputDocIds, string runId, IReadOnlyDictionary<string, JsonElement>? wfParams, CancellationToken ct)
     {

@@ -1,12 +1,16 @@
 {
   "name": "Operators",
-  "version": "2.0",
-  "description": "DSL Operators used in workflows.",
+  "version": "3.0",
+  "description": "DSL operator registry — source of truth for token mapping and catalog display.",
   "tokens": [
     {
       "token": "P",
       "operator": "projector",
       "readsAs": "project",
+      "description": "Transforms a source document using a projection definition. Maps source fields to target field paths.",
+      "inputLabels": ["sourceDoc", "projectionDefinition"],
+      "outputLabels": ["billingProjection.json"],
+      "params": [],
       "algebraExample": "(P)  →  A(P)B  — A projected through B",
       "cliExample": "--expression '$jsonDocId (P) $ruleDocId' --json-doc-id 403 --rule-doc-id 514"
     },
@@ -14,6 +18,14 @@
       "token": "V",
       "operator": "projectorComparer",
       "readsAs": "validate",
+      "description": "Validates a source document against a projection definition. Produces a field-by-field audit JSON and an HTML review with Save and Save & Resolve buttons.",
+      "inputLabels": ["sourceDoc", "projectionDefinition"],
+      "outputLabels": ["sessionAudit.json", "sessionReview.html"],
+      "params": [
+        { "name": "tableName", "type": "string", "required": false, "description": "Target [cases] table name — enables Save & Resolve button" },
+        { "name": "caseId",    "type": "int",    "required": false, "description": "CaseId for document context" },
+        { "name": "srcDocId",  "type": "int",    "required": false, "description": "Original source document id — shown as link in review" }
+      ],
       "algebraExample": "(V)  →  A(V)B  — A validated against B",
       "cliExample": "--expression '$jsonDocId (V) $ruleDocId' --json-doc-id 403 --rule-doc-id 514 --case-id 5 --table-name Session --src-doc-id 369"
     },
@@ -21,6 +33,10 @@
       "token": "R",
       "operator": "billingRule",
       "readsAs": "apply rule",
+      "description": "Applies a billing rule to a projected document. Evaluates NCalc expressions to compute derived fields (e.g. units, charge amount).",
+      "inputLabels": ["billingProjection", "billingRule"],
+      "outputLabels": ["billingResult.json"],
+      "params": [],
       "algebraExample": "(R)  →  A(P)B(R)C  — project A through B then apply rule C",
       "cliExample": "--expression '$jsonDocId (P) $ruleDocId (R) $srcDocId' --json-doc-id 403 --rule-doc-id 514 --src-doc-id 369"
     },
@@ -28,6 +44,13 @@
       "token": "C",
       "operator": "claim837P",
       "readsAs": "build claim",
+      "description": "Builds a HIPAA 837P claim from session, case, coverage, authorization, diagnoses, provider, and assessment data. Produces claim JSON and HTML review doc.",
+      "inputLabels": [],
+      "outputLabels": ["claim837P.json", "claim837P-review.html"],
+      "params": [
+        { "name": "caseId",    "type": "int", "required": true, "description": "CaseId to pull claim data for" },
+        { "name": "sessionId", "type": "int", "required": true, "description": "SessionId to pull claim data for" }
+      ],
       "algebraExample": "(C)  →  (C)  — build claim from context params",
       "cliExample": "--expression '(C)' --case-id 5"
     },
@@ -35,6 +58,14 @@
       "token": "D",
       "operator": "docResolve",
       "readsAs": "resolve to DB",
+      "description": "Resolves a JSON document into a [cases] domain table row using the field mapping for that table. The SP handles insert/update logic.",
+      "inputLabels": ["jsonDoc"],
+      "outputLabels": ["confirm.json"],
+      "params": [
+        { "name": "tableName", "type": "string", "required": true,  "description": "Target [cases] table name" },
+        { "name": "caseId",    "type": "int",    "required": true,  "description": "CaseId for the resolved row" },
+        { "name": "srcDocId",  "type": "int",    "required": false, "description": "Original source document id" }
+      ],
       "algebraExample": "(D)  →  A(D)  — resolve A into domain table",
       "cliExample": "--expression '$jsonDocId (D)' --json-doc-id 403 --table-name Session --case-id 5 --src-doc-id 369"
     },
@@ -42,8 +73,40 @@
       "token": "Z",
       "operator": "zip",
       "readsAs": "bundle",
+      "description": "Packages any number of input documents into a single ZIP archive.",
+      "inputLabels": ["doc1 … docN (variable)"],
+      "outputLabels": ["report.zip"],
+      "params": [
+        { "name": "caseId", "type": "int", "required": false, "description": "CaseId for document context" }
+      ],
       "algebraExample": "(Z)  →  (Z)[A,B,C]  — bundle A, B, C into archive",
       "cliExample": "--expression '(Z)[$jsonDocId, $ruleDocId, 206]' --json-doc-id 403 --rule-doc-id 514"
+    },
+    {
+      "token": "M",
+      "operator": "merge",
+      "readsAs": "merge",
+      "description": "Field-level override merge. Source fields replace matching target fields recursively. Unmatched target fields are preserved. Creates a new document.",
+      "inputLabels": ["sourceDoc", "targetDoc"],
+      "outputLabels": ["merged.json"],
+      "params": [
+        { "name": "caseId", "type": "int", "required": false, "description": "CaseId for document context" }
+      ],
+      "algebraExample": "(M)  →  A(M)B  — A fields merged into B, A overrides",
+      "cliExample": "--expression '$sourceDocId (M) $targetDocId' --case-id 5"
+    },
+    {
+      "token": "AM",
+      "operator": "addMerge",
+      "readsAs": "add-merge",
+      "description": "Smart accumulate-merge. Numbers add, arrays find-or-append by sessionId/documentId/id, objects deep-merge. Recalculates 837P CLM02 and renumbers LX01. Creates a new document.",
+      "inputLabels": ["sourceDoc", "targetDoc"],
+      "outputLabels": ["addMerged.json"],
+      "params": [
+        { "name": "caseId", "type": "int", "required": false, "description": "CaseId for document context" }
+      ],
+      "algebraExample": "(AM)  →  A(AM)B  — A accumulated into B (numbers add, arrays append)",
+      "cliExample": "--expression '$sessionDocId (AM) $invoiceDocId' --case-id 5"
     }
   ]
 }

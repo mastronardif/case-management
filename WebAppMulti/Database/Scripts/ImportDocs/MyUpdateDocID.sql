@@ -3,9 +3,9 @@
 DECLARE @fileData VARBINARY(MAX);
 
 SELECT @fileData = BulkColumn
-FROM OPENROWSET(BULK 'C:\temp\operator-registry.json', SINGLE_BLOB) AS x;
+FROM OPENROWSET(BULK 'C:\temp\blank-837P.json', SINGLE_BLOB) AS x;
 
-DECLARE @docId INT = 652;   -- NULL = insert new doc
+DECLARE @docId INT = NULL --652;   -- NULL = insert new doc
 
 EXEC [cases].[usp_Document_Save]
     @DocumentType = 'operators-catalog',

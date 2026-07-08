@@ -93,15 +93,9 @@ public record Claim837PData(
 
 public record OperatorParam(string Name, string Type, bool Required, string Description);
 
-public record OperatorInfo(
-    string Operator,
-    string Description,
-    string[] InputLabels,
-    string[] OutputLabels,
-    OperatorParam[] Params,
-    string? AlgebraExample = null,
-    string? CliExample     = null,
-    string? Token          = null);
+// Execution-only metadata — used by WorkflowEngine.ValidateAsync for pre-run param checking.
+// Display metadata (description, examples, token letters) lives in the operator registry JSON doc.
+public record OperatorInfo(string Operator, OperatorParam[] Params);
 
 public class BillingResult
 {

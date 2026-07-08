@@ -1,0 +1,20 @@
+
+
+
+The pipeline (sequential, each run builds on the previous result):
+
+
+session1 (P) sessionProj (AM) blank     → invoice1 (docId A)
+session2 (P) sessionProj (AM) A         → invoice2 (docId B)
+provider (P) providerProj (AM) B        → invoice3 (docId C)
+
+patient  (P) patientProj  (AM) C        → invoice4 (docId D)
+auth     (P) authProj     (AM) D        → invoice5 (docId E)
+payer    (P) payerProj    (AM) E        → final 837P
+
+
+# boxes
+dotnet run -- --expression '777 (P) 779' --case-id 9
+
+ .\BuildInvoice837P.ps1 -SpecFile ".\invoice-build.json"
+

@@ -1,0 +1,75 @@
+{
+"client": {
+"name": "Gaurav Reddy Adapa",
+"dob": "2024-02-09",
+"diagnosis": {
+"code": "F84.0",
+"description": "Autistic Disorder"
+}
+},
+"session": {
+"date": "2026-06-18",
+"startTime": "12:00",
+"endTime": "15:00",
+"durationHours": "3.0",
+"breakOccurred": "false",
+"modality": "In person",
+"location": "Home",
+"participants": [
+"Client",
+"BT/RBT",
+"BCBA/Supervisor"
+]
+},
+"service": {
+"code": "97153",
+"modifier": "HM",
+"type": "RBT"
+},
+"clinician": {
+"name": "Jocelyn Rosel"
+},
+"provider": {
+"organization": "Dynamic Minds Corp"
+},
+"goals": [
+{
+"program": "Pairing",
+"longTermGoal": "Technician will pair with Gaurav",
+"behavioralObjectives": [
+{
+"name": "Stays within two feet of the BT",
+"result": "Train",
+"score": "100% (5/5)"
+},
+{
+"name": "Accepts item",
+"result": "Train",
+"score": "100% (5/5)"
+},
+{
+"name": "Orients toward BT during activity",
+"result": "Train",
+"score": "100% (5/5)"
+},
+{
+"name": "Shows positive affect",
+"result": "Train",
+"score": "12 (12x)"
+}
+]
+}
+],
+"interventions": [
+"Antecedent Based Intervention",
+"Naturalistic Intervention"
+],
+"summary": {
+"narrative": "During the session, the client demonstrated leaving the shared space during activities frequently. Keeping eye contact with BT during songs and some movement activities, as well as positive affect during those activities. Client stacked blocks independently and displayed less rigid responding during shape sorter and large block activities. The clinician responded by selecting activities that increased the client's orientation toward the BT and willingness to remain in the shared space. As a result, the client remained engaged in activities for longer periods.",
+"plan": "Reach out to supervisor for changes to behavior plan."
+},
+"signature": {
+"signedBy": "Jocelyn Rosel",
+"signedDateTime": "2026-06-18T14:41:00"
+}
+}

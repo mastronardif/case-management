@@ -31,45 +31,109 @@ public static class ProjectionTransformer
 
         foreach (var field in fields)
         {
-            var fieldObj =
-                field!.AsObject();
+            var fieldObj = field!.AsObject();
+            var target   = fieldObj["target"]!.ToString();
+            var type     = fieldObj.TryGetPropertyValue("type", out var typeNode) ? typeNode?.GetValue<string>() : null;
 
-            var target =
-                fieldObj["target"]!.ToString();
+            JsonNode? value;
 
-            var sourcePath =
-                fieldObj["source"]!.ToString();
+            if (type == "literal")
+            {
+                value = fieldObj["value"]?.DeepClone();
+            }
+            else if (type == "concat")
+            {
+                var separator = fieldObj.TryGetPropertyValue("separator", out var sepNode)
+                    ? sepNode?.GetValue<string>() ?? ""
+                    : "";
+                var parts = fieldObj["source"]!.AsArray()
+                    .Select(s => GetValueByPath(source, s!.GetValue<string>())?.ToString() ?? "")
+                    .ToArray();
+                value = JsonValue.Create(string.Join(separator, parts));
+            }
+            else
+            {
+                // default or "array" — path extraction; "array" type is semantic/documentation only
+                value = GetValueByPath(source, fieldObj["source"]!.ToString());
+            }
 
-            var value =
-                GetValueByPath(
-                    source,
-                    sourcePath);
-
-            result[target] =
-                value?.DeepClone();
+            SetByPath(result, target, value?.DeepClone());
         }
 
         return result;
     }
 
-    private static JsonNode? GetValueByPath(
-        JsonObject source,
-        string path)
+    // Navigates/creates nested objects and arrays from a dot-bracket path.
+    // e.g. "loops.2400[0].DTP472.DTP03" creates { loops: { "2400": [{ DTP472: { DTP03: value } }] } }
+    private static void SetByPath(JsonObject root, string path, JsonNode? value)
     {
-        JsonNode? current = source;
+        var segments = ParseSegments(path);
+        JsonNode current = root;
 
-        var parts = path.Split('.');
-
-        foreach (var part in parts)
+        for (int i = 0; i < segments.Length - 1; i++)
         {
-            current = current?[part];
+            var (key, idx) = segments[i];
+            var obj = (JsonObject)current;
 
-            if (current == null)
+            if (idx.HasValue)
             {
-                return null;
+                if (obj[key] is not JsonArray arr) { arr = new JsonArray(); obj[key] = arr; }
+                while (arr.Count <= idx.Value) arr.Add(new JsonObject());
+                current = arr[idx.Value]!;
+            }
+            else
+            {
+                if (obj[key] is not JsonObject child) { child = new JsonObject(); obj[key] = child; }
+                current = child;
             }
         }
 
+        var (lastKey, lastIdx) = segments[^1];
+        var lastObj = (JsonObject)current;
+
+        if (lastIdx.HasValue)
+        {
+            if (lastObj[lastKey] is not JsonArray arr) { arr = new JsonArray(); lastObj[lastKey] = arr; }
+            while (arr.Count <= lastIdx.Value) arr.Add(JsonValue.Create(0)!);
+            arr[lastIdx.Value] = value;
+        }
+        else
+        {
+            lastObj[lastKey] = value;
+        }
+    }
+
+    private static (string Key, int? Index)[] ParseSegments(string path)
+    {
+        return path.Split('.').Select(part =>
+        {
+            var b = part.IndexOf('[');
+            if (b < 0) return (part, (int?)null);
+            var key = part[..b];
+            var idx = int.Parse(part[(b + 1)..part.IndexOf(']')]);
+            return (key, (int?)idx);
+        }).ToArray();
+    }
+
+    private static JsonNode? GetValueByPath(JsonObject source, string path)
+    {
+        JsonNode? current = source;
+        foreach (var part in path.Split('.'))
+        {
+            if (current is null) return null;
+            var b = part.IndexOf('[');
+            if (b >= 0)
+            {
+                var key = part[..b];
+                var idx = int.Parse(part[(b + 1)..part.IndexOf(']')]);
+                var arr = current[key] as JsonArray;
+                current = arr is not null && idx < arr.Count ? arr[idx] : null;
+            }
+            else
+            {
+                current = current[part];
+            }
+        }
         return current;
     }
 }

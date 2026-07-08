@@ -1,0 +1,44 @@
+{
+  "projectionType": "Payer837P",
+  "targetDocument": "837P_LoopsSegments_X12",
+  "version": "1.0.1",
+
+  "fields": [
+    {
+      "target": "loops.2000B.SBR.SBR01",
+      "source": "payer.insuranceSequence"
+    },
+
+    {
+      "target": "loops.2000B.SBR.SBR09",
+      "source": "payer.planType"
+    },
+
+    {
+      "target": "loops.2010BB.NM1.NM101",
+      "type": "literal",
+      "value": "PR"
+    },
+
+    {
+      "target": "loops.1000B.NM1.NM102",
+      "type": "literal",
+      "value": "2"
+    },
+
+    {
+      "target": "loops.2010BB.NM1.NM103",
+      "source": "payer.name"
+    },
+
+    {
+      "target": "loops.2010BB.NM1.NM108",
+      "source": "payer.idQualifier"
+    },
+
+    {
+      "target": "loops.2010BB.NM1.NM109",
+      "source": "payer.payerId"
+    }
+  ]
+}

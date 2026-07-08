@@ -1,4 +1,209 @@
 ﻿
+7/7/26
+
+----------------
+give me the create table for patient.
+from my similar table session where i have an id, jsondocId, sourcedocId do you rember that.
+
+this projection
+{
+"projectionType": "Patient837P",
+"targetDocument": "837P_LoopsSegments_X12",
+"version": "1.0.0",
+"fields": [
+{
+"target": "loops.2010BA.NM1.NM103",
+"source": "subscriber.lastName"
+},
+{
+"target": "loops.2010BA.NM1.NM104",
+"source": "subscriber.firstName"
+},
+{
+"target": "loops.2010BA.NM1.NM109",
+"source": "subscriber.memberId"
+},
+{
+"target": "loops.2010BA.DMG.DMG02",
+"source": "subscriber.dob"
+},
+{
+"target": "loops.2010BA.DMG.DMG03",
+"source": "subscriber.gender"
+},
+{
+"target": "loops.2010BA.N3.N301",
+"source": "subscriber.address1"
+},
+{
+"target": "loops.2010BA.N4.N401",
+"source": "subscriber.city"
+},
+{
+"target": "loops.2010BA.N4.N402",
+"source": "subscriber.state"
+},
+{
+"target": "loops.2010BA.N4.N403",
+"source": "subscriber.zip"
+}
+]
+}
+
+-------------------
+
+dotnet run -- --expression '777 (P) 779' --case-id 9
+
+-------------------------
+I will do something like this.  for the special cases
+{ "target": "boxes.box24",  "source": "loops.2400",                                        "type": "array"  },
+{ "target": "boxes.box2",   "source": "loops.2010BA.NM1.NM103,loops.2010BA.NM1.NM104",     "type": "concat", "separator": ", " },
+{ "target": "boxes.box31",  "source": "loops.2310B.NM1.NM103,loops.2310B.NM1.NM104",       "type": "concat", "separator": ", " }
+
+---------------
+7/6/26
+can you convert this to  have boxNN's.
+
+---------------
+
+7/5/26
+give me a provider.json source doc
+from this projection C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\Provider837P.projection.json
+where i can later project 
+---------------
+7/3/26
+
+
+
+Session837P.projection.json
+Authorization837P.projection.json
+Provider837P.projection.json
+Subscriber837P.projection.json
+Claim837P.projection.json
+
+give m the rule projection for session to "837P_LoopsSegments_X12"
+I plan getting the left values from session json i have.
+i plan on getting the authentication, provider info for the associated json of that data.
+then i can add other session for said patient.
+
+i can run each projection independently it will merge or add the data to "837P_LoopsSegments_X12"
+
+what do you think? Do you know what i mean and do you need anymore information.
+
+-----------------
+
+
+-----------------------
+--expression '(Z)[$jsonDocId, $ruleDocId, 525]' --json-doc-id 701 --rule-doc-id 525
+> dotnet run --expression '(Z)[$jsonDocId, $ruleDocId, 525]' --json-doc-id 701 --rule-doc-id 525
+
+========================
+
+6/29/2026
+I want to add DocumentId INT to  TABLE [cases].[Pipeline] not null but have a default -999 since i dont have the data yet
+
+----------------------
+June 27th 2026
+
+can you give the json a name, description like
+
+{
+name: "837P_loops_segments_X12",
+Description: "837P loops and segments, X12.",
+
+  "claimHeader": [
+
+give me the json version of a 837P
+
+{
+[
+	{ source: "DOS",  837pField: "Box 24A" },
+	{ source: "CPT",  837pField: "Box 24D" },
+...	
+]
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--------------------------
+
+June 25 2026
+
+CurrentIdentity	MaxDocumentId	TotalRows
+1537	1537	529
+
+Checking identity information: current identity value '1537', current column value '1537'.
+DBCC execution completed. If DBCC printed error messages, contact your system administrator.
+
+
+
+---------------------------
+
+
+151,530, 532,533,534,535,536
+--------------------
+June 24 2026
+      ,[TemplateJson]
+      ,[ParamsSchema]
+i would like to add the above two ints, null not allowed.  you can set it -999.
+USE [CaseManagement]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+TABLE [cases].[Pipeline](
+	[PipelineId] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](100) NOT NULL,
+	[Description] [nvarchar](500) NULL,
+	[TemplateJson] [nvarchar](max) NOT NULL,
+	[ParamsSchema] [nvarchar](max) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+	[CreatedBy] [nvarchar](100) NULL,
+ CONSTRAINT [PK_Pipeline] PRIMARY KEY CLUSTERED 
+(
+	[PipelineId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [cases].[Pipeline] ADD  CONSTRAINT [DF_Pipeline_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [cases].[Pipeline] ADD  CONSTRAINT [DF_Pipeline_CreatedDate]  DEFAULT (sysutcdatetime()) FOR [CreatedDate]
+GO
+
+
+
+-----------------------------
+June 22 2026
+
+Give me the json of the session note.  following what you did before using projection, rule as a guide.
+
+-----------------------------
+June 21 2026
+
+give me an insert of 10 fictious prividers
+Provider
+give e the table def for Provider simiar in type like the other tables i have.  Dont go normalize crazy
+
+------------------------
 
 Ok. Give me the json of this assessment.  You have done it before use the projection, rule.
 
