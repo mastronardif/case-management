@@ -232,6 +232,8 @@ builder.Services.AddSingleton<IWorkflowStep, Claim837PStep>();
 builder.Services.AddSingleton<IWorkflowStep, DocResolveStep>();
 builder.Services.AddSingleton<IWorkflowStep, MergeStep>();
 builder.Services.AddSingleton<IWorkflowStep, AddMergeStep>();
+builder.Services.AddSingleton<IWorkflowStep, HtmlRenderStep>();
+builder.Services.AddSingleton<IWorkflowStep, BillingRule837PStep>();
 builder.Services.AddSingleton<WorkflowEngine>();
 
 var host = builder.Build();

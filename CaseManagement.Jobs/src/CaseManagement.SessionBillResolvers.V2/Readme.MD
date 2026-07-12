@@ -32,7 +32,27 @@ Note the DocumentId returned for each — you'll put them in the workflow JSON.
 | workflow.json | The workflow definition itself |
 
 ---
-## Projection onto 837fP 
+
+Session.json
+            \
+Provider.json \
+Patient.json   ---> Projectors ---> 837P_LoopsSegments_X12
+Payer.json    /
+Auth.json    /
+
+                      │
+                      ▼
+           837P_LoopsSegments_X12.Rule
+                      │
+                      ▼
+     837P_LoopsSegments_X12 (Complete)
+
+                      │
+              ┌───────┴────────┐
+              ▼                ▼
+      CMS1500 Projection    837P X12 Projection
+      
+## Projection onto 837P 
 Session JSON
             \
 Authorization \

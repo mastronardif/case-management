@@ -1,0 +1,80 @@
+{
+  "ruleType": "837P_LoopsSegments_X12",
+  "version": "2.0.0",
+  "description": "Calculates billing values for each service line by loading the original session documents, then validates the complete 837P claim.",
+
+  "constants": {
+    "minutesPerUnit": 15,
+    "maxUnitsPerDay": 32,
+    "unitCode":        "UN",
+    "serviceQualifier": "HC"
+  },
+
+  "loadDocuments": {
+    "authorization": "metadata.sources.authorization"
+  },
+
+  "requiredFields": [
+    "loops.2010AA.NM1.NM109",
+    "loops.2010BA.NM1.NM109",
+    "loops.2010BB.NM1.NM109",
+    "loops.2300.REF_G1.REF02"
+  ],
+
+"forEach": {
+  "source":   "metadata.sources.sessions",
+  "loadDoc":  "documentId",
+  "appendTo": "loops.2400",
+  "fields": [
+    { "target": "DTP472.DTP03",     "source":     "session.date"      },
+    { "target": "SV1.SV101_1",      "type":       "literal", "value": "HC" },
+    { "target": "SV1.SV101_2",      "source":     "service.code"      },
+    { "target": "SV1.SV101_3",      "source":     "service.modifier"  },
+    { "target": "SV1.SV103",        "type":       "literal", "value": "UN" },
+    { "target": "computed.minutes",  "expression": "minutes(session.startTime, session.endTime)" },
+    { "target": "SV1.SV104",        "expression": "ceiling(computed.minutes / constants.minutesPerUnit)" },
+    { "target": "SV1.SV102",        "expression": "SV1.SV104 * authorization.unitRate" }
+  ]
+}
+,
+
+  "rules": [
+    {
+      "field":      "loops.2300.CLM.CLM02",
+      "expression": "sum(loops.2400[*].SV1.SV102)"
+    }
+  ],
+
+  "validations": [
+    {
+      "field":      "loops.2010AA.NM1.NM109",
+      "expression": "length(value) == 10",
+      "message":    "Billing Provider NPI must be 10 digits."
+    },
+    {
+      "field":      "loops.2310B.NM1.NM109",
+      "expression": "length(value) == 10",
+      "message":    "Rendering Provider NPI must be 10 digits."
+    },
+    {
+      "field":      "loops.2010BA.NM1.NM109",
+      "expression": "notEmpty(value)",
+      "message":    "Subscriber Member ID is required."
+    },
+    {
+      "field":      "loops.2300.HI.HI01_2",
+      "expression": "notEmpty(value)",
+      "message":    "Diagnosis Code is required."
+    },
+    {
+      "field":      "loops.2300.REF_G1.REF02",
+      "expression": "notEmpty(value)",
+      "message":    "Authorization Number is required."
+    },
+    {
+      "field":      "loops.2400[*].SV1.SV104",
+      "expression": "value <= constants.maxUnitsPerDay",
+      "message":    "Maximum daily billing units exceeded."
+    }
+  ]
+}

@@ -1,5 +1,185 @@
 
+
+7/11/2026
 -------------------
+why is boxes empty????
+dotnet run -- --expression '1046 (X)'
+docId 1048    http://localhost:5173/api/getDocument?docId=1048
+docId 1048    http://localhost:5173/api/getDocument?docId=1049
+-------------------
+
+07/10/26
+--expression '968 (X)' i want to also leave behind the .json of the transform.
+--expression '968 (X)'
+i want '968 (X) nnn'
+
+I want a seed file left bhid the .json before 977
+
+
+-------------------
+
+07/09/26
+
+------------------------------------
+the rule no longer knows any payer-specific business rules.
+
+--------------------------
+
+"appendTo": "loops.2400", NOT "updateAt":  "loops.2400",
+your appending not updating.  Am i right???????
+
+--------------------------------------------------
+http://localhost:5173/api/getDocument?docId=964
+contains meta data that has the list of sessions so you have everything.
+this Rule uses that 
+Does that make sense?
+Your rule projecter has a foreach and use the meta data.
+Its not a simple rule where you have literals, and one source.
+you have another type like literal that uses the meta.  
+Can that be scrib3ed in a rule that is NOT confusing? ________
+---------------------------
+talk only.  I want to make sure we are on the same page.
+OK change of plan for the session(s).  can you give me a 837P_LoopsSegments_X12.Rule.json
+that can do this.
+Since 2400 is 
+for each session document
+{
+    load session
+
+    create a 2400 service line
+
+    calculate units
+
+    calculate amount
+
+    append service line
+}
+
+ 
+Session.json
+            \
+Provider.json \
+Patient.json   ---> Projectors ---> 837P_LoopsSegments_X12
+Payer.json    /
+Auth.json    /
+
+                      │
+                      ▼
+           837P_LoopsSegments_X12.Rule
+                      │
+                      ▼
+     837P_LoopsSegments_X12 (Complete)
+
+                      │
+              ┌───────┴────────┐
+              ▼                ▼
+      CMS1500 Projection    837P X12 Projection
+     -------------------
+     
+my results of.html is empty?  Why???
+> dotnet run -- --expression '968 (P) 779 (X)' --case-id 9
+Using launch settings from C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Properties\launchSettings.json...
+[15:31:31 INF] Action: loop | RunId: -
+[15:31:31 INF] Fetching document. DocumentId: 652, SessionId: null, CaseId: null, DocumentType: null
+[15:31:31 INF] Fetching document. DocumentId: 968, SessionId: null, CaseId: null, DocumentType: null
+[15:31:31 INF] Fetching document. DocumentId: 779, SessionId: null, CaseId: null, DocumentType: null
+[15:31:31 INF] Workflow dsl-pipeline v1.0 started. RunId: 1e065b41-8285-4ea3-ab22-e0afeca2e26b, Steps: 2
+[15:31:31 INF] Step [1] step1 (projector) inputs: [968, 779]
+[15:31:31 INF] Fetching document. DocumentId: 968, SessionId: null, CaseId: null, DocumentType: null
+[15:31:31 INF] Fetching document. DocumentId: 779, SessionId: null, CaseId: null, DocumentType: null
+[15:31:31 INF] Saving document. Type: billingProjection, CaseId: 9, SessionId: null
+[15:31:31 INF] Projector complete. OutputDocId: 970
+[15:31:31 INF] Step [1] step1 complete. Outputs: [970]
+[15:31:31 INF] Step [2] step2 (htmlRender) inputs: [970]
+[15:31:31 INF] Fetching document. DocumentId: 970, SessionId: null, CaseId: null, DocumentType: null
+[15:31:31 INF] Saving document. Type: cms1500Review, CaseId: 9, SessionId: null
+[15:31:31 INF] HtmlRender complete. boxesDocId=970 → htmlDocId=971
+[15:31:31 INF] Step [2] step2 complete. Outputs: [971]
+[15:31:31 INF] Workflow dsl-pipeline complete. RunId: 1e065b41-8285-4ea3-ab22-e0afeca2e26b, Outputs: [970 | 971]
+[15:31:31 INF] Saving document. Type: workflowRun, CaseId: null, SessionId: null
+[15:31:31 INF] Run manifest saved. DocId: 972, RunId: 1e065b41-8285-4ea3-ab22-e0afeca2e26b
+
+── Outputs ──────────────────────────────────────────────────────────
+  step 1  docId 970     http://localhost:5173/api/getDocument?docId=970
+  step 2  docId 971     http://localhost:5173/api/getDocument?docId=971
+--------------------------
+07/08/26
+--------------------
+Dont do anything I have a question.
+does this help
+  {
+      "target": "loops.2400",
+      "type": "array"
+    }
+    and does this help no index []
+     {
+      "target": "loops.2400[].SV1.SV102",
+      "source": "billing.amount"
+    }
+{
+  "projectionType": "Session837P",
+  "targetDocument": "837P_LoopsSegments_X12",
+  "version": "2.0.1",
+
+  "fields": [
+    {
+      "target": "loops.2400",
+      "type": "array"
+    },
+    {
+      "target": "loops.2400[].DTP472.DTP03",
+      "source": "session.date"
+    },
+    {
+      "target": "loops.2400[].SV1.SV101_1",
+      "type": "literal",
+      "value": "HC"
+    },
+    {
+      "target": "loops.2400[0].SV1.SV101_2",
+      "source": "service.code"
+    },
+    {
+      "target": "loops.2400[0].SV1.SV101_3",
+      "source": "service.modifier"
+    },
+    {
+      "target": "loops.2400[].SV1.SV102",
+      "source": "billing.amount"
+    },
+    {
+      "target": "loops.2400[].SV1.SV103",
+      "type": "literal",
+      "value": "UN"
+    },
+    {
+      "target": "loops.2400[].SV1.SV104",
+      "source": "billing.units"
+    }
+  ]
+}
+
+----------------------
+
+
+--------------------
+Option B — (X) template operator (recommended).  I want to avoid templates for now.
+can you project then
+data.html, css shows what you want.
+it basiclly shows the data in table form.
+
+
+
+--------------------
+talk 
+what is the best way to do this.  Im thinking some type of projection. data (X) something => html
+i want a projection 837P_LoopsSegments_X12", boxes to html. 
+using projection 779
+souceData 889
+that looks becomes
+file:///C:/Users/mastronardif/source/repos/CaseMangement/WebAppMulti/42A/CMS-1500%20Claim%20Review.html
+
+--------------------
 
 07/07/26
 --------------------

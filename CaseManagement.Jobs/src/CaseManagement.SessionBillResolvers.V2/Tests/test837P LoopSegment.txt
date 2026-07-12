@@ -1,0 +1,31 @@
+| CMS-1500 Box | Description          | 837P Loop/Segment      | Source                  | Status |
+| ------------ | -------------------- | ---------------------- | ----------------------- | ------ |
+| **1**        | Insurance Type       | 2000B SBR09            | Payer                   | ✅      |
+| **1a**       | Member ID            | 2010BA NM109           | Patient                 | ✅      |
+| **2**        | Patient Name         | 2010BA NM103/NM104     | Patient                 | ✅      |
+| **3**        | DOB / Sex            | 2010BA DMG02 / DMG03   | Patient                 | ✅      |
+| **4**        | Insured Name         | 2010BB NM103           | Payer                   | ✅      |
+| **21**       | Diagnosis Code       | 2300 HI01-2            | Authorization / Patient | ⏳      |
+| **23**       | Prior Authorization  | 2300 REF*G1 REF02      | Authorization           | ⏳      |
+| **24A**      | Date of Service      | 2400 DTP472 DTP03      | Session                 | ⏳      |
+| **24B**      | Place of Service     | 2300 CLM05-1           | Authorization / Session | ⏳      |
+| **24D**      | CPT / Modifier       | 2400 SV101-2 / SV101-3 | Session                 | ⏳      |
+| **24E**      | Diagnosis Pointer    | 2400 SV107             | Rule                    | ⏳      |
+| **24F**      | Charge               | 2400 SV102             | Rule                    | ⏳      |
+| **24G**      | Units                | 2400 SV104             | Rule                    | ⏳      |
+| **25**       | Tax ID               | 2010AA REF*EI REF02    | Provider                | ✅      |
+| **28**       | Total Charges        | 2300 CLM02             | Rule                    | ⏳      |
+| **31**       | Rendering Provider   | 2310B NM103/NM104      | Provider                | ✅      |
+| **33**       | Billing Provider     | 2010AA NM103/N3/N4     | Provider                | ✅      |
+| **33a**      | Billing Provider NPI | 2010AA NM109           | Provider                | ✅      |
+
+-----------------------------
+
+| CMS Box | Description        | 837P              | Source                  |
+| ------- | ------------------ | ----------------- | ----------------------- |
+| **24A** | Date of Service    | 2400 DTP472 DTP03 | Session                 |
+| **24B** | Place of Service   | 2300 CLM05-1      | Authorization / Session |
+| **24D** | Procedure/Modifier | 2400 SV101        | Session                 |
+| **24E** | Diagnosis Pointer  | 2400 SV107        | Rule                    |
+| **24F** | Charge             | 2400 SV102        | Rule                    |
+| **24G** | Units              | 2400 SV104        | Rule                    |

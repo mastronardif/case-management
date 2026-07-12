@@ -15,6 +15,14 @@ payer    (P) payerProj    (AM) E        → final 837P
 
 # boxes
 dotnet run -- --expression '777 (P) 779' --case-id 9
+dotnet run -- --expression '892 (P) 779' --case-id 9
+boxes to html
+dotnet run -- --expression '889 (P) 779 (X)' --case-id 9
+> dotnet run -- --expression '968 (X)'
+
+-- loops the sessions
+ "cliExample": "--expression 'claimDocId (Q) ruleDocId' --case-id 9"
+ "cliExample": "--expression '961 (Q) 976' --case-id 9"
 
  .\BuildInvoice837P.ps1 -SpecFile ".\invoice-build.json"
 

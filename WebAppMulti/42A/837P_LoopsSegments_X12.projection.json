@@ -1,0 +1,65 @@
+{
+  "ruleType": "837P_LoopsSegments_X12",
+  "version": "1.0.0",
+  "description": "Calculates billing values and validates the canonical 837P working document.",
+
+  "constants": {
+    "minutesPerUnit": 15,
+    "defaultUnitRate": 65.0,
+    "maxUnitsPerDay": 32
+  },
+
+  "requiredFields": [
+    "loops.2010AA.NM1.NM109",
+    "loops.2010BA.NM1.NM109",
+    "loops.2010BB.NM1.NM109",
+    "loops.2400"
+  ],
+
+  "source": {
+    "type": "array",
+    "documentId": "source.documentId"
+  },
+
+  "rules": [
+    {
+      "forEach": "loops.2400",
+      "rules": [
+        {
+          "field": "SV1.SV104",
+          "expression": "ceiling(minutes(source.startTime, source.endTime) / constants.minutesPerUnit)"
+        },
+
+        {
+          "field": "SV1.SV102",
+          "expression": "SV1.SV104 * constants.defaultUnitRate"
+        }
+      ]
+    },
+
+    {
+      "field": "loops.2300.CLM.CLM02",
+      "expression": "sum(loops.2400[*].SV1.SV102)"
+    }
+  ],
+
+  "validations": [
+    {
+      "field": "loops.2400[*].SV1.SV104",
+      "expression": "SV1.SV104 <= constants.maxUnitsPerDay",
+      "message": "Maximum daily units exceeded."
+    },
+
+    {
+      "field": "loops.2300.HI.HI01_2",
+      "expression": "notEmpty(loops.2300.HI.HI01_2)",
+      "message": "Diagnosis code is required."
+    },
+
+    {
+      "field": "loops.2010AA.NM1.NM109",
+      "expression": "length(loops.2010AA.NM1.NM109) == 10",
+      "message": "Billing provider NPI must be 10 digits."
+    }
+  ]
+}

@@ -1,12 +1,17 @@
 {
   "projectionType": "Session837P",
   "targetDocument": "837P_LoopsSegments_X12",
-  "version": "2.0.0",
+  "version": "2.0.1",
 
   "fields": [
     {
       "target": "loops.2400[0].DTP472.DTP03",
       "source": "session.date"
+    },
+    {
+      "target": "loops.2400[0].SV1.SV101_1",
+      "type": "literal",
+      "value": "HC"
     },
     {
       "target": "loops.2400[0].SV1.SV101_2",
@@ -15,6 +20,19 @@
     {
       "target": "loops.2400[0].SV1.SV101_3",
       "source": "service.modifier"
+    },
+    {
+      "target": "loops.2400[0].SV1.SV102",
+      "source": "billing.amount"
+    },
+    {
+      "target": "loops.2400[0].SV1.SV103",
+      "type": "literal",
+      "value": "UN"
+    },
+    {
+      "target": "loops.2400[0].SV1.SV104",
+      "source": "billing.units"
     }
   ]
 }

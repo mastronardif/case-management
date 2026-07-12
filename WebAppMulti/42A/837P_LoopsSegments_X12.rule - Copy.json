@@ -1,0 +1,85 @@
+{
+  "ruleType": "837P_LoopsSegments_X12",
+  "version": "1.0.0",
+  "description": "Calculates billing values and validates the canonical 837P claim after all projectors have completed.",
+
+  "constants": {
+    "minutesPerUnit": 15,
+    "maxUnitsPerDay": 32,
+    "unitCode": "UN"
+  },
+
+  "requiredFields": [
+    "loops.2400",
+    "loops.2010AA.NM1.NM109",
+    "loops.2010BA.NM1.NM109",
+    "loops.2010BB.NM1.NM109",
+    "loops.2300.REF_G1.REF02"
+  ],
+
+  "rules": [
+    {
+      "forEach": "loops.2400",
+      "loadSourceDocument": "source.documentId",
+
+      "rules": [
+        {
+          "field": "computed.minutes",
+          "expression": "minutes(session.startTime, session.endTime)"
+        },
+        {
+          "field": "SV1.SV104",
+          "expression": "ceiling(computed.minutes / constants.minutesPerUnit)"
+        },
+        { "field": "SV1.SV103", "expression": "constants.unitCode" },
+        {
+          "field": "SV1.SV102",
+          "expression": "SV1.SV104 * authorization.unitRate"
+        }
+      ]
+    },
+
+    {
+      "field": "loops.2300.CLM.CLM02",
+      "expression": "sum(loops.2400[*].SV1.SV102)"
+    }
+  ],
+
+  "validations": [
+    {
+      "field": "loops.2010AA.NM1.NM109",
+      "expression": "length(value) == 10",
+      "message": "Billing Provider NPI must contain 10 digits."
+    },
+
+    {
+      "field": "loops.2310B.NM1.NM109",
+      "expression": "length(value) == 10",
+      "message": "Rendering Provider NPI must contain 10 digits."
+    },
+
+    {
+      "field": "loops.2010BA.NM1.NM109",
+      "expression": "notEmpty(value)",
+      "message": "Subscriber Member ID is required."
+    },
+
+    {
+      "field": "loops.2300.HI.HI01_2",
+      "expression": "notEmpty(value)",
+      "message": "Diagnosis Code is required."
+    },
+
+    {
+      "field": "loops.2300.REF_G1.REF02",
+      "expression": "notEmpty(value)",
+      "message": "Authorization Number is required."
+    },
+
+    {
+      "field": "loops.2400[*].SV1.SV104",
+      "expression": "value <= constants.maxUnitsPerDay",
+      "message": "Maximum daily billing units exceeded."
+    }
+  ]
+}
