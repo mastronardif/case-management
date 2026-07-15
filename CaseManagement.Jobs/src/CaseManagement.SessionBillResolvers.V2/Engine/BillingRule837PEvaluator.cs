@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
@@ -32,7 +33,12 @@ public static class BillingRule837PEvaluator
         var baseCtx = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
         FlattenInto(rule["constants"] as JsonObject, "constants", baseCtx);
 
-        // 2. Load external documents declared in "loadDocuments"
+        // Flatten the claim's own metadata (shadow fields not shown on the CMS1500 box view but
+        // needed for 837P math, e.g. metadata.authorization.unitRate → "authorization_unitRate").
+        FlattenInto(claim["metadata"] as JsonObject, null, baseCtx);
+
+        // 2. Load external documents declared in "loadDocuments" (overrides the metadata snapshot
+        // above when a fresher copy is explicitly requested under the same alias)
         var externalDocs = new Dictionary<string, JsonObject>(StringComparer.OrdinalIgnoreCase);
         if (rule["loadDocuments"] is JsonObject loadSection)
         {
@@ -95,7 +101,11 @@ public static class BillingRule837PEvaluator
                     FlattenInto(sessionDoc, null, ctx);
                     ctx["documentId"] = (object)docId;
 
-                    var element = new JsonObject();
+                    // Loop 2400 elements are usually already built by (AM) per session, in the same
+                    // order as metadata.sources.sessions — enrich that element instead of appending
+                    // a duplicate. Only append when no element exists yet at this position.
+                    var isNewElement = i >= targetArr.Count || targetArr[i] is not JsonObject;
+                    var element = isNewElement ? new JsonObject() : (JsonObject)targetArr[i]!;
 
                     foreach (var fieldDef in fields)
                     {
@@ -145,28 +155,59 @@ public static class BillingRule837PEvaluator
                         SetElementPath(element, target, value);
                     }
 
-                    targetArr.Add(element);
+                    if (isNewElement) targetArr.Add(element);
                 }
             }
         }
 
-        // 4. Document-level rules (e.g. CLM02 = sum)
+        // 4. Document-level rules (e.g. CLM02 = sum, per-element transforms like date formatting)
         if (rule["rules"] is JsonArray rulesArr)
         {
-            var ctx = new Dictionary<string, object?>(baseCtx, StringComparer.OrdinalIgnoreCase);
             foreach (var ruleItem in rulesArr)
             {
                 var ri    = ruleItem!.AsObject();
                 var field = ri["field"]?.ToString() ?? "";
                 var expr  = ri["expression"]?.ToString() ?? "";
-                try
+
+                if (field.Contains("[*]"))
                 {
-                    var result = Eval(expr, ctx, claim);
-                    SetByPath(claim, field, ToNode(result));
+                    var (arrPath, subPath) = SplitWildcardPath(field);
+                    var arr = GetByPath(claim, arrPath) as JsonArray;
+                    if (arr is null) continue;
+
+                    for (var i = 0; i < arr.Count; i++)
+                    {
+                        var elementPath = string.IsNullOrEmpty(subPath) ? $"{arrPath}[{i}]" : $"{arrPath}[{i}].{subPath}";
+                        var currentValue = string.IsNullOrEmpty(subPath) ? arr[i] : GetByPath(arr[i], subPath);
+
+                        var ctx = new Dictionary<string, object?>(baseCtx, StringComparer.OrdinalIgnoreCase)
+                            { ["value"] = ToScalar(currentValue) };
+
+                        try
+                        {
+                            var result = Eval(expr, ctx, claim);
+                            SetByPath(claim, elementPath, ToNode(result));
+                        }
+                        catch (Exception ex)
+                        {
+                            issues.Add($"Rule '{elementPath}': {ex.Message}");
+                        }
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    issues.Add($"Rule '{field}': {ex.Message}");
+                    var ctx = new Dictionary<string, object?>(baseCtx, StringComparer.OrdinalIgnoreCase)
+                        { ["value"] = ToScalar(GetByPath(claim, field)) };
+
+                    try
+                    {
+                        var result = Eval(expr, ctx, claim);
+                        SetByPath(claim, field, ToNode(result));
+                    }
+                    catch (Exception ex)
+                    {
+                        issues.Add($"Rule '{field}': {ex.Message}");
+                    }
                 }
             }
         }
@@ -256,6 +297,13 @@ public static class BillingRule837PEvaluator
                 case "notempty":
                     args.Result = !string.IsNullOrWhiteSpace(args.Parameters[0].Evaluate()?.ToString());
                     break;
+                case "formatdate":
+                {
+                    var raw = args.Parameters[0].Evaluate()?.ToString() ?? "";
+                    var fmt = args.Parameters.Length > 1 ? args.Parameters[1].Evaluate()?.ToString() ?? "yyyyMMdd" : "yyyyMMdd";
+                    args.Result = FormatDate(raw, fmt);
+                    break;
+                }
             }
         };
 
@@ -373,6 +421,17 @@ public static class BillingRule837PEvaluator
             .Sum(v => Convert.ToDouble(v));
     }
 
+    // Split "loops.2400[*].DTP472.DTP03" into ("loops.2400", "DTP472.DTP03")
+    private static (string ArrPath, string SubPath) SplitWildcardPath(string path)
+    {
+        var idx = path.IndexOf("[*]", StringComparison.Ordinal);
+        if (idx < 0) return (path, "");
+        var arrPath = path[..idx];
+        var rest    = path[(idx + 3)..];
+        var subPath = rest.StartsWith('.') ? rest[1..] : rest;
+        return (arrPath, subPath);
+    }
+
     private static (string Key, int? Index)[] ParseSegments(string path) =>
         path.Split('.').Select(part =>
         {
@@ -444,5 +503,19 @@ public static class BillingRule837PEvaluator
         var diff = e - s;
         if (diff < TimeSpan.Zero) diff = diff.Add(TimeSpan.FromHours(24));
         return diff.TotalMinutes;
+    }
+
+    private static readonly string[] KnownDateFormats = ["yyyyMMdd", "yyyy-MM-dd", "MM/dd/yyyy", "M/d/yyyy"];
+
+    private static string FormatDate(string raw, string outputFormat)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+            throw new FormatException("formatDate: empty date value");
+
+        if (DateTime.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt) ||
+            DateTime.TryParseExact(raw, KnownDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
+            return dt.ToString(outputFormat, CultureInfo.InvariantCulture);
+
+        throw new FormatException($"formatDate: unrecognized date '{raw}'");
     }
 }

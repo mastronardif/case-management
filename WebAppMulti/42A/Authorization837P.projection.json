@@ -1,23 +1,63 @@
 {
   "projectionType": "Authorization837P",
   "targetDocument": "837P_LoopsSegments_X12",
-  "version": "1.0.0",
+  "version": "1.1.1",
 
   "fields": [
 
     {
       "target": "loops.2300.REF_G1.REF02",
-      "source": "authorization.number"
+      "source": "authorizationNumber"
     },
 
     {
       "target": "loops.2300.HI.HI01_2",
-      "source": "authorization.diagnosisCode"
+      "source": "diagnosisCode"
     },
 
     {
       "target": "loops.2300.CLM.CLM01",
       "source": "claim.claimNumber"
+    },
+
+    {
+      "target": "loops.2300.CLM.CLM05_1",
+      "source": "placeOfService"
+    },
+
+    {
+      "target": "metadata.authorization.minutesPerUnit",
+      "source": "minutesPerUnit"
+    },
+
+    {
+      "target": "metadata.authorization.approvedUnits",
+      "source": "approvedUnits"
+    },
+
+    {
+      "target": "metadata.authorization.monthlyUnits",
+      "source": "monthlyUnits"
+    },
+
+    {
+      "target": "metadata.authorization.unitRate",
+      "source": "feeSchedule.unitRate"
+    },
+
+    {
+      "target": "metadata.authorization.effectiveStartDate",
+      "source": "effectiveStartDate"
+    },
+
+    {
+      "target": "metadata.authorization.effectiveEndDate",
+      "source": "effectiveEndDate"
+    },
+
+    {
+      "target": "metadata.authorization.authorizedCodes",
+      "source": "authorizedCodes"
     }
 
   ]

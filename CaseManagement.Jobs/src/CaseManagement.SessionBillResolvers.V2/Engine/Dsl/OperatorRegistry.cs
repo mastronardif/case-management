@@ -29,6 +29,21 @@ public class OperatorRegistry
     public bool TryResolve(string token, out OperatorToken op) =>
         _byToken.TryGetValue(token, out op!);
 
+    public OperatorRegistry MergeWith(IEnumerable<OperatorToken> additionalTokens)
+    {
+        var merged = _byToken.Values.Concat(additionalTokens)
+            .GroupBy(t => t.Token, StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .ToArray();
+
+        return new OperatorRegistry(merged);
+    }
+
+    public static IReadOnlyCollection<OperatorToken> BuiltInTokens { get; } =
+    [
+        new OperatorToken("W", "x12Writer", "x12Writer", "Serialize a document to an X12 text file")
+    ];
+
     // Handles both:
     //   Object format: { "tokens": [ { "token": "P", ... } ] }
     //   Array format:  [ { "token": "P", ... } ]

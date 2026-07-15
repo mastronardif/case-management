@@ -234,6 +234,7 @@ builder.Services.AddSingleton<IWorkflowStep, MergeStep>();
 builder.Services.AddSingleton<IWorkflowStep, AddMergeStep>();
 builder.Services.AddSingleton<IWorkflowStep, HtmlRenderStep>();
 builder.Services.AddSingleton<IWorkflowStep, BillingRule837PStep>();
+builder.Services.AddSingleton<IWorkflowStep, X12WriterStep>();
 builder.Services.AddSingleton<WorkflowEngine>();
 
 var host = builder.Build();
@@ -276,7 +277,8 @@ if (selectedExpression is not null)
     var operatorsDoc = await repo.GetDocumentAsync(new DocumentContext(DocumentId: operatorsDocId), ct)
         ?? throw new InvalidOperationException($"Operators registry doc {operatorsDocId} not found");
 
-    var registry  = OperatorRegistry.FromJson(operatorsDoc.Content);
+    var registry  = OperatorRegistry.FromJson(operatorsDoc.Content)
+        .MergeWith(OperatorRegistry.BuiltInTokens);
     var ast       = PipelineParser.Parse(selectedExpression, registry);
     var workflow  = PipelineCompiler.Compile(ast);
 

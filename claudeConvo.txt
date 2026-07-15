@@ -1,5 +1,314 @@
 
 
+
+7/14/26
+
+The problem that information is not needed to be known at the CMS1500.  But needed for the 837P.
+Its a shadow field if you want to give it a name.
+Do you have any good ideas to preserve our initial intent and fixing this issue.
+Maybe adding meta: docs.  like we did in some other area.
+
+authorization.minutesPerUnit/unitRate
+are in the source "authorization": 1200
+http://localhost:5173/api/getDocument?docId=1220
+has fields:
+"authorization": {
+"minutesPerUnit": "15",
+"approvedUnits": "193",
+"monthlyUnits": "242",
+"unitRate": 65,
+
+-----------------------------
+The Loop 2400 is duplicated issue.
+We changed the design a little we having the creation of the cms1500 loop with the sessions.  I dont think append
+is append in regards to sessions is needed?  look into that.
+
+----------------------------------------------
+So you want the thing that reates the cm1500 doc. 
+You want me to run it?????
+.\BuildInvoice837P.ps1 -SpecFile ".\invoice-build.json"    
+{
+  "caseId": 9,
+  "blankDocId": 749,
+  "projectors": {
+    "session":       731,
+    "provider":      734,
+    "authorization": 733,
+    "payer":         806,
+    "patient":       735
+  },
+  "sources": {
+    "sessions":      [418, 403],
+    "provider":      1064,
+    "authorization": 1200,
+    "payer":         807,
+    "patient":       793
+  }
+}   
+-----------------------
+date formt wrong.
+http://localhost:5173/api/getDocument?docId=976
+http://localhost:5173/api/getDocument?docId=1245
+DTP*472*D8*2026-05-19~
+DTP*472*D8*2026-06-01~
+-----------------------
+I updated the rule for 837P_LoopsSegments_X12.  the date has to be of format. 
+{
+  "field": "loops.2400[*].DTP472.DTP03",
+  "expression": "formatDate(value, 'yyyyMMdd')"
+}
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\837P_LoopsSegments_X12.rule.json
+---------------------------
+
+Just want to make it clear.  this is a basic traform CMS loop data to edi.txt
+-----------------------------
+I want to cleanup the 837P writer code.
+Lets talk before you do anything.  And tell me if you have a better idea.
+I wanted something like: see: C:\Users\mastronardif\Downloads\837P\837P_LoopsSegments_X12_FLOW.txt
+Also is there a way to have a projector/rule and use that too.  
+I dont want to over complicated it.
+
+Unlike the other transforms data projecter => data.
+this one does data(1220) W => 837P edi file for clearing house.
+the spec is see: C:\Users\mastronardif\Downloads\837P\837p_compguide.pdf
+---------------------------
+
+7/13/26
+---------------------------
+theis worked for me.  
+sqlcmd -S LAPTOP-JIH94VS9\SQLEXPRESS -d CaseManagement -Q "SELECT DocumentId, FileName, DocumentType, LEN(FileData) AS DataLength, CONVERT(varchar(4000), FileData) AS Preview FROM [cases].[Document] WHERE DocumentId = 1220"
+
+---------------------------
+why is the results empty.  it should have data.
+do you need anything from me????
+
+---------------------------
+update for the new Operator.
+C:\temp\operator-registry.json
+
+the generated text doc should look something like.
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\1220.edi.txt
+do this then is a few other changes that need to be made.
+
+
+
+---------------
+the spec
+
+CaseManagement.X12
+│
+├── IX12Writer.cs
+├── X12Writer.cs
+├── X12Builder.cs
+├── Segments
+│     ISA.cs
+│     GS.cs
+│     ST.cs
+│     BHT.cs
+│     NM1.cs
+│     HL.cs
+│     CLM.cs
+│     SV1.cs
+│     DTP.cs
+│     SE.cs
+│     GE.cs
+│     IEA.cs
+│
+└── Helpers
+      SegmentWriter.cs
+      
+      ---------
+      public sealed class X12Builder
+{
+    private readonly StringBuilder _sb = new();
+
+    private const char Element = '*';
+    private const char Segment = '~';
+
+    public void WriteISA()
+    {
+        Write(
+            "ISA",
+            "00",
+            "",
+            "00",
+            "",
+            "ZZ",
+            "SENDER",
+            "ZZ",
+            "RECEIVER",
+            DateTime.Now.ToString("yyMMdd"),
+            DateTime.Now.ToString("HHmm"),
+            "^",
+            "00501",
+            "000000001",
+            "0",
+            "P",
+            ":");
+    }
+
+    public void WriteGS()
+    {
+        Write(
+            "GS",
+            "HC",
+            "SENDER",
+            "RECEIVER",
+            DateTime.Now.ToString("yyyyMMdd"),
+            DateTime.Now.ToString("HHmm"),
+            "1",
+            "X",
+            "005010X222A1");
+    }
+
+    public void Write837P(Claim837P claim)
+    {
+        Write("ST", "837", "0001", "005010X222A1");
+
+        Write("BHT",
+            "0019",
+            "00",
+            claim.Metadata.ClaimNumber,
+            DateTime.Now.ToString("yyyyMMdd"),
+            DateTime.Now.ToString("HHmm"),
+            "CH");
+
+        Write1000A(claim);
+        Write1000B(claim);
+
+        Write2000A(claim);
+        Write2010AA(claim);
+
+        Write2000B(claim);
+        Write2010BA(claim);
+        Write2010BB(claim);
+
+        Write2300(claim);
+
+        foreach (var line in claim.Loops.L2400)
+            Write2400(line);
+
+        Write("SE", "0", "0001");
+    }
+
+    private void Write1000A(Claim837P c)
+    {
+        var nm1 = c.Loops.L1000A.NM1;
+
+        Write("NM1",
+            nm1.NM101,
+            nm1.NM102,
+            nm1.NM103,
+            "",
+            "",
+            "",
+            "",
+            nm1.NM108,
+            nm1.NM109);
+    }
+
+    private void Write1000B(Claim837P c)
+    {
+        var nm1 = c.Loops.L1000B.NM1;
+
+        Write("NM1",
+            nm1.NM101,
+            nm1.NM102,
+            nm1.NM103);
+    }
+
+    private void Write2000A(Claim837P c)
+    {
+        // HL
+    }
+
+    private void Write2010AA(Claim837P c)
+    {
+        // NM1
+        // N3
+        // N4
+        // REF
+        // PRV
+    }
+
+    private void Write2000B(Claim837P c)
+    {
+    }
+
+    private void Write2010BA(Claim837P c)
+    {
+    }
+
+    private void Write2010BB(Claim837P c)
+    {
+    }
+
+    private void Write2300(Claim837P c)
+    {
+    }
+
+    private void Write2400(ServiceLine line)
+    {
+        Write(
+            "SV1",
+            line.SV1.SV101_1,
+            line.SV1.SV101_2 + ":" + line.SV1.SV101_3,
+            line.SV1.SV102.ToString("0.00"),
+            line.SV1.SV103,
+            line.SV1.SV104.ToString());
+
+        Write(
+            "DTP",
+            "472",
+            "D8",
+            line.DTP472.DTP03);
+    }
+
+    public void WriteGE()
+    {
+        Write("GE", "1", "1");
+    }
+
+    public void WriteIEA()
+    {
+        Write("IEA", "1", "000000001");
+    }
+
+    private void Write(params string[] elements)
+    {
+        _sb.Append(string.Join(Element, elements));
+        _sb.Append(Segment);
+        _sb.AppendLine();
+    }
+
+    public override string ToString()
+        => _sb.ToString();
+}
+------------
+      
+      results:
+      C:\Users\mastronardif\Downloads\837P.edi.v1.txt
+-----------------------
+Talk only
+I need a new transform 
+[837P_LoopsSegments_X12.json] (837P) = 837P.txt. A new operator.
+It's basically a seializer to file.  then busines as usual.
+
+I want it to follow the pattern i have now.  Projector 
+
+simple serializer
+in a diagram:
+837P_LoopsSegments_X12.json
+          │
+          ▼
+    X12Writer
+          │
+          ▼
+837P.txt (X12 005010X222A1)
+
+
+
+-------------------
 7/11/2026
 -------------------
 why is boxes empty????

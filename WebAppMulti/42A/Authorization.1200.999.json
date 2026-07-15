@@ -1,0 +1,27 @@
+{
+  "payerName": "999 Evernorth Behavioral Health, Inc.",
+  "memberName": "Austin Ball",
+  "memberId": "U84908999-03",
+  "authorizationNumber": "OP2517241999",
+  "authorizationCode": "97155",
+  "effectiveStartDate": "2025-10-20",
+  "effectiveEndDate": "2026-04-30",
+  "minutesPerUnit": "15",
+  "approvedUnits": "193",
+  "monthlyUnits": "242",
+
+  "placeOfService": "22",
+  "placeOfServiceDescription": "Hospital - Outpatient",
+
+  "billingType": "11:B:1",
+
+  "diagnosisCode": "F84.0",
+  "diagnosisDescription": "Autistic Disorder",
+
+  "providerName": "Kristine B Mastronardi",
+  "authorizedCodes": ["97155", "97153", "97154", "97156", "97158", "0373T"],
+  "feeSchedule": {
+    "unitRate": 65.0,
+    "currency": "USD"
+  }
+}

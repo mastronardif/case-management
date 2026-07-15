@@ -2,39 +2,53 @@
   "ruleType": "837P_LoopsSegments_X12",
   "version": "2.2.0",
   "description": "Builds Loop 2400 service lines from session source documents, calculates billing values using the authorization, computes claim totals, and validates the completed canonical 837P claim.",
-
   "constants": {
     "serviceQualifier": "HC",
-    "unitCode": "UN",
-    "unitRate": 65.0,
-    "_note_unitRate": "TODO: move unitRate to authorization doc when authorization projection is complete"
+    "unitCode": "UN"
   },
-
-  "loadDocuments": {
-    "authorization": "metadata.sources.authorization"
-  },
-
   "requiredFields": [
     "loops.2010AA.NM1.NM109",
     "loops.2010BA.NM1.NM109",
     "loops.2010BB.NM1.NM109",
     "loops.2300.REF_G1.REF02"
   ],
-
   "forEach": {
     "source": "metadata.sources.sessions",
     "loadDoc": "documentId",
     "appendTo": "loops.2400",
-
     "fields": [
-      { "target": "source.documentId", "expression": "documentId" },
-      { "target": "DTP472.DTP03", "source": "session.date" },
-      { "target": "SV1.SV101_1", "expression": "constants.serviceQualifier" },
-      { "target": "SV1.SV101_2", "source": "service.code" },
-      { "target": "SV1.SV101_3", "source": "service.modifier" },
-      { "target": "SV1.SV103", "expression": "constants.unitCode" },
-      { "target": "computed.startTime", "source": "session.startTime" },
-      { "target": "computed.endTime", "source": "session.endTime" },
+      {
+        "target": "source.documentId",
+        "expression": "documentId"
+      },
+      {
+        "target": "DTP472.DTP03",
+        "source": "session.date"
+      },
+      {
+        "target": "SV1.SV101_1",
+        "expression": "constants.serviceQualifier"
+      },
+      {
+        "target": "SV1.SV101_2",
+        "source": "service.code"
+      },
+      {
+        "target": "SV1.SV101_3",
+        "source": "service.modifier"
+      },
+      {
+        "target": "SV1.SV103",
+        "expression": "constants.unitCode"
+      },
+      {
+        "target": "computed.startTime",
+        "source": "session.startTime"
+      },
+      {
+        "target": "computed.endTime",
+        "source": "session.endTime"
+      },
       {
         "target": "computed.minutes",
         "expression": "minutes(session.startTime, session.endTime)"
@@ -45,19 +59,28 @@
       },
       {
         "target": "SV1.SV102",
-        "expression": "round(SV1.SV104 * constants.unitRate, 2)"
+        "expression": "round(SV1.SV104 * authorization.unitRate, 2)"
       },
-      { "target": "computed.amount", "expression": "SV1.SV102" }
+      {
+        "target": "computed.amount",
+        "expression": "SV1.SV102"
+      }
     ]
   },
-
   "rules": [
+    {
+      "field": "loops.2400[*].DTP472.DTP03",
+      "expression": "formatDate(value, 'yyyyMMdd')"
+    },
+    {
+      "field": "loops.2010BA.DMG.DMG02",
+      "expression": "formatDate(value, 'yyyyMMdd')"
+    },
     {
       "field": "loops.2300.CLM.CLM02",
       "expression": "round(sum(loops.2400[*].SV1.SV102), 2)"
     }
   ],
-
   "validations": [
     {
       "field": "loops.2010AA.NM1.NM109",
@@ -83,6 +106,26 @@
       "field": "loops.2300.REF_G1.REF02",
       "expression": "notEmpty(value)",
       "message": "Authorization Number is required."
+    },
+    {
+      "field": "loops.2400[*].SV1.SV104",
+      "expression": "value > 0",
+      "message": "Billing units must be greater than zero."
+    },
+    {
+      "field": "loops.2400[*].SV1.SV101_2",
+      "expression": "notEmpty(value)",
+      "message": "Procedure code is required."
+    },
+    {
+      "field": "loops.2400[*].DTP472.DTP03",
+      "expression": "notEmpty(value)",
+      "message": "Service date is required."
+    },
+    {
+      "field": "metadata.authorization.unitRate",
+      "expression": "value > 0",
+      "message": "Authorization unit rate is missing."
     }
   ]
 }

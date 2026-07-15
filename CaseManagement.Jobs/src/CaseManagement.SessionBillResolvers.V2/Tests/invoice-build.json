@@ -11,7 +11,7 @@
   "sources": {
     "sessions":      [418, 403],
     "provider":      1064,
-    "authorization": 366,
+    "authorization": 1200,
     "payer":         807,
     "patient":       793
   }
