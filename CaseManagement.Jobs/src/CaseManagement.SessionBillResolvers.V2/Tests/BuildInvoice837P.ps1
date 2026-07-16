@@ -1,5 +1,6 @@
 # BuildInvoice837P.ps1
-# Reads an invoice build spec JSON and chains (P)(AM) pipeline steps to produce a 837P invoice.
+# Reads an invoice build spec JSON, chains (P)(AM) pipeline steps to produce a 837P invoice,
+# then applies the current 837P rule (Q) and serializes to X12 (W).
 # Usage: .\BuildInvoice837P.ps1 -SpecFile ".\invoice-build.json"
 # Analysis / test script — not used in application code.
 
@@ -16,6 +17,34 @@ $caseId   = $spec.caseId
 $invoice  = $spec.blankDocId
 $projectors = $spec.projectors
 $sources    = $spec.sources
+
+function Get-ActiveRuleDocId {
+    param([string]$RuleName)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT TOP 1 RuleDocumentId
+        FROM   [cases].[ProjectorRule]
+        WHERE  Name = @Name AND IsActive = 1
+        ORDER  BY ProjectorRuleId DESC
+    "
+    $cmd.Parameters.AddWithValue("@Name", $RuleName) | Out-Null
+
+    $result = $cmd.ExecuteScalar()
+    $conn.Close()
+
+    if (-not $result -or $result -eq 0) {
+        Write-Error "No active RuleDocumentId found in [cases].[ProjectorRule] for '$RuleName'."
+        exit 1
+    }
+    return [int]$result
+}
 
 function Invoke-PipelineStep {
     param([string]$Expr, [int]$CaseId)
@@ -114,6 +143,19 @@ $invoice = Invoke-PipelineStep "$metaDocId (M) $invoice" $caseId
 Write-Host "  => docId: $invoice" -ForegroundColor Green
 
 Write-Host ""
-Write-Host "=== Final invoice ===" -ForegroundColor Cyan
+Write-Host "=== Final invoice (pre-rule) ===" -ForegroundColor Cyan
 Write-Host "  docId : $invoice" -ForegroundColor White
 Write-Host "  Open  : http://localhost:5173/api/getDocument?docId=$invoice" -ForegroundColor Cyan
+
+# Apply the current 837P rule, then serialize to X12
+Write-Host ""
+$ruleDocId = Get-ActiveRuleDocId "837P_LoopsSegments_X12"
+Write-Host "Rule + Write : $invoice (Q) $ruleDocId (W)" -ForegroundColor Yellow
+$ediDocId = Invoke-PipelineStep "$invoice (Q) $ruleDocId (W)" $caseId
+Write-Host "  => docId: $ediDocId" -ForegroundColor Green
+
+Write-Host ""
+Write-Host "=== Final EDI ===" -ForegroundColor Cyan
+Write-Host "  ruleDocId : $ruleDocId" -ForegroundColor Gray
+Write-Host "  docId     : $ediDocId" -ForegroundColor White
+Write-Host "  Open      : http://localhost:5173/api/getDocument?docId=$ediDocId" -ForegroundColor Cyan

@@ -1,5 +1,44 @@
 
+7/16/26
 
+OK here is the latest with the correct date fmt.
+see edi.txt
+i want to incrementally add the missing elements.
+what elements would come from a source like session, authorization, etc?
+elements not from them perhaps a subsidiary table.
+
+The Claim info i can do later.  Is a little involved where an SP is involved, and checks.
+
+------------------------
+OK. leave it alone.
+apeend onto 
+C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Tests\BuildInvoice837P.ps1
+dotnet run -- --expression '{docId} (W)'
+
+------------------------
+No.  Can you write 1346.edi.QQ.txt as the filename.
+and I will remember to forget to 
+dotnet run -- --expression "1346 (Q) 976 (W)" --case-id 9
+
+-----------------------
+Should  ZZZZZZZz process.  
+I go and look at _.edi.txt doc and it should be correct as possible at that time.
+what do you think??????
+-----------------------
+why is the data format incorrect.  Should i change the date format upstream like session??
+[1348]
+DTP*472*D8*2026-06-01~
+> dotnet run -- --expression '1346 (W)'
+-----------------------
+
+7/15/26
+I want to make sure we are on the same page.
+in the area of 837P.  the info about it is here 
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\837P
+What should i provide you.
+The writer should own all the X12-specific formatting, etc.
+
+-----------------
 
 7/14/26
 

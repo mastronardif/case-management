@@ -1,0 +1,122 @@
+i want to incrementally add the missing elements. 
+what elements would come from a source like session, authorization, etc? 
+elements not from them perhaps a subsidiary table. 
+The Claim info i can do later. Its a little involved where an SP and steps involved, and checks.
+
+-------------------------------
+
+| Priority | Segment                    | Source                  | Status                     |
+| -------- | -------------------------- | ----------------------- | -------------------------- |
+| ⭐⭐⭐⭐⭐    | CLM01 Claim Number         | Claim table             | Missing                    |
+| ⭐⭐⭐⭐⭐    | CLM02 Total Charges        | Rule                    | ✔ Done                     |
+| ⭐⭐⭐⭐⭐    | SV1 Amount/Units           | Session + Authorization | ✔ Done                     |
+| ⭐⭐⭐⭐⭐    | REF*G1 Authorization       | Authorization           | ✔ Done                     |
+| ⭐⭐⭐⭐⭐    | HI Diagnosis               | Authorization           | ✔ Done                     |
+| ⭐⭐⭐⭐⭐    | Provider NPIs              | Provider                | ✔ Done                     |
+| ⭐⭐⭐⭐⭐    | Patient                    | Patient                 | ✔ Done                     |
+| ⭐⭐⭐⭐     | Subscriber Address         | Patient                 | Mostly done                |
+| ⭐⭐⭐⭐     | Payer ID                   | Payer                   | Done (needs real payer id) |
+| ⭐⭐⭐⭐     | Facility (if POS requires) | Provider/Location       | Missing                    |
+| ⭐⭐⭐      | Dates                      | Rule                    | ✔ Done                     |
+| ⭐⭐       | ISA/GS Control Numbers     | Claim Generator         | Placeholder                |
+| ⭐⭐       | Billing Provider Phone     | Provider                | Optional                   |
+| ⭐⭐       | Patient Relationship       | Patient                 | Optional now               |
+
+----------------------------
+Session
+97153
+HM
+Date
+Start
+End
+Minutes
+Units
+Charge
+POS (eventually)
+
+Authorization
+Authorization Number
+Diagnosis
+MinutesPerUnit
+UnitRate
+ApprovedUnits
+AuthorizedCodes
+EffectiveStart
+EffectiveEnd
+
+Provider
+Billing Provider
+Billing NPI
+Taxonomy
+Tax ID
+Address
+
+Rendering Provider
+Rendering NPI
+Rendering Taxonomy
+
+Patient
+Subscriber ID
+Name
+DOB
+Gender
+Address
+Relationship
+
+Payer
+Payer Name
+Payer ID
+Claim Filing Indicator
+Receiver ID
+
+Claim  Eventually
+ClaimNumber
+ClaimId
+GeneratedDate
+Status
+SubmissionDate
+EDIControlNumber
+ISAControlNumber
+GSControlNumber
+STControlNumber
+
+-----------------------
+
+Session
+        \
+Authorization
+         \
+Patient
+          \
+Payer
+           ---> Canonical 837P
+Provider  /
+         /
+Claim   /
+
+        ↓
+
+837P Rule
+   ↓
+Loop 2400
+Claim Totals
+Date Formatting
+Validation
+
+        ↓
+
+837P Writer
+
+        ↓
+
+EDI
+
+--------------------------
+
+build these next, in order:
+
+✅ Claim stored procedure (generate ClaimNumber)
+✅ Practice Configuration document (ISA/GS settings)
+✅ Payer enhancements (Receiver IDs, trading partner IDs)
+✅ Facility/Place of Service (Loop 2310C/2310D when needed)
+✅ EDI validation (required segments, control numbers, balancing)
