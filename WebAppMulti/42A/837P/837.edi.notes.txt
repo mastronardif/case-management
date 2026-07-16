@@ -1,0 +1,455 @@
+
+ISA*00*          *00*          *ZZ*SENDERID       *ZZ*RECEIVERID     *260714*2140*^*00501*000000001*0*T*:~
+GS*HC*SENDERID*RECEIVERID*20260714*2140*1*X*005010X222A1~
+ST*837*0001*005010X222A1~
+BHT*0019*00**20260714*2140*CH~
+NM1*41*2*999 Dynamic Minds Corp*****46*DYNAMICMINDS~
+NM1*40*2*Horizon Blue Cross Blue Shield~
+HL~
+NM1*85*2*999 Dynamic Minds Corp*****XX*9939967899~
+N3*311 Lenox Ave.~
+N4*Westfield*NJ*07090~
+REF*EI*12-9956789~
+HL~
+SBR*P********CI~
+NM1***Thompson*Mason*****M123456789~
+DMG*D8*20180416*M~
+NM1*PR*2*Horizon Blue Cross Blue Shield*****PI*12345~
+CLM**1040.00***22~
+HI*:F84.0~
+REF*G1*OP2517241999~
+NM1*82*1*Rosel999*Jocelyn999****XX*9992223399~
+SV1*HC:97153:HM*520.00*UN*8~
+DTP*472*D8*20260519~
+SV1*HC:97153:HM*520.00*UN*8~
+DTP*472*D8*20260601~
+SE*23*0001~
+GE*1*1~
+IEA*1*000000001~
+
+---------------------
+ISA*00*          *00*          *ZZ*SENDERID       *ZZ*RECEIVERID     *260714*2140*^*00501*000000001*0*T*:~
+GS*HC*SENDERID*RECEIVERID*20260714*2140*1*X*005010X222A1~
+ST*837*0001*005010X222A1~
+BHT*0019*00**20260714*2140*CH~
+NM1*41*2*999 Dynamic Minds Corp*****46*DYNAMICMINDS~
+NM1*40*2*Horizon Blue Cross Blue Shield~
+
+To provide a clear and actionable explanation, I analyzed each line of your EDI 837P example using the Medicare Companion Guide. Below is a line-by-line breakdown, showing what each segment means and what information it contains.1. ISA Segment (Interchange Control Header)ISA*00*          *00*          *ZZ*SENDERID       *ZZ*RECEIVERID     *260714*2140*^*00501*000000001*0*T*:~
+ISA: Segment identifier for the Interchange Control Header.ISA01 (00): Authorization Information Qualifier (always '00' for Medicare).ISA02 (10 blanks): Authorization Information (10 spaces, not used).ISA03 (00): Security Information Qualifier (always '00').ISA04 (10 blanks): Security Information (10 spaces, not used).ISA05 (ZZ): Interchange ID Qualifier for sender (usually 'ZZ').ISA06 (SENDERID): Interchange Sender ID (your assigned submitter ID).ISA07 (ZZ): Interchange ID Qualifier for receiver (usually 'ZZ').ISA08 (RECEIVERID): Interchange Receiver ID (Medicare's assigned receiver ID).ISA09 (260714): Interchange Date (YYMMDD format, here: July 14, 2026).ISA10 (2140): Interchange Time (HHMM, here: 21:40 or 9:40 PM).ISA11 (^): Repetition Separator (as defined by the sender).ISA12 (00501): Interchange Control Version Number (should be '00501').ISA13 (000000001): Interchange Control Number (unique for each file).ISA14 (0): Acknowledgment Requested (0 = No, 1 = Yes).ISA15 (T): Usage Indicator ('T' for Test, 'P' for Production).ISA16 (:): Component Element Separator.~: Segment terminator.2. GS Segment (Functional Group Header)GS*HC*SENDERID*RECEIVERID*20260714*2140*1*X*005010X222A1~
+GS: Segment identifier for Functional Group Header.GS01 (HC): Functional Identifier Code ('HC' for Health Care Claim).GS02 (SENDERID): Application Sender's Code (matches ISA06).GS03 (RECEIVERID): Application Receiver's Code (matches ISA08).GS04 (20260714): Date (YYYYMMDD, here: July 14, 2026).GS05 (2140): Time (HHMM, here: 21:40).GS06 (1): Group Control Number (unique within the interchange).GS07 (X): Responsible Agency Code ('X' for ASC X12).GS08 (005010X222A1): Version/Release/Industry Identifier Code (837P version).3. ST Segment (Transaction Set Header)ST*837*0001*005010X222A1~
+ST: Segment identifier for Transaction Set Header.ST01 (837): Transaction Set Identifier Code (837 for Health Care Claim).ST02 (0001): Transaction Set Control Number (unique within the group).ST03 (005010X222A1): Implementation Convention Reference (837P version).4. BHT Segment (Beginning of Hierarchical Transaction)BHT*0019*00**20260714*2140*CH~
+BHT: Beginning of Hierarchical Transaction.BHT01 (0019): Hierarchical Structure Code (0019 for 837P claims).BHT02 (00): Transaction Set Purpose Code ('00' = Original).BHT03 (blank): Reference Identification (optional, often blank).BHT04 (20260714): Date (YYYYMMDD, here: July 14, 2026).BHT05 (2140): Time (HHMM, here: 21:40).BHT06 (CH): Transaction Type Code ('CH' = Chargeable).5. NM1*41 Segment (Submitter Name)NM1*41*2*999 Dynamic Minds Corp*****46*DYNAMICMINDS~
+NM1: Segment identifier for individual or organization name.NM101 (41): Entity Identifier Code ('41' = Submitter).NM102 (2): Entity Type Qualifier ('2' = Non-person entity).NM103 (999 Dynamic Minds Corp): Submitter Last or Organization Name.NM104-NM107 (blank): Name fields (not used here).NM108 (46): Identification Code Qualifier ('46' = Electronic Transmitter Identification Number).NM109 (DYNAMICMINDS): Submitter Identifier (matches SENDERID).6. NM1*40 Segment (Receiver Name)NM1*40*2*Horizon Blue Cross Blue Shield~
+NM1: Segment identifier for individual or organization name.NM101 (40): Entity Identifier Code ('40' = Receiver).NM102 (2): Entity Type Qualifier ('2' = Non-person entity).NM103 (Horizon Blue Cross Blue Shield): Receiver Last or Organization Name.NM104-NM109 (blank): Other name and ID fields (not used here).Summary Table:Segment Purpose Key Fields ISA Interchange envelope header Sender/Receiver IDs, date/time, delimiters GS Functional group header Transaction type, sender/receiver, date/time ST Transaction set header Transaction type, control number BHT Transaction details Structure, purpose, date/time, type NM1*41 Submitter name/ID Organization name, submitter ID NM1*40 Receiver name Organization name All these segments are required for a valid 837P Medicare claim file. Each segment and field must be populated according to the Companion Guide and the ASC X12N 837P standard.
+
+----------------------
+To provide a clear and actionable explanation, I analyzed each line of your EDI 837P example using the Medicare Companion Guide. Here is a line-by-line breakdown, showing what each segment means and what information it contains. This covers the main loops and segments for a professional claim.HL~HL: Hierarchical Level segment. Marks the start of a new hierarchical loop (e.g., Billing Provider, Subscriber, Patient, or Service Line). The details are provided in the following segments.NM1852999 Dynamic Minds Corp*****XX9939967899~NM1: Name segment.85: Entity Identifier Code ('85' = Billing Provider).2: Entity Type Qualifier ('2' = Non-person entity).999 Dynamic Minds Corp: Billing Provider Name.XX: Identification Code Qualifier ('XX' = NPI).9939967899: Billing Provider NPI (National Provider Identifier).N3*311 Lenox Ave.~N3: Address segment.311 Lenox Ave.: Billing Provider Address (Street).N4WestfieldNJ*07090~N4: City, State, ZIP segment.Westfield: City.NJ: State.07090: ZIP Code.REFEI12-9956789~REF: Reference Identification segment.EI: Employer's Identification Number qualifier.12-9956789: Employer Identification Number (EIN) for the billing provider.HL~HL: New Hierarchical Level, typically for the Subscriber (the patient in Medicare claims).SBR*P********CI~SBR: Subscriber Information segment.P: Payer Responsibility Sequence Number Code ('P' = Primary).CI: Claim Filing Indicator Code (e.g., Commercial Insurance).NM1ThompsonMason***M123456789~NM1: Name segment.Thompson: Subscriber Last Name.Mason: Subscriber First Name.M123456789: Subscriber Identifier (e.g., Medicare Beneficiary Identifier).DMGD820180416*M~DMG: Demographic Information segment.D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20180416: Subscriber Birth Date (April 16, 2018).M: Gender (Male).NM1PR2Horizon Blue Cross Blue Shield*****PI12345~NM1: Name segment.PR: Entity Identifier Code ('PR' = Payer).2: Entity Type Qualifier ('2' = Non-person entity).Horizon Blue Cross Blue Shield: Payer Name.PI: Identification Code Qualifier ('PI' = Payer Identification).12345: Payer Identifier.CLM1040.00*22~CLM: Claim Information segment.1040.00: Total Claim Charge Amount.22: Place of Service Code (e.g., Outpatient Hospital).HI*:F84.0~HI: Health Care Diagnosis Code segment.F84.0: Diagnosis Code (e.g., Autism Spectrum Disorder).REFG1OP2517241999~REF: Reference Identification segment.G1: Reference Identification Qualifier (e.g., Provider Control Number).OP2517241999: Reference Number (e.g., internal tracking number).NM1821Rosel999Jocelyn999***XX9992223399~NM1: Name segment.82: Entity Identifier Code ('82' = Rendering Provider).1: Entity Type Qualifier ('1' = Person).Rosel999: Rendering Provider Last Name.Jocelyn999: Rendering Provider First Name.XX: Identification Code Qualifier ('XX' = NPI).9992223399: Rendering Provider NPI.SV1HC:97153:HM520.00UN8~SV1: Professional Service segment.HC:97153:HM: Procedure Code (HCPCS 97153 with modifier HM).520.00: Line Item Charge Amount.UN: Unit or Basis for Measurement Code ('UN' = Units).8: Service Unit Count (number of units billed).DTP472D8*20260519~DTP: Date or Time or Period segment.472: Date Time Qualifier ('472' = Service Date).D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20260519: Service Date (May 19, 2026).SV1HC:97153:HM520.00UN8~(Repeat of previous SV1 segment for another service line.)DTP472D8*20260601~DTP: Date or Time or Period segment.472: Date Time Qualifier ('472' = Service Date).D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20260601: Service Date (June 1, 2026).SE230001~SE: Transaction Set Trailer segment.23: Number of included segments.0001: Transaction Set Control Number (matches ST02 at the start of the transaction).GE11~GE: Functional Group Trailer segment.1: Number of transaction sets included.1: Group Control Number (matches GS06).IEA1000000001~IEA: Interchange Control Trailer segment.1: Number of included functional groups.000000001: Interchange Control Number (matches ISA13).Summary Table:Segment Purpose Key Fields HL Hierarchical Level Start of new loop (provider, subscriber, etc.) NM1*85 Billing Provider Name/ID Name, NPI N3/N4 Billing Provider Address Street, City, State, ZIP REF*EI Billing Provider EIN EIN HL Subscriber Level Start of subscriber loop SBR Subscriber Info Payer responsibility, claim filing code NM1 Subscriber Name/ID Name, Identifier DMG Subscriber Demographics DOB, Gender NM1*PR Payer Name/ID Name, Payer ID CLM Claim Info Charge amount, place of service HI Diagnosis Code ICD code REF*G1 Reference Number Tracking number NM1*82 Rendering Provider Name, NPI SV1 Service Line Procedure, charge, units DTP Service Date Date of service SE Transaction Set Trailer Segment count, control number GE Functional Group Trailer Transaction count, group number IEA Interchange Trailer Group count, control number All these segments are required for a valid 837P Medicare claim file. Each segment and field must be populated according to the Companion Guide and the ASC X12N 837P standard.
+----------------------
+
+
+---------------
+To provide a clear and actionable explanation, I analyzed each line of your EDI 837P example using the Medicare Companion Guide. Here is a line-by-line breakdown, showing what each segment means and what information it contains. This covers the main loops and segments for a professional claim.HL~HL: Hierarchical Level segment. Marks the start of a new hierarchical loop (e.g., Billing Provider, Subscriber, Patient, or Service Line). The details are provided in the following segments.NM1852999 Dynamic Minds Corp*****XX9939967899~NM1: Name segment.85: Entity Identifier Code ('85' = Billing Provider).2: Entity Type Qualifier ('2' = Non-person entity).999 Dynamic Minds Corp: Billing Provider Name.XX: Identification Code Qualifier ('XX' = NPI).9939967899: Billing Provider NPI (National Provider Identifier).N3*311 Lenox Ave.~N3: Address segment.311 Lenox Ave.: Billing Provider Address (Street).N4WestfieldNJ*07090~N4: City, State, ZIP segment.Westfield: City.NJ: State.07090: ZIP Code.REFEI12-9956789~REF: Reference Identification segment.EI: Employer's Identification Number qualifier.12-9956789: Employer Identification Number (EIN) for the billing provider.HL~HL: New Hierarchical Level, typically for the Subscriber (the patient in Medicare claims).SBR*P********CI~SBR: Subscriber Information segment.P: Payer Responsibility Sequence Number Code ('P' = Primary).CI: Claim Filing Indicator Code (e.g., Commercial Insurance).NM1ThompsonMason***M123456789~NM1: Name segment.Thompson: Subscriber Last Name.Mason: Subscriber First Name.M123456789: Subscriber Identifier (e.g., Medicare Beneficiary Identifier).DMGD820180416*M~DMG: Demographic Information segment.D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20180416: Subscriber Birth Date (April 16, 2018).M: Gender (Male).NM1PR2Horizon Blue Cross Blue Shield*****PI12345~NM1: Name segment.PR: Entity Identifier Code ('PR' = Payer).2: Entity Type Qualifier ('2' = Non-person entity).Horizon Blue Cross Blue Shield: Payer Name.PI: Identification Code Qualifier ('PI' = Payer Identification).12345: Payer Identifier.CLM1040.00*22~CLM: Claim Information segment.1040.00: Total Claim Charge Amount.22: Place of Service Code (e.g., Outpatient Hospital).HI*:F84.0~HI: Health Care Diagnosis Code segment.F84.0: Diagnosis Code (e.g., Autism Spectrum Disorder).REFG1OP2517241999~REF: Reference Identification segment.G1: Reference Identification Qualifier (e.g., Provider Control Number).OP2517241999: Reference Number (e.g., internal tracking number).NM1821Rosel999Jocelyn999***XX9992223399~NM1: Name segment.82: Entity Identifier Code ('82' = Rendering Provider).1: Entity Type Qualifier ('1' = Person).Rosel999: Rendering Provider Last Name.Jocelyn999: Rendering Provider First Name.XX: Identification Code Qualifier ('XX' = NPI).9992223399: Rendering Provider NPI.SV1HC:97153:HM520.00UN8~SV1: Professional Service segment.HC:97153:HM: Procedure Code (HCPCS 97153 with modifier HM).520.00: Line Item Charge Amount.UN: Unit or Basis for Measurement Code ('UN' = Units).8: Service Unit Count (number of units billed).DTP472D8*20260519~DTP: Date or Time or Period segment.472: Date Time Qualifier ('472' = Service Date).D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20260519: Service Date (May 19, 2026).SV1HC:97153:HM520.00UN8~(Repeat of previous SV1 segment for another service line.)DTP472D8*20260601~DTP: Date or Time or Period segment.472: Date Time Qualifier ('472' = Service Date).D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20260601: Service Date (June 1, 2026).SE230001~SE: Transaction Set Trailer segment.23: Number of included segments.0001: Transaction Set Control Number (matches ST02 at the start of the transaction).GE11~GE: Functional Group Trailer segment.1: Number of transaction sets included.1: Group Control Number (matches GS06).IEA1000000001~IEA: Interchange Control Trailer segment.1: Number of included functional groups.000000001: Interchange Control Number (matches ISA13).Summary Table:Segment Purpose Key Fields HL Hierarchical Level Start of new loop (provider, subscriber, etc.) NM1*85 Billing Provider Name/ID Name, NPI N3/N4 Billing Provider Address Street, City, State, ZIP REF*EI Billing Provider EIN EIN HL Subscriber Level Start of subscriber loop SBR Subscriber Info Payer responsibility, claim filing code NM1 Subscriber Name/ID Name, Identifier DMG Subscriber Demographics DOB, Gender NM1*PR Payer Name/ID Name, Payer ID CLM Claim Info Charge amount, place of service HI Diagnosis Code ICD code REF*G1 Reference Number Tracking number NM1*82 Rendering Provider Name, NPI SV1 Service Line Procedure, charge, units DTP Service Date Date of service SE Transaction Set Trailer Segment count, control number GE Functional Group Trailer Transaction count, group number IEA Interchange Trailer Group count, control number All these segments are required for a valid 837P Medicare claim file. Each segment and field must be populated according to the Companion Guide and the ASC X12N 837P standar
+
+------------------------
+To provide a clear and actionable explanation, I analyzed each line of your EDI 837P example using the Medicare Companion Guide. Below is a line-by-line breakdown, showing what each segment means and what information it contains.1. ISA Segment (Interchange Control Header)ISA*00*          *00*          *ZZ*SENDERID       *ZZ*RECEIVERID     *260714*2140*^*00501*000000001*0*T*:~
+ISA: Segment identifier for the Interchange Control Header.ISA01 (00): Authorization Information Qualifier (always '00' for Medicare).ISA02 (10 blanks): Authorization Information (10 spaces, not used).ISA03 (00): Security Information Qualifier (always '00').ISA04 (10 blanks): Security Information (10 spaces, not used).ISA05 (ZZ): Interchange ID Qualifier for sender (usually 'ZZ').ISA06 (SENDERID): Interchange Sender ID (your assigned submitter ID).ISA07 (ZZ): Interchange ID Qualifier for receiver (usually 'ZZ').ISA08 (RECEIVERID): Interchange Receiver ID (Medicare's assigned receiver ID).ISA09 (260714): Interchange Date (YYMMDD format, here: July 14, 2026).ISA10 (2140): Interchange Time (HHMM, here: 21:40 or 9:40 PM).ISA11 (^): Repetition Separator (as defined by the sender).ISA12 (00501): Interchange Control Version Number (should be '00501').ISA13 (000000001): Interchange Control Number (unique for each file).ISA14 (0): Acknowledgment Requested (0 = No, 1 = Yes).ISA15 (T): Usage Indicator ('T' for Test, 'P' for Production).ISA16 (:): Component Element Separator.~: Segment terminator.2. GS Segment (Functional Group Header)GS*HC*SENDERID*RECEIVERID*20260714*2140*1*X*005010X222A1~
+GS: Segment identifier for Functional Group Header.GS01 (HC): Functional Identifier Code ('HC' for Health Care Claim).GS02 (SENDERID): Application Sender's Code (matches ISA06).GS03 (RECEIVERID): Application Receiver's Code (matches ISA08).GS04 (20260714): Date (YYYYMMDD, here: July 14, 2026).GS05 (2140): Time (HHMM, here: 21:40).GS06 (1): Group Control Number (unique within the interchange).GS07 (X): Responsible Agency Code ('X' for ASC X12).GS08 (005010X222A1): Version/Release/Industry Identifier Code (837P version).3. ST Segment (Transaction Set Header)ST*837*0001*005010X222A1~
+ST: Segment identifier for Transaction Set Header.ST01 (837): Transaction Set Identifier Code (837 for Health Care Claim).ST02 (0001): Transaction Set Control Number (unique within the group).ST03 (005010X222A1): Implementation Convention Reference (837P version).4. BHT Segment (Beginning of Hierarchical Transaction)BHT*0019*00**20260714*2140*CH~
+BHT: Beginning of Hierarchical Transaction.BHT01 (0019): Hierarchical Structure Code (0019 for 837P claims).BHT02 (00): Transaction Set Purpose Code ('00' = Original).BHT03 (blank): Reference Identification (optional, often blank).BHT04 (20260714): Date (YYYYMMDD, here: July 14, 2026).BHT05 (2140): Time (HHMM, here: 21:40).BHT06 (CH): Transaction Type Code ('CH' = Chargeable).5. NM1*41 Segment (Submitter Name)NM1*41*2*999 Dynamic Minds Corp*****46*DYNAMICMINDS~
+NM1: Segment identifier for individual or organization name.NM101 (41): Entity Identifier Code ('41' = Submitter).NM102 (2): Entity Type Qualifier ('2' = Non-person entity).NM103 (999 Dynamic Minds Corp): Submitter Last or Organization Name.NM104-NM107 (blank): Name fields (not used here).NM108 (46): Identification Code Qualifier ('46' = Electronic Transmitter Identification Number).NM109 (DYNAMICMINDS): Submitter Identifier (matches SENDERID).6. NM1*40 Segment (Receiver Name)NM1*40*2*Horizon Blue Cross Blue Shield~
+NM1: Segment identifier for individual or organization name.NM101 (40): Entity Identifier Code ('40' = Receiver).NM102 (2): Entity Type Qualifier ('2' = Non-person entity).NM103 (Horizon Blue Cross Blue Shield): Receiver Last or Organization Name.NM104-NM109 (blank): Other name and ID fields (not used here).Summary Table:Segment Purpose Key Fields ISA Interchange envelope header Sender/Receiver IDs, date/time, delimiters GS Functional group header Transaction type, sender/receiver, date/time ST Transaction set header Transaction type, control number BHT Transaction details Structure, purpose, date/time, type NM1*41 Submitter name/ID Organization name, submitter ID NM1*40 Receiver name Organization name All these segments are required for a valid 837P Medicare claim file. Each segment and field must be populated according to the Companion Guide and the ASC X12N 837P standard.
+------------------------
+To provide a clear and actionable explanation, I analyzed each line of your EDI 837P example using the Medicare Companion Guide. Here is a line-by-line breakdown, showing what each segment means and what information it contains. This covers the main loops and segments for a professional claim.HL~HL: Hierarchical Level segment. Marks the start of a new hierarchical loop (e.g., Billing Provider, Subscriber, Patient, or Service Line). The details are provided in the following segments.NM1852999 Dynamic Minds Corp*****XX9939967899~NM1: Name segment.85: Entity Identifier Code ('85' = Billing Provider).2: Entity Type Qualifier ('2' = Non-person entity).999 Dynamic Minds Corp: Billing Provider Name.XX: Identification Code Qualifier ('XX' = NPI).9939967899: Billing Provider NPI (National Provider Identifier).N3*311 Lenox Ave.~N3: Address segment.311 Lenox Ave.: Billing Provider Address (Street).N4WestfieldNJ*07090~N4: City, State, ZIP segment.Westfield: City.NJ: State.07090: ZIP Code.REFEI12-9956789~REF: Reference Identification segment.EI: Employer's Identification Number qualifier.12-9956789: Employer Identification Number (EIN) for the billing provider.HL~HL: New Hierarchical Level, typically for the Subscriber (the patient in Medicare claims).SBR*P********CI~SBR: Subscriber Information segment.P: Payer Responsibility Sequence Number Code ('P' = Primary).CI: Claim Filing Indicator Code (e.g., Commercial Insurance).NM1ThompsonMason***M123456789~NM1: Name segment.Thompson: Subscriber Last Name.Mason: Subscriber First Name.M123456789: Subscriber Identifier (e.g., Medicare Beneficiary Identifier).DMGD820180416*M~DMG: Demographic Information segment.D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20180416: Subscriber Birth Date (April 16, 2018).M: Gender (Male).NM1PR2Horizon Blue Cross Blue Shield*****PI12345~NM1: Name segment.PR: Entity Identifier Code ('PR' = Payer).2: Entity Type Qualifier ('2' = Non-person entity).Horizon Blue Cross Blue Shield: Payer Name.PI: Identification Code Qualifier ('PI' = Payer Identification).12345: Payer Identifier.CLM1040.00*22~CLM: Claim Information segment.1040.00: Total Claim Charge Amount.22: Place of Service Code (e.g., Outpatient Hospital).HI*:F84.0~HI: Health Care Diagnosis Code segment.F84.0: Diagnosis Code (e.g., Autism Spectrum Disorder).REFG1OP2517241999~REF: Reference Identification segment.G1: Reference Identification Qualifier (e.g., Provider Control Number).OP2517241999: Reference Number (e.g., internal tracking number).NM1821Rosel999Jocelyn999***XX9992223399~NM1: Name segment.82: Entity Identifier Code ('82' = Rendering Provider).1: Entity Type Qualifier ('1' = Person).Rosel999: Rendering Provider Last Name.Jocelyn999: Rendering Provider First Name.XX: Identification Code Qualifier ('XX' = NPI).9992223399: Rendering Provider NPI.SV1HC:97153:HM520.00UN8~SV1: Professional Service segment.HC:97153:HM: Procedure Code (HCPCS 97153 with modifier HM).520.00: Line Item Charge Amount.UN: Unit or Basis for Measurement Code ('UN' = Units).8: Service Unit Count (number of units billed).DTP472D8*20260519~DTP: Date or Time or Period segment.472: Date Time Qualifier ('472' = Service Date).D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20260519: Service Date (May 19, 2026).SV1HC:97153:HM520.00UN8~(Repeat of previous SV1 segment for another service line.)DTP472D8*20260601~DTP: Date or Time or Period segment.472: Date Time Qualifier ('472' = Service Date).D8: Date Time Period Format Qualifier ('D8' = CCYYMMDD).20260601: Service Date (June 1, 2026).SE230001~SE: Transaction Set Trailer segment.23: Number of included segments.0001: Transaction Set Control Number (matches ST02 at the start of the transaction).GE11~GE: Functional Group Trailer segment.1: Number of transaction sets included.1: Group Control Number (matches GS06).IEA1000000001~IEA: Interchange Control Trailer segment.1: Number of included functional groups.000000001: Interchange Control Number (matches ISA13).Summary Table:Segment Purpose Key Fields HL Hierarchical Level Start of new loop (provider, subscriber, etc.) NM1*85 Billing Provider Name/ID Name, NPI N3/N4 Billing Provider Address Street, City, State, ZIP REF*EI Billing Provider EIN EIN HL Subscriber Level Start of subscriber loop SBR Subscriber Info Payer responsibility, claim filing code NM1 Subscriber Name/ID Name, Identifier DMG Subscriber Demographics DOB, Gender NM1*PR Payer Name/ID Name, Payer ID CLM Claim Info Charge amount, place of service HI Diagnosis Code ICD code REF*G1 Reference Number Tracking number NM1*82 Rendering Provider Name, NPI SV1 Service Line Procedure, charge, units DTP Service Date Date of service SE Transaction Set Trailer Segment count, control number GE Functional Group Trailer Transaction count, group number IEA Interchange Trailer Group count, control number All these segments are required for a valid 837P Medicare claim file. Each segment and field must be populated according to the Companion Guide and the ASC X12N 837P standard.
+----------------
+To explain the key components of the ANSI X12N 837P transaction standard, I referenced the Medicare 837P Companion Guide, which is based on the ASC X12N TR3 standard. The 837P is used for electronically submitting professional health care claims (such as those from physicians) to payers like Medicare. Below is a structured summary of its key components, their roles, and examples for clarity.1. Control Segments / EnvelopesThese segments organize and identify the transaction for secure and accurate transmission.ISA/IEA (Interchange Control Envelope): Outermost envelope, identifies sender/receiver, date/time, and controls the entire file.GS/GE (Functional Group Envelope): Groups similar transaction sets (e.g., all 837P claims in a batch).ST/SE (Transaction Set Envelope): Wraps each individual transaction (claim or batch of claims).Example:ISA*00*          *00*          *ZZ*SENDERID*ZZ*RECEIVERID*...
+GS*HC*SENDERID*RECEIVERID*...
+ST*837*0001*005010X222A1~
+...
+SE*23*0001~
+GE*1*1~
+IEA*1*000000001~
+2. Header and Information SourceBHT (Beginning of Hierarchical Transaction): Identifies the purpose, date, and type of the transaction.Loop 1000A (Submitter Name): Identifies the entity submitting the claim.Loop 1000B (Receiver Name): Identifies the payer receiving the claim.3. Billing Provider DetailLoop 2000A/2010AA: Contains the billing provider’s details, including name, address, and National Provider Identifier (NPI).4. Subscriber and Patient DetailLoop 2000B/2010BA: Contains subscriber (patient) information, such as name, ID, date of birth, and gender.Loop 2010BB: Contains payer (insurance) information.5. Claim InformationLoop 2300: Contains claim-level details, including:
+Claim amountDiagnosis codesDates of serviceClaim frequency and type6. Provider and Service Facility InformationLoop 2310A/B/C/D: Details about referring, rendering, service facility, and supervising providers.7. Service Line InformationLoop 2400: Contains details for each service provided, including:
+Procedure codes (CPT/HCPCS)ModifiersService datesCharges and units8. Other Payer and Coordination of BenefitsLoops 2320/2330: Used if there are other payers involved (e.g., secondary insurance), including payment and adjustment information.9. Trailer SegmentsSE/GE/IEA: Close out the transaction, group, and interchange envelopes, ensuring completeness and integrity.Why These Components MatterOrganization: Each component ensures the claim is structured for automated processing.Validation: Control numbers and identifiers help track, validate, and troubleshoot claims.Compliance: Adhering to these standards is required for Medicare and most other payers.Summary Table of Key Loops and SegmentsSegment/Loop Purpose Example ISA/IEA Interchange envelope Sender/Receiver IDs GS/GE Functional group envelope Transaction type, batch control ST/SE Transaction set envelope Claim batch control 1000A/B Submitter/Receiver Names and IDs 2000A/B Billing Provider/Subscriber Provider and patient info 2300 Claim Information Amount, diagnosis, dates 2400 Service Line Procedures, charges, units 2310/2420 Provider Details Rendering, referring, facility 2320/2330 Other Payer Info Coordination of benefits In summary: The ANSI X12N 837P transaction standard is a highly structured format that ensures all necessary claim data is transmitted in a consistent, secure, and processable way for Medicare and other payers. Each component plays a specific role in organizing, validating, and routing the claim for efficient electronic processing.
+
+To answer your question, I first analyzed the structure of the ANSI X12N 837P transaction as described in the Medicare Companion Guide. The example you provided:ISA*00*          *00*          *ZZ*SENDERID       *ZZ*RECEIVERID     *260714*2140*^*00501*000000001*0*T*:~
+is a typical Interchange Control Header (ISA segment) from an EDI file. The asterisk (*) is used as a data element separator in this context.What does the * mean?According to the Companion Guide (see Table 5. Outbound Transaction Delimiters):Data Element Separator: The asterisk (*) is used to separate individual data elements within a segment.Other Delimiters:^ is the repetition separator> is the component element separator~ is the segment terminatorExample BreakdownIn your example:ISA*00*          *00*          *ZZ*SENDERID       *ZZ*RECEIVERID     *260714*2140*^*00501*000000001*0*T*:~
+Each * separates different data elements in the ISA segment.For example, ISA*00*          *00*          *ZZ*SENDERID means:
+ISA = segment identifier00 = Authorization Information Qualifier  = Authorization Information (10 blanks)00 = Security Information Qualifier  = Security Information (10 blanks)ZZ = Interchange ID QualifierSENDERID = Interchange Sender ID...and so on, each separated by *Why is this important?The asterisk (*) ensures that each data element is clearly separated, allowing the receiving system to parse and interpret each field correctly.This is a standard requirement for all X12 EDI transactions, including Medicare 837P claims.Reference"Table 5. Outbound Transaction Delimiters
+Data Element Separator: * (Dec Value 42, Hex Value 2A)"In summary: The * in your EDI example is the data element separator, used to divide each field within a segment for proper parsing and processing.
+
+To answer your question, I reviewed the Medicare 837P Companion Guide, which provides detailed information about EDI (Electronic Data Interchange) transactions and their structure.What is an "envelope" in EDI/837P context?In the context of EDI and specifically the ANSI X12N 837P transaction for Medicare claims, an envelope refers to the set of control segments that wrap or contain one or more EDI transactions. These envelopes are essential for organizing, identifying, and managing the transmission of EDI data between trading partners (such as providers and Medicare).Types of EnvelopesThere are three main levels of envelopes in an EDI transmission:Interchange Envelope (ISA/IEA):The outermost envelope.Starts with the ISA (Interchange Control Header) segment and ends with the IEA (Interchange Control Trailer) segment.Identifies the sender and receiver, date/time, and other key information for the entire transmission.Example:ISA*00*          *00*          *ZZ*SENDERID*ZZ*RECEIVERID*...
+...
+IEA*1*000000001~
+Functional Group Envelope (GS/GE):Sits inside the ISA/IEA envelope.Starts with the GS (Functional Group Header) segment and ends with the GE (Functional Group Trailer) segment.Groups together similar transaction sets (e.g., all 837P claims).Example:GS*HC*SENDERID*RECEIVERID*...
+...
+GE*1*1~
+Transaction Set Envelope (ST/SE):The innermost envelope.Starts with the ST (Transaction Set Header) segment and ends with the SE (Transaction Set Trailer) segment.Contains the actual business transaction data (e.g., a single claim or batch of claims).Example:ST*837*0001~
+...
+SE*45*0001~
+Why are envelopes important?Organization: They help organize multiple transactions within a single file.Identification: Each envelope has control numbers and identifiers to track and verify transmissions.Error Handling: If there is an error, the envelope structure helps identify where the problem occurred.Example StructureA typical EDI file might look like this:ISA*...~
+  GS*...~
+    ST*...~
+      (claim data)
+    SE*...~
+  GE*...~
+IEA*...~
+Reference from the Companion Guide"Interchange Control (ISA/IEA), Functional Group (GS/GE), and Transaction Set (ST/SE) envelopes must be used as described in the TR3. Medicare’s expectations for the Control Segments and Envelopes are detailed in Sections 6.1, 6.2, and 6.3."In summary:An "envelope" in EDI is a set of control segments (ISA/IEA, GS/GE, ST/SE) that wrap and organize the data for transmission, ensuring it is properly routed, processed, and validated by Medicare and other trading partners.
+
+
+
+
+
+
+
+
+
+2026-07-14 08:21:52.079 -04:00 [INF] Application starting up
+2026-07-14 08:21:52.319 -04:00 [INF] User profile is available. Using 'C:\Users\mastronardif\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2026-07-14 08:21:53.192 -04:00 [INF] Request starting HTTP/2 GET https://localhost:44344/swagger - null null
+2026-07-14 08:21:53.292 -04:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-14 08:21:53.293 -04:00 [INF] Hosting environment: Development
+2026-07-14 08:21:53.293 -04:00 [INF] Content root path: C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti
+2026-07-14 08:21:54.806 -04:00 [INF] Before - Handling request: GET /swagger
+2026-07-14 08:21:55.179 -04:00 [INF] HTTP GET /swagger responded 301 in 365.3744 ms
+2026-07-14 08:21:55.221 -04:00 [INF] After - Response status: 301, Start: 08:21:54.790, End: 08:21:55.209, Duration: 418.9896 ms
+2026-07-14 08:21:55.297 -04:00 [INF] Request starting HTTP/2 GET https://localhost:44344/swagger/index.html - null null
+2026-07-14 08:21:55.306 -04:00 [INF] Before - Handling request: GET /swagger/index.html
+2026-07-14 08:21:55.318 -04:00 [INF] Request finished HTTP/2 GET https://localhost:44344/swagger - 301 null null 2162.9424ms
+2026-07-14 08:21:55.526 -04:00 [INF] HTTP GET /swagger/index.html responded 200 in 219.9668 ms
+2026-07-14 08:21:55.527 -04:00 [INF] After - Response status: 200, Start: 08:21:55.305, End: 08:21:55.526, Duration: 220.9685 ms
+2026-07-14 08:21:55.528 -04:00 [INF] Request finished HTTP/2 GET https://localhost:44344/swagger/index.html - 200 null text/html;charset=utf-8 232.8851ms
+2026-07-14 08:21:55.687 -04:00 [INF] Request starting HTTP/2 GET https://localhost:44344/swagger/swagger-ui-standalone-preset.js - null null
+2026-07-14 08:21:55.687 -04:00 [INF] Request starting HTTP/2 GET https://localhost:44344/swagger/swagger-ui.css - null null
+2026-07-14 08:21:55.690 -04:00 [INF] Before - Handling request: GET /swagger/swagger-ui-standalone-preset.js
+2026-07-14 08:21:55.690 -04:00 [INF] Before - Handling request: GET /swagger/swagger-ui.css
+2026-07-14 08:21:55.690 -04:00 [INF] Request starting HTTP/2 GET https://localhost:44344/_vs/browserLink - null null
+2026-07-14 08:21:55.720 -04:00 [INF] Request starting HTTP/2 GET https://localhost:44344/_framework/aspnetcore-browser-refresh.js - null null
+2026-07-14 08:21:55.739 -04:00 [INF] Request finished HTTP/2 GET https://localhost:44344/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 18.3011ms
+2026-07-14 08:21:55.740 -04:00 [INF] Request starting HTTP/2 GET https://localhost:44344/swagger/swagger-ui-bundle.js - null null
+2026-07-14 08:21:55.740 -04:00 [INF] Before - Handling request: GET /swagger/swagger-ui-bundle.js
+2026-07-14 08:21:55.798 -04:00 [INF] Sending file. Request path: '/swagger-ui.css'. Physical path: 'N/A'
+2026-07-14 08:21:55.798 -04:00 [INF] HTTP GET /swagger/swagger-ui.css responded 200 in 107.5747 ms
+2026-07-14 08:21:55.799 -04:00 [INF] After - Response status: 200, Start: 08:21:55.689, End: 08:21:55.798, Duration: 108.9937 ms
+2026-07-14 08:21:55.831 -04:00 [INF] Sending file. Request path: '/swagger-ui-standalone-preset.js'. Physical path: 'N/A'
+2026-07-14 08:21:55.832 -04:00 [INF] HTTP GET /swagger/swagger-ui-standalone-preset.js responded 200 in 141.7275 ms
+2026-07-14 08:21:55.832 -04:00 [INF] After - Response status: 200, Start: 08:21:55.689, End: 08:21:55.832, Duration: 142.2929 ms
+2026-07-14 08:21:55.841 -04:00 [INF] Sending file. Request path: '/swagger-ui-bundle.js'. Physical path: 'N/A'
+2026-07-14 08:21:55.841 -04:00 [INF] HTTP GET /swagger/swagger-ui-bundle.js responded 200 in 100.2875 ms
+2026-07-14 08:21:55.841 -04:00 [INF] After - Response status: 200, Start: 08:21:55.740, End: 08:21:55.841, Duration: 100.6042 ms
+2026-07-14 08:21:55.841 -04:00 [INF] Request finished HTTP/2 GET https://localhost:44344/swagger/swagger-ui-standalone-preset.js - 200 230280 text/javascript 153.9663ms
+2026-07-14 08:21:56.057 -04:00 [INF] Request finished HTTP/2 GET https://localhost:44344/swagger/swagger-ui.css - 200 152034 text/css 370.104ms
+2026-07-14 08:21:56.058 -04:00 [INF] Request finished HTTP/2 GET https://localhost:44344/swagger/swagger-ui-bundle.js - 200 1456926 text/javascript 317.7898ms
+2026-07-14 08:21:56.252 -04:00 [INF] Request finished HTTP/2 GET https://localhost:44344/_vs/browserLink - 200 null text/javascript; charset=UTF-8 563.4947ms
+2026-07-14 08:21:56.718 -04:00 [INF] Request starting HTTP/2 GET https://localhost:44344/swagger/v1/swagger.json - null null
+2026-07-14 08:21:56.723 -04:00 [INF] Before - Handling request: GET /swagger/v1/swagger.json
+2026-07-14 08:21:56.875 -04:00 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 149.5073 ms
+2026-07-14 08:21:56.879 -04:00 [INF] After - Response status: 200, Start: 08:21:56.723, End: 08:21:56.879, Duration: 156.1124 ms
+2026-07-14 08:21:56.900 -04:00 [INF] Request finished HTTP/2 GET https://localhost:44344/swagger/v1/swagger.json - 200 null application/json;charset=utf-8 181.7341ms
+2026-07-14 09:09:24.631 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1220 - null null
+2026-07-14 09:09:24.763 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 09:09:24.801 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 09:09:25.088 -04:00 [INF] Sending file with download name ''.
+2026-07-14 09:09:25.101 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 09:09:25.108 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 343.6285 ms
+2026-07-14 09:09:25.119 -04:00 [INF] After - Response status: 200, Start: 09:09:24.763, End: 09:09:25.116, Duration: 353.4038 ms
+2026-07-14 09:09:25.138 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1220 - 200 3730 application/json 511.6212ms
+2026-07-14 09:09:32.479 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1239 - null null
+2026-07-14 09:09:32.491 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 09:09:32.505 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 09:09:32.543 -04:00 [INF] Sending file with download name ''.
+2026-07-14 09:09:32.546 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 09:09:32.547 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 55.1829 ms
+2026-07-14 09:09:32.547 -04:00 [INF] After - Response status: 200, Start: 09:09:32.491, End: 09:09:32.547, Duration: 55.8959 ms
+2026-07-14 09:09:32.548 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1239 - 200 145 text/plain 69.1951ms
+2026-07-14 09:25:01.867 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1239 - null null
+2026-07-14 09:25:01.975 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 09:25:01.979 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 09:25:02.058 -04:00 [INF] Sending file with download name ''.
+2026-07-14 09:25:02.059 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 09:25:02.059 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 84.0101 ms
+2026-07-14 09:25:02.060 -04:00 [INF] After - Response status: 200, Start: 09:25:01.969, End: 09:25:02.060, Duration: 90.6817 ms
+2026-07-14 09:25:02.060 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1239 - 200 145 text/plain 196.6993ms
+2026-07-14 09:55:32.701 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - null null
+2026-07-14 09:55:32.781 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 09:55:32.783 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 09:55:32.843 -04:00 [INF] Sending file with download name ''.
+2026-07-14 09:55:32.846 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 09:55:32.846 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 64.2109 ms
+2026-07-14 09:55:32.846 -04:00 [INF] After - Response status: 200, Start: 09:55:32.781, End: 09:55:32.846, Duration: 64.8557 ms
+2026-07-14 09:55:32.848 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - 200 2818 application/json 148.2823ms
+2026-07-14 10:57:23.937 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1241 - null null
+2026-07-14 10:57:24.078 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 10:57:24.087 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 10:57:24.187 -04:00 [INF] Sending file with download name ''.
+2026-07-14 10:57:24.193 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 10:57:24.195 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 114.7233 ms
+2026-07-14 10:57:24.196 -04:00 [INF] After - Response status: 200, Start: 10:57:24.076, End: 10:57:24.196, Duration: 119.3124 ms
+2026-07-14 10:57:24.199 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1241 - 200 812 text/plain 264.8859ms
+2026-07-14 12:23:29.603 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1220 - null null
+2026-07-14 12:23:29.721 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 12:23:29.724 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:23:29.775 -04:00 [INF] Sending file with download name ''.
+2026-07-14 12:23:29.778 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:23:29.778 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 57.2326 ms
+2026-07-14 12:23:29.779 -04:00 [INF] After - Response status: 200, Start: 12:23:29.721, End: 12:23:29.778, Duration: 57.7806 ms
+2026-07-14 12:23:29.780 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1220 - 200 3730 application/json 178.183ms
+2026-07-14 12:34:07.897 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1241 - null null
+2026-07-14 12:34:07.993 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 12:34:07.994 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:34:08.021 -04:00 [INF] Sending file with download name ''.
+2026-07-14 12:34:08.023 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:34:08.024 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 30.1659 ms
+2026-07-14 12:34:08.024 -04:00 [INF] After - Response status: 200, Start: 12:34:07.993, End: 12:34:08.024, Duration: 31.278 ms
+2026-07-14 12:34:08.025 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1241 - 200 812 text/plain 127.6908ms
+2026-07-14 12:34:57.777 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=732 - null null
+2026-07-14 12:34:57.784 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 12:34:57.826 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:34:57.837 -04:00 [INF] Sending file with download name ''.
+2026-07-14 12:34:57.837 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:34:57.838 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 53.7841 ms
+2026-07-14 12:34:57.838 -04:00 [INF] After - Response status: 200, Start: 12:34:57.784, End: 12:34:57.838, Duration: 54.6619 ms
+2026-07-14 12:34:57.839 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=732 - 200 1158 application/json 63.2059ms
+2026-07-14 12:35:35.492 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=731 - null null
+2026-07-14 12:35:35.496 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 12:35:35.497 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:35:35.522 -04:00 [INF] Sending file with download name ''.
+2026-07-14 12:35:35.524 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:35:35.524 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 27.2873 ms
+2026-07-14 12:35:35.524 -04:00 [INF] After - Response status: 200, Start: 12:35:35.496, End: 12:35:35.524, Duration: 27.9211 ms
+2026-07-14 12:35:35.525 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=731 - 200 778 application/json 32.6195ms
+2026-07-14 12:38:41.771 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - null null
+2026-07-14 12:38:41.805 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 12:38:41.808 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:38:41.831 -04:00 [INF] Sending file with download name ''.
+2026-07-14 12:38:41.832 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 12:38:41.833 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 26.9375 ms
+2026-07-14 12:38:41.834 -04:00 [INF] After - Response status: 200, Start: 12:38:41.805, End: 12:38:41.834, Duration: 28.2385 ms
+2026-07-14 12:38:41.836 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - 200 2818 application/json 66.0036ms
+2026-07-14 18:42:48.624 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1243 - null null
+2026-07-14 18:42:48.747 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 18:42:48.770 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:42:48.907 -04:00 [INF] Sending file with download name ''.
+2026-07-14 18:42:48.918 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:42:48.919 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 171.1457 ms
+2026-07-14 18:42:48.920 -04:00 [INF] After - Response status: 200, Start: 18:42:48.747, End: 18:42:48.919, Duration: 172.7177 ms
+2026-07-14 18:42:48.921 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1243 - 200 812 text/plain 312.7208ms
+2026-07-14 18:54:16.179 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - null null
+2026-07-14 18:54:16.241 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 18:54:16.244 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:54:16.363 -04:00 [INF] Sending file with download name ''.
+2026-07-14 18:54:16.365 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:54:16.365 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 124.0025 ms
+2026-07-14 18:54:16.365 -04:00 [INF] After - Response status: 200, Start: 18:54:16.241, End: 18:54:16.365, Duration: 124.3419 ms
+2026-07-14 18:54:16.366 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - 200 2818 application/json 187.2861ms
+2026-07-14 18:55:04.440 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - null null
+2026-07-14 18:55:04.469 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 18:55:04.470 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:55:04.482 -04:00 [INF] Sending file with download name ''.
+2026-07-14 18:55:04.484 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:55:04.485 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 15.4570 ms
+2026-07-14 18:55:04.485 -04:00 [INF] After - Response status: 200, Start: 18:55:04.469, End: 18:55:04.485, Duration: 15.7663 ms
+2026-07-14 18:55:04.485 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - 200 3633 application/json 46.8934ms
+2026-07-14 18:56:12.145 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1245 - null null
+2026-07-14 18:56:12.188 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 18:56:12.191 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:56:12.228 -04:00 [INF] Sending file with download name ''.
+2026-07-14 18:56:12.229 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:56:12.229 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 41.0976 ms
+2026-07-14 18:56:12.241 -04:00 [INF] After - Response status: 200, Start: 18:56:12.188, End: 18:56:12.230, Duration: 41.8217 ms
+2026-07-14 18:56:12.242 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1245 - 200 812 text/plain 97.1314ms
+2026-07-14 18:58:21.072 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - null null
+2026-07-14 18:58:21.112 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 18:58:21.114 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:58:21.148 -04:00 [INF] Sending file with download name ''.
+2026-07-14 18:58:21.149 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:58:21.150 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 36.8143 ms
+2026-07-14 18:58:21.152 -04:00 [INF] After - Response status: 200, Start: 18:58:21.112, End: 18:58:21.150, Duration: 37.4003 ms
+2026-07-14 18:58:21.153 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - 200 3633 application/json 80.3672ms
+2026-07-14 18:59:10.596 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - null null
+2026-07-14 18:59:10.597 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 18:59:10.600 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:59:10.621 -04:00 [INF] Sending file with download name ''.
+2026-07-14 18:59:10.622 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:59:10.622 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 24.9876 ms
+2026-07-14 18:59:10.622 -04:00 [INF] After - Response status: 200, Start: 18:59:10.597, End: 18:59:10.622, Duration: 25.3568 ms
+2026-07-14 18:59:10.623 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - 200 3633 application/json 27.0707ms
+2026-07-14 18:59:17.192 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1245 - null null
+2026-07-14 18:59:17.192 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 18:59:17.194 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:59:17.212 -04:00 [INF] Sending file with download name ''.
+2026-07-14 18:59:17.213 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 18:59:17.213 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 20.4500 ms
+2026-07-14 18:59:17.213 -04:00 [INF] After - Response status: 200, Start: 18:59:17.192, End: 18:59:17.213, Duration: 20.7946 ms
+2026-07-14 18:59:17.214 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1245 - 200 812 text/plain 21.9308ms
+2026-07-14 19:01:32.965 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1220 - null null
+2026-07-14 19:01:32.966 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 19:01:32.968 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:01:32.999 -04:00 [INF] Sending file with download name ''.
+2026-07-14 19:01:33.001 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:01:33.001 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 34.2891 ms
+2026-07-14 19:01:33.001 -04:00 [INF] After - Response status: 200, Start: 19:01:32.966, End: 19:01:33.001, Duration: 34.7804 ms
+2026-07-14 19:01:33.002 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1220 - 200 3730 application/json 37.2382ms
+2026-07-14 19:10:19.743 -04:00 [INF] Request starting HTTP/1.1 POST https://localhost:44344/api/saveWorkflow - application/json 474
+2026-07-14 19:10:19.774 -04:00 [INF] Before - Handling request: POST /api/saveWorkflow
+2026-07-14 19:10:19.818 -04:00 [INF] Executing endpoint 'HTTP: POST /api/saveWorkflow'
+2026-07-14 19:10:20.017 -04:00 [INF] Setting HTTP status code 200.
+2026-07-14 19:10:20.048 -04:00 [INF] Writing value of type '<>f__AnonymousType44`3' as Json.
+2026-07-14 19:10:20.061 -04:00 [INF] Executed endpoint 'HTTP: POST /api/saveWorkflow'
+2026-07-14 19:10:20.061 -04:00 [INF] HTTP POST /api/saveWorkflow responded 200 in 249.5994 ms
+2026-07-14 19:10:20.061 -04:00 [INF] After - Response status: 200, Start: 19:10:19.773, End: 19:10:20.061, Duration: 288.5611 ms
+2026-07-14 19:10:20.062 -04:00 [INF] Request finished HTTP/1.1 POST https://localhost:44344/api/saveWorkflow - 200 null application/json; charset=utf-8 318.9745ms
+2026-07-14 19:11:39.073 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1269 - null null
+2026-07-14 19:11:39.075 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 19:11:39.120 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:11:39.148 -04:00 [INF] Sending file with download name ''.
+2026-07-14 19:11:39.149 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:11:39.149 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 73.7651 ms
+2026-07-14 19:11:39.150 -04:00 [INF] After - Response status: 200, Start: 19:11:39.075, End: 19:11:39.150, Duration: 75.7134 ms
+2026-07-14 19:11:39.157 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1269 - 200 265 text/plain 83.4859ms
+2026-07-14 19:11:45.695 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1269 - null null
+2026-07-14 19:11:45.714 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 19:11:45.715 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:11:45.788 -04:00 [INF] Sending file with download name ''.
+2026-07-14 19:11:45.789 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:11:45.789 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 75.0024 ms
+2026-07-14 19:11:45.789 -04:00 [INF] After - Response status: 200, Start: 19:11:45.714, End: 19:11:45.789, Duration: 75.3245 ms
+2026-07-14 19:11:45.790 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1269 - 200 265 text/plain 95.2021ms
+2026-07-14 19:12:05.169 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=652 - null null
+2026-07-14 19:12:05.169 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 19:12:05.172 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:12:05.193 -04:00 [INF] Sending file with download name ''.
+2026-07-14 19:12:05.195 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:12:05.195 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 25.5701 ms
+2026-07-14 19:12:05.195 -04:00 [INF] After - Response status: 200, Start: 19:12:05.169, End: 19:12:05.195, Duration: 25.8261 ms
+2026-07-14 19:12:05.195 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=652 - 200 8400 application/json 26.9395ms
+2026-07-14 19:12:38.731 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1272 - null null
+2026-07-14 19:12:38.732 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 19:12:38.733 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:12:38.745 -04:00 [INF] Sending file with download name ''.
+2026-07-14 19:12:38.745 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:12:38.746 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 13.3888 ms
+2026-07-14 19:12:38.746 -04:00 [INF] After - Response status: 200, Start: 19:12:38.732, End: 19:12:38.746, Duration: 13.687 ms
+2026-07-14 19:12:38.747 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1272 - 200 894 text/plain 14.9263ms
+2026-07-14 19:12:58.406 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1272 - null null
+2026-07-14 19:12:58.418 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 19:12:58.420 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:12:58.439 -04:00 [INF] Sending file with download name ''.
+2026-07-14 19:12:58.441 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:12:58.442 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 23.3951 ms
+2026-07-14 19:12:58.442 -04:00 [INF] After - Response status: 200, Start: 19:12:58.418, End: 19:12:58.442, Duration: 23.7987 ms
+2026-07-14 19:12:58.443 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1272 - 200 894 text/plain 38.0462ms
+2026-07-14 19:19:53.699 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1266 - null null
+2026-07-14 19:19:53.704 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 19:19:53.720 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:19:53.844 -04:00 [INF] Sending file with download name ''.
+2026-07-14 19:19:53.846 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 19:19:53.847 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 135.8642 ms
+2026-07-14 19:19:53.847 -04:00 [INF] After - Response status: 200, Start: 19:19:53.701, End: 19:19:53.847, Duration: 145.3814 ms
+2026-07-14 19:19:53.848 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1266 - 200 3730 application/json 149.1451ms
+2026-07-14 20:14:08.662 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1275 - null null
+2026-07-14 20:14:08.663 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 20:14:08.675 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:14:08.729 -04:00 [INF] Sending file with download name ''.
+2026-07-14 20:14:08.730 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:14:08.730 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 64.8502 ms
+2026-07-14 20:14:08.730 -04:00 [INF] After - Response status: 200, Start: 20:14:08.663, End: 20:14:08.730, Duration: 67.0981 ms
+2026-07-14 20:14:08.734 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1275 - 200 806 text/plain 71.9088ms
+2026-07-14 20:16:47.564 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=733 - null null
+2026-07-14 20:16:47.594 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 20:16:47.596 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:16:47.622 -04:00 [INF] Sending file with download name ''.
+2026-07-14 20:16:47.623 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:16:47.623 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 28.7992 ms
+2026-07-14 20:16:47.625 -04:00 [INF] After - Response status: 200, Start: 20:16:47.594, End: 20:16:47.624, Duration: 30.0976 ms
+2026-07-14 20:16:47.668 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=733 - 200 1290 application/json 63.076ms
+2026-07-14 20:18:37.718 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1200 - null null
+2026-07-14 20:18:37.820 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 20:18:37.822 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:18:37.854 -04:00 [INF] Sending file with download name ''.
+2026-07-14 20:18:37.856 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:18:37.856 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 35.6910 ms
+2026-07-14 20:18:37.856 -04:00 [INF] After - Response status: 200, Start: 20:18:37.820, End: 20:18:37.856, Duration: 36.0913 ms
+2026-07-14 20:18:37.857 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1200 - 200 748 application/json 139.6178ms
+2026-07-14 20:19:38.808 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=366 - null null
+2026-07-14 20:19:38.881 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 20:19:38.884 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:19:38.930 -04:00 [INF] Sending file with download name ''.
+2026-07-14 20:19:38.931 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:19:38.933 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 50.8320 ms
+2026-07-14 20:19:38.934 -04:00 [INF] After - Response status: 200, Start: 20:19:38.880, End: 20:19:38.934, Duration: 53.3211 ms
+2026-07-14 20:19:38.934 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=366 - 200 507 application/json 126.2772ms
+2026-07-14 20:27:42.916 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - null null
+2026-07-14 20:27:42.973 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 20:27:42.977 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:27:43.031 -04:00 [INF] Sending file with download name ''.
+2026-07-14 20:27:43.032 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 20:27:43.032 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 59.5172 ms
+2026-07-14 20:27:43.033 -04:00 [INF] After - Response status: 200, Start: 20:27:42.972, End: 20:27:43.033, Duration: 60.1202 ms
+2026-07-14 20:27:43.035 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - 200 3633 application/json 117.9952ms
+2026-07-14 21:22:09.736 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1277 - null null
+2026-07-14 21:22:09.807 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 21:22:09.815 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:22:09.859 -04:00 [INF] Sending file with download name ''.
+2026-07-14 21:22:09.861 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:22:09.862 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 52.5951 ms
+2026-07-14 21:22:09.862 -04:00 [INF] After - Response status: 200, Start: 21:22:09.806, End: 21:22:09.862, Duration: 55.2738 ms
+2026-07-14 21:22:09.862 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1277 - 200 4145 application/json 128.441ms
+2026-07-14 21:24:54.766 -04:00 [INF] Request starting HTTP/1.1 POST https://localhost:44344/api/saveWorkflow - application/json 4244
+2026-07-14 21:24:54.766 -04:00 [INF] Before - Handling request: POST /api/saveWorkflow
+2026-07-14 21:24:54.767 -04:00 [INF] Executing endpoint 'HTTP: POST /api/saveWorkflow'
+2026-07-14 21:24:54.799 -04:00 [INF] Setting HTTP status code 200.
+2026-07-14 21:24:54.799 -04:00 [INF] Writing value of type '<>f__AnonymousType44`3' as Json.
+2026-07-14 21:24:54.800 -04:00 [INF] Executed endpoint 'HTTP: POST /api/saveWorkflow'
+2026-07-14 21:24:54.801 -04:00 [INF] HTTP POST /api/saveWorkflow responded 200 in 34.0232 ms
+2026-07-14 21:24:54.801 -04:00 [INF] After - Response status: 200, Start: 21:24:54.766, End: 21:24:54.801, Duration: 34.2086 ms
+2026-07-14 21:24:54.801 -04:00 [INF] Request finished HTTP/1.1 POST https://localhost:44344/api/saveWorkflow - 200 null application/json; charset=utf-8 34.903ms
+2026-07-14 21:29:12.476 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getdocument?docId=106 - null null
+2026-07-14 21:29:12.563 -04:00 [INF] Before - Handling request: GET /api/getdocument
+2026-07-14 21:29:12.564 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:29:12.624 -04:00 [INF] Sending file with download name ''.
+2026-07-14 21:29:12.627 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:29:12.627 -04:00 [INF] HTTP GET /api/getdocument responded 200 in 64.1627 ms
+2026-07-14 21:29:12.628 -04:00 [INF] After - Response status: 200, Start: 21:29:12.563, End: 21:29:12.628, Duration: 64.5899 ms
+2026-07-14 21:29:12.629 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getdocument?docId=106 - 200 null text/html 153.4647ms
+2026-07-14 21:29:16.190 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getdocument?docId=1280 - null null
+2026-07-14 21:29:16.196 -04:00 [INF] Before - Handling request: GET /api/getdocument
+2026-07-14 21:29:16.197 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:29:16.204 -04:00 [INF] Sending file with download name ''.
+2026-07-14 21:29:16.205 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:29:16.205 -04:00 [INF] HTTP GET /api/getdocument responded 200 in 8.8798 ms
+2026-07-14 21:29:16.206 -04:00 [INF] After - Response status: 200, Start: 21:29:16.196, End: 21:29:16.206, Duration: 9.798 ms
+2026-07-14 21:29:16.207 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getdocument?docId=1280 - 200 3642 application/json 17.1325ms
+2026-07-14 21:29:55.049 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getdocument?docId=106 - null null
+2026-07-14 21:29:55.051 -04:00 [INF] Before - Handling request: GET /api/getdocument
+2026-07-14 21:29:55.052 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:29:55.059 -04:00 [INF] Sending file with download name ''.
+2026-07-14 21:29:55.060 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:29:55.060 -04:00 [INF] HTTP GET /api/getdocument responded 200 in 9.0439 ms
+2026-07-14 21:29:55.061 -04:00 [INF] After - Response status: 200, Start: 21:29:55.051, End: 21:29:55.061, Duration: 9.2896 ms
+2026-07-14 21:29:55.062 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getdocument?docId=106 - 200 null text/html 13.0416ms
+2026-07-14 21:30:02.513 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getdocument?docId=1280 - null null
+2026-07-14 21:30:02.520 -04:00 [INF] Before - Handling request: GET /api/getdocument
+2026-07-14 21:30:02.521 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:30:02.526 -04:00 [INF] Sending file with download name ''.
+2026-07-14 21:30:02.527 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:30:02.527 -04:00 [INF] HTTP GET /api/getdocument responded 200 in 6.5767 ms
+2026-07-14 21:30:02.527 -04:00 [INF] After - Response status: 200, Start: 21:30:02.520, End: 21:30:02.527, Duration: 7.2192 ms
+2026-07-14 21:30:02.527 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getdocument?docId=1280 - 200 3642 application/json 14.6343ms
+2026-07-14 21:39:24.912 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - null null
+2026-07-14 21:39:24.913 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 21:39:24.958 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:39:25.022 -04:00 [INF] Sending file with download name ''.
+2026-07-14 21:39:25.023 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:39:25.023 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 109.3953 ms
+2026-07-14 21:39:25.023 -04:00 [INF] After - Response status: 200, Start: 21:39:24.913, End: 21:39:25.023, Duration: 110.0146 ms
+2026-07-14 21:39:25.023 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=976 - 200 3642 application/json 111.4421ms
+2026-07-14 21:43:09.974 -04:00 [INF] Request starting HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1285 - null null
+2026-07-14 21:43:09.992 -04:00 [INF] Before - Handling request: GET /api/getDocument
+2026-07-14 21:43:09.992 -04:00 [INF] Executing endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:43:10.008 -04:00 [INF] Sending file with download name ''.
+2026-07-14 21:43:10.009 -04:00 [INF] Executed endpoint 'HTTP: GET /api/getDocument'
+2026-07-14 21:43:10.009 -04:00 [INF] HTTP GET /api/getDocument responded 200 in 17.6132 ms
+2026-07-14 21:43:10.009 -04:00 [INF] After - Response status: 200, Start: 21:43:09.992, End: 21:43:10.009, Duration: 17.8502 ms
+2026-07-14 21:43:10.011 -04:00 [INF] Request finished HTTP/1.1 GET https://localhost:44344/api/getDocument?docId=1285 - 200 825 text/plain 37.289ms

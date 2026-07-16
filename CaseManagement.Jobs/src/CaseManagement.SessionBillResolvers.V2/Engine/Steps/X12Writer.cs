@@ -17,6 +17,9 @@ public class X12Writer : IX12Writer
     private const string InterchangeControlNumber = "000000001";
     private const string GroupControlNumber = "1";
     private const string TransactionControlNumber = "0001";
+    private const string ProviderTaxonomyCodeListQualifier = "PXC";
+    private const string ClmFacilityCodeQualifier = "B";
+    private const string ClmFrequencyCodeOriginal = "1"; // Medicare CG: CLM05-3 must equal "1" (ORIGINAL)
 
     public string Build(string payload)
     {
@@ -55,6 +58,7 @@ public class X12Writer : IX12Writer
         WriteHL(Write, GetObject(loops, "2000A"));
 
         var loop2010AA = GetObject(loops, "2010AA");
+        WritePrv(Write, loop2010AA, "BI"); // Billing Provider Specialty — belongs to 2000A, precedes NM1
         WriteNM1(Write, loop2010AA, "NM1");
         WriteN3(Write, loop2010AA);
         WriteN4(Write, loop2010AA);
@@ -74,7 +78,9 @@ public class X12Writer : IX12Writer
         WriteHi(Write, GetObject(loop2300, "HI"));
         WriteRef(Write, GetObject(loop2300, "REF_G1"), "G1");
 
-        WriteNM1(Write, GetObject(loops, "2310B"), "NM1");
+        var loop2310B = GetObject(loops, "2310B");
+        WriteNM1(Write, loop2310B, "NM1");
+        WritePrv(Write, loop2310B, "PE"); // Rendering Provider Specialty — follows NM1 in 2310B
 
         foreach (var line in EnumerateArray(GetProperty(loops, "2400")))
         {
@@ -151,11 +157,25 @@ public class X12Writer : IX12Writer
         write("DMG", ["D8", GetString(dmg, "DMG02"), GetString(dmg, "DMG03")]);
     }
 
+    private static void WritePrv(Action<string, string[]> write, JsonElement loop, string entityTypeQualifier)
+    {
+        var prv = GetObject(loop, "PRV");
+        if (prv.ValueKind != JsonValueKind.Object) return;
+        var taxonomy = GetString(prv, "PRV03");
+        if (taxonomy.Length == 0) return;
+        write("PRV", [entityTypeQualifier, ProviderTaxonomyCodeListQualifier, taxonomy]);
+    }
+
     private static void WriteClm(Action<string, string[]> write, JsonElement clm)
     {
         if (clm.ValueKind != JsonValueKind.Object) return;
+        var placeOfService = GetString(clm, "CLM05_1");
+        var clm05 = placeOfService.Length > 0
+            ? $"{placeOfService}{CompositeSeparator}{ClmFacilityCodeQualifier}{CompositeSeparator}{ClmFrequencyCodeOriginal}"
+            : "";
+
         write("CLM", [
-            GetString(clm, "CLM01"), GetMoney(clm, "CLM02"), "", "", GetString(clm, "CLM05_1")
+            GetString(clm, "CLM01"), GetMoney(clm, "CLM02"), "", "", clm05
         ]);
     }
 

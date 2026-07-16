@@ -19,6 +19,8 @@ dotnet run -- --expression '892 (P) 779' --case-id 9
 boxes to html
 dotnet run -- --expression '889 (P) 779 (X)' --case-id 9
 > dotnet run -- --expression '968 (X)'
+1220
+> dotnet run -- --expression '1220 (X)'
 
 -- loops the sessions
  "cliExample": "--expression 'claimDocId (Q) ruleDocId' --case-id 9"

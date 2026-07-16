@@ -1,0 +1,2304 @@
+               Centers for Medicare & Medicaid Services (CMS)
+
+               Standard Companion Guide
+        Health Care Claim Professional (837P)
+
+Based on ASC X12N TR3, Version 005010X222A1
+
+                      Companion Guide Version Number: 9.0,
+                                         March 2026
+CMS 837P Version 005010X222A1 Companion Guide
+
+Disclosure Statement
+
+The Centers for Medicare & Medicaid Services (CMS) is committed to maintaining the integrity and security of
+health care data in accordance with applicable laws and regulations. Disclosure of Medicare claims is
+restricted under the provisions of the Privacy Act of 1974 and Health Insurance Portability and Accountability
+Act of 1996. This Companion Guide is to be used for conducting Medicare business only.
+
+© 2022 Copyright, CGS Administrators, LLC.  ii
+CMS 837P Version 005010X222A1 Companion Guide
+
+Preface
+
+This Companion Guide (CG) to the ASC X12N Technical Report Type 3 (TR3) Version 005010 and associated
+errata adopted under Health Insurance Portability and Accountability Act of 1996 (HIPAA) clarifies and
+specifies the data content when exchanging transactions electronically with Medicare. Transmissions based on
+this CG, used in tandem with the TR3, are compliant with both ASC X12N syntax and those guides. This CG is
+intended to convey information that is within the framework of the TR3 adopted for use under HIPAA. This CG
+is not intended to convey information that in any way exceeds the requirements or usages of data expressed
+in the TR3.
+
+This CG contains instructions for electronic communications with the publishing entity, as well as
+supplemental information, for creating transactions while ensuring compliance with the associated ASC X12N
+TR3s and the Council for Affordable Quality Healthcare ­ Committee on Operating Rules for Information
+Exchange (CAQH CORE) companion guide operating rules.
+
+In addition, this CG contains the information needed by Trading Partners to send and receive electronic data
+with the publishing entity, who is acting on behalf of CMS, including detailed instructions for submission of
+specific electronic transactions. The instructional content is limited by ASC X12N's copyrights and Fair Use
+statement.
+
+© 2022 Copyright, CGS Administrators, LLC.  iii
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table of Contents
+
+Disclosure Statement............................................................................................................................................ii
+Preface ................................................................................................................................................................. iii
+1 Introduction ..................................................................................................................................................1
+
+     1.1 Scope .......................................................................................................................................................1
+     1.2 Overview .................................................................................................................................................2
+     1.3 References...............................................................................................................................................2
+     1.4 Additional Information ............................................................................................................................3
+2 Getting Started..............................................................................................................................................3
+     2.1 Working Together....................................................................................................................................3
+     2.2 Trading Partner Registration....................................................................................................................4
+     2.3 Trading Partner Certification and Testing Process ...................................................................................6
+3 Testing and Certification Requirements........................................................................................................6
+     3.1 Testing Requirements..............................................................................................................................6
+     3.2 Certification Requirements......................................................................................................................7
+4 Connectivity / Communications ....................................................................................................................7
+     4.1 Process Flows ..........................................................................................................................................7
+     4.2 Transmission............................................................................................................................................8
+
+          4.2.1 Re-transmission Procedures ...........................................................................................................9
+     4.3 Communication Protocol Specifications ..................................................................................................9
+     4.4 Security Protocols and Passwords ...........................................................................................................9
+5 Contact Information....................................................................................................................................10
+     5.1 EDI Customer Service.............................................................................................................................10
+     5.2 EDI Technical Assistance ........................................................................................................................11
+     5.3 Trading Partner Service Number ...........................................................................................................11
+     5.4 Applicable Websites / Email ..................................................................................................................11
+
+© 2022 Copyright, CGS Administrators, LLC.     iv
+CMS 837P Version 005010X222A1 Companion Guide
+
+6 Control Segments / Envelopes ....................................................................................................................11
+
+     6.1 ISA-IEA ...................................................................................................................................................13
+          Delimiters ­ Inbound Transactions ........................................................................................................13
+          Delimiters ­ Outbound Transactions .....................................................................................................13
+          Inbound Data Element Detail and Explanation ......................................................................................14
+
+     6.2 GS-GE.....................................................................................................................................................14
+
+     6.3 ST-SE ......................................................................................................................................................14
+7 Specific Business Rules................................................................................................................................14
+
+     7.1 General Notes........................................................................................................................................14
+
+     7.2 General Transaction Notes ....................................................................................................................17
+8 Acknowledgments and Reports ..................................................................................................................17
+
+     8.1 Report Inventory ...................................................................................................................................17
+9 Trading Partner Agreement ........................................................................................................................18
+10 Transaction-Specific Information ................................................................................................................18
+
+     10.1 Header .................................................................................................................................................18
+          10.1.1 Header and Information Source..................................................................................................18
+          10.1.2 Loop 1000A Submitter Name......................................................................................................19
+          10.1.3 Loop 1000B Receiver Name ........................................................................................................19
+
+     10.2 Billing Provider.....................................................................................................................................20
+          10.2.1 Loop 2000A Billing Provider Detail..............................................................................................20
+          10.2.2 Loop 2010AA Billing Provider Name ...........................................................................................20
+
+     10.3 Subscriber Detail..................................................................................................................................21
+          10.3.1 Loop 2000B Subscriber Hierarchical Level ..................................................................................21
+          10.3.2 Loop 2010BA Subscriber Name...................................................................................................22
+          10.3.3 Loop 2010BB Payer Name...........................................................................................................23
+
+     10.4 Patient Detail .......................................................................................................................................23
+          10.4.1 Loop 2300 Claim Information .....................................................................................................24
+          10.4.2 Loop 2310A Referring Provider Name ........................................................................................27
+          10.4.3 Loop 2310B Rendering Provider Name .......................................................................................27
+          10.4.4 Loop 2310C Service Facility Location ..........................................................................................27
+          10.4.5 Loop 2310D Supervising Provider Name.....................................................................................27
+          10.4.6 Loop 2320 Other Subscriber Information ...................................................................................28
+          10.4.7 Loop 2330A Other Subscriber Name...........................................................................................29
+          10.4.8 Loop 2330B Other Payer Name ..................................................................................................29
+
+© 2022 Copyright, CGS Administrators, LLC.  v
+CMS 837P Version 005010X222A1 Companion Guide
+
+          10.4.9 Loop 2400 Service Line Number .................................................................................................30
+          10.4.10 Loop 2410 Drug Identification ..................................................................................................36
+          10.4.11 Loop 2420A Rendering Provider Name.....................................................................................38
+          10.4.12 Loop 2420C Service Facility Location ........................................................................................38
+          10.4.13 Loop 2420D Supervising Provider Name...................................................................................38
+          10.4.14 Loop 2420E Ordering Provider Name .......................................................................................38
+          10.4.15 Loop 2420F Referring Provider Name.......................................................................................39
+          10.4.16 Loop 2430 Line Adjudication Information.................................................................................39
+          10.4.17 Loop 2440 Form Identification Code.........................................................................................40
+          10.4.18 Transaction Set Trailer ..............................................................................................................44
+11 Appendices .................................................................................................................................................44
+
+     11.1 Implementation Checklist....................................................................................................................44
+
+     11.2 Transmission Examples........................................................................................................................44
+
+     11.3 Frequently Asked Questions ................................................................................................................45
+
+     11.4 Acronym Listing ...................................................................................................................................45
+
+     11.5 Change Summary.................................................................................................................................47
+
+© 2022 Copyright, CGS Administrators, LLC.  vi
+CMS 837P Version 005010X222A1 Companion Guide
+
+List of Tables
+
+Table 1. EDI Transactions and Code Set References .............................................................................................2
+Table 2. Additional EDI Resources.........................................................................................................................3
+Table 3. ISA Interchange Control Header ............................................................................................................11
+Table 4. GS Functional Group Header .................................................................................................................12
+Table 5. Outbound Transaction Delimiters .........................................................................................................13
+Table 6. Segment / Elements Not Accepted by Medicare...................................................................................14
+Table 7. ST Transaction Set Header.....................................................................................................................18
+Table 8. BHT Beginning of Hierarchical Transaction............................................................................................19
+Table 9. Loop 1000A NM1 Submitter Name .......................................................................................................19
+Table 10. Loop 1000B NM1 Receiver Name........................................................................................................20
+Table 11. Loop 2000A Billing Provider Detail ......................................................................................................20
+Table 12. Loop 2010AA NM1 Billing Provider Name ...........................................................................................21
+Table 13. Loop 2000B HL Subscriber Hierarchical Level ......................................................................................21
+Table 14. Loop 2000B SBR Subscriber Information .............................................................................................21
+Table 15. Loop 2000B PAT Patient Information ..................................................................................................22
+Table 16. Loop 2010BA NM1 Subscriber Name ..................................................................................................22
+Table 17. Loop 2010BA DMG Subscriber Demographic Information ..................................................................23
+Table 18. Loop 2010BB NM1 Payer Name ..........................................................................................................23
+Table 19. Loop 2300 CLM Claim Information ......................................................................................................24
+Table 20. Loop 2300 DTP Date Elements ............................................................................................................25
+Table 21. Loop 2300 DTP Admission Date...........................................................................................................25
+Table 22. Loop 2300 PWK Claim Supplement Information .................................................................................26
+Table 23. Loop 2300 CR1 Ambulance Transport Information .............................................................................26
+Table 24. Loop 2300 HI Health Care Diagnosis Code...........................................................................................26
+Table 25. Loop 2310A NM1 Referring Provider Name ........................................................................................27
+Table 26. Loop 2310B NM1 Rendering Provider Name.......................................................................................27
+Table 27. Loop 2310C N4 Service Facility Location .............................................................................................27
+Table 28. Loop 2310D NM1 Supervising Provider Name.....................................................................................28
+Table 29. Loop 2320 SBR Other Subscriber Information .....................................................................................28
+Table 30. Loop 2320 CAS Claim Level Adjustments.............................................................................................28
+Table 31. Loop 2320 AMT COB Payer Paid Amount ............................................................................................29
+Table 32. Loop 2330A NM1 Other Subscriber Name ..........................................................................................29
+Table 33. Loop 2330A REF Other Subscriber Secondary Identification ...............................................................29
+Table 34. Loop 2330B DTP Claim Check or Remittance Date ..............................................................................30
+Table 35. Loop 2400 SV1 Professional Service ....................................................................................................30
+Table 36. Loop 2400 PWK DME Certificate of Medical Necessity Indicator ........................................................32
+Table 37. Loop 2400 CR1 Ambulance Transport Information .............................................................................32
+Table 38. Loop 2400 CR3 Durable Medical Equipment Certification...................................................................32
+Table 39. Loop 2400 CRC Condition Indicator/ Durable Medical Equipment......................................................33
+Table 40. Loop 2400 DTP Service Date................................................................................................................34
+Table 41. Loop 2400 QTY Ambulance Patient Count...........................................................................................36
+
+© 2022 Copyright, CGS Administrators, LLC.  vii
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 42. Loop 2400 QTY Obstetric Anesthesia Additional Units ........................................................................36
+Table 43. Loop 2400 MEA Test Results ...............................................................................................................36
+Table 44. Loop 2410 LIN Drug Identification.......................................................................................................37
+Table 45. Loop 2410 CTP Drug Quantity .............................................................................................................37
+Table 46. Loop 2410 CTP Prescription or Compound Drug Association Number ................................................37
+Table 47. Loop 2420A NM1 Rendering Provider Name.......................................................................................38
+Table 48. Loop 2420C N4 Service Facility Location .............................................................................................38
+Table 49. Loop 2420D NM1 Supervising Provider Name.....................................................................................38
+Table 50. Loop 2420E NM1 Ordering Provider Name .........................................................................................39
+Table 51. Loop 2420F NM1 Referring Provider Name.........................................................................................39
+Table 52. Loop 2430 SVD Line Adjudication Information....................................................................................39
+Table 53. Loop 2430 DTP Line Check or Remittance Date...................................................................................40
+Table 54. Loop 2440 LQ Form Identification Code ..............................................................................................40
+Table 55. Loop 2440 FRM Supporting Documentation .......................................................................................41
+Table 56. SE Transaction Set Trailer ....................................................................................................................44
+Table 57. Acronyms Listing and Definitions ........................................................................................................45
+Table 58. Companion Guide Version History ......................................................................................................47
+
+© 2022 Copyright, CGS Administrators, LLC.  viii
+CMS 837P Version 005010X222A1 Companion Guide
+
+List of Figures
+
+Figure 1. GPNet V5010 Test 837 Claims Transaction Flow ....................................................................................7
+Figure 2. GPNet V5010 837 Claims Transaction Flow............................................................................................8
+Figure 3. Example of 837P Control Segments and Envelopes .............................................................................44
+
+© 2022 Copyright, CGS Administrators, LLC.  ix
+CMS 837P Version 005010X222A1 Companion Guide
+
+1 Introduction
+
+This document is intended to provide information from the author of this guide to Trading Partners to give
+them the information they need to exchange Electronic Data Interchange (EDI) data with the author. This
+includes information about registration, testing, support, and specific information about control record setup.
+
+An EDI Trading Partner is defined as any Medicare customer (e.g., provider/supplier, billing service,
+clearinghouse, or software vendor) that transmits to, or receives electronic data from Medicare. Medicare's
+EDI transaction system supports transactions adopted under the Health Insurance Portability and
+Accountability Act of 1996 (HIPAA) as well as additional supporting transactions as described in this guide.
+
+Medicare Fee-For-Service (FFS) is publishing this Companion Guide (CG) to clarify, supplement, and further
+define specific data content requirements to be used in conjunction with, and not in place of, the ASC X12N
+Technical Report Type 3 (TR3) Version 005010 and associated errata mandated by HIPAA and/or adopted by
+Medicare FFS for EDI.
+
+This CG provides communication, connectivity, and transaction-specific information to Medicare FFS Trading
+Partners and serves as the authoritative source for Medicare FFS-specific EDI protocols.
+
+Additional information on Medicare FFS EDI practices are referenced within Internet-only Manual (IOM) Pub.
+100-04 Medicare Claims Processing Manual:
+
+    · Chapter 24 ­ General EDI and EDI Support, Requirements, Electronic Claims, and Mandatory Electronic
+         Filing of Medicare Claims (https://www.cms.gov/Regulations-and-
+         Guidance/Guidance/Manuals/downloads/clm104c24.pdf)
+
+1.1 Scope
+
+EDI addresses how Trading Partners exchange professional and institutional claims, claim acknowledgments,
+claim remittance advice, claim status inquiry and responses, and eligibility inquiry and responses electronically
+with Medicare. This CG also applies to ASC X12N 837P transactions that are being exchanged with Medicare by
+third parties, such as clearinghouses, billing services or network service vendors.
+
+This CG provides technical and connectivity specification for the 837 Health Care Claim: Professional
+transaction Version 005010A1.
+
+© 2022 Copyright, CGS Administrators, LLC.  1
+CMS 837P Version 005010X222A1 Companion Guide
+
+1.2 Overview
+
+This CG includes information needed to commence and maintain communication exchange with Medicare. In
+addition, this CG has been written to assist you in designing and implementing the ASC X12N 837P transaction
+standard to meet Medicare's processing standards. This information is organized in the sections listed below:
+
+    · Getting Started: This section includes information related to hours of operation, and data services.
+         Information concerning Trading Partner registration and the Trading Partner testing process is also
+         included in this section.
+
+    · Testing and Certification Requirements: This section includes detailed transaction testing information
+         as well as certification requirements needed to complete transaction testing with Medicare.
+
+    · Connectivity/Communications: This section includes information on Medicare's transmission
+         procedures as well as communication and security protocols.
+
+    · Contact Information: This section includes EDI customer service, EDI technical assistance, Trading
+         Partner services and applicable websites.
+
+    · Control Segments/Envelopes: This section contains information needed to create the Interchange
+         Control Header/Trailer (ISA/IEA), Functional Group Header/Trailer (GS/GE), and Transaction Set
+         Header/Trailer (ST/SE) control segments for transactions to be submitted to or received from
+         Medicare.
+
+    · Specific Business Rules and Limitations: This section contains Medicare business rules and limitations
+         specific to the ASC X12N 837P.
+
+    · Acknowledgments and Reports: This section contains information on all transaction acknowledgments
+         sent by Medicare and report inventory.
+
+    · Trading Partner Agreement: This section contains information related to implementation checklists,
+         transmission examples, Trading Partner Agreements and other resources.
+
+    · Transaction Specific Information: This section describes the specific CMS requirements over and above
+         the information in the ASC X12N 837P TR3.
+
+1.3 References
+
+The following locations provide information for where to obtain documentation for Medicare-adopted EDI
+transactions and code sets.
+
+Table 1. EDI Transactions and Code Set References  Location
+ Resource                                          The official ASC X12 website
+ ASC X12N TR3s
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              2
+CMS 837P Version 005010X222A1 Companion Guide
+
+Resource                                             Location
+Washington Publishing Company Health Care Code Sets
+                                                     The official Washington Publishing Company
+                                                     website
+
+1.4 Additional Information
+
+Visit the CGS EDI Web page (http://www.cgsmedicare.com/partb/edi/index.html) for additional information.
+
+The websites in the following table provide additional resources for HIPAA Version 005010A1 implementation:
+
+Table 2. Additional EDI Resources                    Web Address
+ Resource                                            https://www.cms.gov/ElectronicBillingEDITrans/
+ Medicare FFS EDI Operations
+
+2 Getting Started
+
+2.1 Working Together
+
+CGS Administrators, LLC (CGS) is dedicated to providing communication channels to ensure communication
+remains constant and efficient. CGS has several options to assist the community with their electronic data
+exchange needs. By using any of these methods CGS is focused on supplying the Trading
+Partner community with a variety of support tools.
+
+An EDI help desk is established for the first point of contact for basic information and troubleshooting. The
+help desk is available to support most EDI questions/incidents while at the same time being structured to
+triage each incident if more advanced research is needed. Email is also accessible as a method of
+communicating with CGS EDI. The email account is monitored by knowledgeable staff ready to assist you.
+When communicating via email, please exclude any protected health information (PHI) to ensure security is
+maintained. In addition to the CGS EDI help desk and email access, see Section 5 for additional contact
+information.
+
+CGS also has several external communication components in place to reach out to the Trading Partner
+community. CGS posts all critical updates, system issues and EDI-specific billing material to their website
+(https://www.cgsmedicare.com/). All Trading Partners are encouraged to visit this page to ensure familiarity
+with the content of the site. CGS also distributes EDI pertinent information in the form of an EDI newsletter or
+comparable publication, which is posted to the website every three months. In addition to the website, a
+distribution list (https://www.cgsmedicare.com/medicare_dynamic/ls/001.asp) has been established in order
+to broadcast urgent messages.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                                3
+CMS 837P Version 005010X222A1 Companion Guide
+
+Specific information about the above-mentioned items can be found in the following sections.
+
+2.2 Trading Partner Registration
+
+An EDI Trading Partner is any entity (provider, billing service, clearinghouse, software vendor, employer group,
+financial institution, etc.) that transmits electronic data to, or receives electronic data from, another entity.
+
+Medicare FFS and CGS support many different types of Trading Partners or customers for EDI. To ensure
+proper registration, it is important to understand the terminology associated with each customer type:
+
+    · Submitter ­ the entity that owns the submitter ID associated with the health care data being
+         submitted. It is most likely the provider, hospital, clinic, supplier, etc., but could also be a third party
+         submitting on behalf of one of these entities. However, a submitter must be directly linked to each
+         billing National Provider Identifier (NPI). Often the terms submitter and Trading Partner are used
+         interchangeably because a Trading Partner is defined as the entity engaged in the exchange or
+         transmission of electronic transactions. Thus, the entity that is submitting electronic administrative
+         transactions to CGS is a Medicare FFS Trading Partner.
+
+    · Vendor ­ an entity that provides hardware, software, and/or ongoing technical support for covered
+         entities. In EDI, a vendor can be classified as a software vendor, billing or network service vendor, or
+         clearinghouse.
+
+    · Software Vendor ­ an entity that creates software used by Trading Partners to conduct the exchange of
+         electronic transactions with Medicare FFS.
+
+    · Billing Service ­ a third party that prepares and/or submits claims for a provider.
+
+    · Clearinghouse ­ a third party that submits and/or exchanges electronic transactions (claims, claim
+         status or eligibility inquiries, remittance advice, etc.) on behalf of a provider.
+
+    · Network Service Vendor ­ a third party that provides connectivity between a Trading Partner and CGS.
+
+Medicare requires all trading partners to complete EDI registration and sign an EDI Enrollment form
+(http://www.cgsmedicare.com/partb/edi/enrollment.html). The EDI enrollment form designates the Medicare
+contractor as the entity they agree to engage in for EDI and ensures agreement between parties to implement
+standard policies and practices to ensure the security and integrity of information exchanged.
+
+Entities processing paper do not need to complete an EDI registration.
+
+Under HIPAA, EDI applies to all covered entities transmitting the following HIPAA-established administrative
+transactions: 837I and 837P, 835, 270/271, 276/277, and the National Council for Prescription Drug Programs
+(NCPDP) D.0. Additionally, Medicare Administrative Contractors (MACs) and Common Electronic Data
+Interchange (CEDI) will use the Interchange Acknowledgment (TA1), Implementation Acknowledgment (999),
+and 277 Claim Acknowledgement (277CA) error-handling transactions.
+
+© 2022 Copyright, CGS Administrators, LLC.  4
+CMS 837P Version 005010X222A1 Companion Guide
+
+Medicare requires that CGS furnish information on EDI to new Trading Partners that request Medicare claim
+privileges. Additionally, Medicare requires CGS to assess the capability of entities to submit data electronically,
+establish their qualifications (see test requirements in Section 3), and enroll and assign submitter EDI
+identification numbers to those approved to use EDI.
+
+A provider must obtain an NPI and furnish that NPI to CGS prior to completion of an initial EDI Enrollment
+Agreement and issuance of an initial EDI number and password by that contractor. CGS is required to verify
+that NPI is on the Provider Enrollment Chain and Ownership System (PECOS). If the NPI is not verified on the
+PECOS, the EDI Enrollment Agreement is denied, and the provider is encouraged to contact CGS provider
+enrollment department (for Medicare Part A and Part B provider) or the National Supplier Clearinghouse (for
+Durable Medical Equipment suppliers) to resolve the issue. Once the NPI is properly verified, the provider can
+reapply the EDI Enrollment Agreement.
+
+A Trading Partner's EDI number and password serve as an electronic signature and the Trading Partner would
+be liable for any improper usage or illegal action performed with it. A Trading Partner's EDI access number and
+password are not part of the capital property of the Trading Partner's operation and may not be given to a
+new owner of the Trading Partner's operation. A new owner must obtain their own EDI access number and
+password.
+
+If providers elect to submit/receive transactions electronically using a third party such as a billing agent, a
+clearinghouse, or network services vendor, then the provider is required to have an agreement signed by that
+third party. The third party must agree to meet the same Medicare security and privacy requirements that
+apply to the provider in regard to viewing or using Medicare beneficiary data. These agreements are not to be
+submitted to Medicare but are to be retained by the provider. Providers will notify CGS which third party
+agents they will be using on their EDI Enrollment form.
+
+Third parties are required to register with CGS by completing the third-party agreement form
+(https://www.cgsmedicare.com/partb/edi/enrollment.html). This will ensure that their connectivity is
+completed properly, however they may need to enroll in mailing lists separately in order to receive all
+publications and email notifications.
+
+Trading Partners must also be informed that they are not permitted to share their personal EDI access number
+and password with any billing agent, clearinghouse, or network service vendor. Trading Partners must also not
+share their personal EDI access number with anyone on their own staff who does not need to see the data for
+completion of a valid electronic claim, to process a remittance advice for a claim, to verify beneficiary
+eligibility, or to determine the status of a claim. No other non-staff individuals or entities may be permitted to
+use a Trading Partner's EDI number and password to access Medicare systems. Clearinghouse and other third-
+party representatives must obtain and use their own unique EDI access number and password from CGS. For a
+complete reference to security requirements, see Section 4.4.
+
+© 2022 Copyright, CGS Administrators, LLC.  5
+CMS 837P Version 005010X222A1 Companion Guide
+
+2.3 Trading Partner Certification and Testing Process
+
+To sign up complete the J15 Communications and the enrollment form
+(https://www.cgsmedicare.com/partb/edi/enrollment.html).
+
+What to expect throughout the process. Once CGS provides the submitter ID to a Trading Partner, a test file
+should be submitted to CGS containing at least 25 claims with a T in the ISA15 field.
+
+Once the test file is submitted, verify the file received an accepted 999 and 277CA. Once an error free 277CA
+populates, the EDI helpdesk should be contacted to move the submitter ID into production.
+
+3 Testing and Certification Requirements
+
+3.1 Testing Requirements
+
+All submitters must produce accurate electronic test files before being allowed to submit claim transactions in
+production. Test claims are subject to ASC X12N standard syntax and TR3 semantic data edits. Documentation
+will be provided when this process detects errors.
+
+    · Standard syntax testing validates the programming of the incoming file and includes file layout, record
+         sequencing, balancing, alpha-numeric/numeric/date file conventions, field values, and relational edits.
+         Test files must pass 100 percent of the standard syntax tests before submission to production is
+         approved.
+
+    · TR3 Semantic Data testing validates data required for claims processing, e.g., procedure/ diagnosis
+         codes, modifiers. A submitter must demonstrate, at a minimum, 95 percent accuracy rate in data
+         testing before submission in production is approved where, in the judgment of CGS, the
+         vendor/submitter will make the necessary correction(s) prior to submitting a production file. For
+         MACs, the minimum 95 percent accuracy rate includes the front-end edits applied implementation
+         guide editing module (https://www.cgsmedicare.com/partb/edi/index.html)
+
+             o Test results will be provided to the submitter within three business days; during HIPAA version
+                  transitions this time period may be extended, not to exceed ten business days.
+
+Many submitters use the same software, or the same clearinghouse to submit their electronic transactions to
+Medicare. Vendors may elect to have a Trading Partner test their software for approval and eliminate every
+user testing.
+
+Trading Partners who submit transactions directly to more than one A/B MAC, and/or CEDI must contact each
+A/B MAC and/or CEDI with whom they exchange EDI transactions to inquire about the need for supplemental
+testing whenever they plan to begin to use an additional EDI transaction, different or significantly modified
+software for submission of a previously used EDI transaction, or before a billing agent or clearinghouse begins
+to submit transactions on behalf of an additional Trading Partner. The individual A/B MAC and/or CEDI may
+
+© 2022 Copyright, CGS Administrators, LLC.                                                                     6
+CMS 837P Version 005010X222A1 Companion Guide
+
+need to retest at that time to re-establish compatibility and accuracy, particularly if there will also be a change
+in the telecommunication connection to be used.
+
+Billing services and clearinghouses are not permitted to begin to submit or receive EDI transactions on behalf
+of a provider prior to submission of written authorization by the provider that the billing agent or
+clearinghouse has been authorized to handle those transactions on the provider's behalf. See Section 2.2 for
+further information on EDI enrollment.
+
+3.2 Certification Requirements
+
+Medicare FFS does not certify Trading Partners. However, CGS does certify vendors, clearinghouses, and billing
+services by conducting testing with them and maintaining an approved vendor list
+(https://www.cgsmedicare.com/partb/edi/nsv_list.html).
+
+4 Connectivity / Communications
+
+4.1 Process Flows
+
+The following diagram illustrates how ANSI ASC X12 electronic transactions flow into and out of GPNet,
+CGS/Palmetto GBA's EDI Gateway.
+
+Figure 1. GPNet V5010 Test 837 Claims Transaction Flow
+
+© 2022 Copyright, CGS Administrators, LLC.  7
+CMS 837P Version 005010X222A1 Companion Guide
+
+Figure 2. GPNet V5010 837 Claims Transaction Flow
+
+4.2 Transmission
+
+For additional information, reference the following websites:
+    · GPNet Communications Manual (https://www.cgsmedicare.com/partb/edi/index.html)
+    · Connectivity Specification section (http://www.cgsmedicare.com/pdf/gpnet_comm_manual.pdf)
+
+© 2022 Copyright, CGS Administrators, LLC.                                                       8
+CMS 837P Version 005010X222A1 Companion Guide
+
+4.2.1 Re-transmission Procedures
+
+CGS does not require any identification of a previous transmission of a claim. All claims should be marked as
+original.
+
+4.3 Communication Protocol Specifications
+
+Please see the GPNet Communications Manual posted under the EDI User Guides webpage
+(https://www.cgsmedicare.com/partb/edi/index.html)
+
+Note: Internet connectivity is only available using our CAQH CORE connectivity method for the following
+transactions:
+
+    · 276: ASC X12 Health Care Claim Status Request
+    · 277: ASC X12 Health Care Information Status Notification
+    · 835: ASC X12 Health Care Claim Payment/ Advice
+    · 999: ASC X12 Implementation Acknowledgment For Health Care Insurance Under the internet portal
+
+         demonstration, for select transaction and with prior CMS approval
+
+4.4 Security Protocols and Passwords
+
+All Trading Partners must adhere to CMS information security policies; including, but not limited to, the
+transmission of electronic claims, claim status, receipt of the remittance advice, or any system access to obtain
+beneficiary PHI and/or eligibility information. Violation of this policy will result in revocation of all methods of
+system access. CGS is responsible for notifying all affected Trading Partners as well as reporting the system
+revocation to CMS.
+
+Password guidelines are provided with receipt of initial passwords from CGS. Please contact the EDI helpdesk
+for assistance with passwords and resets.
+
+CMS' information security policy strictly prohibits the sharing or loaning of Medicare assigned IDs and
+passwords. Users should take appropriate measures to prevent unauthorized disclosure or modification of
+assigned IDs and passwords. The Trading Partner should protect password privacy by limiting knowledge of
+the password to key personnel. The password should be changed when there are any personnel changes.
+
+The submitter ID and Password are required to transmit files to CGS. Please see our GPNet communications
+manual posted under the EDI User Guides webpage (https://www.cgsmedicare.com/partb/edi/index.html)
+
+© 2022 Copyright, CGS Administrators, LLC.  9
+CMS 837P Version 005010X222A1 Companion Guide
+
+5 Contact Information
+
+5.1 EDI Customer Service
+
+For EDI Customer Service information, please visit the contact us area on our website
+(https://www.cgsmedicare.com)
+
+J15- Part B Correspondence
+CGS
+PO box 20018
+Nashville, TN 37202
+
+EDI Helpdesk Numbers
+    · CGS Part A ­ 1-866-590-6703 Option 2
+    · CGS Part B ­ 1-866-276-9558 Option 2
+    · CGS HHH ­ 1-866-299-4500 Option 2
+
+EDI Fax Numbers
+    · Ohio Part A ­ 1-615-664-5945
+    · Kentucky Part A ­ 1-615-664-5943
+    · Ohio Part B ­ 1-615-664-5927
+    · Kentucky Part B ­ 1-615-664-5917
+    · Home Health & Hospice ­ 1-615-664-5947
+
+Hours of Operation and Holiday Schedule
+
+Monday ­ Friday 8:00 a.m. to 5:00 p.m. Eastern Time.
+
+CGS Holiday Schedule
+    · New Year's Day
+    · Martin Luther King, Jr.'s Birthday
+    · Memorial Day
+    · Independence Day
+    · Labor Day
+    · Thanksgiving Day
+
+© 2022 Copyright, CGS Administrators, LLC.                                             10
+CMS 837P Version 005010X222A1 Companion Guide
+
+    · Day after Thanksgiving
+    · Christmas Eve
+    · Christmas Day
+
+5.2 EDI Technical Assistance
+
+See section 5.1 for Technical Assistance Information
+
+5.3 Trading Partner Service Number
+
+See section 5.1 for Technical Assistance Information
+
+5.4 Applicable Websites / Email
+
+CGS Medicare Part B Online Help (https://www.cgsmedicare.com/partb/cs/online_help.html)
+CGS Home Health & Hospice Online Help (https://www.cgsmedicare.com/hhh/cs/onlinehelphhh.html)
+CGS Medicare Part A Online Help (https://www.cgsmedicare.com/parta/cs/online_help.html)
+CGS Medicare Website (http://www.cgsmedicare.com)
+
+6 Control Segments / Envelopes
+
+Enveloping information must be as follows:
+
+Note: A hyphen in the table below means N/A.
+
+Table 3. ISA Interchange Control Header
+
+Page #  Element Name                          Codes/Content Notes/Comments
+C.4
+        ISA01  Authorization                  00  Medicare expects the value to be 00.
+C.4            Information Qualifier
+
+C.4     ISA02  Authorization                  -   ISA02 shall contain 10 blank spaces.
+               Information
+
+        ISA03  Security Information           00  Medicare expects the value to be 00 and
+               Qualifier
+                                                  ISA04 shall contain 2 blank spaces.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                     11
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page #  Element Name                           Codes/Content  Notes/Comments
+C.4     ISA04 Security Information             -
+C.4                                                           Medicare does not use Security
+C.4     ISA05  Interchange ID                  27, ZZ         Information and will ignore content sent
+C.5     ISA06  Qualifier                                      in ISA04.
+C.5
+               Interchange Sender ID                          Must be "27" or "ZZ"
+C.5
+C.6     ISA07  Interchange ID                  -              CGS assigned Submitter ID. This is also
+        ISA08  Qualifier                       27, ZZ         required in the GS02.
+
+               Interchange Receiver                           Must be "27" or "ZZ"
+               ID
+                                               -              CGS contract number
+
+                                                              Ohio Part B 15202
+
+                                                              Home Health & Hospice 15004
+
+                                                              Ohio Part A 15201
+
+                                                              Kentucky Part B 15102
+
+                                                              Kentucky Part A 15101
+
+        ISA11  Repetition Separator            -              Defined by the submitter
+        ISA14
+               Acknowledgement                 1              Medicare requires submitter to send
+               Requested
+                                                              code value 1 ­ Interchange
+
+                                                              Acknowledgment Requested (TA1).
+
+                                                              Medicare will only return a TA1 segment
+                                                              when there is an error in the ISA/IEA
+                                                              Interchange Envelope.
+
+Note: A hyphen in the table below means N/A.
+
+Table 4. GS Functional Group Header
+
+Page #  Element Name                           Codes/Content Notes/Comments
+C.7
+        GS02   Application Sender              -              Submitter number assigned by CGS.
+               Code
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              12
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page #  Element Name                           Codes/Content  Notes/Comments
+C.7                                            -              CGS contract number
+        GS03          Application Receiver's                  Ohio Part B 15202
+C.7                   Code                     -              Home Health & Hospice 15004
+C.7                                            005010X222A1   Ohio Part A 15201
+        GS04          Functional Group                        Kentucky Part B 15102
+        GS08          Creation Date                           Kentucky Part A 15101
+                                                              Must not be a future date
+                      Version Identifier Code
+                                                              Medicare expects value "005010X222A1"
+
+Interchange Control (ISA/IEA), Functional Group (GS/GE), and Transaction Set (ST/SE) envelopes must be used
+as described in the TR3. Medicare's expectations for the Control Segments and Envelopes are detailed in
+Sections 6.1, 6.2, and 6.3.
+
+6.1 ISA-IEA
+
+Delimiters ­ Inbound Transactions
+
+As detailed in the TR3, delimiters are determined by the characters sent in specified, set positions of the ISA
+header. For transmissions inbound to Medicare FFS, these characters are determined by the submitter and
+can be any characters as defined in the TR3 and must not be contained within any data elements within the
+ISA/IEA Interchange Envelope.
+
+Delimiters ­ Outbound Transactions
+
+Trading Partners should contact CGS for a list of delimiters to expect from Medicare. Note that
+these characters will not be used in data elements within an ISA/IEA Interchange Envelope.
+
+Table 5. Outbound Transaction Delimiters
+
+Delimiter               Character Used         Dec Value      Hex Value
+Data Element Separator  *                      42             2A
+
+Repetition Separator    ^                      94             5E
+
+Component Element Separator >                  62             3E
+
+Segment Terminator      ~                      126            7E
+
+© 2022 Copyright, CGS Administrators, LLC.                                                                       13
+CMS 837P Version 005010X222A1 Companion Guide
+
+Inbound Data Element Detail and Explanation
+
+All data elements within the ISA/IEA interchange envelope must follow ASC X12N syntax rules as defined
+within the TR3.
+
+6.2 GS-GE
+
+Functional group (GS-GE) codes are transaction specific. Therefore, information concerning the GS/GE
+Functional Group Envelope can be found in Table 4.
+
+6.3 ST-SE
+
+Medicare FFS follows the HIPAA-adopted TR3 requirements.
+
+7 Specific Business Rules
+
+This section describes the specific CMS requirements over and above the standard information in the TR3.
+
+7.1 General Notes
+
+Errors identified for business level edits performed prior to the Subscriber loop (2000B) will result in
+immediate file failure at that point. When this occurs, no further editing will be performed beyond the point of
+failure.
+
+The billing provider must be associated with an approved electronic submitter. Claims submitted for billing
+providers that are not associated to an approved electronic submitter will be rejected. The following table
+describes segments/ elements not accepted by Medicare.
+
+Note: A hyphen in the table below means N/A.
+
+Table 6. Segment / Elements Not Accepted by Medicare
+
+Page # Loop ID Reference Name                 Codes/Content Notes/Comments
+
+85  2000A CUR      Foreign Currency -                 Medicare does not support the
+                   Information                        submission of foreign currency.
+
+96  2010AA REF     Billing Provider -                 Must not be present.
+                   UPIN/License                                                                  14
+                   Information
+
+© 2022 Copyright, CGS Administrators, LLC.
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page # Loop ID  Reference Name                 Codes/Content Notes/Comments
+106 2010AC
+129 2010BA      Loop Rule  Pay to Plan Loop    -  Must not be present.
+                REF
+138 2010BB                 Subscriber          -  Must not be present.
+140 2010BB      REF        Secondary
+142 2000C       REF        Identification      -  Must not be present.
+144 2000C                  (REF01 = "SY")
+147 2010CA                                     -  Must not be present.
+186 2300                   Payer Secondary
+191 2300                   Identification
+
+196 2300                   Billing Provider
+332 2330C                  Secondary
+336 2330D                  Identification
+
+                HL         Patient             -  Must not be present. For Medicare,
+
+                           Hierarchical           the subscriber is always the same as
+
+                           Level                  the patient.
+
+                PAT        Patient             -  Must not be present. For Medicare,
+
+                           Information            the subscriber is always the same as
+
+                                                  the patient.
+
+                Loop Rule  Patient Name        -  Must not be present.
+                CN1        Loop
+                REF                            -  Must not be present.
+                           Contract
+                REF        Information         -  Must not be present.
+                Loop Rule
+                Loop Rule  Mandatory           -  Must not be present.
+                           Medicare
+                           (Section 4081)      -  Must not be present.
+                           Crossover
+                           Indicator           -  Must not be present.
+
+                           Payer Claim
+                           Control Number
+
+                           Other Payer
+                           Referring
+                           Provider
+
+                           Other Payer
+                           Rendering
+                           Provider
+
+© 2022 Copyright, CGS Administrators, LLC.                                   15
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page # Loop ID  Reference Name                 Codes/Content Notes/Comments
+340 2330E
+                Loop Rule Other Payer          -  Must not be present.
+343 2330F                                         Must not be present.
+                     Service Facility             Must not be present.
+347 2330G                                         Must not be present.
+395 2400             Location
+416 2400
+                Loop Rule Other Payer          -
+
+                     Supervising
+
+                     Provider
+
+                Loop Rule Other Payer          -
+
+                     Billing Provider
+
+                CN1  Contract                  -
+
+                     Information
+
+                HCP  Line                      -  Must not be present.
+
+                     Pricing/Repricing
+
+                     Information
+
+© 2022 Copyright, CGS Administrators, LLC.                                   16
+CMS 837P Version 005010X222A1 Companion Guide
+
+7.2 General Transaction Notes
+
+The following are Medicare-specific general rules pertaining to the 837P transaction:
+    · The maximum number of characters to be submitted in any dollar amount field is seven characters.
+         Claims containing a dollar amount in excess of 99,999.99 will be rejected.
+    · Claims that contain percentage amounts with values in excess of 99.99 will be rejected.
+    · With the exception of the CAS segment, all amounts must be submitted as positive amounts. Negative
+         amounts submitted in any non-CAS amount element will cause the claim to be rejected.
+    · Claims that contain percentage amounts cannot exceed two positions to the left or the right of the
+         decimal. Percent amounts that exceed their defined size limit will be rejected.
+    · Only loops, segments, and data elements valid for the TR3 will be translated. Submitting invalid data
+         will cause files to be rejected.
+    · Medicare requires the NPI be submitted as the identifier for all claims. Claims submitted with legacy
+         identifiers will be rejected.
+    · National Provider Identifiers will be validated against the NPI algorithm. Claims which fail validation will
+         be rejected.
+    · The MAC will only accept claims for one line of business per transaction. Claims submitted for multiple
+         lines of business within one ST-SE (Transaction Set) will cause the transaction to be rejected.
+    · Submissions with more than one GS-GE (Functional Group) per ISA-IEA (interchange) will be rejected.
+
+8 Acknowledgments and Reports
+
+CGS will provide acknowledgments and reports for submitted X12 version 005010 transactions.
+
+Medicare has adopted three acknowledgement transactions with the Version 005010 implementation: the
+277CA, the TA1, and the 999. These acknowledgments will replace proprietary reports previously provided by
+the MACs.
+
+Medicare FFS has adopted a process to only reject claim submissions that are out of compliance with the ASC
+X12N Version 005010 standard; the appropriate response for such errors will be returned on a 999. Batch
+submissions with errors will not be rejected in totality, unless warranted.
+
+8.1 Report Inventory
+
+CGS does not provide any proprietary acknowledgments.
+
+© 2022 Copyright, CGS Administrators, LLC.  17
+CMS 837P Version 005010X222A1 Companion Guide
+
+9 Trading Partner Agreement
+
+EDI Trading Partner Agreements ensure the integrity of the electronic transaction process. The Trading Partner
+Agreement is related to the electronic exchange of information, whether the agreement is an entity or a part
+of a larger agreement, between each party to the agreement.
+
+Medicare FFS requires all Trading Partners to sign a Trading Partner Agreement
+(https://www.cgsmedicare.com/partb/edi/index.html) with CGS.
+
+Additionally, CGS requires the following: The CGS Trading Partner Agreement process is identical to our EDI
+enrollment and registration process.
+
+10 Transaction-Specific Information
+
+This section defines specific CMS requirements over and above the standard information in the ASC X12N
+837P TR3.
+
+10.1 Header
+
+The following sub-sections contain specific details associated with header.
+
+10.1.1 Header and Information Source
+
+The following tables define the specific details associated with Header and Information Source:
+
+Notes:
+    · A hyphen in the table below means N/A.
+    · A new table exists for each segment.
+
+Table 7. ST Transaction Set Header
+
+Page # Loop ID  Reference Name                Codes/Content  Length          Notes/Comments
+                                              -              9
+70  N/A         ST02  Transaction Set                                        CGS will reject an
+                                                                             interchange
+                      Control Number                                         (transmission) that is not
+                                                                             submitted with unique
+                                                                             values in the ST02
+                                                                             (Transaction Set Control
+                                                                             Number) elements.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              18
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 8. BHT Beginning of Hierarchical Transaction
+
+Page # Loop ID Reference Name                       Codes/Content  Length Notes/Comments
+
+71  N/A         BHT02  Transaction Set 00                          2  Must equal "00"
+                BHT06  Purpose Code
+                                                                      (ORIGINAL).
+                       Claim/Encounter CH
+72  N/A                Identifier                                  2  Must equal "CH"
+
+                                                                      (CHARGEABLE).
+
+10.1.2 Loop 1000A Submitter Name
+
+The following table defines the specific details associated with Loop 1000A Submitter Name:
+
+Note: A hyphen in the table below means N/A.
+
+Table 9. Loop 1000A NM1 Submitter Name
+
+Page # Loop ID  Reference Name                 Codes/Content  Length  Notes/Comments
+                                               -              25
+75  1000A       NM105  Submitter                                      The first position must be
+                       Middle                                         alphabetic (A-Z).
+                       Name or
+                       Initial
+
+75  1000A       NM109  Submitter               -              80      CGS will reject an interchange
+                       ID
+                                                                      (transmission) that is
+
+                                                                      submitted with a submitter
+
+                                                                      identification number that is
+
+                                                                      not authorized for electronic
+
+                                                                      claim submission. Submitter ID
+
+                                                                      must match the value
+
+                                                                      submitted in ISA06 and GS02.
+
+10.1.3 Loop 1000B Receiver Name
+
+The following table defines the specific details associated with Loop 1000B Receiver Name:
+Note: A hyphen in the table below means N/A.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                           19
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 10. Loop 1000B NM1 Receiver Name
+
+Page # Loop ID Reference Name                  Codes/Content  Length  Notes/Comments
+                                               -              80
+80      1000B NM109 Receiver                                          CGS will reject an interchange
+                                                                      (transmission) that is not
+                        Primary                                       submitted with a valid CGS
+                                                                      contractor code. Each
+                        Identifier                                    individual MAC determines
+                                                                      this identifier. Submitter ID
+                                                                      must match the value
+                                                                      submitted in ISA08 and GS03.
+
+10.2 Billing Provider
+
+The following sub-sections contain specific details associated with Billing Provider.
+
+10.2.1 Loop 2000A Billing Provider Detail
+
+The following table defines the specific details associated with Loop 2000A Billing Provider.
+
+Table 11. Loop 2000A Billing Provider Detail
+
+Loop ID Notes/Comments
+
+2000A   The Billing Provider Detail Section of this CG contains no unique CMS Medicare requirements
+        that differ from the TR3. Refer to the TR3 specifications for the following Loops: 2000A, 2010AA,
+        2010AB.
+
+2010AA  REF: must not be present (non-VA contractors).
+        NM109: billing provider must be "associated" to the submitter (from a Trading Partner
+        management perspective) in 1000A NM109.
+        CGS will provide appropriate direction to VA providers.
+
+10.2.2 Loop 2010AA Billing Provider Name
+
+The following table defines the specific details associated with Loop 2010AA Billing Provider Name.
+Note: A hyphen in the table below means N/A.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                           20
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 12. Loop 2010AA NM1 Billing Provider Name
+
+Page # Loop ID Reference Name                    Codes/Content  Length           Notes/Comments
+                                                                25
+89  2010AA NM105 Billing Provider -                                              The first position must be
+                                                                15               alphabetic (A-Z).
+                        Middle Name
+                                                                                 When the postal code
+93  2010AA N403         Billing Provider -                                       does not include a +4
+                        Postal Code                                              value, use 9998.
+
+10.3 Subscriber Detail
+
+The following sub-sections contain specific details associated with Subscriber.
+
+10.3.1 Loop 2000B Subscriber Hierarchical Level
+
+The following tables define the specific details associated with Loop 2000B Subscriber Hierarchical Level.
+
+Note: A new table exists for each segment.
+
+Table 13. Loop 2000B HL Subscriber Hierarchical Level
+
+Page # Loop ID Reference Name                    Codes/Content  Length Notes/Comments
+
+115 2000B HL04          Hierarchical             0              1                The value accepted is "0"
+
+                        Child Code
+
+Table 14. Loop 2000B SBR Subscriber Information
+
+Page # Loop ID  Reference Name                   Codes/Content  Length           Notes/Comments
+116 2000B                                        P, S           1
+                SBR01   Payer                                                    The values accepted are
+117 2000B               Responsibility           18                              "P" or "S"
+118 2000B               Sequence                 MB
+                        Number Code
+
+                SBR02   Individual                              2                For Medicare, the
+                        Relationship
+                        Code                                                     subscriber is always the
+
+                                                                                 same as the patient.
+
+                SBR09   Claim Filing                            2                For Medicare, the
+                        Indicator Code
+                                                                                 subscriber is always the
+
+                                                                                 same as the patient.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                                   21
+CMS 837P Version 005010X222A1 Companion Guide
+
+Note: A hyphen in the table below means N/A.
+
+Table 15. Loop 2000B PAT Patient Information
+
+Page # Loop ID Reference Name                  Codes/Content  Length  Notes/Comments
+                                               -              10
+120 2000B PAT08        Patient Weight                                 For DME claims only, a
+                                                                      maximum of 4 whole
+                                                                      numbers and up to 2
+                                                                      decimal positions are
+                                                                      allowable.
+
+10.3.2 Loop 2010BA Subscriber Name
+
+The following tables define the specific details associated with Loop 2010BA Subscriber Name.
+
+Notes:
+    · A hyphen in the table below means N/A.
+    · A new table exists for each segment.
+
+Table 16. Loop 2010BA NM1 Subscriber Name
+
+Page # Loop ID  Reference Name                 Codes/Content  Length Notes/Comments
+122 2010BA                                     1
+                NM102  Subscriber                             1       The value accepted is 1.
+122 2010BA             Entity Type             -
+122 2010BA             Qualifier               MI
+
+                NM105  Subscriber                             25      The first position must be
+                       Middle Name
+                                                                      alphabetic (A-Z).
+
+                NM108  Subscriber                             2       The value accepted is "MI"
+                       Identification
+                       Code Qualifier
+
+© 2022 Copyright, CGS Administrators, LLC.                                                        22
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page # Loop ID  Reference Name                 Codes/Content  Length              Notes/Comments
+123 2010BA                                     -              80
+                NM109  Subscriber                                                 For the Medicare
+                       Primary                                                    Beneficiary Identifier
+                       Identifier                                                 (MBI): Must be 11
+                                                                                  positions in the format of
+                                                                                  C A AN N A AN N A A N N
+                                                                                  where "C" represents a
+                                                                                  constrained numeric 1
+                                                                                  thru 9; "A" represents
+                                                                                  alphabetic character A ­ Z
+                                                                                  but excluding S, L, O, I, B,
+                                                                                  Z; "N" represents numeric
+                                                                                  0 thru 9; "AN" represents
+                                                                                  either "A" or "N".
+
+Note: A hyphen in the table below means N/A.
+
+Table 17. Loop 2010BA DMG Subscriber Demographic Information
+
+Page # Loop ID Reference Name                  Codes/Content  Length Notes/Comments
+
+127 2010BA DMG02 Subscriber Birth -                           35                  Must not be a future date.
+                                        Date
+
+10.3.3 Loop 2010BB Payer Name
+
+The following table defines the specific details associated with Loop 2010BB Payer Name.
+
+Table 18. Loop 2010BB NM1 Payer Name
+
+Page # Loop ID  Reference Name                 Codes/Content  Length Notes/Comments
+134 2010BB                                     PI
+                NM108  Payer                                  2                   The value accepted is "PI"
+                       Identification
+                       Code Qualifier
+
+10.4 Patient Detail
+
+The following sub-sections contain specific requirements for the Patient Detail.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                23
+CMS 837P Version 005010X222A1 Companion Guide
+
+10.4.1 Loop 2300 Claim Information
+
+The following tables define the specific details associated with Loop 2300 Claim Information.
+
+Note:
+    · A hyphen in the table below means N/A.
+    · A new table exists for each segment.
+
+Table 19. Loop 2300 CLM Claim Information
+
+Page #  Loop  Reference Name                   Codes/Content  Length Notes/Comments
+158     ID
+              CLM01  Patient Control -                        38  Only 20 characters will be
+        2300         Number
+
+                                                                  stored and returned by
+
+                                                                  Medicare.
+
+159     2300 CLM02 Total Claim                 -              18  Must be >=0 and <=
+
+                     Charge                                       99,999.9.
+
+                     Amount                                       When Medicare is primary
+                                                                  payer, CLM02 must equal
+                                                                  the sum of all SV102
+                                                                  service line charge
+                                                                  amounts.
+
+                                                                  When Medicare is
+                                                                  Secondary. Total
+                                                                  Submitted Charges
+                                                                  (CLM02) must equal the
+                                                                  sum of all 2320 & 2430
+                                                                  CAS amounts and the 2320
+                                                                  AMT02 (AMT01=D).
+
+159     2300 CLM05-3 Claim                     1              1   Must be equal to "1"
+
+                     Frequency                                    (ORIGINAL).
+
+                     Code
+
+163     2300 CLM20 Delay Reason -                             2   Data submitted in CLM20
+
+                     Code                                         will not be used for
+
+                                                                  processing.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                     24
+CMS 837P Version 005010X222A1 Companion Guide
+
+Note: A hyphen in the table below means N/A.
+
+Table 20. Loop 2300 DTP Date Elements
+
+Page # Loop ID  Reference Name                 Codes/Content  Length Notes/Comments
+164 2300
+                DTP03  Onset of                -              35  Must not be a future date.
+165 2300
+167 2300               Current Illness
+
+168 2300               or Injury Date
+169 2300
+170 2300        DTP03  Initial                 -              35  Must not be a future date.
+171 2300
+173 2300               Treatment Date
+
+                DTP03  Acute                   -              35  Must not be a future date.
+
+                       Manifestation
+
+                       Date
+
+                DTP03  Accident Date -                        35  Must not be a future date.
+
+                DTP03  Last Menstrual -                       35  Must not be a future date.
+                       Period Date
+
+                DTP03  Last X-Ray Date -                      35  Must not be a future date.
+
+                DTP03  Prescription            -              35  Must not be a future date.
+
+                       Date
+
+                DTP03  Disability From -                      35  Future dates are allowed
+                       Date
+                                                                  in this situation.
+
+174 2300        DTP03  Last Worked -                          35  Must not be a future date.
+                       Date
+
+In the table below, for Loop 2300 Admission Date Segment, if 2400.SV105 = "21", "51" or "61" then 2300 DTP
+with DTP01 = "435" must be present.
+
+Note: A hyphen in the table below means N/A.
+
+Table 21. Loop 2300 DTP Admission Date
+
+Page # Loop ID  Reference Name                 Codes/Content  Length Notes/Comments
+176 2300                                       -
+                DTP03  Related                                35  Must not be a future date.
+177 2300               Hospitalization         -
+                       Admission Date
+
+                DTP03  Related                                35  Must not be a future date.
+                       Hospitalization
+                       Discharge Date
+
+© 2022 Copyright, CGS Administrators, LLC.                                                  25
+CMS 837P Version 005010X222A1 Companion Guide
+
+In the table below, for Loop 2300 Claim Supplement Information, only the first iteration of the PWK, at either
+the claim level and/or line level, will be considered in the claim adjudication.
+
+Table 22. Loop 2300 PWK Claim Supplement Information
+
+Page # Loop ID Reference Name                      Codes/Content   Length  Notes/Comments
+                                                                   2
+184 2300  PWK02   Attachment                       BM, FX, EL, FT          Must be "BM", "FX", "EL",
+                  Transmission                                             or "FT"
+                  Code
+
+Note: A hyphen in the table below means N/A.
+
+Table 23. Loop 2300 CR1 Ambulance Transport Information
+
+Page # Loop ID Reference Name                      Codes/Content   Length  Notes/Comments
+                                                                   10
+212 2300 CR102    Patient Weight -                                         A maximum of 4 whole
+                                                                   15      numbers and up to 2
+213 2300 CR106    Transport                        -                       decimal positions are
+                                                                           allowable.
+                  Distance
+                                                                           Patient weight in excess of
+                                                                           9,999.99 pounds will be
+                                                                           rejected.
+
+                                                                           Must not exceed 4 digits.
+
+                                                                           Transport distance in
+                                                                           excess of 9,999 miles will
+                                                                           be rejected.
+
+Note: A hyphen in the table below means N/A.
+
+Table 24. Loop 2300 HI Health Care Diagnosis Code
+
+Page # Loop ID Reference Name                      Codes/Content   Length  Notes/Comments
+                                                                   30
+227 2300  HI01-2  Health Care                      -                       All diagnosis codes
+                                                                           submitted on a claim must
+                  Diagnosis Code                                           be valid codes per the
+                                                                           qualified code source.
+
+                                                                           Claims that contain invalid
+                                                                           diagnosis codes (pointed
+                                                                           to or not) will be rejected.
+
+© 2022 Copyright, CGS Administrators, LLC.                                 26
+CMS 837P Version 005010X222A1 Companion Guide
+
+10.4.2 Loop 2310A Referring Provider Name
+
+The following table defines the specific details associated with Loop 2310A Referring Provider Name.
+
+Note: A hyphen in the table below means N/A.
+
+Table 25. Loop 2310A NM1 Referring Provider Name
+
+Page # Loop ID   Reference Name                    Codes/Content  Length  Notes/Comments
+258 2310A                                                         25
+                 NM105  Referring                  -                      The first position must be
+                                                                          alphabetic (A-Z).
+                        Provider Middle
+
+                        Name
+
+10.4.3 Loop 2310B Rendering Provider Name
+
+The following table defines the specific details associated with Loop 2310B Rendering Provider Name.
+
+Note: A hyphen in the table below means N/A.
+
+Table 26. Loop 2310B NM1 Rendering Provider Name
+
+Page # Loop ID Reference Name                      Codes/Content  Length  Notes/Comments
+                                                                  25
+263 2310B NM105 Rendering                          -                      The first position must be
+                                                                          alphabetic (A-Z).
+                        Provider Middle
+
+                        Name
+
+10.4.4 Loop 2310C Service Facility Location
+
+The following table defines the specific details associated with Loop 2310C Service Facility Location.
+
+Note: A hyphen in the table below means N/A.
+
+Table 27. Loop 2310C N4 Service Facility Location
+
+Page #  Loop ID  Reference Name                    Codes/Content  Length  Notes/Comments
+274     2310C                                      -              15
+                 N4     Service Facility                                  When the postal code
+                                                                          does not include a +4
+                        Location Postal                                   value, use 9998.
+
+                        Code
+
+10.4.5 Loop 2310D Supervising Provider Name
+
+The following table defines the specific details associated with Loop 2310D Supervising Provider Name.
+Note: A hyphen in the table below means N/A.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              27
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 28. Loop 2310D NM1 Supervising Provider Name
+
+Page # Loop ID Reference Name                    Codes/Content  Length  Notes/Comments
+                                                                25
+281 2310D NM105 Supervising                      -                      The first position must be
+                                                                        alphabetic (A-Z).
+                       Provider Middle
+
+                       Name
+
+10.4.6 Loop 2320 Other Subscriber Information
+
+The following tables define the specific details associated with Loop 2320 Other Subscriber Information.
+
+Note:
+    · A hyphen in the table below means N/A.
+    · A new table exists for each segment.
+
+Table 29. Loop 2320 SBR Other Subscriber Information
+
+Page # Loop ID  Reference Name                   Codes/Content  Length  Notes/Comments
+296 2320                                         -              1
+                SBR01  Payer                                            2320 SBR01 = "P" must be
+298 2320               Responsibility            -                      present when 2000B
+                       Sequence                                         SBR01 = "S"
+                       Number Code
+
+                SBR09  Claim Filing                             2       The value cannot be "MA"
+                       Indicator Code
+                                                                        or "MB"
+
+In the table below, for Loop 2320 Claim Level Adjustments, CAS segment must not be present when 2000B
+SBR01 = "P".
+
+Note: A hyphen in the table below means N/A.
+
+Table 30. Loop 2320 CAS Claim Level Adjustments
+
+Page # Loop ID  Reference Name                   Codes/Content  Length  Notes/Comments
+301 2320                                         -              2
+                CAS01  Claim Level                                      CAS segment must not be
+                       Adjustments                                      present when 2000B
+                                                                        SBR01 = "P"
+
+© 2022 Copyright, CGS Administrators, LLC.                                                                28
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 31. Loop 2320 AMT COB Payer Paid Amount
+
+Page # Loop ID Reference Name                   Codes/Content       Length  Notes/Comments
+                                                                    3
+305 2320        AMT01  Coordination of D                                    Medicare requires one
+                       Benefits (COB)                                       occurrence of 2320 loop
+                       Payer Paid                                           with an AMT segment
+                       Amount                                               AMT01 = "D" must be
+                                                                            present when 2000B
+                                                                            SBR01 = "S".
+
+10.4.7 Loop 2330A Other Subscriber Name
+
+The following tables define the specific details associated with Loop 2330A Other Subscriber Name.
+
+Note:
+    · A hyphen in the table below means N/A.
+    · A new table exists for each segment.
+
+Table 32. Loop 2330A NM1 Other Subscriber Name
+
+Page # Loop ID  Reference Name                  Codes/Content       Length  Notes/Comments
+313 2330A                                       -                   25
+                NM105  Other Insured                                        The first position must be
+                       Middle Name                                          alphabetic (A-Z).
+
+Note: A hyphen in the table below means N/A.
+
+Table 33. Loop 2330A REF Other Subscriber Secondary Identification
+
+Page # Loop ID  Reference Name                  Codes/Content       Length  Notes/Comments
+319 2330A                                       -                   9
+                REF02  Other Insured                                        Must be 9 digits with no
+                       Additional                                           punctuation.
+                       Identifier                                           First 3 digits cannot be
+                                                                            higher than "272".
+                                                                            Digits 1-3, 4-5, and 6-9
+                                                                            cannot be zeros (0).
+
+10.4.8 Loop 2330B Other Payer Name
+
+The following table defines the specific details associated with Loop 2330B Other Payer Name.
+Note: A hyphen in the table below means N/A.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              29
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 34. Loop 2330B DTP Claim Check or Remittance Date
+
+Page # Loop ID Reference Name                  Codes/Content  Length Notes/Comments
+
+325 2330B DTP03     Date Time                  -              35  Must not be a future date.
+
+                    Period
+
+10.4.9 Loop 2400 Service Line Number
+
+The following table defines the specific details associated with Loop 2400 Service Line Number.
+
+Note:
+    · A hyphen in the table below means N/A.
+    · A new table exists for each segment.
+
+Table 35. Loop 2400 SV1 Professional Service
+
+Page # Loop ID Reference Name                  Codes/Content  Length Notes/Comments
+                                               HC
+352 2400  SV101-1   Product or                                2   Must be "HC".
+                    Service ID                 -
+                    Qualifier
+
+353 2400  SV101-3,  Procedure                                 2   For DME only: These
+          SV101-4,  Modifier
+          SV101-5,                                                segments cannot have a
+          SV101-6
+                                                                  value of "EX."
+
+                                                                  For DME only: When
+                                                                  billing for capped rentals
+                                                                  and pen pumps with 2
+                                                                  units of service, one of
+                                                                  SV101-3, SV101-4, SV101-
+                                                                  5, SV101-6 must have a
+                                                                  value of "RT" and one of
+                                                                  one of SV101-3, SV101-4,
+                                                                  SV101-5, SV101-6 must
+                                                                  have a value of "LT".
+
+354 2400 SV102      Line Item                  -              18  SV102 must be greater
+
+                    Charge Amount                                 than 0. SV102's decimal
+
+                                                                  positions are limited to 0,
+
+                                                                  1, or 2.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                       30
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page # Loop ID  Reference Name                 Codes/Content  Length  Notes/Comments
+355 2400                                                      2
+                SV103  Unit or Basis for MJ, UN                       SV103 must be "UN" for
+                       Measurement                            15      DME claims.
+                       Code
+                                                              15      SV103 must be "MJ" when
+355 2400 SV104         Service Unit            -              18      SV101-3, SV101-4, SV101-
+                                                              18      5, or SV101-6 is an
+                       Count                                          anesthesia modifier (AA,
+                                                                      AD, QK, QS, QX, QY or QZ).
+360 2400 SV503         Quantity                -
+                                                                      Otherwise, must be "UN".
+360 2400 SV504         Monetary                -
+                                                                      Anesthesia claims must be
+                       Amount                                         submitted with minutes
+                                                                      (qualifier MJ). The max
+360 2400 SV505         Monetary                -                      value cannot exceed 4
+                                                                      bytes numeric.
+                       Amount
+                                                                      Must be > 0 with
+                                                                      maximum of 4 whole
+                                                                      numbers and 1 decimal
+                                                                      position (cannot exceed
+                                                                      9999.9).
+
+                                                                      For DME only: SV104 must
+                                                                      be "1" or "2" for capped
+                                                                      rentals and pen pumps.
+
+                                                                      DME Only: Must be
+                                                                      greater than 0 with a
+                                                                      maximum of 3 whole
+                                                                      numbers (must not exceed
+                                                                      999).
+
+                                                                      DME Only: Must be
+                                                                      greater than 0 with
+                                                                      maximum of 7 digits ­
+                                                                      inclusive of up to 3
+                                                                      decimal positions.
+
+                                                                      DME Only: Must be
+                                                                      greater than 0 with
+                                                                      maximum of 7 digits ­
+                                                                      inclusive of up to 3
+                                                                      decimal positions.
+
+© 2022 Copyright, CGS Administrators, LLC.                            31
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 36. Loop 2400 PWK DME Certificate of Medical Necessity Indicator
+
+Page # Loop ID Reference Name                  Codes/Content Length Notes/Comments
+
+366 2400        PWK01  Durable                 CT                       2       DME only.
+
+                       Medical                                                  Must not be present on
+                                                                                Part B claims.
+                       Equipment
+
+                       (DME)
+
+                       Certificate of
+
+                       Medical
+
+                       Necessity
+
+                       Indicator
+
+Note: A hyphen in the table below means N/A.
+
+Table 37. Loop 2400 CR1 Ambulance Transport Information
+
+Page # Loop ID Reference Name                  Codes/Content            Length  Notes/Comments
+                                                                        10
+369 2400 CR102         Patient Weight -                                         Must not exceed 4 whole
+                                                                        15      numbers and 2 decimals.
+370 2400 CR106         Transport               -
+                                                                                Patient weight in excess of
+                       Distance                                                 9,999.99 pounds will be
+                                                                                rejected.
+
+                                                                                Must not exceed 4 digits.
+                                                                                Transport distance in
+                                                                                excess of 9,999 miles will
+                                                                                be rejected.
+
+In the table below, for Loop 2400 DME Certification, CR3 segment must be present when DME CMN
+information is included with the claim. Must not be present on Part B claims.
+
+Note: A hyphen in the table below means N/A.
+
+Table 38. Loop 2400 CR3 Durable Medical Equipment Certification
+
+Page # Loop ID  Reference Name                 Codes/Content            Length  Notes/Comments
+371 2400                                                                2
+                CR303  Unit or Basis for -                                      DME Only: Must not
+                       Measurement                                              exceed 2 digits.
+                       Code
+                                                                                DME Only: Must be
+                                                                                greater than 0 unless 2400
+                                                                                L02 = "08.02".
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              32
+CMS 837P Version 005010X222A1 Companion Guide
+
+In the table below, for Loop 2400 Condition Indicator/ DME, DME only: CR3 segment must be present when
+DME CMN information is included with the claim. Must not be present on a Part B Claim.
+
+Table 39. Loop 2400 CRC Condition Indicator/ Durable Medical Equipment
+
+Page # Loop ID Reference Name                  Codes/Content Length Notes/Comments
+
+378 2400  CRC01  Code Category 09              2                        DME Only: When CRC
+
+                                                                        Condition Indicator (CRC01
+
+                                                                        = "09") is submitted,
+
+                                                                        either CRC03 or CRC04
+
+                                                                        must be "38".
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              33
+CMS 837P Version 005010X222A1 Companion Guide
+
+Note: A hyphen in the table below means N/A.
+
+Table 40. Loop 2400 DTP Service Date
+
+Page # Loop ID  Reference Name                 Codes/Content  Length  Notes/Comments
+381 2400                                       -              35
+                DTP03  Date ­ Service                                 Must not be a future date.
+                       Date
+                                                                      DME only:
+
+                                                                      Must not be a single date of
+                                                                      service when modifier RR is
+                                                                      reported with more than 1
+                                                                      unit of service.
+
+                                                                      When a Service Date range
+                                                                      extends into the future, the
+                                                                      procedure code must
+                                                                      equate to an Inexpensive
+                                                                      Supply, PEN Amino Acid,
+                                                                      PEN Enteral, PEN
+                                                                      Immunosuppressant Drug,
+                                                                      PEN Kit/Supply, PEN Lipid,
+                                                                      PEN Pump, PEN Special
+                                                                      Parenteral, or PEN
+                                                                      Dextrose/Home Mix.
+
+                                                                      Must be a single DOS when
+                                                                      procedure code is NOT
+                                                                      "E0935" or "E0936" and the
+                                                                      procedure code is not
+                                                                      considered a Glucose
+                                                                      Monitoring or Inexpensive
+                                                                      Supply, and the procedure
+                                                                      code is categorized as
+                                                                      Frequently Serviced DME,
+                                                                      Inexpensive or Routinely
+                                                                      Purchased DME, Capped
+                                                                      Rental DME, Stationary
+                                                                      Liquid and Portable Oxygen
+                                                                      Equipment, Oxygen
+                                                                      Concentrators, Gaseous
+                                                                      Oxygen Equipment, Liquid
+                                                                      Oxygen Equipment, or
+                                                                      Portable Oxygen
+                                                                      Equipment.
+
+© 2022 Copyright, CGS Administrators, LLC.                            34
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page # Loop ID  Reference Name                 Codes/Content  Length Notes/Comments
+382 2400                                       -
+383 2400        DTP03  Date ­                  -              35  Must not be a future date.
+                       Prescription
+384 2400               Date                    -
+
+                DTP03  Date ­                                 35  DME only: Must not be a
+                       Certification
+                       Revision /                                 future date.
+                       Recertification
+                       Date                                       Must not be present on a
+                                                                  Part B claim.
+
+                DTP03  Date ­ Begin                           35  DME only: Must not be a
+                       Therapy Date
+                                                                  future date.
+
+                                                                  Must not be present on a
+                                                                  Part B claim.
+
+385 2400        DTP03  Date ­ Last             -              35  DME only: Must not be a
+386 2400        DTP03
+                       Certification                              future date.
+
+                       Date                                       Must not be present on a
+                                                                  Part B claim.
+
+                       Date ­ Last             -              35  Segment must not be
+
+                       Seen Date                                  present for DME claims.
+
+                                                                  Part B only: Must not be a
+                                                                  future date
+
+387 2400        DTP03  Test                    -              35  Must not be a future date.
+
+                       Performed
+
+                       Date
+
+389 2400        DTP03  Last X-Ray              -              35  Segment must not be
+
+                       Date                                       present for DME claims.
+
+                                                                  Part B only: Must not be a
+                                                                  future date.
+
+390 2400        DTP03  Initial                 -              35  Must not be a future date.
+
+                       Treatment
+
+                       Date
+
+© 2022 Copyright, CGS Administrators, LLC.                                                    35
+CMS 837P Version 005010X222A1 Companion Guide
+
+Note: A hyphen in the table below means N/A.
+
+Table 41. Loop 2400 QTY Ambulance Patient Count
+
+Page # Loop ID  Reference Name                   Codes/Content  Length  Notes/Comments
+391 2400                                         -              15
+                QTY02  Ambulance                                        Does not apply to DME.
+                       Patient Count                                    Must be between 1 and
+                                                                        99.
+
+Note: A hyphen in the table below means N/A.
+
+Table 42. Loop 2400 QTY Obstetric Anesthesia Additional Units
+
+Page # Loop ID  Reference Name                   Codes/Content  Length  Notes/Comments
+392 2400                                                        15
+                QTY02  Obstetric                 -                      Does not apply to DME.
+                                                                        Must be between 1 and
+                       Additional Units                                 99.
+
+Note: A hyphen in the table below means N/A.
+
+Table 43. Loop 2400 MEA Test Results             Codes/Content  Length  Notes/Comments
+ Page # Loop ID Reference Name                   -              20
+                                                                        Must not exceed 2 whole
+394 2400        MEA03  MEA ­ Test                                       numbers and 1 decimal
+                       Results                                          position.
+
+                                                                        Must be a value greater
+                                                                        than or equal to 0 and less
+                                                                        than or equal to 99.9.
+
+10.4.10 Loop 2410 Drug Identification
+
+The following tables define the specific details associated with Loop 2410 Drug Identification. For DME claims,
+must be present when 2400 SV101-1 contains a default Healthcare Common Procedure Coding System
+(HCPCS) code.
+
+Note:
+    · A hyphen in the table below means N/A.
+    · A new table exists for each segment.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                      36
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 44. Loop 2410 LIN Drug Identification
+
+Page # Loop ID Reference Name                  Codes/Content Length Notes/Comments
+
+425 2410 LIN02           Product or            N4             2           Must be N4.
+425 2410 LIN03           Service ID
+                         Qualifier             -              11          Must be exactly 11
+
+                         National Drug                                    numeric positions.
+                         Code
+
+Note: A hyphen in the table below means N/A.
+
+Table 45. Loop 2410 CTP Drug Quantity
+
+Page # Loop ID  Reference Name                 Codes/Content  Length      Notes/Comments
+426 2410                                       -              15
+                CTP04    National Drug                                    Must be greater than 0
+                         Unit Count                           2           and less than or equal to
+                                                                          9,999,999.999.
+427 2410        CTP05-1  Unit or Basis for -
+                         Measurement                                      For DME claims only:
+                         Code
+                                                                          Must be "UN" when 2410
+                                                                          LIN03 NDC is found on
+                                                                          Medicare file as associated
+                                                                          to an Oral Cancer Drug
+                                                                          HCPCS code.
+
+In the table below, for Loop 2410 Prescription or Compound Drug Association Number, must be submitted
+with REF01 = "XZ" if service line includes modifier J1.
+
+Table 46. Loop 2410 CTP Prescription or Compound Drug Association Number
+
+Page # Loop ID  Reference Name                 Codes/Content  Length      Notes/Comments
+428 2410                                       XZ             3
+                REF01    Reference                                        If service line (SV1)
+                         Identification                                   includes Modifier J1,
+                         Qualifier                                        REF01 = "XZ" must be
+                                                                          present.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                             37
+CMS 837P Version 005010X222A1 Companion Guide
+
+10.4.11 Loop 2420A Rendering Provider Name
+
+The following table defines the specific details associated with Loop 2420A Rendering Provider Name.
+
+Note: A hyphen in the table below means N/A.
+
+Table 47. Loop 2420A NM1 Rendering Provider Name
+
+Page # Loop ID  Reference Name                     Codes/Content  Length  Notes/Comments
+431 2420A                                                         25
+                NM105  Rendering                   -                      The first position must be
+                                                                          alphabetic (A-Z).
+                       Provider Middle
+
+                       Name
+
+10.4.12 Loop 2420C Service Facility Location
+
+The following table defines the specific details associated with Loop 2420C Service Facility Location.
+
+Note: A hyphen in the table below means N/A.
+
+Table 48. Loop 2420C N4 Service Facility Location
+
+Page # Loop ID Reference Name                      Codes/Content  Length  Notes/Comments
+                                                                  15
+446 2420C N4           Service Facility -                                 When the postal code
+                       Location Postal                                    does not include a +4
+                       Code                                               value, use 9998.
+
+10.4.13 Loop 2420D Supervising Provider Name
+
+The following table defines the specific details associated with Loop 2420D Supervising Provider Name.
+
+Note: A hyphen in the table below means N/A.
+
+Table 49. Loop 2420D NM1 Supervising Provider Name
+
+Page # Loop ID  Reference Name                     Codes/Content  Length  Notes/Comments
+450 2420D                                                         25
+                NM105  Supervising                 -                      First position of
+                                                                          Supervising Provider
+                       Provider Middle                                    Middle Name must be
+                                                                          alphabetic (A-Z).
+                       Name
+
+10.4.14 Loop 2420E Ordering Provider Name
+
+The following table defines the specific details associated with Loop 2420E Ordering Provider Name.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              38
+CMS 837P Version 005010X222A1 Companion Guide
+
+Note: A hyphen in the table below means N/A.
+
+Table 50. Loop 2420E NM1 Ordering Provider Name
+
+Page # Loop ID  Reference Name                    Codes/Content  Length  Notes/Comments
+455 2420E                                                        25
+                NM105     Ordering                -                      First position of Ordering
+                                                                         Provider Middle Name
+                          Provider Middle                                must be alphabetic (A-Z).
+
+                          Name
+
+10.4.15 Loop 2420F Referring Provider Name
+
+The following table defines the specific details associated with Loop 2420F Referring Provider Name.
+
+Note: A hyphen in the table below means N/A.
+
+Table 51. Loop 2420F NM1 Referring Provider Name
+
+Page # Loop ID Reference  Name                    Codes/Content  Length  Notes/Comments
+466 2420F NM105                                   -              25
+                          Referring                                      First position of Referring
+                          Provider                                       Provider Middle Name
+                          Middle Name                                    must be alphabetic (A-Z).
+
+10.4.16 Loop 2430 Line Adjudication Information
+
+The following tables define the specific details associated with Loop 2430 Line Adjudication Information.
+
+Note:
+    · A hyphen in the table below means N/A.
+    · A new table exists for each segment.
+
+Table 52. Loop 2430 SVD Line Adjudication Information
+
+Page # Loop ID Reference Name                     Codes/Content  Length  Notes/Comments
+                                                                 2
+481 2430 SVD03-1 Product or                       HC                     Must be "HC". Claims with
+                                                                         "ER", "IV" or "WK" will be
+                          Service ID                                     rejected.
+
+                          Qualifier
+
+© 2022 Copyright, CGS Administrators, LLC.                                                                 39
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page # Loop ID  Reference Name                   Codes/Content  Length  Notes/Comments
+483 2430                                         -              15
+                SVD05  Paid Service                                     Must not exceed 4 whole
+                       Unit Count                -              6       numbers and one decimal
+                                                                        position.
+483 2430        SVD06  Bundled Line                                     Must be a value greater
+                       Number                                           than or equal to 0 and less
+                                                                        than or equal to 9999.9
+
+                                                                        Must be an integer (no
+                                                                        decimals).
+
+Note: A hyphen in the table below means N/A.
+
+Table 53. Loop 2430 DTP Line Check or Remittance Date
+
+Page # Loop ID  Reference Name                   Codes/Content  Length Notes/Comments
+490 2430                                         -
+                DTP03  Adjudication or                          35      Must not be a future date.
+                       Payment Date
+
+10.4.17 Loop 2440 Form Identification Code
+
+The following tables define the specific requirements for the Loop 2440 Form Identification Code data.
+
+Note:
+
+    · This loop is only for Durable Medical Equipment (DME) Claims. This loop must not be present for Part B
+         Claims.
+
+    · A new table exists for each segment.
+
+Table 54. Loop 2440 LQ Form Identification Code
+
+Page # Loop ID  Reference Name                   Codes/Content  Length  Notes/Comments
+493 2440                                         UT             3
+                LQ01   Code List                                        DME Must be "UT". DME
+                       Qualifier Code                                   claims only.
+                                                                        Not valid for Part B Claims.
+
+In the table below, for loop 2440 Supporting Documentation, FRM is only for Durable Medical Equipment
+(DME) Claims. This loop must not be present for Part B Claims.
+
+Note: A hyphen in the table below means N/A.
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              40
+CMS 837P Version 005010X222A1 Companion Guide
+
+Table 55. Loop 2440 FRM Supporting Documentation
+
+Page # Loop ID Reference Name                     Codes/Content  Length  Notes/Comments
+                                                                 20
+495 2440  FRM01  Question                         -                      DME claims only.
+                                                                 20
+                 Number/Letter                                           When LQ02='484.03' and
+                                                                 20      FRM01='6A' or `6B', an
+495 2440  FRM01  Question                         -              20      occurrence of FRM01 with
+                                                                         the value of `6C' is
+                 Number/Letter                                   20      required.
+
+495 2440  FRM01  Question                         -                      DME claims only.
+
+                 Number/Letter                                           When LQ02='484.03' and
+                                                                         FRM01='6C', an
+495 2440  FRM01  Question                         -                      occurrence of FRM01 with
+                                                                         the value of `6A' or `6B' is
+                 Number/Letter                                           required.
+
+495 2440  FRM01  Question                         -                      DME claims only.
+
+                 Number/Letter                                           FRM01 Question number
+                                                                         must be valid for the LQ02
+                                                                         CMN/DIF number.
+
+                                                                         DME claims only.
+
+                                                                         When LQ02 = `484.03",
+                                                                         occurrences of FRM01 =
+                                                                         "1A" or "1B", and FRM01
+                                                                         = "1C", and FRM01 = "05"
+                                                                         must be present.
+
+                                                                         DME claims only.
+
+                                                                         When LQ02 = `484.03"
+                                                                         and FRM01 = "1A", and
+                                                                         FRM03 is greater than or
+                                                                         equal to "55.5" and less
+                                                                         than or equal to "59.4",
+                                                                         occurrences of FRM01 =
+                                                                         "07", "08" and "09" must
+                                                                         be present.
+
+© 2022 Copyright, CGS Administrators, LLC.                               41
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page # Loop ID  Reference Name                 Codes/Content  Length  Notes/Comments
+495 2440                                       -              20
+                FRM01  Question                                       DME claims only.
+                       Number/Letter                          1
+                                                              50      When LQ02 = `484.03"
+495 2440        FRM02  Question                -              50      and FRM01 = "1B", and
+                                                              50      FRM05 is greater than or
+                       Number/Letter                                  equal to "88.5" and less
+                                                                      than or equal to "89.4",
+495 2440 FRM03 Question                        -                      occurrences of FRM01 =
+                                                                      "07", "08" and "09" must
+                       Response                                       be present.
+
+495 2440 FRM03 Question                        -                      DME claims only.
+
+                       Response                                       When LQ02 = `484.03"
+                                                                      and FRM with FRM01 =
+495 2440 FRM03 Question                        -                      "04", "07", "08" or "09" is
+                                                                      present, then FRM02 must
+                       Response                                       be present.
+
+                                                                      DME claims only.
+
+                                                                      When LQ02 = "04.04" and
+                                                                      FRM01 = "07B", "09B",
+                                                                      "10B" or "10C", FRM03
+                                                                      must be present.
+
+                                                                      DME claims Only.
+
+                                                                      When LQ02 = "06.03" and
+                                                                      FRM01 = "02" or "03",
+                                                                      FRM03 must be present.
+
+                                                                      DME claims Only.
+
+                                                                      When LQ02 = "09.03" and
+                                                                      FRM01 = "01", "01A",
+                                                                      "01B", "01C", "02", "02A",
+                                                                      "02B", "02C", "03" or
+                                                                      "04", FRM03 must be
+                                                                      present.
+
+© 2022 Copyright, CGS Administrators, LLC.                            42
+CMS 837P Version 005010X222A1 Companion Guide
+
+Page # Loop ID  Reference Name                 Codes/Content  Length  Notes/Comments
+495 2440                                       -              50
+                FRM03  Question                                       DME claims Only.
+                       Response                -              50
+                                                                      When LQ02 = "10.03" and
+495 2440        FRM03  Question                -              8       FRM01 = "03", "03A",
+                       Response                -              8       "03B", "04", "04A", "04B",
+                                                                      "05", "06", "08A", "08C",
+495 2440        FRM04  Question                -              6       "08D", "08F", "08G" or
+495 2440        FRM04  Response                -              6       "09", FRM03 must be
+                                               -              6       present.
+                       Question
+                       Response                                       DME claims Only.
+
+495 2440        FRM05  Question                                       When LQ02 = `484.03"
+                       Response                                       and FRM with FRM01 =
+                                                                      "1A", "1B", "02", "03" or
+495 2440        FRM05  Question                                       "05" is present, then
+                       Response                                       FRM03 must be present.
+
+495 2440        FRM05  Question                                       DME claims Only.
+                       Response
+                                                                      Must not be a future date.
+
+                                                                      DME claims Only.
+
+                                                                      When LQ02 = "484.03"
+                                                                      and FRM with FRM01 =
+                                                                      "1C" or "6C" is present,
+                                                                      then FRM04 must be
+                                                                      present.
+
+                                                                      DME claims Only.
+
+                                                                      When LQ02 = "10.03" and
+                                                                      FRM01 = "08B", "08E" or
+                                                                      "08H", FRM05 must be
+                                                                      present.
+
+                                                                      DME claims Only.
+
+                                                                      When LQ02 = "484.03"
+                                                                      and FRM01 = "1B" or
+                                                                      "6B", FRM05 must be
+                                                                      present.
+
+                                                                      DME claims Only.
+
+                                                                      Must be between 0 and
+                                                                      100 and can contain up to
+                                                                      one decimal place.
+
+© 2022 Copyright, CGS Administrators, LLC.                            43
+CMS 837P Version 005010X222A1 Companion Guide
+
+10.4.18 Transaction Set Trailer
+
+The following table defines the specific details associated with the Transaction Set Trailer.
+
+Note: A hyphen in the table below means N/A.
+
+Table 56. SE Transaction Set Trailer
+
+Page # Loop ID  Reference Name                 Codes/Content  Length  Notes/Comments
+496 N/A                                        -              9
+                SE02  Transaction Set                                 Must have the same value
+                                                                      as ST02. Must be greater
+                      Control                                         than zero.
+
+                      Number
+
+11 Appendices
+
+11.1 Implementation Checklist
+
+When you decide to go live with CGS EDI you will need the following:
+    · EDI Enrollment Form if you have not submitted this form previously to CGS.
+    · EDI Application
+    · Approved Vendor Software or approved Clearinghouse or Billing Service Approved Network Service
+         Vendor
+    · Upon approval of the request to exchange files with CGS, a letter will be sent to the requestor.
+
+11.2 Transmission Examples
+
+Figure 3. Example of 837P Control Segments and Envelopes
+
+© 2022 Copyright, CGS Administrators, LLC.                                                              44
+CMS 837P Version 005010X222A1 Companion Guide
+
+Please refer to the GPNet communications manual (https://www.cgsmedicare.com/partb/edi/index.html) for
+additional information.
+
+11.3 Frequently Asked Questions
+
+Frequently asked questions can be accessed at Medicare FFS EDI Operations
+(https://www.cms.gov/ElectronicBillingEDITrans/) and the CGS website (https://www.cgsmedicare.com/).
+Click on your line of business and the FAQ's can be located on the menu.
+
+11.4 Acronym Listing
+
+Table 57. Acronyms Listing and Definitions
+
+Acronym    Definition
+276        276 Claim Status Request transaction
+277        277 Claim Status Response transaction
+277CA      277 Claim Acknowledgement
+835        835 Electronic Remittance Advice transaction
+837P       837 Professional Claims transaction
+999        Implementation Acknowledgment
+ASC        Accredited Standards Committee
+CAQH CORE  Council for Affordable Quality Healthcare ­ Committee on Operating Rules for
+           Information Exchange
+CEDI       Common Electronic Data Interchange
+CG         Companion Guide
+CMS        Centers for Medicare & Medicaid Services
+CMN        Certificate of Medical Necessity
+DME        Durable Medical Equipment
+EDI        Electronic Data Interchange
+ERA        Electronic Remittance Advice
+FFS        Medicare Fee-For-Service
+FISMA      Federal Information Security Management Act
+GS/GE      GS ­ Functional Group Header / GE ­ Functional Group Trailer
+
+© 2022 Copyright, CGS Administrators, LLC.                                                            45
+CMS 837P Version 005010X222A1 Companion Guide
+
+Acronym  Definition
+HCPCS    Healthcare Common Procedure Coding System
+HIPAA    Health Insurance Portability and Accountability Act of 1996
+HTTP     Hyper Text Transfer Protocol
+HTTPS    Hyper Text Transfer Protocol Secure
+IOM      Internet-only Manual
+ISA/IEA  ISA ­ Interchange Control Header / IEA ­ Interchange Control Trailer
+MAC      Medicare Administrative Contractor
+MBI      Medicare Beneficiary Identifier
+MIME     Multipurpose Internet Mail Extensions
+NCPDP    National Council for Prescription Drug Programs
+NPI      National Provider Identifier
+NSV      Network Service Vendor
+PDAC     Pricing, Data Analysis and Coding
+PECOS    Provider Enrollment Chain and Ownership System
+PHI      Protected Health Information
+PID      Packet Identifier
+sFTP     Secure File Transfer Protocol
+SOAP     Simple Object Access Protocol
+ST/SE    ST ­ Transaction Set Header / SE ­ Transaction Set Trailer
+TA1      Interchange Acknowledgment
+TR3      Technical Report Type 3
+TRN      Transaction Acknowledgment report (CEDI proprietary report)
+WSDL     Web Services Description Language
+X12      A standards development organization that develops EDI standards and related
+         documents for national and global markets. (See the official ASC X12 website.)
+X12N     Insurance subcommittee of X12
+
+© 2022 Copyright, CGS Administrators, LLC.                                               46
+CMS 837P Version 005010X222A1 Companion Guide
+
+11.5 Change Summary
+
+The following table details the version history of this CG.
+
+Table 58. Companion Guide Version History
+
+Version  Date              Section(s) Changed                Change Summary
+1.0      November 5, 2010  All                               Initial Draft
+2.0      January 3, 2010   All                               1st Publication Version
+3.0      April 2011        6.0                               2nd Publication Version
+4.0      September 2015    All                               3rd Publication Version
+4.0      June 2016         All                               Updated CMS URLs
+5.0      March 2017        2.2,4.1.3,4.3&4.4                 Updated hyperlinks and connectivity
+                                                             information
+5.1      August 2017       All                               Updated CGS and CMS URL
+                                                             4th Publication Version
+6.0      March 2019        All                               Updated WPC and X12 Web addresses
+                                                             508 Compliance updates
+7.1      June 2020         1.3, 11.4                         Removed incorrect reference to CEDI
+                                                             Added instruction for +4 postal code when not
+8.0      June 2022         All                               provided by USPS.
+                                                             Updated LIN03 to indicate numeric only.
+8.1      February 2023     2.2
+
+8.2      June 2023         10.2.2, 10.4.4 and
+                           10.4.12
+
+9.0      March 2026        Page 37
+
+© 2022 Copyright, CGS Administrators, LLC.                                                                  47
+

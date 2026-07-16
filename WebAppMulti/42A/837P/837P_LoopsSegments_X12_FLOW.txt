@@ -1,0 +1,240 @@
+837P_LoopsSegments_X12 document http://localhost:5173/api/getDocument?docId=1225
+        ↓
+X12 Writer
+        ↓
+837P X12 file
+-----------
+
+CaseManagement.X12
+│
+├── IX12Writer.cs
+├── X12Writer.cs
+├── X12Builder.cs
+├── Segments
+│     ISA.cs
+│     GS.cs
+│     ST.cs
+│     BHT.cs
+│     NM1.cs
+│     HL.cs
+│     CLM.cs
+│     SV1.cs
+│     DTP.cs
+│     SE.cs
+│     GE.cs
+│     IEA.cs
+│
+└── Helpers
+      SegmentWriter.cs
+
+_________________________
+
+public interface IX12Writer
+{
+    Task WriteAsync(
+        Claim837P document,
+        Stream output,
+        CancellationToken cancellationToken = default);
+}
+-----------------
+public sealed class X12Writer : IX12Writer
+{
+    public async Task WriteAsync(
+        Claim837P claim,
+        Stream output,
+        CancellationToken cancellationToken = default)
+    {
+        var builder = new X12Builder();
+
+        builder.WriteISA();
+        builder.WriteGS();
+
+        builder.Write837P(claim);
+
+        builder.WriteGE();
+        builder.WriteIEA();
+
+        using var writer = new StreamWriter(output);
+
+        await writer.WriteAsync(builder.ToString());
+
+        await writer.FlushAsync();
+    }
+}
+---------------------------
+public sealed class X12Builder
+{
+    private readonly StringBuilder _sb = new();
+
+    private const char Element = '*';
+    private const char Segment = '~';
+
+    public void WriteISA()
+    {
+        Write(
+            "ISA",
+            "00",
+            "",
+            "00",
+            "",
+            "ZZ",
+            "SENDER",
+            "ZZ",
+            "RECEIVER",
+            DateTime.Now.ToString("yyMMdd"),
+            DateTime.Now.ToString("HHmm"),
+            "^",
+            "00501",
+            "000000001",
+            "0",
+            "P",
+            ":");
+    }
+
+    public void WriteGS()
+    {
+        Write(
+            "GS",
+            "HC",
+            "SENDER",
+            "RECEIVER",
+            DateTime.Now.ToString("yyyyMMdd"),
+            DateTime.Now.ToString("HHmm"),
+            "1",
+            "X",
+            "005010X222A1");
+    }
+
+    public void Write837P(Claim837P claim)
+    {
+        Write("ST", "837", "0001", "005010X222A1");
+
+        Write("BHT",
+            "0019",
+            "00",
+            claim.Metadata.ClaimNumber,
+            DateTime.Now.ToString("yyyyMMdd"),
+            DateTime.Now.ToString("HHmm"),
+            "CH");
+
+        Write1000A(claim);
+        Write1000B(claim);
+
+        Write2000A(claim);
+        Write2010AA(claim);
+
+        Write2000B(claim);
+        Write2010BA(claim);
+        Write2010BB(claim);
+
+        Write2300(claim);
+
+        foreach (var line in claim.Loops.L2400)
+            Write2400(line);
+
+        Write("SE", "0", "0001");
+    }
+
+    private void Write1000A(Claim837P c)
+    {
+        var nm1 = c.Loops.L1000A.NM1;
+
+        Write("NM1",
+            nm1.NM101,
+            nm1.NM102,
+            nm1.NM103,
+            "",
+            "",
+            "",
+            "",
+            nm1.NM108,
+            nm1.NM109);
+    }
+
+    private void Write1000B(Claim837P c)
+    {
+        var nm1 = c.Loops.L1000B.NM1;
+
+        Write("NM1",
+            nm1.NM101,
+            nm1.NM102,
+            nm1.NM103);
+    }
+
+    private void Write2000A(Claim837P c)
+    {
+        // HL
+    }
+
+    private void Write2010AA(Claim837P c)
+    {
+        // NM1
+        // N3
+        // N4
+        // REF
+        // PRV
+    }
+
+    private void Write2000B(Claim837P c)
+    {
+    }
+
+    private void Write2010BA(Claim837P c)
+    {
+    }
+
+    private void Write2010BB(Claim837P c)
+    {
+    }
+
+    private void Write2300(Claim837P c)
+    {
+    }
+
+    private void Write2400(ServiceLine line)
+    {
+        Write(
+            "SV1",
+            line.SV1.SV101_1,
+            line.SV1.SV101_2 + ":" + line.SV1.SV101_3,
+            line.SV1.SV102.ToString("0.00"),
+            line.SV1.SV103,
+            line.SV1.SV104.ToString());
+
+        Write(
+            "DTP",
+            "472",
+            "D8",
+            line.DTP472.DTP03);
+    }
+
+    public void WriteGE()
+    {
+        Write("GE", "1", "1");
+    }
+
+    public void WriteIEA()
+    {
+        Write("IEA", "1", "000000001");
+    }
+
+    private void Write(params string[] elements)
+    {
+        _sb.Append(string.Join(Element, elements));
+        _sb.Append(Segment);
+        _sb.AppendLine();
+    }
+
+    public override string ToString()
+        => _sb.ToString();
+}
+--------------------------------
+
+var claim = JsonSerializer.Deserialize<Claim837P>(
+    File.ReadAllText("837P_LoopsSegments_X12.json"));
+
+IX12Writer writer = new X12Writer();
+
+await using var stream = File.Create("837P.txt");
+
+await writer.WriteAsync(claim, stream);
