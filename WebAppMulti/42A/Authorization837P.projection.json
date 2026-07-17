@@ -16,11 +16,6 @@
     },
 
     {
-      "target": "loops.2300.CLM.CLM01",
-      "source": "claim.claimNumber"
-    },
-
-    {
       "target": "loops.2300.CLM.CLM05_1",
       "source": "placeOfService"
     },

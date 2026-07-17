@@ -6,8 +6,7 @@
     "provider":      734,
     "authorization": 733,
     "payer":         806,
-    "patient":       735,
-    "pacticeConfiguration": 1
+    "patient":       735
   },
   "sources": {
     "sessions":      [418, 403],

@@ -1,7 +1,240 @@
 ﻿
+
+7/17/26
+-------------------
+give me an SP to void a claim voided. 
+the undo of 
+PROCEDURE [cases].[usp_CreateClaim]
+
+
+-------------------
+does [usp_CreateClaim] need any updates
+--------------------
+give me the snips for the new fields if any
+TABLE [cases].[ClaimSession](
+	[ClaimSessionId] [int] IDENTITY(1,1) NOT NULL,
+	[ClaimId] [int] NOT NULL,
+	[SessionDocumentId] [int] NOT NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ClaimSessionId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [cases].[ClaimSession] ADD  DEFAULT (getdate()) FOR [CreatedDate]
+GO
+
+ALTER TABLE [cases].[ClaimSession]  WITH CHECK ADD  CONSTRAINT [FK_ClaimSession_Claim] FOREIGN KEY([ClaimId])
+REFERENCES [cases].[Claim] ([ClaimId])
+GO
+
+ALTER TABLE [cases].[ClaimSession] CHECK CONSTRAINT [FK_ClaimSession_Claim]
+GO
+
+ALTER TABLE [cases].[ClaimSession]  WITH CHECK ADD  CONSTRAINT [FK_ClaimSession_Document] FOREIGN KEY([SessionDocumentId])
+REFERENCES [cases].[Document] ([DocumentId])
+
+-------------------
+here i the table
+give me the snippets to add the new cols
+
+USE [CaseManagement]
+GO
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [cases].[Claim](
+	[ClaimId] [int] IDENTITY(1,1) NOT NULL,
+	[CaseId] [int] NOT NULL,
+	[ClaimNumber] [varchar](50) NULL,
+	[Status] [varchar](50) NULL,
+	[GeneratedDate] [datetime2](7) NULL,
+	[EdiDocumentId] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ClaimId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+-------------------
+I want to mark a claim as diabled mot used an old bad claim.
+
+maybe extra cols and updated SP cases.[usp_CreateClaim]
+any suggestion. 
+
+
+----------------
+
+7/16/26
+-------------------
+OK. planning the claim piece.  I have most of it done already.
+
+
+begin tran
+{
+    1. create claim for sessions[a, b,c]
+    2. run my process create edi.  With the additional claim info.	
+}
+end tran
+
+invoice-build.json have two new items 
+.json having
+Provider
+Patient
+Authorization
+Payer
+Sessions[]
+
+*new items 
+Practice Configuration
+Claim
+
+
+-------------------
+OK.  Lets talk. 
+Can you create the whole thing. 
+Create a claim submission?  I feel i am doing a lot of the work and querying the AI.
+what do you think?
+
+-------------------
+
+give me the insert for a claim.
+for  "sessions":      [418, 403]
+I know later it will be more bullet proof 
+
+--------------------------
+my latest 
+I want to finalize the edi as much as i can.  What is missing and what can i do.
+i have the root docs session, authorization, payer, etc.
+if I have to generate a claim ID or anything like that let me now.
+
+ISA*00*          *00*          *ZZ*SENDERID       *ZZ*RECEIVERID     *260716*1120*^*00501*000000001*0*T*:~
+GS*HC*SENDERID*RECEIVERID*20260716*1120*1*X*005010X222A1~
+ST*837*0001*005010X222A1~
+BHT*0019*00**20260716*1120*CH~
+NM1*41*2*999 Dynamic Minds Corp*****46*DYNAMICMINDS~
+NM1*40*2*Horizon Blue Cross Blue Shield~
+HL~
+PRV*BI*PXC*193200000X~
+NM1*85*2*999 Dynamic Minds Corp*****XX*9939967899~
+N3*311 Lenox Ave.~
+N4*Westfield*NJ*07090~
+REF*EI*12-9956789~
+HL~
+SBR*P********CI~
+NM1***Thompson*Mason*****M123456789~
+DMG*D8*2018-04-16*M~
+NM1*PR*2*Horizon Blue Cross Blue Shield*****PI*12345~
+CLM**0.00***22:B:1~
+HI*:F84.0~
+REF*G1*OP2517241999~
+NM1*82*1*Rosel999*Jocelyn999****XX*9992223399~
+PRV*PE*PXC*251B00000X~
+SV1*HC:97153:HM**UN~
+DTP*472*D8*2026-05-19~
+SV1*HC:97153:HM**UN~
+DTP*472*D8*2026-06-01~
+SE*25*0001~
+GE*1*1~
+IEA*1*000000001~
+
+---------------------------------
+
+"expression": "formatDate(value, 'yyyyMMdd')"
+-------------------------------
+7/14/26
+
+"expression": "constants.serviceQualifier"
+
+"ruleType": "837P_LoopsSegments_X12"
+should have  a rule for the date  
+{
+"target": "loops.2400[0].DTP472.DTP03",
+"source": "session.date"
+},
+
+----------------
+7/9/26
+authorization.minutesPerUnit
+
+07/09/26
+
+here is the rule for i'm thinking for 837P_LoopsSegments_X12
+{
+  "ruleType": "837P_LoopsSegments_X12",
+  "version": "1.0.0",
+
+  "constants": {
+    "unitRate": 65.00
+  },
+
+  "foreach": {
+    "source":    "metadata.sources.sessions",
+    "loadDoc":   "documentId",
+    "appendTo":  "loops.2400",
+    "fields": [
+      { "target": "DTP472.DTP03", "source": "session.date"      },
+      { "target": "SV1.SV101_1", "type": "literal", "value": "HC"  },
+      { "target": "SV1.SV101_2", "source": "service.code"       },
+      { "target": "SV1.SV101_3", "source": "service.modifier"   },
+      { "target": "SV1.SV103",   "type": "literal", "value": "UN"  },
+      { "target": "SV1.SV104",   "expression": "minutes(session.startTime, session.endTime) / 15" },
+      { "target": "SV1.SV102",   "expression": "SV1.SV104 * unitRate" }
+    ]
+  },
+
+  "rules": [
+    { "field": "loops.2300.CLM.CLM02", "expression": "sum(loops.2400, 'SV1.SV102')" }
+  ]
+}
+
+----------------------------------------
+I have the boxes mostly populated.
+I don't have the loop box 24 data filled in.   that is not known from my projections so far.
+You mentioned the Loop project and or Rule => boxes filled or 837P or cms1500.
+I think i need  at least a Rule 
+
+I could [] () [Rule] => new doc withe loop service dds, hours, code, data filled in
+
+i do have the sources 
+
+"metadata": {
+"claimNumber": "",
+"caseId": 9,
+"patientId": 0,
+"pipelineRunId": "f13740a4-fd3b-41cf-8a44-48bc9377bbb2",
+"sources": {
+"provider": 759,
+"authorization": 366,
+"patient": 793,
+"payer": 807,
+"sessions": [
+{
+"documentId": 418
+},
+{
+"documentId": 403
+}
+]
+}
+},
+----------------
+----------------
+
 7/7/26
 
 ----------------
+[SourceDocumentId]
+[JsonDocumentId]
+------------------
 give me the create table for patient.
 from my similar table session where i have an id, jsondocId, sourcedocId do you rember that.
 

@@ -15,8 +15,7 @@ $projectDir = "C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.J
 $spec     = Get-Content $SpecFile | ConvertFrom-Json
 $caseId   = $spec.caseId
 $invoice  = $spec.blankDocId
-$projectors = $spec.projectors
-$sources    = $spec.sources
+$sources  = $spec.sources
 
 function Get-ActiveRuleDocId {
     param([string]$RuleName)
@@ -44,6 +43,90 @@ function Get-ActiveRuleDocId {
         exit 1
     }
     return [int]$result
+}
+
+function Get-ActiveProjectionDocId {
+    param([string]$ProjectionName)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT TOP 1 ProjectionDocumentId
+        FROM   [cases].[ProjectorRule]
+        WHERE  Name = @Name AND IsActive = 1
+        ORDER  BY ProjectorRuleId DESC
+    "
+    $cmd.Parameters.AddWithValue("@Name", $ProjectionName) | Out-Null
+
+    $result = $cmd.ExecuteScalar()
+    $conn.Close()
+
+    if (-not $result -or $result -eq 0) {
+        Write-Error "No active ProjectionDocumentId found in [cases].[ProjectorRule] for '$ProjectionName'."
+        exit 1
+    }
+    return [int]$result
+}
+
+function New-Claim {
+    param([int]$CaseId, [int[]]$SessionDocumentIds)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = New-Object System.Data.SqlClient.SqlCommand("[cases].[usp_CreateClaim]", $conn)
+    $cmd.CommandType = [System.Data.CommandType]::StoredProcedure
+    $cmd.Parameters.AddWithValue("@CaseId", $CaseId) | Out-Null
+    $cmd.Parameters.AddWithValue("@SessionDocumentIds", ($SessionDocumentIds -join ",")) | Out-Null
+
+    $claimIdParam = New-Object System.Data.SqlClient.SqlParameter("@ClaimId", [System.Data.SqlDbType]::Int)
+    $claimIdParam.Direction = [System.Data.ParameterDirection]::Output
+    $cmd.Parameters.Add($claimIdParam) | Out-Null
+
+    $claimNumberParam = New-Object System.Data.SqlClient.SqlParameter("@ClaimNumber", [System.Data.SqlDbType]::VarChar, 50)
+    $claimNumberParam.Direction = [System.Data.ParameterDirection]::Output
+    $cmd.Parameters.Add($claimNumberParam) | Out-Null
+
+    try {
+        $cmd.ExecuteNonQuery() | Out-Null
+    }
+    catch {
+        $conn.Close()
+        Write-Error "usp_CreateClaim failed: $($_.Exception.Message)"
+        exit 1
+    }
+    $conn.Close()
+
+    return @{ ClaimId = [int]$claimIdParam.Value; ClaimNumber = [string]$claimNumberParam.Value }
+}
+
+function Set-ClaimEdiDocument {
+    param([int]$ClaimId, [int]$EdiDocumentId)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        UPDATE [cases].[Claim]
+        SET    EdiDocumentId = @EdiDocumentId, Status = 'Generated'
+        WHERE  ClaimId = @ClaimId
+    "
+    $cmd.Parameters.AddWithValue("@EdiDocumentId", $EdiDocumentId) | Out-Null
+    $cmd.Parameters.AddWithValue("@ClaimId", $ClaimId) | Out-Null
+    $cmd.ExecuteNonQuery() | Out-Null
+    $conn.Close()
 }
 
 function Invoke-PipelineStep {
@@ -81,33 +164,47 @@ Write-Host "  Spec     : $SpecFile" -ForegroundColor Gray
 Write-Host "  CaseId   : $caseId  |  Blank: $invoice" -ForegroundColor Gray
 Write-Host ""
 
+# Claim — created first; fails fast if any session is already claimed
+Write-Host "Claim : creating for sessions [$($sources.sessions -join ', ')]..." -ForegroundColor Yellow
+$claim = New-Claim -CaseId $caseId -SessionDocumentIds $sources.sessions
+Write-Host "  => claimId: $($claim.ClaimId)  claimNumber: $($claim.ClaimNumber)" -ForegroundColor Green
+
+$claimJson  = @{ claimNumber = $claim.ClaimNumber } | ConvertTo-Json
+$claimSave  = @{ json = $claimJson; name = "claim" } | ConvertTo-Json
+$claimResp  = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $claimSave
+$claimDocId = $claimResp.docId
+
+$claimProjectorDocId = Get-ActiveProjectionDocId "Claim837P"
+$invoice = Run-Step $claimDocId $claimProjectorDocId $invoice "Claim ($claimDocId)"
+
 # Sessions — each appends a Loop 2400 entry
 if ($sources.sessions -and $sources.sessions.Count -gt 0) {
+    $sessionProjectorDocId = Get-ActiveProjectionDocId "Session837P"
     $i = 1
     foreach ($sessionDocId in $sources.sessions) {
-        $invoice = Run-Step $sessionDocId $projectors.session $invoice "Session $i ($sessionDocId)"
+        $invoice = Run-Step $sessionDocId $sessionProjectorDocId $invoice "Session $i ($sessionDocId)"
         $i++
     }
 }
 
 # Provider
 if ($sources.provider) {
-    $invoice = Run-Step $sources.provider $projectors.provider $invoice "Provider"
+    $invoice = Run-Step $sources.provider (Get-ActiveProjectionDocId "Provider837P") $invoice "Provider"
 }
 
 # Payer
 if ($sources.payer) {
-    $invoice = Run-Step $sources.payer $projectors.payer $invoice "Payer"
+    $invoice = Run-Step $sources.payer (Get-ActiveProjectionDocId "Payer837P") $invoice "Payer"
 }
 
 # Authorization
 if ($sources.authorization) {
-    $invoice = Run-Step $sources.authorization $projectors.authorization $invoice "Authorization"
+    $invoice = Run-Step $sources.authorization (Get-ActiveProjectionDocId "Authorization837P") $invoice "Authorization"
 }
 
 # Patient
 if ($sources.patient) {
-    $invoice = Run-Step $sources.patient $projectors.patient $invoice "Patient"
+    $invoice = Run-Step $sources.patient (Get-ActiveProjectionDocId "Patient837P") $invoice "Patient"
 }
 
 # Metadata — build from spec and (M) merge into final invoice
@@ -120,6 +217,7 @@ $sessionSources = @($sources.sessions | ForEach-Object { @{ documentId = $_ } })
 $metadataPatch = @{
     metadata = @{
         caseId        = $caseId
+        claimNumber   = $claim.ClaimNumber
         pipelineRunId = $pipelineRunId
         sources       = @{
             sessions      = $sessionSources
@@ -154,8 +252,13 @@ Write-Host "Rule + Write : $invoice (Q) $ruleDocId (W)" -ForegroundColor Yellow
 $ediDocId = Invoke-PipelineStep "$invoice (Q) $ruleDocId (W)" $caseId
 Write-Host "  => docId: $ediDocId" -ForegroundColor Green
 
+# Close the loop — link the claim row to its generated EDI document
+Set-ClaimEdiDocument -ClaimId $claim.ClaimId -EdiDocumentId $ediDocId
+
 Write-Host ""
 Write-Host "=== Final EDI ===" -ForegroundColor Cyan
-Write-Host "  ruleDocId : $ruleDocId" -ForegroundColor Gray
-Write-Host "  docId     : $ediDocId" -ForegroundColor White
-Write-Host "  Open      : http://localhost:5173/api/getDocument?docId=$ediDocId" -ForegroundColor Cyan
+Write-Host "  claimId     : $($claim.ClaimId)" -ForegroundColor Gray
+Write-Host "  claimNumber : $($claim.ClaimNumber)" -ForegroundColor Gray
+Write-Host "  ruleDocId   : $ruleDocId" -ForegroundColor Gray
+Write-Host "  docId       : $ediDocId" -ForegroundColor White
+Write-Host "  Open        : http://localhost:5173/api/getDocument?docId=$ediDocId" -ForegroundColor Cyan

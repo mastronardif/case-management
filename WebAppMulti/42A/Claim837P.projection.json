@@ -1,0 +1,14 @@
+{
+  "projectionType": "Claim837P",
+  "targetDocument": "837P_LoopsSegments_X12",
+  "version": "1.0.0",
+
+  "fields": [
+
+    {
+      "target": "loops.2300.CLM.CLM01",
+      "source": "claimNumber"
+    }
+
+  ]
+}

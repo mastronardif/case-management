@@ -1,6 +1,65 @@
 
+7/17/26
+-----------------------------------
+Let fix that index issue.
+I will be using the same sessions for my testing for now.
+give me the DDL and i will apply the change.
+-----------------------------------
+I update some tables, and SP's around the claim info.
+I voided the claim.
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+----------------------------------
+See: 
+C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Tests\invoice-build.json
+ignore "pacticeConfiguration": 1 for now.  we can do that later.
+the other day you had a plan for updating the .ps1.  Just tell me it and then you can proceed.
+----------------------------------
+I meant abstractly.  right now it does what it does.  i run the .ps1 job.
+there is no queue. or do i plan on doing that now.  thats futher down the road.
+I am going to update the .json file for the ps1 job
+Got it??????
+----------------------------------
+lets review.  I want to make sure we follow the theme of the application/process.
+The application has the users piece.  and this piece the Worker Pipeline process
+the ser will pick n sessions from a case and genrate the claim.
+Imagine he submits the job. The worker feeds from the queue.
+Got it????
+----------------------------------
 7/16/26
+----------------------------------
+not yet .  more talking.  
+Ithe begn end tran was phseo noat a sql db thing. I agree with you not to do it at the db.  
+Can you explain how you do that and the claim projeuction.
+_____________________________
+Talk only.  What do you think and let me know if you have a better design!
+Adding missig piesces to the 837P.
 
+Planning the claim piece. 
+I have to create the claim to get the claimNumber.  
+It also validates. see: [cases].[usp_CreateClaim]
+
+phsedo code:
+begin tran
+{
+    1. create claim for sessions[a, b,c]
+    2. run my process create edi.  With the additional claim info.	
+}
+end tran
+
+new .ps1 BuildClaim837P.ps1 using the new .json
+invoice-build.json have two new items 
+.json having
+Provider
+Patient
+Authorization
+Payer
+Sessions[]
+
+*new items 
+Practice Configuration
+Claim
+
+----------------------------------
 OK here is the latest with the correct date fmt.
 see edi.txt
 i want to incrementally add the missing elements.
