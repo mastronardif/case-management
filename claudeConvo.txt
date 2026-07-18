@@ -1,4 +1,21 @@
 
+-----------------------------------
+7/18/26
+I updated   [CaseManagement].[cases].[ProjectorRule] with PracticeConfiguration837P
+---------------------
+Table is here see schema
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+
+-----------------
+
+-----------------
+Unlike the other docs [PracticeConfigurationId] is a table.
+What do you think do you think i dhaould aamke it like the others.
+the others are json because they orignaint as pdfs or what ever and get saved as json.
+
+-----------------------------------\
+Add the PracticeConfiguration
+-----------------------------------
 7/17/26
 -----------------------------------
 Let fix that index issue.

@@ -129,6 +129,48 @@ function Set-ClaimEdiDocument {
     $conn.Close()
 }
 
+function Get-PracticeConfiguration {
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT TOP 1
+            SubmitterName, SubmitterIdentifier, ReceiverName,
+            SenderIdQualifier, SenderId, ReceiverIdQualifier, ReceiverId,
+            FunctionalIdentifierCode, VersionIdentifier, TestIndicator
+        FROM   [cases].[PracticeConfiguration]
+        WHERE  IsActive = 1
+        ORDER  BY PracticeConfigurationId DESC
+    "
+    $reader = $cmd.ExecuteReader()
+    $table  = New-Object System.Data.DataTable
+    $table.Load($reader)
+    $conn.Close()
+
+    if ($table.Rows.Count -eq 0) {
+        Write-Error "No active row found in [cases].[PracticeConfiguration]."
+        exit 1
+    }
+    $row = $table.Rows[0]
+
+    return @{
+        submitterName            = $row.SubmitterName
+        submitterIdentifier      = $row.SubmitterIdentifier
+        receiverName              = $row.ReceiverName
+        senderIdQualifier         = $row.SenderIdQualifier
+        senderId                  = $row.SenderId
+        receiverIdQualifier       = $row.ReceiverIdQualifier
+        receiverId                = $row.ReceiverId
+        functionalIdentifierCode  = $row.FunctionalIdentifierCode
+        versionIdentifier         = $row.VersionIdentifier
+        testIndicator             = $row.TestIndicator
+    }
+}
+
 function Invoke-PipelineStep {
     param([string]$Expr, [int]$CaseId)
 
@@ -206,6 +248,18 @@ if ($sources.authorization) {
 if ($sources.patient) {
     $invoice = Run-Step $sources.patient (Get-ActiveProjectionDocId "Patient837P") $invoice "Patient"
 }
+
+# Practice Configuration — runs last among (P)(AM) sources so its submitter/receiver
+# identity (1000A/1000B) wins over any overlapping values Provider837P may also set
+Write-Host ""
+Write-Host "Practice Configuration : loading active row..." -ForegroundColor Yellow
+$practiceConfig     = Get-PracticeConfiguration
+$practiceConfigJson = $practiceConfig | ConvertTo-Json
+$practiceConfigSave = @{ json = $practiceConfigJson; name = "practice-configuration" } | ConvertTo-Json
+$practiceConfigResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $practiceConfigSave
+$practiceConfigDocId = $practiceConfigResp.docId
+
+$invoice = Run-Step $practiceConfigDocId (Get-ActiveProjectionDocId "PracticeConfiguration837P") $invoice "Practice Configuration ($practiceConfigDocId)"
 
 # Metadata — build from spec and (M) merge into final invoice
 Write-Host ""

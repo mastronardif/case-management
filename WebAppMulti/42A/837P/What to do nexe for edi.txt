@@ -1,3 +1,26 @@
+Overall
+
+Prioritizing the remaining work, I'd go:
+
+✅ PracticeConfiguration
+✅ LX segments
+✅ HI qualifier (ABK)
+✅ Subscriber address (N3/N4)
+✅ SV107 diagnosis pointer
+✅ REF*6R (Session ID)
+✅ Place of Service from Session
+✅ ISA/GS control number sequencing
+
+After that, you're essentially generating a production-quality 837P. 
+At that point, most of the remaining work isn't about the EDI itself—it's about payer-specific requirements, 
+trading partner testing, acknowledgments (999/277CA), and eventually processing 835 remittance files.
+
+You've built the hard part already: a document-driven projection engine that 
+assembles the claim from Provider, Patient, Payer, Authorization, Session, and Claim documents. 
+That's the foundation that makes the rest straightforward.
+
+
+______________________________________
 i want to incrementally add the missing elements. 
 what elements would come from a source like session, authorization, etc? 
 elements not from them perhaps a subsidiary table. 

@@ -12,8 +12,14 @@ public class X12Writer : IX12Writer
     private const char CompositeSeparator = ':';
     private const char SegmentSeparator = '~';
 
-    private const string SenderId = "SENDERID";
-    private const string ReceiverId = "RECEIVERID";
+    // Fallbacks when metadata.practiceConfiguration isn't present on the source doc
+    private const string DefaultIdQualifier = "ZZ";
+    private const string DefaultSenderId = "SENDERID";
+    private const string DefaultReceiverId = "RECEIVERID";
+    private const string DefaultFunctionalIdentifierCode = "HC";
+    private const string DefaultVersionIdentifier = "005010X222A1";
+    private const string DefaultTestIndicator = "T";
+
     private const string InterchangeControlNumber = "000000001";
     private const string GroupControlNumber = "1";
     private const string TransactionControlNumber = "0001";
@@ -28,6 +34,15 @@ public class X12Writer : IX12Writer
         var metadata = GetObject(root, "metadata");
         var now = DateTime.Now;
 
+        var practiceConfig = GetObject(metadata, "practiceConfiguration");
+        var senderIdQualifier = GetStringOrDefault(practiceConfig, "senderIdQualifier", DefaultIdQualifier);
+        var senderId = GetStringOrDefault(practiceConfig, "senderId", DefaultSenderId);
+        var receiverIdQualifier = GetStringOrDefault(practiceConfig, "receiverIdQualifier", DefaultIdQualifier);
+        var receiverId = GetStringOrDefault(practiceConfig, "receiverId", DefaultReceiverId);
+        var functionalIdentifierCode = GetStringOrDefault(practiceConfig, "functionalIdentifierCode", DefaultFunctionalIdentifierCode);
+        var versionIdentifier = GetStringOrDefault(practiceConfig, "versionIdentifier", DefaultVersionIdentifier);
+        var testIndicator = GetStringOrDefault(practiceConfig, "testIndicator", DefaultTestIndicator);
+
         var sb = new StringBuilder();
         var segmentCount = 0;
 
@@ -41,15 +56,15 @@ public class X12Writer : IX12Writer
         // Envelope (ISA is fixed-width per spec; not trimmed)
         sb.AppendLine(BuildFixedSegment("ISA",
             "00", "          ", "00", "          ",
-            "ZZ", SenderId.PadRight(15), "ZZ", ReceiverId.PadRight(15),
+            senderIdQualifier, senderId.PadRight(15), receiverIdQualifier, receiverId.PadRight(15),
             now.ToString("yyMMdd"), now.ToString("HHmm"), "^", "00501",
-            InterchangeControlNumber, "0", "T", ":"));
+            InterchangeControlNumber, "0", testIndicator, ":"));
 
-        Write("GS", "HC", SenderId, ReceiverId, now.ToString("yyyyMMdd"), now.ToString("HHmm"),
-            GroupControlNumber, "X", "005010X222A1");
+        Write("GS", functionalIdentifierCode, senderId, receiverId, now.ToString("yyyyMMdd"), now.ToString("HHmm"),
+            GroupControlNumber, "X", versionIdentifier);
 
         var transactionStart = segmentCount; // segments from here through SE (inclusive) count toward SE01
-        Write("ST", "837", TransactionControlNumber, "005010X222A1");
+        Write("ST", "837", TransactionControlNumber, versionIdentifier);
         Write("BHT", "0019", "00", GetString(metadata, "claimNumber"), now.ToString("yyyyMMdd"), now.ToString("HHmm"), "CH");
 
         WriteNM1(Write, GetObject(loops, "1000A"), "NM1");
@@ -231,6 +246,12 @@ public class X12Writer : IX12Writer
             JsonValueKind.Number => value.GetRawText(),
             _ => ""
         };
+    }
+
+    private static string GetStringOrDefault(JsonElement obj, string name, string defaultValue)
+    {
+        var value = GetString(obj, name);
+        return value.Length > 0 ? value : defaultValue;
     }
 
     private static string GetMoney(JsonElement obj, string name)

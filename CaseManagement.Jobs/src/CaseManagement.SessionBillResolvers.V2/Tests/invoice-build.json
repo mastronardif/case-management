@@ -1,19 +1,18 @@
 {
   "caseId": 9,
   "blankDocId": 749,
-  "projectors": {
-    "session":       731,
-    "provider":      734,
+  "projectors reference not used": {
+    "session": 731,
+    "provider": 734,
     "authorization": 733,
-    "payer":         806,
-    "patient":       735,
-    "pacticeConfiguration": 1
+    "payer": 806,
+    "patient": 735
   },
   "sources": {
-    "sessions":      [418, 403],
-    "provider":      1064,
+    "sessions": [418, 403],
+    "provider": 1064,
     "authorization": 1200,
-    "payer":         807,
-    "patient":       793
+    "payer": 807,
+    "patient": 793
   }
 }

@@ -1,0 +1,87 @@
+{
+  "projectionType": "PracticeConfiguration837P",
+  "targetDocument": "837P_LoopsSegments_X12",
+  "version": "1.0.0",
+
+  "fields": [
+    {
+      "target": "loops.1000A.NM1.NM101",
+      "type": "literal",
+      "value": "41"
+    },
+
+    {
+      "target": "loops.1000A.NM1.NM102",
+      "type": "literal",
+      "value": "2"
+    },
+
+    {
+      "target": "loops.1000A.NM1.NM103",
+      "source": "submitterName"
+    },
+
+    {
+      "target": "loops.1000A.NM1.NM108",
+      "type": "literal",
+      "value": "46"
+    },
+
+    {
+      "target": "loops.1000A.NM1.NM109",
+      "source": "submitterIdentifier"
+    },
+
+    {
+      "target": "loops.1000B.NM1.NM101",
+      "type": "literal",
+      "value": "40"
+    },
+
+    {
+      "target": "loops.1000B.NM1.NM102",
+      "type": "literal",
+      "value": "2"
+    },
+
+    {
+      "target": "loops.1000B.NM1.NM103",
+      "source": "receiverName"
+    },
+
+    {
+      "target": "metadata.practiceConfiguration.senderIdQualifier",
+      "source": "senderIdQualifier"
+    },
+
+    {
+      "target": "metadata.practiceConfiguration.senderId",
+      "source": "senderId"
+    },
+
+    {
+      "target": "metadata.practiceConfiguration.receiverIdQualifier",
+      "source": "receiverIdQualifier"
+    },
+
+    {
+      "target": "metadata.practiceConfiguration.receiverId",
+      "source": "receiverId"
+    },
+
+    {
+      "target": "metadata.practiceConfiguration.functionalIdentifierCode",
+      "source": "functionalIdentifierCode"
+    },
+
+    {
+      "target": "metadata.practiceConfiguration.versionIdentifier",
+      "source": "versionIdentifier"
+    },
+
+    {
+      "target": "metadata.practiceConfiguration.testIndicator",
+      "source": "testIndicator"
+    }
+  ]
+}
