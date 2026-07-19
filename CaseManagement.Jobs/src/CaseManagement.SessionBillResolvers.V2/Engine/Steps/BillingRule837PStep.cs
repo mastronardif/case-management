@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 
 namespace CaseManagement.SessionBillResolvers.V2.Engine.Steps;
@@ -42,6 +43,15 @@ public class BillingRule837PStep(ICaseManagementRepository repository, ILogger<B
         if (result.ValidationIssues.Count > 0)
             logger.LogWarning("BillingRule837P validation issues ({Count}): {Issues}",
                 result.ValidationIssues.Count, string.Join(" | ", result.ValidationIssues));
+
+        // Persist issues onto the claim so downstream consumers (CMS-1500 review,
+        // claim status) can see why a claim isn't submittable — not just this run's log.
+        if (result.UpdatedClaim["metadata"] is not JsonObject metadataNode)
+        {
+            metadataNode = new JsonObject();
+            result.UpdatedClaim["metadata"] = metadataNode;
+        }
+        metadataNode["validationIssues"] = new JsonArray(result.ValidationIssues.Select(i => (JsonNode?)JsonValue.Create(i)).ToArray());
 
         var updatedJson = result.UpdatedClaim.ToJsonString(WriteIndented);
         var docId = await repository.SaveDocumentAsync(

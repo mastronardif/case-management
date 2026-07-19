@@ -109,7 +109,7 @@ function New-Claim {
 }
 
 function Set-ClaimEdiDocument {
-    param([int]$ClaimId, [int]$EdiDocumentId)
+    param([int]$ClaimId, [int]$EdiDocumentId, [string]$Status)
 
     $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
     $connStr  = $settings.ConnectionStrings.DefaultConnection
@@ -120,10 +120,11 @@ function Set-ClaimEdiDocument {
     $cmd = $conn.CreateCommand()
     $cmd.CommandText = "
         UPDATE [cases].[Claim]
-        SET    EdiDocumentId = @EdiDocumentId, Status = 'Generated'
+        SET    EdiDocumentId = @EdiDocumentId, Status = @Status
         WHERE  ClaimId = @ClaimId
     "
     $cmd.Parameters.AddWithValue("@EdiDocumentId", $EdiDocumentId) | Out-Null
+    $cmd.Parameters.AddWithValue("@Status", $Status) | Out-Null
     $cmd.Parameters.AddWithValue("@ClaimId", $ClaimId) | Out-Null
     $cmd.ExecuteNonQuery() | Out-Null
     $conn.Close()
@@ -299,15 +300,26 @@ Write-Host "=== Final invoice (pre-rule) ===" -ForegroundColor Cyan
 Write-Host "  docId : $invoice" -ForegroundColor White
 Write-Host "  Open  : http://localhost:5173/api/getDocument?docId=$invoice" -ForegroundColor Cyan
 
-# Apply the current 837P rule, then serialize to X12
+# Apply the current 837P rule — split from (W) so we can inspect validation issues
+# before deciding the claim's status
 Write-Host ""
 $ruleDocId = Get-ActiveRuleDocId "837P_LoopsSegments_X12"
-Write-Host "Rule + Write : $invoice (Q) $ruleDocId (W)" -ForegroundColor Yellow
-$ediDocId = Invoke-PipelineStep "$invoice (Q) $ruleDocId (W)" $caseId
+Write-Host "Rule : $invoice (Q) $ruleDocId" -ForegroundColor Yellow
+$ruledClaimDocId = Invoke-PipelineStep "$invoice (Q) $ruleDocId" $caseId
+Write-Host "  => docId: $ruledClaimDocId" -ForegroundColor Green
+
+$ruledClaim = Invoke-RestMethod -Uri "http://localhost:5173/api/getDocument?docId=$ruledClaimDocId"
+$issues     = @($ruledClaim.metadata.validationIssues)
+$claimStatus = if ($issues.Count -gt 0) { "HasErrors" } else { "ReadyToSubmit" }
+
+Write-Host ""
+Write-Host "Write : $ruledClaimDocId (W)" -ForegroundColor Yellow
+$ediDocId = Invoke-PipelineStep "$ruledClaimDocId (W)" $caseId
 Write-Host "  => docId: $ediDocId" -ForegroundColor Green
 
-# Close the loop — link the claim row to its generated EDI document
-Set-ClaimEdiDocument -ClaimId $claim.ClaimId -EdiDocumentId $ediDocId
+# Close the loop — link the claim row to its generated EDI document and mark
+# whether it's actually submittable
+Set-ClaimEdiDocument -ClaimId $claim.ClaimId -EdiDocumentId $ediDocId -Status $claimStatus
 
 Write-Host ""
 Write-Host "=== Final EDI ===" -ForegroundColor Cyan
@@ -315,4 +327,9 @@ Write-Host "  claimId     : $($claim.ClaimId)" -ForegroundColor Gray
 Write-Host "  claimNumber : $($claim.ClaimNumber)" -ForegroundColor Gray
 Write-Host "  ruleDocId   : $ruleDocId" -ForegroundColor Gray
 Write-Host "  docId       : $ediDocId" -ForegroundColor White
+Write-Host "  status      : $claimStatus" -ForegroundColor $(if ($claimStatus -eq "HasErrors") { "Red" } else { "Green" })
+if ($issues.Count -gt 0) {
+    Write-Host "  issues      :" -ForegroundColor Red
+    foreach ($issue in $issues) { Write-Host "    - $issue" -ForegroundColor Red }
+}
 Write-Host "  Open        : http://localhost:5173/api/getDocument?docId=$ediDocId" -ForegroundColor Cyan

@@ -1,3 +1,247 @@
+
+This is getting really close. I'd call this Version 0.9. It's definitely recognizable as an 837P now.
+
+Here's what I'd change next, in order.
+
+1. HI Segment (Highest Priority)
+
+Currently:
+
+HI*:F84.0~
+
+Should become:
+
+HI*ABK:F84.0~
+
+For ICD-10 diagnosis codes.
+
+Your projection should simply populate:
+
+{
+  "target": "loops.2300.HI.HI01_1",
+  "expression": "ABK"
+}
+
+and
+
+{
+  "target": "loops.2300.HI.HI01_2",
+  "source": "authorization.diagnosisCode"
+}
+2. Subscriber Name
+
+Right now
+
+NM1***Thompson*Mason*****M123456789~
+
+Notice all those empty fields.
+
+It should eventually become
+
+NM1*IL*1*Thompson*Mason****MI*M123456789~
+
+Meaning
+
+IL = Insured
+1  = Person
+MI = Member ID
+
+These should already exist in your projection.
+
+3. Subscriber Address
+
+Missing completely.
+
+You already have it.
+
+Just emit
+
+N3*15 Oak Street~
+N4*Westfield*NJ*07090~
+4. LX Segments
+
+Every service line should start with
+
+LX*1~
+SV1...
+DTP...
+
+LX*2~
+SV1...
+DTP...
+
+Easy addition.
+
+5. Diagnosis Pointer
+
+Current
+
+SV1*HC:97153:HM*520.00*UN*8~
+
+Eventually
+
+SV1*HC:97153:HM*520.00*UN*8***1~
+
+meaning
+
+Diagnosis #1.
+
+6. REF 6R
+
+Nice one because you already have
+
+SessionDocumentId
+
+418
+403
+
+Just emit
+
+LX*1~
+REF*6R*418~
+SV1...
+
+LX*2~
+REF*6R*403~
+SV1...
+
+Many clearinghouses like seeing this.
+
+7. Place of Service
+
+You're currently
+
+CLM*...***22:B:1
+
+Later
+
+22
+
+comes from Session.
+
+For ABA Home
+
+12
+
+For Office
+
+11
+
+etc.
+
+8. Claim Frequency
+
+Right now
+
+1
+
+which is Original Claim.
+
+Eventually you'll support
+
+1 Original
+7 Replacement
+8 Void
+
+Probably derived from Claim.Status.
+
+9. Practice Configuration
+
+Looks much better now.
+
+ISA Sender
+GS Sender
+Receiver
+
+all belong there.
+
+Exactly where I'd keep them.
+
+10. Control Numbers
+
+Later your PracticeConfiguration can maintain
+
+ISA13
+
+GS06
+
+ST02
+
+instead of hardcoding
+
+000000001
+
+1
+
+0001
+My only concern
+
+These IDs
+
+ZZ*DYNAMICMINDS
+ZZ*HORIZONBCBS
+
+are fine for development.
+
+Production eventually needs your trading partner's assigned IDs.
+
+So don't hard-code them into the EDI.
+
+Keep them in PracticeConfiguration exactly as you've done.
+
+Architecture
+
+I think you've reached the point where the architecture is essentially complete.
+
+PracticeConfiguration
+        │
+Provider
+        │
+Patient
+        │
+Authorization
+        │
+Session(s)
+        │
+Claim
+        │
+        ▼
+Projection Engine
+        │
+        ▼
+837P Canonical JSON
+        │
+        ▼
+X12 Writer
+        │
+        ▼
+837P.edi
+
+I wouldn't change that design. It's clean, modular, and extensible.
+-----------------------
+Next milestone
+
+At this point I would stop adding random segments and instead build an X12 validation layer.
+
+Something like:
+
+Validate837P()
+
+✓ Missing required loops
+✓ Missing required segments
+✓ Missing required elements
+✓ NPI length = 10
+✓ Dates = yyyyMMdd
+✓ Claim Amount = Sum(SV102)
+✓ Units > 0
+✓ Authorization exists
+✓ Diagnosis exists
+✓ Service Date within Authorization period
+✓ CPT authorized
+✓ Units do not exceed authorization
+✓ Billing Provider exists
+✓ Rendering Provider exists
+-------------------------------
 Overall
 
 Prioritizing the remaining work, I'd go:

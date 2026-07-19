@@ -1,6 +1,67 @@
+7/19/26
 
+
+staus state Generated  can be changed to 'ReadyToSubmit' vs 'HasErrors' 
 -----------------------------------
 7/18/26
+I like for the claim not to be blocked.
+I would like the validation to show the errors and noting that this claim can not be process because of xyz errors.
+hence will not be able to go to the clearing house for example.
+
+At this point i want to eyeball the results.
+for example i can generate the two docs below.  The CMS-1500 being more readable.
+837P EDI        CMS-1500 PDF
+(submit)        (audit / review / print) 
+
+Session / Claim Data
+        |
+        +----------------+
+        |                |
+        v                v
+   CMS-1500 Output    837P EDI Output
+   (human view)      (electronic claim)
+
+Does this make sense??? we've been do this kinda thing all along.
+
+-----------------------------------
+At this point 
+we can add more segmenst or build an X12 validation layer.
+What do you think???? talk about it.
+
+Something like:
+
+Validate837P()
+
+✓ Missing required loops
+✓ Missing required segments
+✓ Missing required elements
+✓ NPI length = 10
+✓ Dates = yyyyMMdd
+✓ Claim Amount = Sum(SV102)
+✓ Units > 0
+✓ Authorization exists
+✓ Diagnosis exists
+✓ Service Date within Authorization period
+✓ CPT authorized
+✓ Units do not exceed authorization
+✓ Billing Provider exists
+✓ Rendering Provider exists
+
+-----------------------------------
+Talk.
+Remember that list will be passed to the process that creates the 837P.
+Do you have a suggestions on how to accomplish this????
+
+  "sources": {
+    "pacticeConfiguration": table 1, this is hard codeded for now. its ok talk.
+    "sessions":      [418, 403],
+    "provider":      1064,
+    "authorization": 1200,
+    "payer":         807,
+    "patient":       793
+  }
+  
+-----------------------------------
 I updated   [CaseManagement].[cases].[ProjectorRule] with PracticeConfiguration837P
 ---------------------
 Table is here see schema
