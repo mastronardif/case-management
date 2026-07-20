@@ -261,6 +261,17 @@ public class SqlCaseManagementRepository : ICaseManagementRepository
         return result is null or DBNull ? null : Convert.ToInt32(result);
     }
 
+    public async Task<int> CreateShortLinkAsync(string targetUrl, DateTime? expiresDate, CancellationToken ct)
+    {
+        await using var conn = new SqlConnection(_conn.DefaultConnection);
+        await conn.OpenAsync(ct);
+        using var cmd = new SqlCommand(
+            "INSERT INTO [cases].[ShortLink] (TargetUrl, ExpiresDate) OUTPUT INSERTED.ShortLinkId VALUES (@TargetUrl, @ExpiresDate)", conn);
+        cmd.Parameters.AddWithValue("@TargetUrl", targetUrl);
+        cmd.Parameters.AddWithValue("@ExpiresDate", (object?)expiresDate ?? DBNull.Value);
+        return (int)(await cmd.ExecuteScalarAsync(ct))!;
+    }
+
     public async Task SaveInvoiceAsync(DocumentContext context, string invoiceJson, CancellationToken ct)
     {
         _logger.LogInformation("Saving invoice");

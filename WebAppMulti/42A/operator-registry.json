@@ -1,6 +1,6 @@
 {
   "name": "Operators",
-  "version": "3.0",
+  "version": "3.2.0",
   "description": "DSL operator registry — source of truth for token mapping and catalog display.",
   "tokens": [
     {
@@ -22,9 +22,24 @@
       "inputLabels": ["sourceDoc", "projectionDefinition"],
       "outputLabels": ["sessionAudit.json", "sessionReview.html"],
       "params": [
-        { "name": "tableName", "type": "string", "required": false, "description": "Target [cases] table name — enables Save & Resolve button" },
-        { "name": "caseId",    "type": "int",    "required": false, "description": "CaseId for document context" },
-        { "name": "srcDocId",  "type": "int",    "required": false, "description": "Original source document id — shown as link in review" }
+        {
+          "name": "tableName",
+          "type": "string",
+          "required": false,
+          "description": "Target [cases] table name — enables Save & Resolve button"
+        },
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": false,
+          "description": "CaseId for document context"
+        },
+        {
+          "name": "srcDocId",
+          "type": "int",
+          "required": false,
+          "description": "Original source document id — shown as link in review"
+        }
       ],
       "algebraExample": "(V)  →  A(V)B  — A validated against B",
       "cliExample": "--expression '$jsonDocId (V) $ruleDocId' --json-doc-id 403 --rule-doc-id 514 --case-id 5 --table-name Session --src-doc-id 369"
@@ -48,8 +63,18 @@
       "inputLabels": [],
       "outputLabels": ["claim837P.json", "claim837P-review.html"],
       "params": [
-        { "name": "caseId",    "type": "int", "required": true, "description": "CaseId to pull claim data for" },
-        { "name": "sessionId", "type": "int", "required": true, "description": "SessionId to pull claim data for" }
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": true,
+          "description": "CaseId to pull claim data for"
+        },
+        {
+          "name": "sessionId",
+          "type": "int",
+          "required": true,
+          "description": "SessionId to pull claim data for"
+        }
       ],
       "algebraExample": "(C)  →  (C)  — build claim from context params",
       "cliExample": "--expression '(C)' --case-id 5"
@@ -62,9 +87,24 @@
       "inputLabels": ["jsonDoc"],
       "outputLabels": ["confirm.json"],
       "params": [
-        { "name": "tableName", "type": "string", "required": true,  "description": "Target [cases] table name" },
-        { "name": "caseId",    "type": "int",    "required": true,  "description": "CaseId for the resolved row" },
-        { "name": "srcDocId",  "type": "int",    "required": false, "description": "Original source document id" }
+        {
+          "name": "tableName",
+          "type": "string",
+          "required": true,
+          "description": "Target [cases] table name"
+        },
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": true,
+          "description": "CaseId for the resolved row"
+        },
+        {
+          "name": "srcDocId",
+          "type": "int",
+          "required": false,
+          "description": "Original source document id"
+        }
       ],
       "algebraExample": "(D)  →  A(D)  — resolve A into domain table",
       "cliExample": "--expression '$jsonDocId (D)' --json-doc-id 403 --table-name Session --case-id 5 --src-doc-id 369"
@@ -77,7 +117,12 @@
       "inputLabels": ["doc1 … docN (variable)"],
       "outputLabels": ["report.zip"],
       "params": [
-        { "name": "caseId", "type": "int", "required": false, "description": "CaseId for document context" }
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": false,
+          "description": "CaseId for document context"
+        }
       ],
       "algebraExample": "(Z)  →  (Z)[A,B,C]  — bundle A, B, C into archive",
       "cliExample": "--expression '(Z)[$jsonDocId, $ruleDocId, 206]' --json-doc-id 403 --rule-doc-id 514"
@@ -90,7 +135,12 @@
       "inputLabels": ["sourceDoc", "targetDoc"],
       "outputLabels": ["merged.json"],
       "params": [
-        { "name": "caseId", "type": "int", "required": false, "description": "CaseId for document context" }
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": false,
+          "description": "CaseId for document context"
+        }
       ],
       "algebraExample": "(M)  →  A(M)B  — A fields merged into B, A overrides",
       "cliExample": "--expression '$sourceDocId (M) $targetDocId' --case-id 5"
@@ -103,10 +153,93 @@
       "inputLabels": ["sourceDoc", "targetDoc"],
       "outputLabels": ["addMerged.json"],
       "params": [
-        { "name": "caseId", "type": "int", "required": false, "description": "CaseId for document context" }
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": false,
+          "description": "CaseId for document context"
+        }
       ],
       "algebraExample": "(AM)  →  A(AM)B  — A accumulated into B (numbers add, arrays append)",
       "cliExample": "--expression '$sessionDocId (AM) $invoiceDocId' --case-id 5"
+    },
+    {
+      "token": "X",
+      "operator": "htmlRender",
+      "readsAs": "render HTML",
+      "description": "Renders a boxes-format doc as a self-contained CMS-1500 HTML review page.",
+      "inputLabels": ["boxesDoc"],
+      "outputLabels": ["CMS-1500.html"],
+      "params": [
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": false,
+          "description": "CaseId for document context"
+        }
+      ],
+      "algebraExample": "(X)  →  A(X)  — render A as CMS-1500 HTML",
+      "cliExample": "--expression '889 (P) 779 (X)' --case-id 9"
+    },
+    {
+      "token": "Q",
+      "operator": "billingRule837P",
+      "readsAs": "apply 837P rule",
+      "description": "Applies the 837P billing rule to an assembled claim. Loads session and authorization documents from metadata, builds Loop 2400 service lines, calculates units and amounts, computes CLM02, and validates the claim.",
+      "inputLabels": ["claimDoc", "ruleDoc"],
+      "outputLabels": ["claim837P.json"],
+      "params": [
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": false,
+          "description": "CaseId for document context"
+        }
+      ],
+      "algebraExample": "(Q)  →  A(Q)B  — apply rule B to claim A",
+      "cliExample": "--expression 'claimDocId (Q) ruleDocId' --case-id 9"
+    },
+    {
+      "token": "W",
+      "operator": "x12Writer",
+      "readsAs": "serialize X12",
+      "description": "Serializes a source 837P document to an X12 text artifact with an .edi.txt filename based on the source document id.",
+      "inputLabels": ["sourceDoc"],
+      "outputLabels": ["837P.edi.txt"],
+      "params": [
+        {
+          "name": "caseId",
+          "type": "int",
+          "required": false,
+          "description": "CaseId for document context"
+        }
+      ],
+      "algebraExample": "(W)  →  A(W)  — serialize A as X12 text",
+      "cliExample": "--expression '1220 (W)'"
+    },
+    {
+      "token": "S",
+      "operator": "shorten",
+      "readsAs": "shorten URL",
+      "description": "Shortens a URL. No chained doc input — url/lifetime come from --url/--lifetime. Saves a {shortUrl} doc and echoes the /s/{id} link to console.",
+      "inputLabels": [],
+      "outputLabels": ["shortLink.json"],
+      "params": [
+        {
+          "name": "url",
+          "type": "string",
+          "required": true,
+          "description": "URL to shorten"
+        },
+        {
+          "name": "lifetime",
+          "type": "int",
+          "required": false,
+          "description": "Hours until the short link expires; omit for no expiration"
+        }
+      ],
+      "algebraExample": "(S)  →  (S)  — shorten a URL from context params",
+      "cliExample": "--expression '(S)' --url \"http://192.168.1.184:5173/docviewer/1623\" --lifetime 1"
     }
   ]
 }

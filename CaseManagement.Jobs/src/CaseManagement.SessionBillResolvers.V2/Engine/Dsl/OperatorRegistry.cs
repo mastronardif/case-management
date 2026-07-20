@@ -41,7 +41,9 @@ public class OperatorRegistry
 
     public static IReadOnlyCollection<OperatorToken> BuiltInTokens { get; } =
     [
-        new OperatorToken("W", "x12Writer", "x12Writer", "Serialize a document to an X12 text file")
+        new OperatorToken("W", "x12Writer", "x12Writer", "Serialize a document to an X12 text file"),
+        new OperatorToken("S", "shorten", "shorten", "Shorten a URL. No chained input — url/lifetime come from --url/--lifetime",
+            CliExample: "--expression '(S)' --url \"http://192.168.1.184:5173/docviewer/1623\" --lifetime 1")
     ];
 
     // Handles both:

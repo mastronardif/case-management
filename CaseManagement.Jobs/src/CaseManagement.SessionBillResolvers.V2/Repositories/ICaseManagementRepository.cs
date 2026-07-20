@@ -10,4 +10,5 @@ public interface ICaseManagementRepository
     Task<Claim837PData> Get837PDataAsync(int caseId, int sessionId, CancellationToken ct);
     Task ResolveDocAsync(int docId, string tableName, int caseId, int? srcDocId, CancellationToken ct);
     Task<int?> GetConstantAsync(string key, CancellationToken ct);
+    Task<int> CreateShortLinkAsync(string targetUrl, DateTime? expiresDate, CancellationToken ct);
 }

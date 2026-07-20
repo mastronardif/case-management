@@ -30,6 +30,8 @@ var ruleDocIdOption = new Option<int?>   ("--rule-doc-id", "DocumentId of the pr
 var srcDocIdOption  = new Option<int?>   ("--src-doc-id",  "DocumentId of the original source document (workflow param srcDocId)");
 var tableNameOption = new Option<string?>("--table-name",  "Target [cases] table name (workflow param tableName)");
 var caseIdOption    = new Option<int?>   ("--case-id",     "CaseId (workflow param caseId)");
+var urlOption       = new Option<string?>("--url",         "URL to shorten (workflow param url, used by (S))");
+var lifetimeOption  = new Option<int?>   ("--lifetime",    "Hours until a shortened link expires; omit for no expiration (workflow param lifetime)");
 
 var rootCommand = new RootCommand("CaseManagement session billing resolver")
 {
@@ -45,7 +47,9 @@ var rootCommand = new RootCommand("CaseManagement session billing resolver")
     ruleDocIdOption,
     srcDocIdOption,
     tableNameOption,
-    caseIdOption
+    caseIdOption,
+    urlOption,
+    lifetimeOption
 };
 
 // Command manifest — add entries here as new jobs are built
@@ -105,6 +109,8 @@ void HandleRoot(InvocationContext context)
     var srcDocId      = context.ParseResult.GetValueForOption(srcDocIdOption);
     var tableName     = context.ParseResult.GetValueForOption(tableNameOption);
     var caseId        = context.ParseResult.GetValueForOption(caseIdOption);
+    var url           = context.ParseResult.GetValueForOption(urlOption);
+    var lifetime      = context.ParseResult.GetValueForOption(lifetimeOption);
 
     if (list)
     {
@@ -124,6 +130,8 @@ void HandleRoot(InvocationContext context)
         if (srcDocId  is not null) overrides["srcDocId"]  = JsonSerializer.SerializeToElement(srcDocId.Value);
         if (tableName is not null) overrides["tableName"] = JsonSerializer.SerializeToElement(tableName);
         if (caseId    is not null) overrides["caseId"]    = JsonSerializer.SerializeToElement(caseId.Value);
+        if (url       is not null) overrides["url"]       = JsonSerializer.SerializeToElement(url);
+        if (lifetime  is not null) overrides["lifetime"]  = JsonSerializer.SerializeToElement(lifetime.Value);
         if (overrides.Count > 0) workflowParamOverrides = overrides;
 
         return;
@@ -140,6 +148,8 @@ void HandleRoot(InvocationContext context)
         if (srcDocId  is not null) overrides["srcDocId"]  = JsonSerializer.SerializeToElement(srcDocId.Value);
         if (tableName is not null) overrides["tableName"] = JsonSerializer.SerializeToElement(tableName);
         if (caseId    is not null) overrides["caseId"]    = JsonSerializer.SerializeToElement(caseId.Value);
+        if (url       is not null) overrides["url"]       = JsonSerializer.SerializeToElement(url);
+        if (lifetime  is not null) overrides["lifetime"]  = JsonSerializer.SerializeToElement(lifetime.Value);
         if (overrides.Count > 0) workflowParamOverrides = overrides;
 
         return;
@@ -235,6 +245,7 @@ builder.Services.AddSingleton<IWorkflowStep, AddMergeStep>();
 builder.Services.AddSingleton<IWorkflowStep, HtmlRenderStep>();
 builder.Services.AddSingleton<IWorkflowStep, BillingRule837PStep>();
 builder.Services.AddSingleton<IWorkflowStep, X12WriterStep>();
+builder.Services.AddSingleton<IWorkflowStep, ShortenStep>();
 builder.Services.AddSingleton<WorkflowEngine>();
 
 var host = builder.Build();

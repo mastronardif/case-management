@@ -170,8 +170,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.WebHost.UseUrls("http://0.0.0.0:80");
-
 var app = builder.Build();
 
 // FORCE CORQS BOOTSTRAP
@@ -198,6 +196,7 @@ app.MapSaveDocumentEndpoint();
 app.MapResolveDocEndpoint();
 app.MapUploadDocumentEndpoint();
 app.MapSaveWorkflowEndpoint();
+app.MapShortLinkEndpoint();
 app.MapDocWorkbenchEndpoint();
 app.MapWfRunReportEndpoint();
 app.MapPipelineCatalogEndpoint();

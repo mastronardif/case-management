@@ -1,6 +1,28 @@
 7/19/26
+i want both hosts to work!  this periodically gets messed up for some reason.
+192.168.1.184:5173 this is the host the iphone can get to on my home network.
+https://localhost:44344/templates
+http://192.168.1.184:5173/templates
+---------------
+dotnet run -- --expression "1610 (P) 779 (X)" 
+ok i want 
+dotnet run -- --expression "url (S)" --lifetime defalts to for ever if not supplied else n hours
+ruturns  short link
+-----------------------------
+i want a url shortner.  that works like this
+url []
+return s = [] the shorten url something like 
+http://192.168.1.184:5173/docviewer/1623
+http://192.168.1.184:5173/s/id
+now http://192.168.1.184:5173/s/id brings up http://192.168.1.184:5173/docviewer/1623
 
+i want to add it to MultiApp project.
+a mimimal envasive feature.
+give me the best solution. maybe a plugin, or a lib
+--------------------
 
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti
+----------------------------
 staus state Generated  can be changed to 'ReadyToSubmit' vs 'HasErrors' 
 -----------------------------------
 7/18/26
