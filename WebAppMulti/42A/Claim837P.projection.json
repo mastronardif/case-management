@@ -8,6 +8,42 @@
     {
       "target": "loops.2300.CLM.CLM01",
       "source": "claimNumber"
+    },
+
+    {
+      "target": "loops.2000A.HL.HL01",
+      "type": "literal",
+      "value": "1"
+    },
+    {
+      "target": "loops.2000A.HL.HL03",
+      "type": "literal",
+      "value": "20"
+    },
+    {
+      "target": "loops.2000A.HL.HL04",
+      "type": "literal",
+      "value": "1"
+    },
+    {
+      "target": "loops.2000B.HL.HL01",
+      "type": "literal",
+      "value": "2"
+    },
+    {
+      "target": "loops.2000B.HL.HL02",
+      "type": "literal",
+      "value": "1"
+    },
+    {
+      "target": "loops.2000B.HL.HL03",
+      "type": "literal",
+      "value": "22"
+    },
+    {
+      "target": "loops.2000B.HL.HL04",
+      "type": "literal",
+      "value": "0"
     }
 
   ]

@@ -1,4 +1,11 @@
+
+7/20/26
+-----------------------
+
 7/19/26
+--expression '(S)' --url "http://192.168.1.184:5173/docviewer/1623" --lifetime 1
+--expression '(S)' --url "http://192.168.1.184:5173/docviewer/1623" --lifetime 1
+---------------
 i want both hosts to work!  this periodically gets messed up for some reason.
 192.168.1.184:5173 this is the host the iphone can get to on my home network.
 https://localhost:44344/templates

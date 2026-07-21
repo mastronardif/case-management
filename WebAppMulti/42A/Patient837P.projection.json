@@ -6,6 +6,18 @@
   "fields": [
 
     {
+      "target": "loops.2010BA.NM1.NM101",
+      "type": "literal",
+      "value": "IL"
+    },
+
+    {
+      "target": "loops.2010BA.NM1.NM102",
+      "type": "literal",
+      "value": "1"
+    },
+
+    {
       "target": "loops.2010BA.NM1.NM103",
       "source": "subscriber.lastName"
     },
@@ -13,6 +25,12 @@
     {
       "target": "loops.2010BA.NM1.NM104",
       "source": "subscriber.firstName"
+    },
+
+    {
+      "target": "loops.2010BA.NM1.NM108",
+      "type": "literal",
+      "value": "MI"
     },
 
     {

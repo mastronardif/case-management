@@ -164,8 +164,12 @@ public class AddMergeStep(ICaseManagementRepository repository, ILogger<AddMerge
         int seq = 1;
         foreach (var line in lines2400.OfType<JsonObject>())
         {
-            if (line["LX"] is JsonObject lx)
-                lx["LX01"] = JsonValue.Create(seq);
+            if (line["LX"] is not JsonObject lx)
+            {
+                lx = new JsonObject();
+                line["LX"] = lx;
+            }
+            lx["LX01"] = JsonValue.Create(seq);
             seq++;
         }
     }

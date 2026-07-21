@@ -11,6 +11,12 @@
     },
 
     {
+      "target": "loops.2300.HI.HI01_1",
+      "type": "literal",
+      "value": "ABK"
+    },
+
+    {
       "target": "loops.2300.HI.HI01_2",
       "source": "diagnosisCode"
     },
