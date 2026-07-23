@@ -36,6 +36,7 @@ public class ApiDefinition
     public string? Method { get; set; }
     public string? Route { get; set; }
     public Dictionary<string, ParamDefinition> Params { get; set; }
+    public string[]? ResultSets { get; set; }
     public DataRouteDefinition? DataRoute { get; set; }
     public List<ActionDefinition>? Actions { get; set; }
     public List<EnrichmentDefinition>? Enrichments { get; set; }

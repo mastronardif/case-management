@@ -1,5 +1,84 @@
 
+
+7/23/26
+
+I dont have the SP queueClaimsToBeCreated
+see:  C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+can you give me the DDL 
+
+------------------------
+Talk about a page session/claims
+This will displat the n tables from SP ___.
+This screen is where the case manager Submits a claim.  
+"goes on a queue and a job runs it.  Most likely it will go throug a few states: submited, pending, 
+ either rejected or with the payer.  then enventualy Paied"
+
+-----------------
+7/22/26
+PROCEDURE see: C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+[cases].[usp_GetClaimInfo]
+[cases].[usp_SubmitClaim]
+schema same names 
+
+-----------------------
+We have used the SP and result set name.
+Rember.  We dont want to polute the query.
+I have to create the SP's.
+they select sessions they want in the claim.  Then Submit Claim.  I will write to a table.
+a background process will do the claim like we've been doing.  Still an MVP.
+sp1 - R1
+sp2 - SumiClaim
+sp3 - R2
+Table one has the sessions u can select whcih ones you want to submit.  and it will have a submit button.
+the other tables are for show.
+any more questions.  lets talk more so we are on the same page.
+-----------------------------
+
+I have a new page 'claim' 
+it can use a lot of what we did.
+Looks like the below.  It calls an API which is an SP that will return n reslut sets.  i have all the plubming for that.
+Its for whenthe user is going to create a claim.  He will select n sessions.  and can view that all the sections have the correct data.
+
+title: case info
+
+table with header: sessions - case #.  see exisiting code. http://localhost:5173/data/Case_GetDocuments/caseId/9
+sessions
+[]
+provider
+[]
+authorization
+[]
+patient
+[]
+payer
+...
+  "sources": {
+    "sessions":      [418, 403],
+    "provider":      1064,
+    "authorization": 1200,
+    "payer":         807,
+    "patient":       793
+  }
+
+------------------
+quetion : should i have three chats open.  Ive been having one chat this one.  If i create a chat in the UI proj will it know about this one.
+I want it too.
+my projct constists of three parts workers what weve been doing, server dot net core, and a UI react piece.
+
+
+-------------
+7/21/26
+Give me a page component.
+that list
+
+
+
+-------------------
 7/20/26
+I want to add the missing stuff on the left[session, provider, ...]  => 837P.
+If data is missing let me know which object and i will add it.
+Got it let do one object at a time or let me know whats missing?
+
 -----------------------
 
 7/19/26

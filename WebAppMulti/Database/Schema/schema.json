@@ -308,8 +308,44 @@
           "route": "/invoice/{invoiceId}"
         }
       ]
-    }
+    },
 
+    {
+      "name": "GetClaimInfo",
+      "type": "storedProcedureMulti",
+      "storedProcedure": "cases.usp_GetClaimInfo",
+      "resultSets": ["sessions", "claim", "payer", "patient", "authorization", "provider", "practiceConfiguration"],
+      "params": {
+        "caseId": {
+          "type": "int",
+          "required": true,
+          "source": "body"
+        },
+        "filter": {
+          "type": "string",
+          "required": false,
+          "source": "body"
+        }
+      }
+    },
+
+    {
+      "name": "SubmitClaim",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_SubmitClaim",
+      "params": {
+        "caseId": {
+          "type": "int",
+          "required": true,
+          "source": "body"
+        },
+        "sessionDocumentIds": {
+          "type": "string",
+          "required": true,
+          "source": "body"
+        }
+      }
+    }
 
   ]
 }

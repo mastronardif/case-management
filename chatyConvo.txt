@@ -1,6 +1,40 @@
 ﻿
+7/12/26
+
+
+give me an usp called GetClaimInfo(caseId, filter)
+it will for now
+select * from vw
+-- below other selects that have info about a claim, payer, patient, etc.
+select * from tbd
+-------------------
+
+writing a SP getClaim(caseId, filter)
+if you rember i have two tables claim, ClaimSession
+so get the list based on that. 
+
+----------------
+7/19/26
+
+I have a application code question about http.
+i have an application i want to send a txt to ones phone.
+usually the url cn be problematic.
+i want to send for example 
+instead of http://192.168.1.184:5173/docviewer/1623
+I want to http://192.168.1.184:5173/id
+
+That url will be short lived 
+any suggestions
+
+I want a one liner url shortner or close to it.
+a small .ps1 script
+a small fixture/feature to my WEb multiapp
+
+----------------------
 
 7/17/26
+
+http://localhost:5173/docviewer/1623
 -------------------
 give me an SP to void a claim voided. 
 the undo of 
