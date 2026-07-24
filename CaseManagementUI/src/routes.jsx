@@ -51,7 +51,9 @@ const routes = [
   { path: "/templates", element: <FilesTablePage />, label: "Templates" },
   { path: "/calendar", element: <CalendarPage />, label: "Calendar" },
   
-  { path: "/billing", element: <BillingTablePage />, label: "Billing" },
+  { path: "/claim", element: <ClaimPage />, label: "ClaimQueue", navGroup: "Bill" },
+
+  { path: "/billing", element: <BillingTablePage />, label: "Billing", navGroup: "Bill" },
   { path: "/billing/:caseId", element: <BillingPage />, hideFromNav: true },
   { path: "/invoice/:invoiceId", element: <InvoiceDetailPage />, hideFromNav: true },
 

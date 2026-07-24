@@ -27,7 +27,7 @@ export default function CasePage() {
     { label: "RBT Books", onClick: () => handleRBTbooks() },
     { label: "Insurance Books", onClick: () => handleInsurancebooks() },
     { label: "Import from Scan", onClick: () => handleImportScan() },
-    { label: "tbd", onClick: () => handleFillForm() },
+    { label: "Claims", onClick: () => handleFillForm() },
   ];
 
   const handleWorkbooks = () => {
@@ -76,7 +76,8 @@ export default function CasePage() {
   };
 
   const handleFillForm = () => {
-    alert("Fill out form feature coming soon!");
+    navigate(`/claim/${id}`, { state: { caseData } });
+    //alert("Fill out form feature coming soon!");
   };
 
   return (
