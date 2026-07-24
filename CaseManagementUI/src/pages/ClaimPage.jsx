@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../services/http";
+import { enrichDocIdLinks } from "../utils/docIdLinks";
 import XyzTablePage from "./XyzTablePage";
 
 const DISPLAY_SECTIONS = [
@@ -14,6 +15,7 @@ const DISPLAY_SECTIONS = [
 
 export default function ClaimPage() {
   const { caseId } = useParams();
+  const navigate = useNavigate();
 
   const [info, setInfo] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -76,6 +78,7 @@ export default function ClaimPage() {
   };
 
   const sessions = info?.sessions ?? [];
+  const enrichedSessions = enrichDocIdLinks(sessions, navigate);
   const sessionColumns = sessions.length > 0 ? Object.keys(sessions[0]) : [];
 
   return (
@@ -131,9 +134,10 @@ export default function ClaimPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {sessions.map((row, i) => {
-                    const id = row.jsonDocumentId;
-                    const alreadyClaimed = row.claimId != null;
+                  {sessions.map((rawRow, i) => {
+                    const id = rawRow.jsonDocumentId;
+                    const alreadyClaimed = rawRow.claimId != null;
+                    const displayRow = enrichedSessions[i];
                     return (
                       <tr key={id ?? i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-gray-300 px-2 py-1">
@@ -146,7 +150,7 @@ export default function ClaimPage() {
                         </td>
                         {sessionColumns.map((col) => (
                           <td className="border border-gray-300 px-2 py-1" key={col}>
-                            {String(row[col] ?? "")}
+                            {displayRow[col] ?? ""}
                           </td>
                         ))}
                       </tr>
@@ -160,7 +164,11 @@ export default function ClaimPage() {
 
         {DISPLAY_SECTIONS.map(({ key, label }) => (
           <div key={key} className="mb-6">
-            <XyzTablePage title={label} rows={info?.[key] ?? []} emptyMessage={`No ${label.toLowerCase()} found.`} />
+            <XyzTablePage
+              title={label}
+              rows={enrichDocIdLinks(info?.[key] ?? [], navigate)}
+              emptyMessage={`No ${label.toLowerCase()} found.`}
+            />
           </div>
         ))}
       </div>

@@ -1,6 +1,11 @@
 
 
 7/23/26
+did you forget to make the DocIds linkable like on /cses page??
+---------------------
+0k put this page here
+
+------------------
 
 I dont have the SP queueClaimsToBeCreated
 see:  C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
