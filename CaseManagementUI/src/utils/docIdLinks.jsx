@@ -1,4 +1,4 @@
-const DOC_ID_COLS = ["sourceDocumentId", "jsonDocumentId", "ediDocumentId"];
+const DOC_ID_COLS = ["sourceDocumentId", "jsonDocumentId", "ediDocumentId", "documentId"];
 
 export function enrichDocIdLinks(rows, navigate) {
   return rows.map((row) => {

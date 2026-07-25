@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { formatCellValue } from "../components/DataTable";
+import PageHeader from "../components/PageHeader";
 import api from "../services/http";
 import { enrichDocIdLinks } from "../utils/docIdLinks";
 import XyzTablePage from "./XyzTablePage";
@@ -84,7 +86,14 @@ export default function ClaimPage() {
   return (
     <div className="p-4 sm:p-6 flex flex-col items-center gap-6">
       <div className="w-full max-w-6xl">
-        <h1 className="text-xl font-semibold mb-4">Case Info — Case {caseId}</h1>
+        <PageHeader
+          title={`Case Info — Case ${caseId}`}
+          breadcrumbs={[
+            { label: "Cases", to: "/cases" },
+            { label: `Case ${caseId}`, to: `/cases/${caseId}` },
+            { label: "Claim 🦪" },
+          ]}
+        />
         {error && <p className="text-red-500 mb-2">{error}</p>}
 
         <div className="rounded shadow bg-white border border-gray-200 mb-6">
@@ -119,10 +128,14 @@ export default function ClaimPage() {
           <div className="overflow-x-auto">
             {sessions.length === 0 ? (
               <p className="px-4 py-2 text-gray-500">
-                {loading ? "Loading..." : "No sessions found."}
+                {loading ? "Loading..." : "No sessions to create a claim."}
               </p>
             ) : (
-              <table className="w-full border-collapse border border-gray-300">
+              <>
+                <p className="px-4 pt-2 text-sm text-gray-500">
+                  Select session(s) to create a claim.
+                </p>
+                <table className="w-full border-collapse border border-gray-300">
                 <thead>
                   <tr>
                     <th className="border border-gray-300 px-2 py-1 bg-gray-100"></th>
@@ -150,14 +163,15 @@ export default function ClaimPage() {
                         </td>
                         {sessionColumns.map((col) => (
                           <td className="border border-gray-300 px-2 py-1" key={col}>
-                            {displayRow[col] ?? ""}
+                            {formatCellValue(displayRow[col]) ?? ""}
                           </td>
                         ))}
                       </tr>
                     );
                   })}
                 </tbody>
-              </table>
+                </table>
+              </>
             )}
           </div>
         </div>

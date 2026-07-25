@@ -1,6 +1,23 @@
 import { saveAs } from "file-saver";
 import React, { forwardRef, useImperativeHandle, useMemo } from "react";
 
+// Matches ISO 8601 date/datetime strings, capturing the date and (optional) time separately
+// (e.g. "2026-07-16" or "2026-07-16T16:56:48.9678804")
+const ISO_DATETIME_RE = /^(\d{4}-\d{2}-\d{2})(?:T(\d{2}:\d{2}:\d{2})(?:\.\d+)?)?$/;
+
+// Shared so any hand-rolled table (not just DataTable) can render dates the same way.
+// Date-only values (or midnight timestamps, i.e. real dates stored with a throwaway time)
+// render as yyyy-MM-dd. Values with a real, non-midnight time keep it, just cleaned up.
+export const formatCellValue = (value) => {
+  if (typeof value !== "string") return value;
+  const match = value.match(ISO_DATETIME_RE);
+  if (!match) return value;
+
+  const [, datePart, timePart] = match;
+  if (!timePart || timePart === "00:00:00") return datePart;
+  return `${datePart} ${timePart}`;
+};
+
 const escapeCsvValue = (value) => {
   if (value === null || value === undefined) return "";
   if (typeof value === "object") {
@@ -81,7 +98,7 @@ const DataTable = forwardRef(
           return "[object]";
         }
       }
-      return String(value);
+      return String(formatCellValue(value));
     };
 
     if (!rows || rows.length === 0) {

@@ -1,6 +1,7 @@
 // CasePage.jsx
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ActionPage from "../components/ActionPage";
+import PageHeader from "../components/PageHeader";
 import { fetchPayerDocs } from "../services/payerdocService";
 import { setTableActions } from "../utils/tableActionStore";
 
@@ -27,7 +28,7 @@ export default function CasePage() {
     { label: "RBT Books", onClick: () => handleRBTbooks() },
     { label: "Insurance Books", onClick: () => handleInsurancebooks() },
     { label: "Import from Scan", onClick: () => handleImportScan() },
-    { label: "Claims", onClick: () => handleFillForm() },
+    { label: "Claims 🦪", onClick: () => handleFillForm() },
   ];
 
   const handleWorkbooks = () => {
@@ -82,7 +83,15 @@ export default function CasePage() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start p-6 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6">Case {id}</h1>
+      <div className="w-full max-w-4xl">
+        <PageHeader
+          title={`Case ${id}`}
+          breadcrumbs={[
+            { label: "Cases", to: "/cases" },
+            { label: `Case ${id}` },
+          ]}
+        />
+      </div>
 
       <ActionPage actions={pageActions} buttonClass={greyButtonClass} />
 

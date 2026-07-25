@@ -6,6 +6,7 @@ import CaseDocumentsPage from "./pages/CaseDocumentsPage";
 import CasePage from "./pages/CasePage";
 import CasesTablePage from "./pages/CasesTablePage";
 import ClaimPage from "./pages/ClaimPage";
+import ClaimQueuePage from "./pages/ClaimQueuePage";
 import CorqsTestPage from "./pages/CorqsTestPage";
 import DataPage from "./pages/DataPage";
 import DocumentViewerPage from "./pages/DocumentViewerPage";
@@ -51,7 +52,7 @@ const routes = [
   { path: "/templates", element: <FilesTablePage />, label: "Templates" },
   { path: "/calendar", element: <CalendarPage />, label: "Calendar" },
   
-  { path: "/claim", element: <ClaimPage />, label: "ClaimQueue", navGroup: "Bill" },
+  { path: "/claim", element: <ClaimQueuePage />, label: "ClaimQueue", navGroup: "Bill" },
 
   { path: "/billing", element: <BillingTablePage />, label: "Billing", navGroup: "Bill" },
   { path: "/billing/:caseId", element: <BillingPage />, hideFromNav: true },

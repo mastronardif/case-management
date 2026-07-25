@@ -1,4 +1,68 @@
 
+7/23/26
+put the open buttons back.
+have them do repectively
+openSession  => (tbd sessionId)
+openDocument =>  tbd DocumentId, DocumentType)
+I plan on doing something at a later time. if not the column will be removed.
+----------------
+C:\Users\mastronardif\source\repos\CaseMangement\CaseManagementUI\src\pages\CaseDocumentsPage.jsx
+have two issues with fetchDocs, fetchSessions 
+fetchSessions Open RowId is undefined
+fetchDocs documentID is not linkable
+
+---------------------------
+http://localhost:5173/claim/4
+Cases
+/
+Case 4
+/
+Claim 🦪
+I want a little txt 'select session to create a claim.'  something like that.
+or 'No sesstions to create a claim'
+
+-------------------
+
+ its own page later ??
+ http://localhost:5173/claim
+ that was meant to show all the claims. But i you think its big enough to have it own page we can leave it alone or popup a message
+ 'tbd list all claims'
+ 
+---------------------
+  { path: "/claim/:caseId", element: <ClaimPage />, hideFromNav: true },
+  claim id is intential eventual might be used.  it opens the Claim(s) for said case.
+  it needs to be there right????
+---------------------------
+update the clam icon here.\ ad the Header. 
+http://localhost:5173/cases/4
+
+I have this UI for now. the user goes to the case
+then ownener she/he can open said books via the Tabs.
+I dont like the UI that much but this is it for now.
+
+
+__________________
+ok i see it for the page below.
+
+Cases
+/
+Case 9
+/
+Claim
+Case Info — Case 9
+----------------------
+
+-------------------
+getting errors see log at: C:\temp
+------------------------
+I want a header for each page.  whatever is a good UX.
+what do you suggest???
+
+-------------------------------
+I want the dates to be of the format yyyy-mm-dd.
+whaere is a best place to do that. 
+The tables at the react side. the scema where??
+________
 
 7/23/26
 did you forget to make the DocIds linkable like on /cses page??
