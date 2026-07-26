@@ -58,6 +58,26 @@ export default function ClaimPage() {
     });
   };
 
+  const openClaim = (claimId) => {
+    navigate(`/claim/view/${claimId}`);
+  };
+
+  const enrichClaimIdLink = (rows) =>
+    rows.map((row) => {
+      if (row.claimId == null) return row;
+      return {
+        ...row,
+        claimId: (
+          <button
+            onClick={() => openClaim(row.claimId)}
+            className="text-blue-600 underline hover:text-blue-800"
+          >
+            {row.claimId}
+          </button>
+        ),
+      };
+    });
+
   const handleSubmit = async () => {
     if (selectedIds.size === 0) return;
     setSubmitting(true);
@@ -163,7 +183,16 @@ export default function ClaimPage() {
                         </td>
                         {sessionColumns.map((col) => (
                           <td className="border border-gray-300 px-2 py-1" key={col}>
-                            {formatCellValue(displayRow[col]) ?? ""}
+                            {col === "claimId" && displayRow.claimId != null ? (
+                              <button
+                                onClick={() => openClaim(displayRow.claimId)}
+                                className="text-blue-600 underline hover:text-blue-800"
+                              >
+                                {displayRow.claimId}
+                              </button>
+                            ) : (
+                              formatCellValue(displayRow[col]) ?? ""
+                            )}
                           </td>
                         ))}
                       </tr>
@@ -176,15 +205,15 @@ export default function ClaimPage() {
           </div>
         </div>
 
-        {DISPLAY_SECTIONS.map(({ key, label }) => (
-          <div key={key} className="mb-6">
-            <XyzTablePage
-              title={label}
-              rows={enrichDocIdLinks(info?.[key] ?? [], navigate)}
-              emptyMessage={`No ${label.toLowerCase()} found.`}
-            />
-          </div>
-        ))}
+        {DISPLAY_SECTIONS.map(({ key, label }) => {
+          let rows = enrichDocIdLinks(info?.[key] ?? [], navigate);
+          if (key === "claim") rows = enrichClaimIdLink(rows);
+          return (
+            <div key={key} className="mb-6">
+              <XyzTablePage title={label} rows={rows} emptyMessage={`No ${label.toLowerCase()} found.`} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

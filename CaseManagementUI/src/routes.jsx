@@ -7,6 +7,7 @@ import CasePage from "./pages/CasePage";
 import CasesTablePage from "./pages/CasesTablePage";
 import ClaimPage from "./pages/ClaimPage";
 import ClaimQueuePage from "./pages/ClaimQueuePage";
+import ClaimViewPage from "./pages/ClaimViewPage";
 import CorqsTestPage from "./pages/CorqsTestPage";
 import DataPage from "./pages/DataPage";
 import DocumentViewerPage from "./pages/DocumentViewerPage";
@@ -49,6 +50,7 @@ const routes = [
   // },
   { path: "/data/Case_GetDocuments/caseId/:caseId", element: <CaseDocumentsPage />, hideFromNav: true },
   { path: "/claim/:caseId", element: <ClaimPage />, hideFromNav: true },
+  { path: "/claim/view/:claimId", element: <ClaimViewPage />, hideFromNav: true },
   { path: "/templates", element: <FilesTablePage />, label: "Templates" },
   { path: "/calendar", element: <CalendarPage />, label: "Calendar" },
   
