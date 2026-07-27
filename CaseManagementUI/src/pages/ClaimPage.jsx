@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { formatCellValue } from "../components/DataTable";
 import PageHeader from "../components/PageHeader";
 import api from "../services/http";
-import { enrichDocIdLinks } from "../utils/docIdLinks";
+import { enrichDocIdLinks, omitColumns } from "../utils/docIdLinks";
 import XyzTablePage from "./XyzTablePage";
 
 const DISPLAY_SECTIONS = [
@@ -25,6 +25,8 @@ export default function ClaimPage() {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [submitting, setSubmitting] = useState(false);
   const [submitResult, setSubmitResult] = useState(null);
+  const [queueRows, setQueueRows] = useState([]);
+  const [queueLoading, setQueueLoading] = useState(false);
 
   const fetchInfo = useCallback(async () => {
     setLoading(true);
@@ -32,7 +34,7 @@ export default function ClaimPage() {
     try {
       const res = await api.post("/api/corqs", {
         action: "GetClaimInfo",
-        params: { caseId: Number(caseId) },
+        params: { caseId: Number(caseId), filter: "Not Claimed" },
       });
       setInfo(res.data?.data ?? {});
       setSelectedIds(new Set());
@@ -45,9 +47,26 @@ export default function ClaimPage() {
     }
   }, [caseId]);
 
+  const fetchQueue = useCallback(async () => {
+    setQueueLoading(true);
+    try {
+      const res = await api.post("/api/corqs", {
+        action: "GetClaimQueue",
+        params: { caseId: Number(caseId) },
+      });
+      setQueueRows(res.data?.data ?? []);
+    } catch (err) {
+      console.error("Failed to fetch claim queue:", err);
+      setQueueRows([]);
+    } finally {
+      setQueueLoading(false);
+    }
+  }, [caseId]);
+
   useEffect(() => {
     fetchInfo();
-  }, [fetchInfo]);
+    fetchQueue();
+  }, [fetchInfo, fetchQueue]);
 
   const toggleSession = (jsonDocumentId) => {
     setSelectedIds((prev) => {
@@ -84,13 +103,32 @@ export default function ClaimPage() {
     setSubmitResult(null);
     try {
       const sessionDocumentIds = Array.from(selectedIds).join(",");
+
+      // Everything the claim builder will need, in one linkable doc — provider/payer/
+      // authorization/patient are still placeholder-resolved (see usp_GetClaimInfo TODOs)
+      // until the case can properly resolve its own peripheral info.
+      const spec = {
+        caseId: Number(caseId),
+        sessions: Array.from(selectedIds),
+        provider: info?.provider?.[0]?.jsonDocumentId ?? null,
+        authorization: info?.authorization?.[0]?.jsonDocumentId ?? null,
+        payer: info?.payer?.[0]?.jsonDocumentId ?? null,
+        patient: info?.patient?.[0]?.jsonDocumentId ?? null,
+      };
+      const specSaveRes = await api.post("/api/saveWorkflow", {
+        json: JSON.stringify(spec),
+        name: "claim-queue-spec",
+      });
+      const specDocumentId = specSaveRes.data?.docId ?? null;
+
       const res = await api.post("/api/corqs", {
         action: "SubmitClaim",
-        params: { caseId: Number(caseId), sessionDocumentIds },
+        params: { caseId: Number(caseId), sessionDocumentIds, specDocumentId },
       });
       const queueClaimId = res.data?.data?.[0]?.queueClaimId;
       setSubmitResult({ ok: true, queueClaimId });
       fetchInfo();
+      fetchQueue();
     } catch (err) {
       console.error("Failed to submit claim:", err);
       setSubmitResult({ ok: false });
@@ -99,9 +137,16 @@ export default function ClaimPage() {
     }
   };
 
+  // Always empty/constant here since fetchInfo always filters to "Not Claimed" — these
+  // columns only carry information on unfiltered vw_SessionClaimStatus queries.
+  const IRRELEVANT_SESSION_COLS = ["claimId", "claimNumber", "claimStatus", "queueClaimId", "sessionClaimStatus"];
+
   const sessions = info?.sessions ?? [];
   const enrichedSessions = enrichDocIdLinks(sessions, navigate);
-  const sessionColumns = sessions.length > 0 ? Object.keys(sessions[0]) : [];
+  const sessionColumns =
+    sessions.length > 0
+      ? Object.keys(sessions[0]).filter((c) => !IRRELEVANT_SESSION_COLS.includes(c))
+      : [];
 
   return (
     <div className="p-4 sm:p-6 flex flex-col items-center gap-6">
@@ -118,7 +163,9 @@ export default function ClaimPage() {
 
         <div className="rounded shadow bg-white border border-gray-200 mb-6">
           <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-2">
-            <h2 className="font-semibold text-lg">Sessions — Case {caseId}</h2>
+            <h2 className="font-semibold text-lg">
+              Sessions — Case {caseId} <span className="text-gray-400 font-normal">({sessions.length})</span>
+            </h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={fetchInfo}
@@ -169,7 +216,6 @@ export default function ClaimPage() {
                 <tbody>
                   {sessions.map((rawRow, i) => {
                     const id = rawRow.jsonDocumentId;
-                    const alreadyClaimed = rawRow.claimId != null;
                     const displayRow = enrichedSessions[i];
                     return (
                       <tr key={id ?? i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
@@ -177,22 +223,12 @@ export default function ClaimPage() {
                           <input
                             type="checkbox"
                             checked={selectedIds.has(id)}
-                            disabled={alreadyClaimed}
                             onChange={() => toggleSession(id)}
                           />
                         </td>
                         {sessionColumns.map((col) => (
                           <td className="border border-gray-300 px-2 py-1" key={col}>
-                            {col === "claimId" && displayRow.claimId != null ? (
-                              <button
-                                onClick={() => openClaim(displayRow.claimId)}
-                                className="text-blue-600 underline hover:text-blue-800"
-                              >
-                                {displayRow.claimId}
-                              </button>
-                            ) : (
-                              formatCellValue(displayRow[col]) ?? ""
-                            )}
+                            {formatCellValue(displayRow[col]) ?? ""}
                           </td>
                         ))}
                       </tr>
@@ -205,9 +241,19 @@ export default function ClaimPage() {
           </div>
         </div>
 
+        <div className="mb-6">
+          <XyzTablePage
+            title="Queue — Claims To Be Created"
+            rows={enrichDocIdLinks(queueRows, navigate)}
+            emptyMessage="Nothing queued."
+            tableActions={[{ label: queueLoading ? "Loading..." : "Reload", onClick: fetchQueue }]}
+          />
+        </div>
+
         {DISPLAY_SECTIONS.map(({ key, label }) => {
           let rows = enrichDocIdLinks(info?.[key] ?? [], navigate);
           if (key === "claim") rows = enrichClaimIdLink(rows);
+          if (key === "payer") rows = omitColumns(rows, ["publicId"]);
           return (
             <div key={key} className="mb-6">
               <XyzTablePage title={label} rows={rows} emptyMessage={`No ${label.toLowerCase()} found.`} />

@@ -1,4 +1,167 @@
 
+
+7/27/26
+
+-------------------
+More Cleanup
+the following columns make no sense here.
+Case Info — Case 9
+Sessions — Case 9 (5)
+claimId	claimNumber	claimStatus	queueClaimId	
+shold I remove them from the query?????????
+
+-------------------
+Microsoft.Data.SqlClient.SqlException (0x80131904): Procedure or function usp_SubmitClaim has too many arguments specified.
+also can you remove buttons [new][reload] 
+
+------------------------
+
+----------------------------
+I dont understand the Case knows all the peripheral information patient, provider etc.
+There is not a sql for that now but you can assume it will know.  for now you can use what we have been using.
+you can ake a note if you want.
+
+what i meant by repeat is this on the page
+Queue — Claims To Be Created Queue — Claims To Be
+
+-----------------------
+
+http://172.26.80.1:5173/claim/9
+issues: "Queue — Claims To Be Created" is showing twice.
+can you put the row count somewhere.
+SessionDocumentIds I thought that was going to be a json a docid to the documents linkable like all docId's
+it would be something like: allthe info to create a claim that the claim builder uses.
+{
+  "caseId": 9,
+  "blankDocId": 749,
+  "projectors reference not used": {
+    "session": 731,
+    "provider": 734,
+    "authorization": 733,
+    "payer": 806,
+    "patient": 735
+  },
+  "sources": {
+    "sessions": [418, 403],
+    "provider": 1064,
+    "authorization": 1200,
+    "payer": 807,
+    "patient": 793
+  }
+}
+Do you understand???????????
+
+----------------------------
+JsonDocId is the intended identifier.  unique session data and goes to the claim.
+
+
+-----------------------
+7/26/26
+------------------------------
+there is a bug a confusion what the top table 
+on the claim page if i select a few session for a claim and submit claim.
+I should NOT see those session again.  THey are part of a claim now.
+ a session can NOT be in more then one claim.
+
+
+----------------------
+I want to do the samart thng here.
+
+----------------------
+the flow when you create a claim it puts it in queue1.
+the claim screen show you that queue1. and now those sessions are not seen.  you can not have a session in more then one claim.
+the sessions will not be available on the top table since you used them already in the claim.
+
+queue2
+a new queue2 gets populated form the ps1 script which creates the EDI docs that script we have altered and been using.
+that will go to the clearing house.
+queue2 - a list of rows for the clearing house script to sftp to the clearing house an update the 
+queue accordingly.
+Got it???????????
+----------------------
+
+you can change the SP if it makes more sense.
+an modfy the filter to get al claims for a caseId.  or leave that out i cn get that anoter way.
+what do you think ?  What is best. Always suggest a better way if you have one.
+
+----------------------
+the practice-config doc is known in the sence. its static and its one row and i know it when i run the script.
+its a special docId that read from an SP.  we can talk about that later.
+
+sources-doc fix applied to the PS1 script first (as the still-manual path).
+that script may go to prod. or built in later. 
+
+------------------------
+fix the gap so provider/payer/authorization/patient/practiceConfig doc ids get recorded per-claim.
+I am thinking 
+
+the input to the ps1
+{
+  "caseId": 9,
+  "blankDocId": 749,
+  "projectors reference not used": {
+    "session": 731,
+    "provider": 734,
+    "authorization": 733,
+    "payer": 806,
+    "patient": 735
+  },
+  "sources": {
+    "sessions": [418, 403],
+    "provider": 1064,
+    "authorization": 1200,
+    "payer": 807,
+    "patient": 793
+  }
+}
+needs to be saved as a jsonDocId 
+What do you think.
+That script is going to be the batch that creates the edi.
+and another script to send edi to clearing house to be done later in phases.  File, then sfpt, the update DB.
+what do you think i want to be on the same page with this.  I know we or least I was thinkgin MVP along the way.
+But now we gettting close to pieces that are near Production level.
+
+
+------------------------
+The case manager is reviewing the claim before it goes to the clearinghouse.
+The EDI is created.
+I want the claim screen to show for review.
+as we created the edi we left a paer trail.
+can you list the doc ids left behind.
+
+DO you know what i Mean????????? ____________
+
+
+----------------
+7/24/26
+and here is the claim
+  select * from [cases].[ClaimSession]
+  where ClaimId = @claimId
+
+---------------------------
+for example 10 is the claimId when i select that it opens the claim page 'tbd ..'
+http://172.26.80.1:5173/claim/9
+Claim
+Claim
+New
+Reload
+Export
+Search...
+claimId	caseId	claimNumber	status	generatedDate	ediDocumentId	isActive	isVoided	voidReason	createdDate	createdBy	submittedDate	acknowledgedDate	paidDate	totalCharge	ediControlNumber	payerClaimNumber	voidDate	Action
+10	9	CM000000010	ReadyToSubmit	2026-07-21 12:39:17	1698	true	false		2026-07-21 12:39:17		
+
+----------------------------
+
+wire claimId as a link-button with an openClaim stub in ClaimPage.jsx passing the claimId which is needed to 
+show the claim.  You can make the Claimpage a page withe "TBD claimId(id)"
+
+----------------------
+http://172.26.80.1:5173/claim/9
+I need an Open button or you can make the claimId act like a button with
+said action open the claim (function to be implemented)
+What do you think?????????
+
+-----------------------------
 7/23/26
 put the open buttons back.
 have them do repectively
@@ -282,6 +445,10 @@ Got it????
 ----------------------------------
 7/16/26
 ----------------------------------
+I createad a claim i want it to go on the queue.
+I also want to see the queue on the page: claim page.
+does that make sence??????
+----------------------------------
 not yet .  more talking.  
 Ithe begn end tran was phseo noat a sql db thing. I agree with you not to do it at the db.  
 Can you explain how you do that and the claim projeuction.
@@ -290,6 +457,7 @@ Talk only.  What do you think and let me know if you have a better design!
 Adding missig piesces to the 837P.
 
 Planning the claim piece. 
+
 I have to create the claim to get the claimNumber.  
 It also validates. see: [cases].[usp_CreateClaim]
 

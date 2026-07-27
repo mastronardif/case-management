@@ -1,4 +1,12 @@
-const DOC_ID_COLS = ["sourceDocumentId", "jsonDocumentId", "ediDocumentId", "documentId"];
+const DOC_ID_COLS = ["sourceDocumentId", "jsonDocumentId", "ediDocumentId", "documentId", "sourcesDocumentId", "specDocumentId"];
+
+export function omitColumns(rows, cols) {
+  return rows.map((row) => {
+    const patched = { ...row };
+    for (const col of cols) delete patched[col];
+    return patched;
+  });
+}
 
 export function enrichDocIdLinks(rows, navigate) {
   return rows.map((row) => {

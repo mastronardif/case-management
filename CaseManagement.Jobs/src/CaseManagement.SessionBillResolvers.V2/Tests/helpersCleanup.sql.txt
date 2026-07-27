@@ -1,0 +1,16 @@
+
+
+cleanup claims
+-- Order matters: children before parents (FKs)
+DELETE FROM cases.QueueClaimSession;
+DELETE FROM cases.queueClaimsToBeCreated;
+DELETE FROM cases.queueClaimsToBeSubmitted;
+DELETE FROM cases.ClaimSession;
+DELETE FROM cases.Claim;
+
+-- Optional: reset identities so new claims/queue rows start back at 1
+DBCC CHECKIDENT ('cases.QueueClaimSession', RESEED, 0);
+DBCC CHECKIDENT ('cases.queueClaimsToBeCreated', RESEED, 0);
+DBCC CHECKIDENT ('cases.queueClaimsToBeSubmitted', RESEED, 0);
+DBCC CHECKIDENT ('cases.ClaimSession', RESEED, 0);
+DBCC CHECKIDENT ('cases.Claim', RESEED, 0);

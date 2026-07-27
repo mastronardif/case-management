@@ -109,7 +109,7 @@ function New-Claim {
 }
 
 function Set-ClaimEdiDocument {
-    param([int]$ClaimId, [int]$EdiDocumentId, [string]$Status)
+    param([int]$ClaimId, [int]$EdiDocumentId, [string]$Status, [int]$SourcesDocumentId)
 
     $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
     $connStr  = $settings.ConnectionStrings.DefaultConnection
@@ -120,12 +120,33 @@ function Set-ClaimEdiDocument {
     $cmd = $conn.CreateCommand()
     $cmd.CommandText = "
         UPDATE [cases].[Claim]
-        SET    EdiDocumentId = @EdiDocumentId, Status = @Status
+        SET    EdiDocumentId = @EdiDocumentId, Status = @Status, SourcesDocumentId = @SourcesDocumentId
         WHERE  ClaimId = @ClaimId
     "
     $cmd.Parameters.AddWithValue("@EdiDocumentId", $EdiDocumentId) | Out-Null
     $cmd.Parameters.AddWithValue("@Status", $Status) | Out-Null
+    $cmd.Parameters.AddWithValue("@SourcesDocumentId", $SourcesDocumentId) | Out-Null
     $cmd.Parameters.AddWithValue("@ClaimId", $ClaimId) | Out-Null
+    $cmd.ExecuteNonQuery() | Out-Null
+    $conn.Close()
+}
+
+function Add-ClaimToSubmitQueue {
+    param([int]$ClaimId, [int]$EdiDocumentId)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        INSERT INTO [cases].[queueClaimsToBeSubmitted] (ClaimId, EdiDocumentId, Status)
+        VALUES (@ClaimId, @EdiDocumentId, 'Pending')
+    "
+    $cmd.Parameters.AddWithValue("@ClaimId", $ClaimId) | Out-Null
+    $cmd.Parameters.AddWithValue("@EdiDocumentId", $EdiDocumentId) | Out-Null
     $cmd.ExecuteNonQuery() | Out-Null
     $conn.Close()
 }
@@ -262,6 +283,22 @@ $practiceConfigDocId = $practiceConfigResp.docId
 
 $invoice = Run-Step $practiceConfigDocId (Get-ActiveProjectionDocId "PracticeConfiguration837P") $invoice "Practice Configuration ($practiceConfigDocId)"
 
+# Sources — paper trail of every reference doc used to build this claim (sessions are
+# tracked separately via cases.ClaimSession, so they're deliberately left out here)
+Write-Host ""
+Write-Host "Sources : recording paper trail..." -ForegroundColor Yellow
+$sourcesJson = @{
+    provider              = if ($sources.provider)      { $sources.provider }      else { $null }
+    payer                 = if ($sources.payer)          { $sources.payer }         else { $null }
+    authorization         = if ($sources.authorization)  { $sources.authorization } else { $null }
+    patient               = if ($sources.patient)        { $sources.patient }       else { $null }
+    practiceConfiguration = $practiceConfigDocId
+} | ConvertTo-Json
+$sourcesSave  = @{ json = $sourcesJson; name = "claim-sources" } | ConvertTo-Json
+$sourcesResp  = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $sourcesSave
+$sourcesDocId = $sourcesResp.docId
+Write-Host "  sources doc: $sourcesDocId" -ForegroundColor Gray
+
 # Metadata — build from spec and (M) merge into final invoice
 Write-Host ""
 Write-Host "Metadata : building from spec..." -ForegroundColor Yellow
@@ -319,15 +356,25 @@ Write-Host "  => docId: $ediDocId" -ForegroundColor Green
 
 # Close the loop — link the claim row to its generated EDI document and mark
 # whether it's actually submittable
-Set-ClaimEdiDocument -ClaimId $claim.ClaimId -EdiDocumentId $ediDocId -Status $claimStatus
+Set-ClaimEdiDocument -ClaimId $claim.ClaimId -EdiDocumentId $ediDocId -Status $claimStatus -SourcesDocumentId $sourcesDocId
+
+# Queue2 — hand off to the (not-yet-built) clearinghouse submission job, but only
+# if the claim actually passed validation
+if ($claimStatus -eq "ReadyToSubmit") {
+    Add-ClaimToSubmitQueue -ClaimId $claim.ClaimId -EdiDocumentId $ediDocId
+}
 
 Write-Host ""
 Write-Host "=== Final EDI ===" -ForegroundColor Cyan
 Write-Host "  claimId     : $($claim.ClaimId)" -ForegroundColor Gray
 Write-Host "  claimNumber : $($claim.ClaimNumber)" -ForegroundColor Gray
 Write-Host "  ruleDocId   : $ruleDocId" -ForegroundColor Gray
+Write-Host "  sourcesDocId: $sourcesDocId" -ForegroundColor Gray
 Write-Host "  docId       : $ediDocId" -ForegroundColor White
 Write-Host "  status      : $claimStatus" -ForegroundColor $(if ($claimStatus -eq "HasErrors") { "Red" } else { "Green" })
+if ($claimStatus -eq "ReadyToSubmit") {
+    Write-Host "  queue2      : queued for clearinghouse submission" -ForegroundColor Green
+}
 if ($issues.Count -gt 0) {
     Write-Host "  issues      :" -ForegroundColor Red
     foreach ($issue in $issues) { Write-Host "    - $issue" -ForegroundColor Red }

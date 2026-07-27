@@ -98,13 +98,16 @@ export default function XyzTablePage({
     <div className="relative p-4 sm:p-6 flex justify-center">
       <div className="relative w-full max-w-6xl rounded shadow bg-white border border-gray-200 flex flex-col">
         <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-2 flex-shrink-0">
-          <h2 className="font-semibold text-lg">{title}</h2>
+          <h2 className="font-semibold text-lg">
+            {title} <span className="text-gray-400 font-normal">({filteredRows.length})</span>
+          </h2>
           <div className="flex items-center gap-2">
             <ActionTable
-              title={title}
               onReload={fetchUrl ? fetchData : undefined}
               loading={loading}
               onNew={handleNew}
+              showNew={!!fetchUrl}
+              showReload={!!fetchUrl}
               onExport={handleExport}
               onSearch={setSearch}
               buttonClass={greyButtonClass}

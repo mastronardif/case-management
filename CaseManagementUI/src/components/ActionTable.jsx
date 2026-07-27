@@ -7,6 +7,8 @@ export default function ActionTable({
   onExport,
   onSearch,
   loading = false,
+  showNew = true,
+  showReload = true,
   buttonClass, // receives grey button style from parent
 }) {
   const [searchValue, setSearchValue] = useState("");
@@ -20,12 +22,16 @@ export default function ActionTable({
   return (
     <div className="flex items-center gap-2">
       {title && <span className="text-lg font-semibold mr-2">{title}</span>}
-      <button onClick={onNew} className={buttonClass} disabled={loading}>
-        New
-      </button>
-      <button onClick={onReload} className={buttonClass} disabled={loading}>
-        Reload
-      </button>
+      {showNew && (
+        <button onClick={onNew} className={buttonClass} disabled={loading}>
+          New
+        </button>
+      )}
+      {showReload && (
+        <button onClick={onReload} className={buttonClass} disabled={loading}>
+          Reload
+        </button>
+      )}
       <button onClick={onExport} className={buttonClass} disabled={loading}>
         Export
       </button>

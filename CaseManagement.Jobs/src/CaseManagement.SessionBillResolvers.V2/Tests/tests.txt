@@ -1,4 +1,5 @@
-
+1346.edi.txt
+1346.edi.QQ.txt
 
 
 The pipeline (sequential, each run builds on the previous result):
@@ -28,3 +29,5 @@ dotnet run -- --expression '889 (P) 779 (X)' --case-id 9
 
  .\BuildInvoice837P.ps1 -SpecFile ".\invoice-build.json"
 
+Fix is just: run (Q) before (W).
+dotnet run -- --expression "1346 (Q) 976 (W)" --case-id 9

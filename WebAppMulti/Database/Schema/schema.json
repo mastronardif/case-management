@@ -318,7 +318,12 @@
       "params": {
         "caseId": {
           "type": "int",
-          "required": true,
+          "required": false,
+          "source": "body"
+        },
+        "claimId": {
+          "type": "int",
+          "required": false,
           "source": "body"
         },
         "filter": {
@@ -342,6 +347,24 @@
         "sessionDocumentIds": {
           "type": "string",
           "required": true,
+          "source": "body"
+        },
+        "specDocumentId": {
+          "type": "int",
+          "required": false,
+          "source": "body"
+        }
+      }
+    },
+
+    {
+      "name": "GetClaimQueue",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_GetClaimQueue",
+      "params": {
+        "caseId": {
+          "type": "int",
+          "required": false,
           "source": "body"
         }
       }
