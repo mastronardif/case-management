@@ -1,5 +1,53 @@
 
+7/30/26
 
+whats wrong with Launch-MyTabs.ps1
+I added anoher shell.  I tink its a syntax isue.
+
+------------------
+7/29/26
+ i like it.  Please give me an option on the design.
+ I want paper trail and visibility
+--------------------------------
+http://172.26.80.1:5173/claim/9
+cahnge the working on the UX from Claim (1) to ClaimForCLearingHoues (1) something like that.
+---------------------
+Getting closer can you do the following:
+change name Claim to Claim for Clearing House
+
+have the .ps1 either take an ClaimId or the .json file.
+
+Have system mark the Queue — Claims To Be Created (1) to have a status moved to " Claim to Claim for Clearing House"
+
+Tha do you think.  Do you understand what I am trying to accomplish.
+If not we can talk about it.
+
+
+---------------------
+I want another BuildQueueForClearingHouse.ps1 script that will take that as the input.  You can treat as a file read
+similar to the BuildInvoice837P.ps1.  I will play computer and run it.
+
+flow: I will copy that put it in a file and run the new .ps1.
+the queue for the clearing house will be updated,etc.
+
+The other process that read the queue and send to clearing house. to be written later.
+QueueToClearingHouse.ps1
+
+---------------------
+TALK IT OUT: 
+I thought i would run BuildInvoice837P.ps1 that puts the data in the queue for clearing house.
+The .json look a little off.
+http://172.26.80.1:5173/docviewer/1713
+instead of this format.  For now u can use the default values for proivider, etc
+C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Tests\invoice-build.json
+
+instead of: and i pu run PS>.\BuildInvoice837P.ps1 -SpecFile ".\batchinvoice-build.0.json"
+
+Are we on the smae page????
+
+---------------
+
+------------------
 7/27/26
 
 -------------------

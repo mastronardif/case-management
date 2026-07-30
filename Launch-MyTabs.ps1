@@ -14,8 +14,13 @@ nt --title "SessionBillResolvers" `
 nt --title "CaseManagementUI" `
    --tabColor "#FF69B4" `
    -d "$root\CaseManagementUI" `
+   pwsh `
+`; `
+nt --title "Claims" `
+   --tabColor "#5d73be" `
+   -d "$root\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Tests" `
    pwsh
- 
+
 # put path on a newline 
 #prompt $P$_$G
 

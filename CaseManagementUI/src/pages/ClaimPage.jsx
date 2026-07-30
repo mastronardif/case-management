@@ -7,7 +7,7 @@ import { enrichDocIdLinks, omitColumns } from "../utils/docIdLinks";
 import XyzTablePage from "./XyzTablePage";
 
 const DISPLAY_SECTIONS = [
-  { key: "claim", label: "Claim" },
+  { key: "claim", label: "Claim for Clearing House" },
   { key: "payer", label: "Payer" },
   { key: "patient", label: "Patient" },
   { key: "authorization", label: "Authorization" },
