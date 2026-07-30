@@ -315,11 +315,13 @@ $practiceConfigDocId = $practiceConfigResp.docId
 
 $invoice = Run-Step $practiceConfigDocId (Get-ActiveProjectionDocId "PracticeConfiguration837P") $invoice "Practice Configuration ($practiceConfigDocId)"
 
-# Sources — paper trail of every reference doc used to build this claim (sessions are
-# tracked separately via cases.ClaimSession, so they're deliberately left out here)
+# Sources — paper trail of every reference doc used to build this claim. cases.ClaimSession
+# remains the live/authoritative session link; sessions are included here too as a point-in-
+# time audit snapshot, not a second source of truth for current linkage.
 Write-Host ""
 Write-Host "Sources : recording paper trail..." -ForegroundColor Yellow
 $sourcesJson = @{
+    sessions              = $sources.sessions
     provider              = if ($sources.provider)      { $sources.provider }      else { $null }
     payer                 = if ($sources.payer)          { $sources.payer }         else { $null }
     authorization         = if ($sources.authorization)  { $sources.authorization } else { $null }
