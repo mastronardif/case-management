@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -64,12 +65,38 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         {
             var f = field!.AsObject();
             var target = f["target"]!.ToString();
-            var source = f["source"]!.ToString();
-            var value = GetValueByPath(session, source)?.ToString();
+            var type = f.TryGetPropertyValue("type", out var typeNode) ? typeNode?.GetValue<string>() : null;
+
+            string source;
+            string? value;
+
+            // Mirrors ProjectionTransformer's field-type dispatch (literal/concat/default),
+            // which the real (P) projector already relies on — this comparer had fallen
+            // behind and assumed every field was source-based.
+            if (type == "literal")
+            {
+                // No real session-side source path for a literal — RenderReviewHtml's ruleMap
+                // is keyed by Source and needs it unique, so use the (already-unique) target.
+                source = $"(literal:{target})";
+                value = f["value"]?.ToString();
+            }
+            else if (type == "concat")
+            {
+                var separator = f.TryGetPropertyValue("separator", out var sepNode) ? sepNode?.GetValue<string>() ?? "" : "";
+                var sourcePaths = f["source"]!.AsArray().Select(s => s!.GetValue<string>()).ToArray();
+                source = string.Join(separator, sourcePaths);
+                value = string.Join(separator, sourcePaths.Select(p => GetValueByPath(session, p)?.ToString() ?? ""));
+            }
+            else
+            {
+                source = f["source"]!.ToString();
+                value = GetValueByPath(session, source)?.ToString();
+            }
 
             mapped.Add(new MappedField(target, source, value));
 
-            if (string.IsNullOrWhiteSpace(value))
+            // Literal fields are always present by definition — never flag them as missing.
+            if (type != "literal" && string.IsNullOrWhiteSpace(value))
                 issues.Add(new ValidationIssue(target, source, "Value is null or missing"));
         }
 

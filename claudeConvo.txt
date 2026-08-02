@@ -1,5 +1,73 @@
+7/31/26
+------------------
+8/1/26
 
+ why [SourceDocumentId] null.  What did i do wrong????????
+ 
+-----------------------------
+do that another time.  Keeop in your memeory.
+
+Where is the STEP n.  That does the validate and you press a button on the page and the table gets updated.
+Why is this always missed or confussed.
+-----------------------------
+looks good for verifying session.
+
+I am thinking and you let me know your thoughts.
+I want another review 837P so the case manager can eyeball it.
+
+The hole purpose of what i want to do is eventual create the 837p.
+I am wondering if we should have a more comprehesive validation where it shows  the other fields which come from payer, 
+[PracticeConfiguration], etc.
+----------------------------
+
+I updated the Rule to be in line with where data is sourced.
+C:\Users\mastronardif\Downloads\Case5\July\New folder\732.Session837P.rule.002.updated.json
+from the below.
+http://localhost:5173/api/getDocument?docId=366
+what do you think????
+
+-----------
 7/30/26
+-------------
+I want to document it or better yet have a .ps1 that does it.  we can talk about that later.
+ dotnet run -- --help
+ It was a workflow/pipelines we ran.  Then I wanted to use DSL the algebra 
+
+It was a manual process of the following steps. It is used to validate the .json i get from the document.
+1. I add the session document to the doc database.
+2. I run the pack process (docContextPack or the DSL algebra)that that puts the .jsons in a zip, from a list of docid{projector, rule, doc} see http://localhost:5173/api/getDocument?docId=404 
+3.  I run AI to get the json of the session note document.
+4. Import the Session Note.json
+5. I run te validate and eyeball the results; Validate, or Projector Composer.
+6. Preview and it update the session table.
+
+
+
+
+-------------
+Do you remember the 'session doc to session .json' process.
+It was a manual process it was about 5 steps.
+-------------
+i want 
+http://localhost:5173/claim/9
+Queue - Claims to be created
+Claim for Clearing House 
+to be more infomrative.
+ediDouentID is good
+claimId =not sre the point of going to a new page is here.  I think that should be not a link.
+sourcesDocumentId should inclucee everyting. 
+{
+  "payer": null,
+  "practiceConfiguration": 1862,
+  "provider": 759,
+  "authorization": 1200,
+  "patient": 793
+}
+and the sources.
+
+What do you think????????????
+
+---------------
 
 whats wrong with Launch-MyTabs.ps1
 I added anoher shell.  I tink its a syntax isue.

@@ -3,11 +3,11 @@ use CaseManagement
 DECLARE @fileData VARBINARY(MAX);
 
 SELECT @fileData = BulkColumn
-FROM OPENROWSET(BULK 'C:\temp\operator-registry.json', SINGLE_BLOB) AS x;
+FROM OPENROWSET(BULK 'C:\temp\732.Session837P.rule.002.updated.json', SINGLE_BLOB) AS x;
 --C:\temp\operator-registry.json
 -- C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\42A\CMS1500_Boxes.projection.json
 
-DECLARE @docId INT = 652 --NULL --652;   -- NULL = insert new doc
+DECLARE @docId INT = 732 --NULL --652;   -- NULL = insert new doc
 
 EXEC [cases].[usp_Document_Save]
     --@DocumentType = 'operators-catalog',

@@ -31,3 +31,25 @@ dotnet run -- --expression '889 (P) 779 (X)' --case-id 9
 
 Fix is just: run (Q) before (W).
 dotnet run -- --expression "1346 (Q) 976 (W)" --case-id 9
+
+July 31
+C:\Users\mastronardif\source\repos\CaseMangement\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2
+>
+	caseId 5 Mia
+	ProjectionDocumentId	RuleDocumentId
+	731	732
+
+STEP 2.
+dotnet run -- --expression '(Z)[1974, 731, 732]' --case-id 5
+STEP 3
+AI
+STEP 4.
+http://localhost:5173/api/getDocument?docId=1986
+STEP 5.
+-- --expression "<jsonDocId> (V) <ruleDocId>" --case-id <caseId>
+-- --expression "1986            (V) 731" --case-id 5
+dotnet run -- --expression "1986 (V) 731" --case-id 5 --table-name Session --src-doc-id 1975
+
+
+
+
