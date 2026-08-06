@@ -314,7 +314,7 @@
       "name": "GetClaimInfo",
       "type": "storedProcedureMulti",
       "storedProcedure": "cases.usp_GetClaimInfo",
-      "resultSets": ["sessions", "claim", "payer", "patient", "authorization", "provider", "practiceConfiguration"],
+      "resultSets": ["sessions", "claim", "insuranceCoverage", "payer", "patient", "authorization", "provider", "practiceConfiguration"],
       "params": {
         "caseId": {
           "type": "int",

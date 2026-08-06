@@ -253,9 +253,11 @@ function Get-PracticeConfiguration {
     $cmd = $conn.CreateCommand()
     $cmd.CommandText = "
         SELECT TOP 1
-            SubmitterName, SubmitterIdentifier, ReceiverName,
-            SenderIdQualifier, SenderId, ReceiverIdQualifier, ReceiverId,
-            FunctionalIdentifierCode, VersionIdentifier, TestIndicator
+            SubmitterName, SubmitterIdentifier,
+            SenderIdQualifier, SenderId,
+            FunctionalIdentifierCode, VersionIdentifier, TestIndicator,
+            BillingProviderName, BillingProviderNPI, BillingProviderTaxonomy, TaxId,
+            Address1, Address2, City, State, Zip
         FROM   [cases].[PracticeConfiguration]
         WHERE  IsActive = 1
         ORDER  BY PracticeConfigurationId DESC
@@ -274,14 +276,180 @@ function Get-PracticeConfiguration {
     return @{
         submitterName            = $row.SubmitterName
         submitterIdentifier      = $row.SubmitterIdentifier
-        receiverName              = $row.ReceiverName
         senderIdQualifier         = $row.SenderIdQualifier
         senderId                  = $row.SenderId
-        receiverIdQualifier       = $row.ReceiverIdQualifier
-        receiverId                = $row.ReceiverId
         functionalIdentifierCode  = $row.FunctionalIdentifierCode
         versionIdentifier         = $row.VersionIdentifier
         testIndicator             = $row.TestIndicator
+        billingProviderName       = $row.BillingProviderName
+        billingProviderNPI        = $row.BillingProviderNPI
+        billingProviderTaxonomy   = $row.BillingProviderTaxonomy
+        taxId                     = $row.TaxId
+        address1                  = $row.Address1
+        address2                  = $row.Address2
+        city                      = $row.City
+        state                     = $row.State
+        zip                       = $row.Zip
+    }
+}
+
+function Get-InsuranceCoverage {
+    param([int]$CaseId)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT TOP 1
+            IC.InsuranceCoverageId, IC.PayerId, IC.MemberId, IC.GroupNumber, IC.SubscriberName,
+            IC.RelationshipCode, IC.SubscriberFirstName, IC.SubscriberLastName, IC.SubscriberMiddleName,
+            IC.SubscriberDateOfBirth, IC.SubscriberGender,
+            PP.PayerName
+        FROM   [cases].[InsuranceCoverage] IC
+        LEFT JOIN [cases].[Payer] PP ON PP.Id = IC.PayerId
+        WHERE  IC.CaseId = @CaseId
+        ORDER  BY IC.InsuranceCoverageId DESC
+    "
+    $cmd.Parameters.AddWithValue("@CaseId", $CaseId) | Out-Null
+    $reader = $cmd.ExecuteReader()
+    $table  = New-Object System.Data.DataTable
+    $table.Load($reader)
+    $conn.Close()
+
+    if ($table.Rows.Count -eq 0) { return $null }
+    $row = $table.Rows[0]
+
+    return @{
+        insuranceCoverageId    = [int]$row.InsuranceCoverageId
+        payerId                = [int]$row.PayerId
+        payerName              = $row.PayerName
+        memberId               = $row.MemberId
+        groupNumber            = $row.GroupNumber
+        subscriberName         = $row.SubscriberName
+        relationshipCode       = $row.RelationshipCode
+        subscriberFirstName    = $row.SubscriberFirstName
+        subscriberLastName     = $row.SubscriberLastName
+        subscriberMiddleName   = $row.SubscriberMiddleName
+        subscriberDateOfBirth  = if ($row.SubscriberDateOfBirth -is [DBNull]) { $null } else { ([datetime]$row.SubscriberDateOfBirth).ToString("yyyyMMdd") }
+        subscriberGender       = $row.SubscriberGender
+    }
+}
+
+# Payer is a business entity, not a document (SourceDocumentId/JsonDocumentId on cases.Payer
+# were renamed to *_REMOVEME) — queried directly by PayerId, same as InsuranceCoverage/PracticeConfiguration.
+function Get-PayerEDI {
+    param([int]$PayerId)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    # Payer.PayerCode/CodeQualifier are legacy — PayerEDI is the authoritative source for the
+    # payer's own EDI identifier. Receiver/clearinghouse fields were removed from this table
+    # (renamed *REMOVE) — where that identity lives now (for ISA08/GS03/1000B) is still open.
+    $cmd.CommandText = "
+        SELECT TOP 1 PayerIdentifier, PayerIdentifierQualifier
+        FROM   [cases].[PayerEDI]
+        WHERE  PayerId = @PayerId AND IsActive = 1
+        ORDER  BY PayerEDIId DESC
+    "
+    $cmd.Parameters.AddWithValue("@PayerId", $PayerId) | Out-Null
+    $reader = $cmd.ExecuteReader()
+    $table  = New-Object System.Data.DataTable
+    $table.Load($reader)
+    $conn.Close()
+
+    if ($table.Rows.Count -eq 0) { return $null }
+    $row = $table.Rows[0]
+
+    return @{
+        payerIdentifier          = $row.PayerIdentifier
+        payerIdentifierQualifier = $row.PayerIdentifierQualifier
+    }
+}
+
+# Rendering provider (loop 2310B) is resolved from the claimed session's own JSON content
+# (session.provider.clinicianUsername), matched against cases.Provider — a business entity now
+# (JsonDocumentId renamed *REMOVEME on this table too; cases.RenderingProvider was dropped —
+# all providers, billing org and individual clinicians alike, live in cases.Provider).
+function Get-RenderingProvider {
+    param([int]$SessionJsonDocId)
+
+    $sessionDoc = Invoke-RestMethod -Uri "http://localhost:5173/api/getDocument?docId=$SessionJsonDocId"
+    $username = $sessionDoc.provider.clinicianUsername
+    if ([string]::IsNullOrWhiteSpace($username)) { return $null }
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT TOP 1 Id, FirstName, LastName, NPI, TaxonomyCode
+        FROM   [cases].[Provider]
+        WHERE  ClinicianUsername = @Username AND IsActive = 1
+    "
+    $cmd.Parameters.AddWithValue("@Username", $username) | Out-Null
+    $reader = $cmd.ExecuteReader()
+    $table  = New-Object System.Data.DataTable
+    $table.Load($reader)
+    $conn.Close()
+
+    if ($table.Rows.Count -eq 0) { return $null }
+    $row = $table.Rows[0]
+
+    return @{
+        providerId   = [int]$row.Id
+        firstName    = $row.FirstName
+        lastName     = $row.LastName
+        npi          = $row.NPI
+        taxonomyCode = $row.TaxonomyCode
+    }
+}
+
+# Patient is a business entity, not a document (SourceDocumentId/JsonDocumentId on cases.Patient
+# were renamed *REMOVEME too). Feeds 2010CA (Patient) only — 2010BA (Subscriber) comes from
+# InsuranceCoverage, never from here, even when patient and subscriber are the same person.
+function Get-Patient {
+    param([int]$CaseId)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT TOP 1 Id, FirstName, LastName, DateOfBirth, Gender
+        FROM   [cases].[Patient]
+        WHERE  CaseId = @CaseId AND IsActive = 1
+        ORDER  BY Id DESC
+    "
+    $cmd.Parameters.AddWithValue("@CaseId", $CaseId) | Out-Null
+    $reader = $cmd.ExecuteReader()
+    $table  = New-Object System.Data.DataTable
+    $table.Load($reader)
+    $conn.Close()
+
+    if ($table.Rows.Count -eq 0) { return $null }
+    $row = $table.Rows[0]
+
+    return @{
+        patientId   = [int]$row.Id
+        firstName   = $row.FirstName
+        lastName    = $row.LastName
+        dateOfBirth = if ($row.DateOfBirth -is [DBNull]) { $null } else { ([datetime]$row.DateOfBirth).ToString("yyyyMMdd") }
+        gender      = $row.Gender
     }
 }
 
@@ -343,14 +511,24 @@ if ($spec.sessions -and $spec.sessions.Count -gt 0) {
     }
 }
 
-# Provider
-if ($spec.provider) {
-    $invoice = Run-Step $spec.provider (Get-ActiveProjectionDocId "Provider837P") $invoice "Provider"
-}
-
-# Payer
-if ($spec.payer) {
-    $invoice = Run-Step $spec.payer (Get-ActiveProjectionDocId "Payer837P") $invoice "Payer"
+# Rendering Provider (loop 2310B only) — resolved from the first claimed session's own
+# clinicianUsername. Billing provider (1000A/2010AA) now comes entirely from Practice
+# Configuration, which already carried those fields — Provider837P is retired.
+$renderingProviderId = $null
+if ($spec.sessions -and $spec.sessions.Count -gt 0) {
+    Write-Host ""
+    Write-Host "Rendering Provider : loading for session $($spec.sessions[0])..." -ForegroundColor Yellow
+    $renderingProvider = Get-RenderingProvider -SessionJsonDocId $spec.sessions[0]
+    if ($renderingProvider) {
+        $renderingProviderId = $renderingProvider.providerId
+        $renderingProviderJson = $renderingProvider | ConvertTo-Json
+        $renderingProviderSave = @{ json = $renderingProviderJson; name = "rendering-provider" } | ConvertTo-Json
+        $renderingProviderResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $renderingProviderSave
+        $renderingProviderDocId = $renderingProviderResp.docId
+        $invoice = Run-Step $renderingProviderDocId (Get-ActiveProjectionDocId "RenderingProvider837P") $invoice "Rendering Provider ($renderingProviderDocId)"
+    } else {
+        Write-Host "  No clinicianUsername on session $($spec.sessions[0]), or no matching active Provider row." -ForegroundColor DarkYellow
+    }
 }
 
 # Authorization
@@ -358,9 +536,67 @@ if ($spec.authorization) {
     $invoice = Run-Step $spec.authorization (Get-ActiveProjectionDocId "Authorization837P") $invoice "Authorization"
 }
 
-# Patient
-if ($spec.patient) {
-    $invoice = Run-Step $spec.patient (Get-ActiveProjectionDocId "Patient837P") $invoice "Patient"
+# Insurance Coverage — a business entity, not a document (same idea as Practice Configuration):
+# queried directly by CaseId, LEFT JOINed to Payer for the name (so the payer's name doesn't
+# depend on a PayerEDI row existing). Snapshotted into a transient doc to flow through (P)(AM).
+# Drives SBR (2000B), the name portion of 2010BB.NM1 (Payer), and 2010BA (Subscriber). Resolved
+# before Patient below because RelationshipCode decides whether 2010CA gets populated.
+Write-Host ""
+Write-Host "Insurance Coverage : loading for case $caseId..." -ForegroundColor Yellow
+$insuranceCoverage = Get-InsuranceCoverage -CaseId $caseId
+$insuranceCoverageDocId = $null
+$payerId = $null
+if ($insuranceCoverage) {
+    $payerId = $insuranceCoverage.payerId
+    $insuranceCoverageJson = $insuranceCoverage | ConvertTo-Json
+    $insuranceCoverageSave = @{ json = $insuranceCoverageJson; name = "insurance-coverage" } | ConvertTo-Json
+    $insuranceCoverageResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $insuranceCoverageSave
+    $insuranceCoverageDocId = $insuranceCoverageResp.docId
+    $invoice = Run-Step $insuranceCoverageDocId (Get-ActiveProjectionDocId "InsuranceCoverage837P") $invoice "Insurance Coverage ($insuranceCoverageDocId)"
+} else {
+    Write-Host "  No InsuranceCoverage row for case $caseId — SBR will be empty." -ForegroundColor DarkYellow
+}
+
+# Payer EDI — the payer's own EDI identifier (2010BB.NM1.NM108/NM109). Receiver/clearinghouse
+# identity (1000B.NM1, ISA08/GS03) is unresolved right now — PayerEDI's Receiver* fields were
+# removed and PayerSubmissionConfiguration doesn't carry a receiver id either. Not wired here
+# until that's settled.
+if ($insuranceCoverage -and $payerId) {
+    Write-Host ""
+    Write-Host "Payer EDI : loading for PayerId $payerId..." -ForegroundColor Yellow
+    $payerEDI = Get-PayerEDI -PayerId $payerId
+    if ($payerEDI) {
+        $payerJson = $payerEDI | ConvertTo-Json
+        $payerSave = @{ json = $payerJson; name = "payer-edi" } | ConvertTo-Json
+        $payerResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $payerSave
+        $payerDocId = $payerResp.docId
+        $invoice = Run-Step $payerDocId (Get-ActiveProjectionDocId "Payer837P") $invoice "Payer EDI ($payerDocId)"
+    } else {
+        Write-Host "  No active PayerEDI row for PayerId $payerId." -ForegroundColor DarkYellow
+    }
+}
+
+# Patient (loop 2010CA) — populated only when the patient isn't the subscriber. This is the
+# only place RelationshipCode is interpreted; X12Writer just reacts to whether 2010CA has
+# content and never re-derives dependent-vs-self on its own.
+$patientId = $null
+if ($insuranceCoverage -and $insuranceCoverage.relationshipCode -and $insuranceCoverage.relationshipCode -ne "18") {
+    Write-Host ""
+    Write-Host "Patient (2010CA) : relationshipCode=$($insuranceCoverage.relationshipCode), loading for case $caseId..." -ForegroundColor Yellow
+    $patient = Get-Patient -CaseId $caseId
+    if ($patient) {
+        $patientId = $patient.patientId
+        $patientJson = $patient | ConvertTo-Json
+        $patientSave = @{ json = $patientJson; name = "patient" } | ConvertTo-Json
+        $patientResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $patientSave
+        $patientDocId = $patientResp.docId
+        $invoice = Run-Step $patientDocId (Get-ActiveProjectionDocId "Patient837P") $invoice "Patient ($patientDocId)"
+    } else {
+        Write-Host "  No Patient row for case $caseId." -ForegroundColor DarkYellow
+    }
+} else {
+    Write-Host ""
+    Write-Host "Patient (2010CA) : relationshipCode=18 (self) or no InsuranceCoverage — skipping." -ForegroundColor DarkGray
 }
 
 # Practice Configuration — runs last among (P)(AM) sources so its submitter/receiver
@@ -382,10 +618,11 @@ Write-Host ""
 Write-Host "Sources : recording paper trail..." -ForegroundColor Yellow
 $sourcesJson = @{
     sessions              = $spec.sessions
-    provider              = if ($spec.provider)      { $spec.provider }      else { $null }
-    payer                 = if ($spec.payer)          { $spec.payer }         else { $null }
+    renderingProviderId   = $renderingProviderId
+    payerId               = $payerId
     authorization         = if ($spec.authorization)  { $spec.authorization } else { $null }
-    patient               = if ($spec.patient)        { $spec.patient }       else { $null }
+    patientId             = $patientId
+    insuranceCoverageId   = if ($insuranceCoverage)   { $insuranceCoverage.insuranceCoverageId } else { $null }
     practiceConfiguration = $practiceConfigDocId
 } | ConvertTo-Json
 $sourcesSave  = @{ json = $sourcesJson; name = "claim-sources" } | ConvertTo-Json
@@ -407,10 +644,8 @@ $metadataPatch = @{
         pipelineRunId = $pipelineRunId
         sources       = @{
             sessions      = $sessionSources
-            provider      = if ($spec.provider)      { $spec.provider }      else { $null }
-            payer         = if ($spec.payer)         { $spec.payer }         else { $null }
             authorization = if ($spec.authorization) { $spec.authorization } else { $null }
-            patient       = if ($spec.patient)       { $spec.patient }       else { $null }
+            patientId     = $patientId
         }
     }
 } | ConvertTo-Json -Depth 6

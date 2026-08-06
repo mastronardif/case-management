@@ -1,5 +1,143 @@
-﻿
-7/12/26
+﻿8/4/26
+
+Primary Caregiver
+Parent / Guardian information
+Name
+Dana Assis
+Relationship
+Mother
+Primary Language
+Address
+31 Solomon Dr
+City
+Bridgewater
+State
+New Jersey
+Zip Code
+08807
+Phone
+2018881376
+Email
+dana.assis@gmail.com
+Parent Name
+Dana Assis
+Date
+
+01/17/2026
+Staff Name
+Kristine Mastronardi
+----------------------
+
+give me  an insert int Patient for case5
+get as much data from
+
+patient  "client": {
+    "name": "Mia Alapati"
+Team Dynamic Minds Corp
+Client’s Legal Name: Mia Alapati
+Learner’s DOB Apr 1, 2021
+Learner Diagnosis F84.0 - Autistic Disorder
+Date of Session: May 21, 2026
+Session Start Time: 4:00 pm Session End Time: 6:00 pm Length of Session: 2 hours
+Was there a break in your session?
+Name of Clinician: Isabella Bonenfanti
+Authorized BCBA Supervisor:
+Service Code: Modifier:
+Modality
+Location:
+Session Participants:
+List other participants:
+ Yes  No
+97153 HM (RBT)
+In person
+Home
+
+
+[cases].[Patient]
+           ([CaseId]
+           ,[SourceDocumentId]
+           ,[JsonDocumentId]
+           ,[MemberId]
+           ,[MedicaidId]
+           ,[Suffix]
+           ,[FirstName]
+           ,[MiddleName]
+           ,[LastName]
+           ,[DateOfBirth]
+           ,[Gender]
+           ,[Address1]
+           ,[Address2]
+           ,[City]
+           ,[State]
+           ,[ZipCode]
+           ,[Phone]
+           ,[Email]
+           ,[IsActive]
+           ,[CreatedDate]
+           ,[CreatedBy]
+           ,[ModifiedDate]
+           ,[ModifiedBy])
+
+---------------------
+add "clinicianUsername": "bonenfanti17", to provider
+adding first, lastname to provider
+
+Name splitting: cases.Provider.ProviderName is one combined field ("Jocelyn Rosel"), but NM1*82 needs it split — NM103=LastName, NM104=FirstName. Splitting on the last space is fragile (breaks on suffixes, multi-word last names). Do you want to add FirstName/LastName columns to Provider (matching what the old RenderingProvider table you just dropped actually had), or should I just split ProviderName on whitespace and accept the edge cases?
+-------------
+8/4/26
+------------------
+Let me try to understand this confusion i am having. 
+So Availity has a name for Cigna???
+the architecture is edi for Avality right?????
+Should i get from the patient insurance
+or   availity.  Did I already tell Availity about Cigna???
+---------------------
+8/2/26
+
+should NM1*40*2*Horizon Blue Cross Blue Shield~ 
+come from [InsuranceCoverage]?????????? NOT []
+-----------------------
+Question - again does [InsuranceCoverage] come rom a document OR does / can it come from a few places.  
+I have been converting docs to json.  
+If its like PracticeConfiguration free entry not from a consting document.
+-------------------------
+
+I am wiring the insurance info into my pipeline.
+
+I have this .[cases].[InsuranceCoverage]
+
+
+-------------------------
+can you give me the payer info for Cigna as a json like this one for 
+{
+"documentType": "Payer",
+"version": "1.0.0",
+"payer": {
+"name": "Horizon Blue Cross Blue Shield",
+"payerId": "12345",
+"idQualifier": "PI",
+"insuranceSequence": "P",
+"planType": "CI",
+"address1": "3 Penn Plaza East",
+"city": "Newark",
+"state": "NJ",
+"zip": "07105",
+"phone": "800-355-2583"
+}
+}
+
+Id	PublicId	PayerCode	PayerName	PayerType	StateCode	PhoneNumber	Website	PayerIdentifier	EDIReceiverId	ClaimsSubmissionMethod	Notes	CreatedDate	CreatedBy	ModifiedDate	ModifiedBy	IsActive	SourceDocumentId	JsonDocumentId
+3	A9ACD50F-4F89-430D-83E8-3DA33977BE10	CIGNA	Cigna	NULL	NJ	800-997-1654	https://www.cigna.com	NULL	NULL	NULL	NULL	2026-05-18 00:32:55	DocumentResolver	NULL	NULL	1	NULL	NULL
+--------------------------------
+7/22/26
+
+Anu Malik <anum@ignitecinc.com>
+---------------------
+give me a phsedo  usp for SubmitClaim(caseId, Sessions a list of sessionnums coma sep
+SubmitClaim(5, '[418, 403]')
+[418, 403],
+
+-----------------------
 
 
 give me an usp called GetClaimInfo(caseId, filter)

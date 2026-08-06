@@ -8,6 +8,7 @@ import XyzTablePage from "./XyzTablePage";
 
 const DISPLAY_SECTIONS = [
   { key: "claim", label: "Claim for Clearing House" },
+  { key: "insuranceCoverage", label: "Insurance Coverage" },
   { key: "payer", label: "Payer" },
   { key: "patient", label: "Patient" },
   { key: "authorization", label: "Authorization" },
@@ -84,15 +85,16 @@ export default function ClaimPage() {
     try {
       const sessionDocumentIds = Array.from(selectedIds).join(",");
 
-      // Everything the claim builder will need, in one linkable doc — provider/payer/
-      // authorization/patient are still placeholder-resolved (see usp_GetClaimInfo TODOs)
-      // until the case can properly resolve its own peripheral info.
+      // Everything the claim builder will need, in one linkable doc — provider/authorization/
+      // patient are still placeholder-resolved (see usp_GetClaimInfo TODOs) until the case can
+      // properly resolve its own peripheral info. Payer isn't included here — it's a business
+      // entity resolved directly via InsuranceCoverage.PayerId inside the build scripts, not a
+      // doc-id lookup (cases.Payer no longer carries SourceDocumentId/JsonDocumentId).
       const spec = {
         caseId: Number(caseId),
         sessions: Array.from(selectedIds),
         provider: info?.provider?.[0]?.jsonDocumentId ?? null,
         authorization: info?.authorization?.[0]?.jsonDocumentId ?? null,
-        payer: info?.payer?.[0]?.jsonDocumentId ?? null,
         patient: info?.patient?.[0]?.jsonDocumentId ?? null,
       };
       const specSaveRes = await api.post("/api/saveWorkflow", {

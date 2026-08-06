@@ -79,14 +79,33 @@ public class X12Writer : IX12Writer
         WriteN4(Write, loop2010AA);
         WriteRef(Write, GetObject(loop2010AA, "REF_EI"), "EI");
 
-        WriteHL(Write, GetObject(loops, "2000B"));
-        WriteSbr(Write, GetObject(loops, "2000B"));
+        // Dependent (2000C/2010CA) is entirely upstream-driven: PS1 only populates 2010CA when
+        // InsuranceCoverage.RelationshipCode isn't "self" — the writer just reacts to whether
+        // that data shows up, it never interprets RelationshipCode or names itself.
+        var loop2010CA = GetObject(loops, "2010CA");
+        var hasDependent = GetObject(loop2010CA, "NM1").ValueKind == JsonValueKind.Object;
+
+        // 2000B (Subscriber) — HL04 is derived here, not trusted from the source doc: "1" when
+        // a dependent loop is present, "0" otherwise.
+        var loop2000B = GetObject(loops, "2000B");
+        var hl2000B = GetObject(loop2000B, "HL");
+        if (hl2000B.ValueKind == JsonValueKind.Object)
+            Write("HL", GetString(hl2000B, "HL01"), GetString(hl2000B, "HL02"), GetString(hl2000B, "HL03"), hasDependent ? "1" : "0");
+        WriteSbr(Write, loop2000B);
 
         var loop2010BA = GetObject(loops, "2010BA");
         WriteNM1(Write, loop2010BA, "NM1");
         WriteDmg(Write, loop2010BA);
 
         WriteNM1(Write, GetObject(loops, "2010BB"), "NM1");
+
+        // 2000C / 2010CA (Patient) — sequential HL under the Subscriber (2000B = HL01 "2").
+        if (hasDependent)
+        {
+            Write("HL", "3", "2", "23", "0");
+            WriteNM1(Write, loop2010CA, "NM1");
+            WriteDmg(Write, loop2010CA);
+        }
 
         var loop2300 = GetObject(loops, "2300");
         WriteClm(Write, GetObject(loop2300, "CLM"));
@@ -119,8 +138,13 @@ public class X12Writer : IX12Writer
         var nm1 = GetObject(nm1Loop, childName);
         if (nm1.ValueKind != JsonValueKind.Object) return;
 
+        // A skeleton/seed doc can carry this node with every field still blank (e.g. 1000B,
+        // whose receiver identity nothing populates yet) — a nameless NM1 isn't real content.
+        var nm103 = GetString(nm1, "NM103");
+        if (nm103.Length == 0) return;
+
         write("NM1", [
-            GetString(nm1, "NM101"), GetString(nm1, "NM102"), GetString(nm1, "NM103"), GetString(nm1, "NM104"),
+            GetString(nm1, "NM101"), GetString(nm1, "NM102"), nm103, GetString(nm1, "NM104"),
             "", "", "", GetString(nm1, "NM108"), GetString(nm1, "NM109")
         ]);
     }

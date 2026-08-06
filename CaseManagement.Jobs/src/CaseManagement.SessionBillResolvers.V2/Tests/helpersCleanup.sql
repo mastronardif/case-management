@@ -1,6 +1,5 @@
 
-
-cleanup claims
+use CaseManagement
 -- Order matters: children before parents (FKs)
 DELETE FROM cases.QueueClaimSession;
 DELETE FROM cases.queueClaimsToBeCreated;
@@ -14,3 +13,11 @@ DBCC CHECKIDENT ('cases.queueClaimsToBeCreated', RESEED, 0);
 DBCC CHECKIDENT ('cases.queueClaimsToBeSubmitted', RESEED, 0);
 DBCC CHECKIDENT ('cases.ClaimSession', RESEED, 0);
 DBCC CHECKIDENT ('cases.Claim', RESEED, 0);
+
+/******
+SELECT * FROM cases.QueueClaimSession;
+SELECT * FROM cases.queueClaimsToBeCreated;
+SELECT * FROM cases.queueClaimsToBeSubmitted;
+SELECT * FROM cases.ClaimSession;
+SELECT * FROM cases.Claim;
+*******/
