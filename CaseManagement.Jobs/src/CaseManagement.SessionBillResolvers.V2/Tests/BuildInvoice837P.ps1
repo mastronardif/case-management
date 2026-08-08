@@ -393,6 +393,45 @@ function Get-Patient {
     }
 }
 
+# Fee Schedule Line is a business entity, not a document — queried directly by PayerId +
+# ProcedureCode. Drives billing.minutesPerUnit/allowedAmount ("how much to bill"), replacing
+# authorization.minutesPerUnit/unitRate — Authorization now only carries eligibility data
+# (approvedUnits, monthlyUnits, effective dates, authorized codes). Resolved per session
+# (not once per claim) since different sessions can bill different procedure codes.
+function Get-FeeScheduleLine {
+    param([int]$PayerId, [string]$ProcedureCode)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT TOP 1 fsl.MinutesPerUnit, fsl.AllowedAmount
+        FROM   [cases].[FeeSchedule] fs
+        JOIN   [cases].[FeeScheduleLine] fsl ON fsl.FeeScheduleId = fs.FeeScheduleId
+        WHERE  fs.PayerId = @PayerId AND fsl.ProcedureCode = @ProcedureCode
+          AND  fs.IsActive = 1 AND fsl.IsActive = 1
+        ORDER  BY fsl.FeeScheduleLineId DESC
+    "
+    $cmd.Parameters.AddWithValue("@PayerId", $PayerId) | Out-Null
+    $cmd.Parameters.AddWithValue("@ProcedureCode", $ProcedureCode) | Out-Null
+    $reader = $cmd.ExecuteReader()
+    $table  = New-Object System.Data.DataTable
+    $table.Load($reader)
+    $conn.Close()
+
+    if ($table.Rows.Count -eq 0) { return $null }
+    $row = $table.Rows[0]
+
+    return @{
+        minutesPerUnit = [int]$row.MinutesPerUnit
+        allowedAmount  = [double]$row.AllowedAmount
+    }
+}
+
 function Invoke-PipelineStep {
     param([string]$Expr, [int]$CaseId)
 
@@ -570,12 +609,40 @@ $sourcesResp  = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" 
 $sourcesDocId = $sourcesResp.docId
 Write-Host "  sources doc: $sourcesDocId" -ForegroundColor Gray
 
+# Fee Schedule — resolved per session, not once per claim, since different sessions can bill
+# different procedure codes. Looked up by PayerId + that session's own service.code, then (M)
+# merged onto a session-specific snapshot so (Q)'s forEach picks up feeSchedule.minutesPerUnit/
+# allowedAmount alongside the session's own fields (metadata.sources.sessions[].documentId
+# below points at these merged copies, not the raw session docs — the raw docs stay untouched
+# and are still what the "Sources" paper trail above records).
+Write-Host ""
+Write-Host "Fee Schedule : resolving per session..." -ForegroundColor Yellow
+$sessionDocIdsForBilling = @()
+foreach ($sessionDocId in $sources.sessions) {
+    $sessionDoc  = Invoke-RestMethod -Uri "http://localhost:5173/api/getDocument?docId=$sessionDocId"
+    $serviceCode = $sessionDoc.service.code
+    $feeScheduleLine = if ($payerId -and $serviceCode) { Get-FeeScheduleLine -PayerId $payerId -ProcedureCode $serviceCode } else { $null }
+
+    if ($feeScheduleLine) {
+        $feeScheduleJson = @{ feeSchedule = $feeScheduleLine } | ConvertTo-Json
+        $feeScheduleSave = @{ json = $feeScheduleJson; name = "fee-schedule" } | ConvertTo-Json
+        $feeScheduleResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $feeScheduleSave
+        $feeScheduleDocId = $feeScheduleResp.docId
+        $mergedSessionDocId = Invoke-PipelineStep "$feeScheduleDocId (M) $sessionDocId" $caseId
+        Write-Host "  Session $sessionDocId ($serviceCode) : feeSchedule ($feeScheduleDocId) (M) $sessionDocId => $mergedSessionDocId" -ForegroundColor Gray
+        $sessionDocIdsForBilling += $mergedSessionDocId
+    } else {
+        Write-Host "  Session $sessionDocId : no active FeeScheduleLine for PayerId $payerId / code '$serviceCode' — billing math will fail validation." -ForegroundColor DarkYellow
+        $sessionDocIdsForBilling += $sessionDocId
+    }
+}
+
 # Metadata — build from spec and (M) merge into final invoice
 Write-Host ""
 Write-Host "Metadata : building from spec..." -ForegroundColor Yellow
 
 $pipelineRunId  = [System.Guid]::NewGuid().ToString()
-$sessionSources = @($sources.sessions | ForEach-Object { @{ documentId = $_ } })
+$sessionSources = @($sessionDocIdsForBilling | ForEach-Object { @{ documentId = $_ } })
 
 $metadataPatch = @{
     metadata = @{

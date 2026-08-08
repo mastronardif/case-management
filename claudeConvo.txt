@@ -1,5 +1,45 @@
 
+8/8/26
+---------------------
+| Data              | Comes from                            | Purpose                                   |
+| ----------------- | ------------------------------------- | ----------------------------------------- |
+| **Payer**         | `InsuranceCoverage → Payer`           | Who we're billing                         |
+| **Fee Schedule**  | Payer → FeeSchedule → FeeScheduleLine | **How much to bill**                      |
+| **Authorization** | Case/session authorization            | **Whether/how the service is authorized** |
+| **Session**       | Session                               | What service actually occurred            |
+| **Claim**         | Claim                                 | Groups the sessions being submitted       |
 
+go with option A
+Claim
+ ├── Authorization
+ │     └── loaded once
+ │
+ └── Sessions
+       ├── Session 1
+       │     ├── service.code = 97153
+       │     └── feeSchedule = lookup(PayerId, 97153)
+       │
+       ├── Session 2
+       │     ├── service.code = 97155
+       │     └── feeSchedule = lookup(PayerId, 97155)
+       │
+       └── Session 3
+             ├── service.code = 97153
+             └── feeSchedule = lookup(PayerId, 97153)
+             
+---------------------
+Now the bill calculation is from the fee schedule. Not from Authorization. 
+You want to talk about it? You ok with what to do?  better yet tell me your plan.
+
+
+------------------
+on the claim page 
+below Authorization add fee schedule.
+see: SP [cases].[usp_GetBillingContext]
+What o you think?
+----------------------
+add Fee schedule to the claim page above Authorization.
+---------------
 
 8/6/26
 I did not update.  more cleanup needed.

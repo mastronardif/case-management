@@ -12,6 +12,7 @@ const DISPLAY_SECTIONS = [
   { key: "payer", label: "Payer" },
   { key: "patient", label: "Patient" },
   { key: "authorization", label: "Authorization" },
+  { key: "feeSchedule", label: "Fee Schedule" },
   { key: "provider", label: "Provider" },
   { key: "practiceConfiguration", label: "Practice Configuration" },
 ];
