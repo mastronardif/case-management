@@ -1,7 +1,64 @@
 
 
+
+8/6/26
+I did not update.  more cleanup needed.
+
+is projection below necessary since we are getting it here "target": "provider.clinicianName",
+{
+"target": "clinicianName",
+"source": "clinician.name"
+},
+
+same with the rule.
+
+-----------------
+NO.  
+Update the session proection so it will capture the signature info from the document.  
+Right now that projection is not there.
+I use AI to create the .json of the document using the projection, rule and doc.  I send it the .zip and it gives me the 
+session as a json.
+Do you understand???????????
+
+-------------------
+I need to project onto 
+"provider": {
+"clinicianName": "Isabella Bonenfant",
+"clinicianUsername": "bonenfanti17",
+"supervisorName": ""
+}
+FROM
+session pdf
+"signature": {
+"signedBy": "Isabella Bonenfant",
+"signedDate": "2026-07-12",
+"signedTime": "11:07",
+    "signedByIdentifier": "bonenfanti17"
+}
+
+---------------
 8/5/26
 
+1. You still have the invalid NM1~
+
+This line:
+
+NM1~
+
+is invalid and needs to be removed.
+
+It appears immediately after:
+
+NM1*41*2*Dynamic Minds Corp*****46*DYNAMICMINDS~
+NM1~
+HL*1**20*1~
+
+There should simply be:
+
+NM1*41*2*Dynamic Minds Corp*****46*DYNAMICMINDS~
+HL*1**20*1~
+
+--------------------
 Your four pieces make sense
 X12Writer.cs
 Write 2000C only when loops.2010CA contains data.

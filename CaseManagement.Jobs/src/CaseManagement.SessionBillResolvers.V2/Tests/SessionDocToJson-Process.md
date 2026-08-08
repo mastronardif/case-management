@@ -23,6 +23,7 @@ once the steps below are confirmed against real usage.
      "steps": [{ "id": "pack", "operator": "zip", "input": [370, 367, 380], "output": ["context-pack.zip"] }]
    }
    ```
+   > dotnet run -- --expression '(Z)[1974, 731, 732]' --case-id 5
    Run via `dotnet run -- --workflow <workflowDocId> --case-id <caseId>`.
    **Open question**: the `input` array is currently hardcoded per workflow doc — a new
    session means either editing this doc or creating a new one. A future script would need
@@ -50,7 +51,9 @@ once the steps below are confirmed against real usage.
    dotnet run -- --expression "<jsonDocId> (V) <projectionDocId>" --case-id <caseId> `
        --table-name Session --src-doc-id <sourceDocId>
    ```
-   Example for Session837P: `dotnet run -- --expression "1986 (V) 731" --case-id 5 --table-name Session --src-doc-id 1626`.
+   Example for Session: `dotnet run -- --expression "2721 (V) 2638" --case-id 5 --table-name Session --src-doc-id 1976`
+
+   Example for Session837P: `dotnet run -- --expression "2721 (V) 2638" --case-id 5 --table-name Session --src-doc-id 1975`.
 
    **Important — projection doc, not rule doc.** `(V)`'s second input must be the
    **projection** doc (e.g. 731 for Session837P — the one shaped `{fields: [{target, source}]}`),

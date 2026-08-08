@@ -250,7 +250,7 @@ function Get-InsuranceCoverage {
             IC.SubscriberDateOfBirth, IC.SubscriberGender,
             PP.PayerName
         FROM   [cases].[InsuranceCoverage] IC
-        LEFT JOIN [cases].[Payer] PP ON PP.Id = IC.PayerId
+        LEFT JOIN [cases].[Payer] PP ON PP.PayerId = IC.PayerId
         WHERE  IC.CaseId = @CaseId
         ORDER  BY IC.InsuranceCoverageId DESC
     "
