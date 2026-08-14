@@ -20,6 +20,8 @@ nt --title "Claims" `
    --tabColor "#5d73be" `
    -d "$root\CaseManagement.Jobs\src\CaseManagement.SessionBillResolvers.V2\Tests" `
    pwsh
+   
+# todo: C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti dotnet run --launch-profile https
 
 # put path on a newline 
 #prompt $P$_$G

@@ -1,5 +1,11 @@
 
 8/8/26
+
+i get the below more often.  Any ideas.  Is it a connection limit thing?
+Microsoft.Data.SqlClient.SqlException (0x80131904): Execution Timeout Expired.  
+The timeout period elapsed prior to completion of the operation or the server is not responding.
+
+---------------------
 ---------------------
 | Data              | Comes from                            | Purpose                                   |
 | ----------------- | ------------------------------------- | ----------------------------------------- |

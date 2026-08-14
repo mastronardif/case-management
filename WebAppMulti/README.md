@@ -44,5 +44,9 @@ the middleware
 C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\WebAppMulti.sln
  C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\WebAppMulti.csproj 
 
+ cd WebAppMulti
+dotnet run --launch-profile VS44344
+
+
 
 
