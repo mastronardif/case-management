@@ -1,4 +1,29 @@
 
+
+8/14/26
+
+usp_ProjectorRule_GetManifest
+usp_GetManifestProjectorRule
+---------------------
+Talk it out.  Also is there anything i can say / do to save on tokens $ here.  Im learning about this token $ stuff.
+
+I need to backup the projection, rule files.  I will put them in the Repo.
+I want to run an SP that list said files. A manifest. 
+    I will call said SP via powershel, C# console, or Python(lots of jobs with Python).
+    Write said responeses to {docId}.{Name}.json files.
+2. zip said folder.
+3. Archive the zip.
+DONE!
+
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Schema\script.sql
+sugested SP usp_archivePojectionRules().
+SELECT [ProjectorRuleId]
+      ,[Name],[ProjectionDocumentId]      ,[RuleDocumentId]     
+	  , 'http://localhost:5173/api/getDocument?docId={}'
+  FROM [CaseManagement].[cases].[ProjectorRule]
+
+
+-------------------
 8/8/26
 
 i get the below more often.  Any ideas.  Is it a connection limit thing?
