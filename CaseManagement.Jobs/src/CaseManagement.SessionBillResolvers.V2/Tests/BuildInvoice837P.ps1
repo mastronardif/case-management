@@ -315,15 +315,17 @@ function Get-PayerEDI {
     }
 }
 
-# Rendering provider (loop 2310B) is resolved from the claimed session's own JSON content
-# (session.provider.clinicianUsername), matched against cases.Provider — a business entity now
-# (JsonDocumentId renamed *REMOVEME on this table too; cases.RenderingProvider was dropped —
-# all providers, billing org and individual clinicians alike, live in cases.Provider).
+# Rendering provider (loop 2310B) is resolved from the claimed session's own JSON content,
+# matched against cases.Provider — a business entity now (JsonDocumentId renamed *REMOVEME on
+# this table too; cases.RenderingProvider was dropped — all providers, billing org and
+# individual clinicians alike, live in cases.Provider).
+# signature.signedByIdentifier is the lookup key — the current Session projection's canonical
+# source for it.
 function Get-RenderingProvider {
     param([int]$SessionJsonDocId)
 
     $sessionDoc = Invoke-RestMethod -Uri "http://localhost:5173/api/getDocument?docId=$SessionJsonDocId"
-    $username = $sessionDoc.provider.clinicianUsername
+    $username = $sessionDoc.signature.signedByIdentifier
     if ([string]::IsNullOrWhiteSpace($username)) { return $null }
 
     $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
@@ -430,6 +432,28 @@ function Get-FeeScheduleLine {
         minutesPerUnit = [int]$row.MinutesPerUnit
         allowedAmount  = [double]$row.AllowedAmount
     }
+}
+
+# The original uploaded PDF/scan each session was extracted from — kept in the claim-sources
+# paper trail alongside JsonDocumentId so the doc-to-json chain is traceable end to end, not
+# just from the JSON forward.
+function Get-SessionSourceDocId {
+    param([int]$JsonDocumentId)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "SELECT TOP 1 SourceDocumentId FROM [cases].[Session] WHERE JsonDocumentId = @JsonDocumentId"
+    $cmd.Parameters.AddWithValue("@JsonDocumentId", $JsonDocumentId) | Out-Null
+    $result = $cmd.ExecuteScalar()
+    $conn.Close()
+
+    if ($null -eq $result -or $result -is [DBNull]) { return $null }
+    return [int]$result
 }
 
 function Invoke-PipelineStep {
@@ -595,8 +619,10 @@ $invoice = Run-Step $practiceConfigDocId (Get-ActiveProjectionDocId "PracticeCon
 # time audit snapshot, not a second source of truth for current linkage.
 Write-Host ""
 Write-Host "Sources : recording paper trail..." -ForegroundColor Yellow
+$sourceDocs = @($sources.sessions | ForEach-Object { Get-SessionSourceDocId -JsonDocumentId $_ })
 $sourcesJson = @{
     sessions              = $sources.sessions
+    sourceDocs             = $sourceDocs
     renderingProviderId   = $renderingProviderId
     payerId               = $payerId
     authorization         = if ($sources.authorization)  { $sources.authorization } else { $null }

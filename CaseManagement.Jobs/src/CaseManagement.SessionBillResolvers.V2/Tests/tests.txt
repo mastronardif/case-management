@@ -51,5 +51,8 @@ STEP 5.
 dotnet run -- --expression "1986 (V) 731" --case-id 5 --table-name Session --src-doc-id 1975
 
 
+https://www.perplexity.ai/computer/a/837p-validator-._KoUHE3TcGLLO.rRhgIcA
+
+
 
 

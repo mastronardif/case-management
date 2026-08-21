@@ -1,0 +1,23 @@
+# the # is a comment
+# Shared extraction template — used both directly (python ask_claude.py --prompt-file
+# ask.claude.txt --var folder=... --var returnInstruction=...) and by session_doc_agent.py's
+# run/local commands (which substitute {folder}/{notes}/{returnInstruction} themselves).
+
+Take the contents in folder {folder}
+it contains: source document (the clinical note), projection.json, rule.json.
+
+Extract EVERY "source" path listed in projection.json's fields array — that full list, not a
+subset — from the source document. Nest objects/arrays as implied by the dots (e.g.
+"client.diagnosis.code" means {"client": {"diagnosis": {"code": ...}}}), and produce no other
+top-level keys beyond those paths.
+
+Separately, rule.json's requiredFields marks which of those same fields must not be omitted
+if the information appears anywhere in the document — it is not a shorter list to extract
+instead of projection.json's full field list.
+
+Dates as YYYY-MM-DD, times as HH:MM (24h). If a field genuinely isn't present, omit it —
+never invent a value.
+
+{notes}
+
+{returnInstruction}

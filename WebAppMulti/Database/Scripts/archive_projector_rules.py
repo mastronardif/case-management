@@ -7,11 +7,16 @@ from datetime import datetime
 
 import pyodbc
 import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # === CONFIG ===
 SERVER      = r"LAPTOP-JIH94VS9\SQLEXPRESS"
 DATABASE    = "CaseManagement"
-API_BASE    = "http://localhost:5173/api/getDocument"
+# Hits the backend directly, not through the Vite dev server's proxy — this script only needs
+# WebAppMulti running, not the frontend. verify=False since the dev cert is self-signed.
+API_BASE    = "https://localhost:44344/api/getDocument"
 ROOT        = os.path.dirname(os.path.abspath(__file__))
 ARCHIVE_DIR = os.path.join(ROOT, "Archive", "ProjectorRules")
 # ===============================
@@ -34,7 +39,7 @@ def get_manifest(include_inactive=False):
 
 
 def fetch_doc(doc_id):
-    resp = requests.get(API_BASE, params={"docId": doc_id}, timeout=30)
+    resp = requests.get(API_BASE, params={"docId": doc_id}, timeout=30, verify=False)
     resp.raise_for_status()
     return resp.text
 

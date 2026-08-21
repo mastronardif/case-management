@@ -1,9 +1,217 @@
 
+---------------------
 
+8/21/26
+
+
+
+----------------------
+tyring:
+1112223334
+
+    python session_get_zip.py --case-id 5 --src-doc-id 1974 --dir "C:\temp\session-context-5-1974"
+    python session_get_zip.py --case-id 5 --src-doc-id 1975 --dir "C:\temp\session-context-5-1975"
+    python session_get_zip.py --case-id 5 --src-doc-id 1976 --dir "C:\temp\session-context-5-1976"
+
+    python session_get_zip.py --case-id 5 --src-doc-id 1977 --dir "C:\temp\session-context-5-1977"
+    python session_get_zip.py --case-id 5 --src-doc-id 1978 --dir "C:\temp\session-context-5-1978"
+    python session_get_zip.py --case-id 5 --src-doc-id 1979 --dir "C:\temp\session-context-5-1979"
+
+
+    python session_doc_agent.py local --dir "C:\temp\session-context-5-1974" --case-id 5 --src-doc-id 1974
+    python session_doc_agent.py local --dir "C:\temp\session-context-5-1975" --case-id 5 --src-doc-id 1975
+    python session_doc_agent.py local --dir "C:\temp\session-context-5-1976" --case-id 5 --src-doc-id 1976
+
+    python session_doc_agent.py local --dir "C:\temp\session-context-5-1977" --case-id 5 --src-doc-id 1977
+    python session_doc_agent.py local --dir "C:\temp\session-context-5-1978" --case-id 5 --src-doc-id 1978
+    python session_doc_agent.py local --dir "C:\temp\session-context-5-1979" --case-id 5 --src-doc-id 1979
+
+
+8/21/26
+
+-----------------------
+why am i getting breakOccurred for document 1975?  
+http://localhost:5173/api/getDocument?docId=3286
+Validation Issues (1)
+breakOccurred (session.breakOccurred): Value is null or missing
+
+
+---------------
+
+8/21/26
+
+I will re-run from the begining.
+
+
+--------------------
+I thought this was there.  I want SourceDocId's to follow for refrence.  All things come from the doc and later on the json of it used.
+do we need to talk.  You have a couple of places to change
+
+{
+  "authorization": 1200,
+  "payerId": 3,
+  "patientId": 2,
+  *sourceDocs[],
+  "sessions": [
+    3188
+  ],
+  "practiceConfiguration": 3216,
+  "renderingProviderId": 11,
+  "insuranceCoverageId": 2
+}
+
+Also i want docId=3188
+to have *sourceDocs=______,
+
+--------------------------------
+8/20/26
+this provicer has 10 digit NPI.  why the failure ? please Review
+
+ProviderName	NPI
+Jocelyn Rosel	1112223334
+=== Final EDI ===
+  claimId     : 3
+  claimNumber : CM000000003
+  ruleDocId   : 2859
+  sourcesDocId: 3088
+  docId       : 3097
+  status      : HasErrors
+  queue1      : row 3 marked 'Claim for Clearing House'
+  issues      :
+    - Rendering Provider NPI must be 10 digits.
+  Open        : http://localhost:5173/api/getDocument?docId=3097
+---------------------
+can you review.  it appears the Agent failed.
+it looks like doc 1977 has a  
+provider.clinicianUsername (signature.signedByIdentifier): Value is null or missing
+
+see: http://localhost:5173/api/getDocument?docId=2983
+--------------------------------
+
+Getting an error I think it can not resolve the provider can you tell shich session?
+
+  claimId     : 2
+  claimNumber : CM000000002
+  ruleDocId   : 2859
+  sourcesDocId: 3038
+  docId       : 3050
+  status      : HasErrors
+  queue1      : row 2 marked 'Claim for Clearing House'
+  issues      :
+    - forEach field 'SV1.SV104': Parameter feeSchedule_minutesPerUnit not defined.
+    - forEach field 'SV1.SV102': Parameter feeSchedule_allowedAmount not defined.
+    - Rendering Provider NPI must be 10 digits.
+    - Billing units must be greater than zero.
+    - Procedure code is required.
+    - Billing amount is missing — check FeeScheduleLine for this procedure code.
+  Open        : http://localhost:5173/api/getDocument?docId=3050
+  
+  
+{
+  "authorization": 1200,
+  "payerId": 3,
+  "patientId": 2,
+  "sessions": [
+    2985,
+    3004,
+    2999
+  ],
+  "practiceConfiguration": 3034,
+  "renderingProviderId": null,
+  "insuranceCoverageId": 2
+}
+
+.\BuildQueueForClearingHouse.ps1 -QueueClaimId 2
+
+---------------------
+
+------------------------
+python session_get_zip.py --case-id 5 --src-doc-id 1978 --dir "C:\temp\session-context-5-1978"
+python session_doc_agent.py local --dir "C:\\temp\\session-context-5-1978" --case-id 5 --src-doc-id 1978
+
+8/19/26
+if i dont have script make one that gets the .zip of a session doc, projecter, rule adn writes to said folder. you know the api call
+
+python session_get_zip.py  --case-id 5 --src-doc-id 1978 --dir "C:\\temp\\session-context-5-1978"
+-------------------------
+fix my webmultii 
+hte below used to work. i want it to work.
+http://localhost:5173/
+
+python session_doc_agent.py local --dir "C:\\temp\\session-context-5-1976" --case-id 5 --src-doc-id 1976
+------------------------
+8/17/26
+I am going to try
+python session_doc_agent.py local --dir "C:\\temp\\session-context-5-1976 --case-id 5 --src-doc-id 1976"
+that should give me what i want??
+
+---------------------------
+8/15/26
+
+---------------
+read the ask from for example C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Scripts\ask.claude.txt
+and give m an example of calling the py script.
+
+-----------------
+a couple of problems it should look similar to 
+http://localhost:5173/api/getDocument?docId=2725
+Also I want the py script vlsufe to use a memory file.  I dont want to keep training it or have it makes the same mistakes on every run.  Is that possible?
+
+--------------
+can i set some environment vars to allow writing to file, etc.
+So the script can write or have the claude prompt me like the ide does.
+---------------
+OK waht do i run to have clauxe generate the .json and the validate page?
+I thought i would run the python script with options
+---------------
+can tye python script do the below?????????
+Hand this zip to Claude Code and ask it to extract the session JSON - it should
+read projection.json's "source" paths (and rule.json's requiredFields) to know
+exactly what to produce from source.pdf.
+
+---------------------
+What i do is give the AI the .zip which has the [doc, projection, rule] and it creates the .json
+I expect you to learn and do it better if you make mistakes creating the .json
+
+------------------------------------------
+
+
+------------------------
+lets do a Python agent. - doc to json
+
+-------------
+1.  C# ImportDocs.csproj
+ 2. C# dotnet run -- --expression "2721 (V) 2638" etc.
+ 3, C#, humane. validate. 4. button action write to table.
+ DONE
+ 
+ 
+--------------------
+
+Wanting to make the session doc to session json process an agent.
+should i make the powershell a C# or python app?
+
+-----------------------
+-------------------
+1. python session_doc_agent.py pack --case-id 5 --src-doc-id 1976
+
+ python session_doc_agent.py finish --case-id 5 --src-doc-id 1975 --json-file C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Scripts
+echo "Say hello" | python ask_claude.py 
+echo "take this ./session-context-5-1975.zip using projection, rule and pdf and give me the session.json" | python ask_claude.py 
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Scripts\session-context-5-1975
+echo "take this ./ssession-context-5-1975 contents using projection, rule and pdf and give me the session.json" | python ask_claude.py 
+echo "take this c:/temp/ssession-context-5-1975 contents using projection, rule and pdf and give me the session.json" | python ask_claude.py --permission-mode acceptEdits
+
+
+--------------
 8/14/26
 
 usp_ProjectorRule_GetManifest
+
 usp_GetManifestProjectorRule
+
+Python Script.
+
 ---------------------
 Talk it out.  Also is there anything i can say / do to save on tokens $ here.  Im learning about this token $ stuff.
 
