@@ -10,3 +10,6 @@ run automatically, no code change needed.
 - Any source path whose value in the document is a list of multiple items (e.g.
   `session.participants`) must be extracted as a JSON array of strings, never a single
   comma-joined string.
+- `service.modifier` must be ONLY the raw HCPCS modifier code (e.g. `HM`, `HO`) — never append
+  a role/credential in parentheses like `HO (BCBA)`. If the document shows a role next to the
+  modifier, put the modifier alone in `service.modifier` and the role in `service.type`.

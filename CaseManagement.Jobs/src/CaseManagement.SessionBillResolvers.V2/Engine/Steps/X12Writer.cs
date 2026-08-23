@@ -121,6 +121,12 @@ public class X12Writer : IX12Writer
             WriteLx(Write, GetObject(line, "LX"));
             WriteSv1(Write, GetObject(line, "SV1"));
             WriteDtp(Write, GetObject(line, "DTP472"), "472");
+
+            // 2420A — line-level rendering provider override. Only present when upstream (PS1)
+            // determined this line's provider differs from the claim-level 2310B primary;
+            // WriteNM1 itself skips the segment when there's no name to write, so a line that
+            // matches the primary provider naturally emits nothing here.
+            WriteNM1(Write, line, "NM1_82");
         }
 
         var transactionSegments = (segmentCount - transactionStart) + 1; // +1 for SE itself

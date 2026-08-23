@@ -1,6 +1,93 @@
 
 ---------------------
 
+8/22/26
+I did a claim for three dtaes but availity is showing it by date. here is the info for 7/23/26 i believe
+"session": {
+"date": "2026-07-23",
+"startTime": "13:30",
+"endTime": "15:30",
+"durationHours": "2",
+"breakOccurred": "false",
+"modality": "In person",
+"location": "Home",
+"participants": [
+"Client",
+"BT/RBT",
+"BCBA/Supervisor",
+"Siblings/Peers"
+]
+},
+"service": {
+"code": "97153",
+"modifier": "HM (RBT)",
+"type": "Direct Service"
+},
+"sessionSummary": {
+"narrative": "Reciprocal Participation in Shared Interaction: Mia completed extended reciprocal turn-taking with 2 turns in 5 of 5 opportunities (100%). Following mastery of the target, the technician increased the difficulty to 3-turn reciprocal exchanges, during which Mia completed 4 of 5 opportunities (80%). The technician modeled turn-taking, provided verbal prompts, and delivered praise throughout the activities. Mia participated in the interactions until an episode of vocal/emotional distress occurred near the end of the activity, resulting in one incomplete opportunity.Responsive Gaze Shifting to Communicative Signals: Mia shifted her gaze toward the communication partner in 5 of 5 opportunities (100%) during structured games and singing activities. The technician used pauses, verbal cues, and modeled actions to create opportunities for gaze shifting. Mia looked toward the communication partner during the activities and continued participating in the routines.Behavior Reduction â€“ Disengagement: Mia engaged in two episodes of disengagement during a beanbag toss activity by attempting to continue playing with dinosaur toys instead of participating in the structured activity. The technician redirected Mia to observe the activity, provided verbal prompts, and reinforced attending. Mia remained with the group during the activity and later participated in singing activities following redirection."
+},
+"signature": {
+"signedBy": "Isabella Bonenfant",
+"signedByIdentifier": "bonenfanti17"
+},
+"sourceDocs": [
+"1974"
+]
+}
+Claim Number,Status,Patient Last Name,Patient First Name,Member ID,Patient Account Number,Patient DOB,Service Date From,Service Date To,Total Billed Amount,Total Paid Amount,Finalized Date
+262821931500,FINALIZED,ALAPATI,,11185562902,UNKNOWN,2021-04-01,2026-07-20,2026-07-23,312.00,218.40,2026-08-07
+
+-----------------------
+Option B — implement 2420A properly.
+The X12 837P standard explicitly supports multiple rendering providers on one claim:
+NM1*82*1*Bonenfant*Isabella****XX*[Isabella NPI]~
+
+LX*1~
+SV1*HC:97153:HM*...~
+DTP*472*D8*20260712~
+
+LX*2~
+SV1*HC:97155:HO*...~
+DTP*472*D8*20260713~
+NM1*82*1*Mastronardi*Kristine****XX*[Kristine NPI]~
+
+LX*3~
+SV1*HC:97153:HM*...~
+DTP*472*D8*20260723~
+
+-------------------
+
+three session.json files support one patient/case, but they involve two different rendering clinicians.
+
+I created a claim for 3 case 5 3 sessions. It looks a logic mistake you have only one provider.  please review.
+The three sessions
+DOS	CPT	Modifier	Clinician	Duration
+2026-07-12	97153	HM	Isabella Bonenfant	2 hrs
+2026-07-13	97155	HO	Kristine Mastronardi	2 hrs
+2026-07-23	97153	HM	Isabella Bonenfant	2 hrsshould be:
+
+Case 5
+   │
+   ├── Session 1976
+   │   97153 / HM
+   │   Isabella
+   │
+   ├── Session 1975
+   │   97155 / HO
+   │   Kristine
+   │
+   └── Session 1974
+       97153 / HM
+       Isabella
+
+            ↓
+
+      Create Claim
+            ↓
+
+       Claim Lines
+       
+       -------------------
 8/21/26
 
 

@@ -635,30 +635,47 @@ $sourcesResp  = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" 
 $sourcesDocId = $sourcesResp.docId
 Write-Host "  sources doc: $sourcesDocId" -ForegroundColor Gray
 
-# Fee Schedule — resolved per session, not once per claim, since different sessions can bill
-# different procedure codes. Looked up by PayerId + that session's own service.code, then (M)
-# merged onto a session-specific snapshot so (Q)'s forEach picks up feeSchedule.minutesPerUnit/
-# allowedAmount alongside the session's own fields (metadata.sources.sessions[].documentId
-# below points at these merged copies, not the raw session docs — the raw docs stay untouched
-# and are still what the "Sources" paper trail above records).
+# Fee Schedule + rendering-provider override — both resolved per session, not once per claim:
+# procedure codes can differ session to session, and so can the clinician. Looked up by
+# PayerId + that session's own service.code (fee schedule) and by that session's own
+# signature.signedByIdentifier (provider), then (M) merged onto a session-specific snapshot so
+# (Q)'s forEach picks up feeSchedule.minutesPerUnit/allowedAmount and — only when this line's
+# provider differs from the claim-level 2310B primary (resolved from sessions[0] above) —
+# renderingProvider.*, which drives a 2420A override for just that line. Matching providers get
+# no override merged in; X12Writer only emits 2420A when there's actually a name to write.
+# metadata.sources.sessions[].documentId below points at these merged copies, not the raw
+# session docs — the raw docs stay untouched and are still what the "Sources" paper trail
+# above records.
 Write-Host ""
-Write-Host "Fee Schedule : resolving per session..." -ForegroundColor Yellow
+Write-Host "Fee Schedule + Rendering Provider overrides : resolving per session..." -ForegroundColor Yellow
 $sessionDocIdsForBilling = @()
 foreach ($sessionDocId in $sources.sessions) {
     $sessionDoc  = Invoke-RestMethod -Uri "http://localhost:5173/api/getDocument?docId=$sessionDocId"
     $serviceCode = $sessionDoc.service.code
     $feeScheduleLine = if ($payerId -and $serviceCode) { Get-FeeScheduleLine -PayerId $payerId -ProcedureCode $serviceCode } else { $null }
+    if (-not $feeScheduleLine) {
+        Write-Host "  Session $sessionDocId : no active FeeScheduleLine for PayerId $payerId / code '$serviceCode' — billing math will fail validation." -ForegroundColor DarkYellow
+    }
 
-    if ($feeScheduleLine) {
-        $feeScheduleJson = @{ feeSchedule = $feeScheduleLine } | ConvertTo-Json
-        $feeScheduleSave = @{ json = $feeScheduleJson; name = "fee-schedule" } | ConvertTo-Json
-        $feeScheduleResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $feeScheduleSave
-        $feeScheduleDocId = $feeScheduleResp.docId
-        $mergedSessionDocId = Invoke-PipelineStep "$feeScheduleDocId (M) $sessionDocId" $caseId
-        Write-Host "  Session $sessionDocId ($serviceCode) : feeSchedule ($feeScheduleDocId) (M) $sessionDocId => $mergedSessionDocId" -ForegroundColor Gray
+    $lineRenderingProvider = Get-RenderingProvider -SessionJsonDocId $sessionDocId
+    $needsOverride = $lineRenderingProvider -and $lineRenderingProvider.providerId -ne $renderingProviderId
+
+    $mergeFragment = @{}
+    if ($feeScheduleLine) { $mergeFragment.feeSchedule = $feeScheduleLine }
+    if ($needsOverride) {
+        $mergeFragment.renderingProvider = $lineRenderingProvider
+        Write-Host "  Session $sessionDocId : provider differs from claim primary -> 2420A override ($($lineRenderingProvider.lastName), $($lineRenderingProvider.firstName))" -ForegroundColor Gray
+    }
+
+    if ($mergeFragment.Count -gt 0) {
+        $mergeJson = $mergeFragment | ConvertTo-Json
+        $mergeSave = @{ json = $mergeJson; name = "session-line-context" } | ConvertTo-Json
+        $mergeResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $mergeSave
+        $mergeDocId = $mergeResp.docId
+        $mergedSessionDocId = Invoke-PipelineStep "$mergeDocId (M) $sessionDocId" $caseId
+        Write-Host "  Session $sessionDocId ($serviceCode) : context ($mergeDocId) (M) $sessionDocId => $mergedSessionDocId" -ForegroundColor Gray
         $sessionDocIdsForBilling += $mergedSessionDocId
     } else {
-        Write-Host "  Session $sessionDocId : no active FeeScheduleLine for PayerId $payerId / code '$serviceCode' — billing math will fail validation." -ForegroundColor DarkYellow
         $sessionDocIdsForBilling += $sessionDocId
     }
 }

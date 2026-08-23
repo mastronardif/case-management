@@ -304,6 +304,16 @@ public static class BillingRule837PEvaluator
                     args.Result = FormatDate(raw, fmt);
                     break;
                 }
+                case "firsttoken":
+                {
+                    // Defends against upstream extraction jamming a role/credential onto a code
+                    // value (e.g. "HO (BCBA)" instead of just "HO") — takes everything before
+                    // the first whitespace, or the whole string if there's none.
+                    var raw = args.Parameters[0].Evaluate()?.ToString() ?? "";
+                    var idx = raw.IndexOf(' ');
+                    args.Result = idx < 0 ? raw : raw[..idx];
+                    break;
+                }
             }
         };
 
