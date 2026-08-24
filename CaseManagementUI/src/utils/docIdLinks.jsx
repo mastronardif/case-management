@@ -1,4 +1,4 @@
-const DOC_ID_COLS = ["sourceDocumentId", "jsonDocumentId", "ediDocumentId", "documentId", "sourcesDocumentId", "specDocumentId"];
+const DOC_ID_COLS = ["sourceDocumentId", "jsonDocumentId", "ediDocumentId", "availityReviewDocumentId", "documentId", "sourcesDocumentId", "specDocumentId"];
 // Columns holding a comma-joined list of doc ids (e.g. usp_GetClaimQueue's STRING_AGG'd
 // SessionDocumentIds) rather than a single id — each id in the list gets its own link.
 const MULTI_DOC_ID_COLS = ["sessionDocumentIds"];

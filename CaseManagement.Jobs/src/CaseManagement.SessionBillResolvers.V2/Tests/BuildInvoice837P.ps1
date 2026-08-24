@@ -109,7 +109,7 @@ function New-Claim {
 }
 
 function Set-ClaimEdiDocument {
-    param([int]$ClaimId, [int]$EdiDocumentId, [string]$Status, [int]$SourcesDocumentId)
+    param([int]$ClaimId, [int]$EdiDocumentId, [string]$Status, [int]$SourcesDocumentId, [int]$AvailityReviewDocumentId)
 
     $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
     $connStr  = $settings.ConnectionStrings.DefaultConnection
@@ -120,12 +120,14 @@ function Set-ClaimEdiDocument {
     $cmd = $conn.CreateCommand()
     $cmd.CommandText = "
         UPDATE [cases].[Claim]
-        SET    EdiDocumentId = @EdiDocumentId, Status = @Status, SourcesDocumentId = @SourcesDocumentId
+        SET    EdiDocumentId = @EdiDocumentId, Status = @Status, SourcesDocumentId = @SourcesDocumentId,
+               AvailityReviewDocumentId = @AvailityReviewDocumentId
         WHERE  ClaimId = @ClaimId
     "
     $cmd.Parameters.AddWithValue("@EdiDocumentId", $EdiDocumentId) | Out-Null
     $cmd.Parameters.AddWithValue("@Status", $Status) | Out-Null
     $cmd.Parameters.AddWithValue("@SourcesDocumentId", $SourcesDocumentId) | Out-Null
+    $cmd.Parameters.AddWithValue("@AvailityReviewDocumentId", $AvailityReviewDocumentId) | Out-Null
     $cmd.Parameters.AddWithValue("@ClaimId", $ClaimId) | Out-Null
     $cmd.ExecuteNonQuery() | Out-Null
     $conn.Close()
@@ -737,12 +739,22 @@ Write-Host "Write : $ruledClaimDocId (W)" -ForegroundColor Yellow
 $ediDocId = Invoke-PipelineStep "$ruledClaimDocId (W)" $caseId
 Write-Host "  => docId: $ediDocId" -ForegroundColor Green
 
-# Close the loop — link the claim row to its generated EDI document and mark
-# whether it's actually submittable
-Set-ClaimEdiDocument -ClaimId $claim.ClaimId -EdiDocumentId $ediDocId -Status $claimStatus -SourcesDocumentId $sourcesDocId
+# Availity Claim Form Preview — same source as the X12, rendered for eyeball verification
+$availityProjectionDocId = Get-ActiveProjectionDocId "Availity_ProfessionalClaimForm"
+Write-Host "Availity : $ruledClaimDocId (P) $availityProjectionDocId (Y)" -ForegroundColor Yellow
+$availityReviewDocId = Invoke-PipelineStep "$ruledClaimDocId (P) $availityProjectionDocId (Y)" $caseId
+Write-Host "  => docId: $availityReviewDocId" -ForegroundColor Green
+
+# Close the loop — link the claim row to its generated EDI + Availity review documents and
+# mark whether it's actually submittable
+Set-ClaimEdiDocument -ClaimId $claim.ClaimId -EdiDocumentId $ediDocId -Status $claimStatus `
+    -SourcesDocumentId $sourcesDocId -AvailityReviewDocumentId $availityReviewDocId
 
 Add-ClaimPipelineEvent -CaseId $caseId -ClaimId $claim.ClaimId -EventType "EdiGenerated" `
     -DocumentId $ediDocId -Details "Status=$claimStatus"
+
+Add-ClaimPipelineEvent -CaseId $caseId -ClaimId $claim.ClaimId -EventType "AvailityReviewGenerated" `
+    -DocumentId $availityReviewDocId
 
 # Queue2 — hand off to the (not-yet-built) clearinghouse submission job, but only
 # if the claim actually passed validation

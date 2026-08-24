@@ -1,4 +1,27 @@
 
+
+8/24/26
+
+OK its fine if it gets generated in the end like the 837P.  
+All this end results is source from the begining and to makes sense
+to me it is created at the end.
+------------------------
+I want to add a column Availty review
+to: 
+Claim for Clearing House (1)
+What do you think?
+Any suggestions on how.  a calculated filed. something else???
+------------------
+claim would produce:
+
+Generate the Claim preview .json, html something like.  I can use that for eyebal verification.
+DOS	CPT	Minutes	Units	Rate	Charge
+07/23	97153	120	8	$10	$80
+07/13	97155	120	8	$19	$152
+07/12	97153	120	8	$10	$80
+
+TOTAL					$312
+---------------------
 ---------------------
 
 8/22/26
@@ -116,6 +139,20 @@ tyring:
 
 ------------------------
 8/23/26
+Lets talk about this. I want to make sure you understand.
+i want an avalability json created. and it to the claim proces job.
+
+Root Documents
+    ↓
+Claim Working Model
+    ├── Availity Claim Form Preview
+    └── X12 837P Preview
+            ↓
+      Compare / Validate
+      
+      create a canonical Claim Preview JSON
+      
+      
 
 I fillout Availity form below.
 I am thinking  this X12 837P form based.
