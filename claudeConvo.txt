@@ -114,6 +114,23 @@ tyring:
     python session_doc_agent.py local --dir "C:\temp\session-context-5-1979" --case-id 5 --src-doc-id 1979
 
 
+------------------------
+8/23/26
+
+I fillout Availity form below.
+I am thinking  this X12 837P form based.
+I have not seen any documentation about converting an 837P to this.
+I plan on doing it for an interum feature that alows the case manger to see they are equivslent.  Then add the SFTP batch Avality providws.
+If you want i have docs from Avality.
+C:\Users\mastronardif\Downloads\Claims & Encounters.txt
+
+---------------
+
+I want the durration to be calc fields number of minutes most likely number of 15min increments.  see 
+ PROCEDURE [cases].[usp_GetClaimInfo]
+ page:
+http://172.28.16.1:5173/claim/5
+
 8/21/26
 
 -----------------------
