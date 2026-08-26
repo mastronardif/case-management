@@ -21,17 +21,51 @@ Usage (standalone):
 Usage (from another script):
     from ask_claude import ask_claude
     answer = ask_claude(prompt_text, allowed_tools="Read")
+
+Every call is logged to claude_usage_log.jsonl (next to this file) — one JSON line per call
+with cost/token/duration figures straight from claude -p's own --output-format json response.
+This is the single funnel every headless call in this Scripts folder goes through, so the log
+is a global usage record, not just for this script. See claude_usage_report.py to summarize it.
 """
 
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
+from datetime import datetime, timezone
+
+LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "claude_usage_log.jsonl")
 
 
-def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, timeout=300):
+def _log_usage(wrapper, cwd, caller):
+    try:
+        record = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "caller": caller,
+            "cwd": cwd,
+            "sessionId": wrapper.get("session_id"),
+            "totalCostUsd": wrapper.get("total_cost_usd"),
+            "durationMs": wrapper.get("duration_ms"),
+            "numTurns": wrapper.get("num_turns"),
+            "isError": wrapper.get("is_error"),
+            "usage": wrapper.get("usage"),
+            "modelUsage": wrapper.get("modelUsage"),
+        }
+        with open(LOG_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record) + "\n")
+
+        cost = record["totalCostUsd"]
+        if cost is not None:
+            print(f"[ask_claude] cost: ${cost:.4f}  ({caller})", file=sys.stderr)
+    except Exception as ex:
+        # Logging must never break the actual call — worst case, one row is missing.
+        print(f"[ask_claude] usage logging failed: {ex}", file=sys.stderr)
+
+
+def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, timeout=300, caller=None):
     # On Windows, "claude" is an npm-installed .cmd/.ps1 shim, not a plain executable —
     # subprocess needs the resolved path (with extension) to launch it without shell=True.
     claude_exe = shutil.which("claude.cmd") or shutil.which("claude") or "claude"
@@ -48,6 +82,7 @@ def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, tim
         raise RuntimeError(f"claude -p failed (exit {result.returncode}):\n{result.stderr}")
 
     wrapper = json.loads(result.stdout)
+    _log_usage(wrapper, cwd, caller or os.path.basename(sys.argv[0]))
     return wrapper.get("result", "")
 
 

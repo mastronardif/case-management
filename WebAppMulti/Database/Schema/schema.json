@@ -70,7 +70,17 @@
       "storedProcedure": "cases.usp_GetCalendar",
       "route": "/api/corqs/getCalendar",
       "params": {
-        "month": {
+        "caseId": {
+          "type": "int",
+          "required": false,
+          "source": "body"
+        },
+        "startDate": {
+          "type": "string",
+          "required": true,
+          "source": "body"
+        },
+        "endDate": {
           "type": "string",
           "required": true,
           "source": "body"

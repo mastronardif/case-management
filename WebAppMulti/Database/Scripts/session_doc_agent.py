@@ -11,7 +11,9 @@ Three commands:
 
   run     Does the whole thing end-to-end: pack, then a headless Claude Code call
           ("claude -p ...") to extract the JSON, then finish. Uses your normal Claude Code
-          subscription auth (regular -p, not --bare) — no separate API key.
+          subscription auth (regular -p, not --bare) — no separate API key. Working files
+          (source.*, projection.json, rule.json, session.json) go to a temp folder that's
+          deleted afterward, unless you pass --dest to keep them in a folder you choose.
 
   finish  Takes JSON someone (or `run`/`local`) already extracted, saves it, runs the (V)
           projectorComparer step to validate it and produce a review page, and prints the
@@ -31,10 +33,13 @@ click, regardless of which command produced the JSON.
 Usage:
     python session_doc_agent.py run --case-id 5 --file "C:\\path\\to\\session.pdf"
     python session_doc_agent.py run --case-id 5 --src-doc-id 1626
+    python session_doc_agent.py run --case-id 5 --src-doc-id 3532 --dest "C:\\temp\\session-5-3532"
+    python session_doc_agent.py run --case-id 5 --src-doc-id 3533 --dest "C:\\temp\\aug26\\session-5-3533"
+    
 
     python session_doc_agent.py pack --case-id 5 --file "C:\\path\\to\\session.pdf"
     python session_doc_agent.py local --dir "C:\\temp\\session-context-5-1976"
-    python session_doc_agent.py finish --case-id 5 --src-doc-id 1626 --json-file extracted.json
+    python session_doc_agent.py finish --case-id 5 --src-doc-id 3532 --json-file extracted.json
 """
 
 import argparse
@@ -264,7 +269,12 @@ def cmd_run(args):
     src_doc_id, source_bytes, source_ext, projection_doc_id, rule_doc_id, projection_bytes, rule_bytes = \
         resolve_source_and_context(args.case_id, args.file, args.src_doc_id)
 
-    work_dir = tempfile.mkdtemp(prefix="session_doc_agent_")
+    # --dest keeps the working files around for inspection (e.g. re-running extraction by
+    # hand); without it, this is scratch space that gets cleaned up after the run like before.
+    keep_dir = bool(args.dest)
+    work_dir = args.dest or tempfile.mkdtemp(prefix="session_doc_agent_")
+    if keep_dir:
+        os.makedirs(work_dir, exist_ok=True)
     try:
         with open(os.path.join(work_dir, f"source{source_ext}"), "wb") as f:
             f.write(source_bytes)
@@ -272,6 +282,8 @@ def cmd_run(args):
             f.write(projection_bytes)
         with open(os.path.join(work_dir, "rule.json"), "wb") as f:
             f.write(rule_bytes)
+        if keep_dir:
+            print(f"Working files: {work_dir}")
 
         prompt = build_extraction_prompt(work_dir)
 
@@ -282,8 +294,13 @@ def cmd_run(args):
         except json.JSONDecodeError as ex:
             sys.exit(f"claude -p did not return valid JSON: {ex}\n---\n{result_text}")
         print(json.dumps(extracted, indent=2))
+
+        if keep_dir:
+            with open(os.path.join(work_dir, "session.json"), "w", encoding="utf-8") as f:
+                json.dump(extracted, f, indent=2)
     finally:
-        shutil.rmtree(work_dir, ignore_errors=True)
+        if not keep_dir:
+            shutil.rmtree(work_dir, ignore_errors=True)
 
     finish(args.case_id, src_doc_id, extracted, projection_doc_id)
 
@@ -337,6 +354,8 @@ def main():
 
     run_parser = sub.add_parser("run", help="Full pipeline: pack, headless extract via claude -p, finish")
     add_source_args(run_parser)
+    run_parser.add_argument("--dest", help="Folder to write source/projection/rule/session.json into "
+                                            "(default: temp folder, deleted after the run)")
     run_parser.set_defaults(func=cmd_run)
 
     finish_parser = sub.add_parser("finish", help="Save extracted JSON, validate, print review link")

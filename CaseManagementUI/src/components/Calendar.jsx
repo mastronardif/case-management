@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { useGlobalStore } from "../context/GlobalStore";
 
 import api from "../services/http";
 
-export default function Calendar() {
-  const { urlCalendar } = useGlobalStore();
+const toDateOnly = (d) => d.toISOString().slice(0, 10);
 
+export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -15,29 +14,19 @@ export default function Calendar() {
   const month = currentDate.getMonth() + 1;
 
   const fetchData = useCallback(async () => {
-    if (!urlCalendar) return;
-
     setLoading(true);
     try {
       setError(null);
 
-      const res = await api.get(urlCalendar, {
-        params: { year, month }
+      const startDate = toDateOnly(new Date(year, month - 1, 1));
+      const endDate = toDateOnly(new Date(year, month, 0));
+
+      const res = await api.post("/api/corqs", {
+        action: "getCalendar",
+        params: { startDate, endDate },
       });
 
-      let normalized = [];
-
-      if (res.data?.data) {
-        normalized = Array.isArray(res.data.data)
-          ? res.data.data
-          : [res.data.data];
-      } else if (Array.isArray(res.data)) {
-        normalized = res.data;
-      } else if (res.data && typeof res.data === "object") {
-        normalized = [res.data];
-      }
-
-      setEvents(normalized);
+      setEvents(res.data?.data ?? []);
     } catch (err) {
       console.error("Error fetching calendar:", err);
       setEvents([]);
@@ -45,7 +34,7 @@ export default function Calendar() {
     } finally {
       setLoading(false);
     }
-  }, [urlCalendar, year, month]);
+  }, [year, month]);
 
   useEffect(() => {
     fetchData();
@@ -107,9 +96,11 @@ export default function Calendar() {
 
                   {dayEvents.map(e => (
                     <div
-                      key={e.id}
+                      key={e.eventId}
+                      title={`${e.provider ?? ""} — ${e.status ?? ""}`}
                       className="text-xs bg-blue-100 rounded px-1 py-0.5 mb-1"
                     >
+                      {new Date(e.start).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}{" "}
                       {e.title}
                     </div>
                   ))}

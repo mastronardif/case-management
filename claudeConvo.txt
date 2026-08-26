@@ -1,7 +1,41 @@
 
 
-8/24/26
+8/26/26
 
+I want to know how much it costs.
+to run my python session_doc_agent.py
+any suggestions.  Can this be a global report for when i use claude AI like in this case?
+
+----------------------
+what do you think about adding sourceDocs to the below????
+add http://localhost:5173/api/getDocument?docId=3549 to 
+ "sourceDocs": [
+    "3533"
+  ]
+  
+--------------------------
+
+I want to run the script.
+I give it the docid and a dest folder.  It shouuld put the zip etc in that folder then run the AI, then giv me a lik to resolve any errors.
+I thought we had that what is the the cmd line
+
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Scripts\session_doc_agent.py
+
+8/25/26
+
+give me a script what you think is best python or powershell that can creates a .csv file like the below.
+It takes n args.  path = folder path, case= CASE-7341693071, Title= SessionNote, month = Aug
+
+C:\Users\mastronardif\source\repos\CaseMangement\WebAppMulti\Database\Scripts\ImportDocs\import.csv
+CaseNumber=CASE-7341693071
+Title=	SessionNote
+SessionNote	SessionNote.Aug
+-----------------
+Now lets work on the calendar.  
+It will evolve over time but lets start with Sessions.  later on there will other tables with time information like appointments, etc.
+I want the busines layer to be SP's and posible a little C#.
+I have  FE piece http://172.28.16.1:5173/calendar
+-----------------------
 OK its fine if it gets generated in the end like the 837P.  
 All this end results is source from the begining and to makes sense
 to me it is created at the end.

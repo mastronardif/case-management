@@ -12,7 +12,6 @@ export const DEFAULTS = {
 export function GlobalProvider({ children }) {
   const { auth, logout } = useAuth();
 
-  const [urlCalendar]  = useState("/api/Calendar/GetCalendar");
   const [urlCases,     setUrlCases]     = useState(localStorage.getItem("urlCases")     || DEFAULTS.urlCases);
   const [urlTemplates, setUrlTemplates] = useState(localStorage.getItem("urlTemplates") || DEFAULTS.urlTemplates);
   const [url,          setUrl]          = useState(localStorage.getItem("url")          || DEFAULTS.url);
@@ -58,7 +57,6 @@ export function GlobalProvider({ children }) {
   return (
     <GlobalContext.Provider
       value={{
-        urlCalendar,
         url, setUrl,
         body, setBody,
         urlCases, setUrlCases,
