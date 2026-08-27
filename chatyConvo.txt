@@ -1,4 +1,25 @@
-﻿8/4/26
+﻿
+where what table should i put  
+how should the code know which BCBA supervises a given RBT/case? There's no supervisor link in the schema today (cases.Authorization has no such field, and cases.Provider has no self-referencing supervisor column
+
+8/22/26
+
+-------------------
+What i did was three sessions.  My plan is select the case5 claims and create the 837P for availity.
+Or should i do them individually.
+I can show you the three session json's.  what you surmized about Kristin is correct.
+------------------
+
+Protocol Modification" session note (service code 97155)
+breakOccurred do you know what that means
+
+
+-----------------------------
+8/6/26
+
+UPDATE [cases].[ProjectorRule] SET ProjectionDocumentId = 2634, RuleDocumentId = 2635 WHERE Name = 'Session';
+----------------
+8/4/26
 
 Primary Caregiver
 Parent / Guardian information

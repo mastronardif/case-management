@@ -1,5 +1,64 @@
 
 
+8/37/26
+
+i added the role below. do option Single practice 
+   [CaseManagement].[cases].[Provider]
+  [ProviderRole]
+  
+-----------------------
+837p is incorrect Kristine is the provider.
+
+Dynamic Minds Corp
+        │
+        └── Kristine Mastronardi
+              BCBA / Practice Provider
+                    │
+          ┌─────────┴─────────┐
+          │                   │
+       Isabella             Kristine
+         RBT                  BCBA
+          │                   │
+        97153                97155
+        
+        
+   wrong
+   NM1*82*1*Bonenfant*Isabella****XX*1112223335~
+LX*1~
+SV1*HC:97153:HM*80.00*UN*8~
+
+BillingProvider
+RenderingProvider
+PerformingProvider
+ProviderRole
+
+
+{
+  "billingProvider": "Dynamic Minds Corp",
+  "renderingProvider": "Kristine Mastronardi",
+  "renderingProviderNpi": "1234567890",
+  "performingProvider": "Isabella Bonenfant",
+  "performingProviderRole": "RBT",
+  "procedureCode": "97153"
+}
+
+-------------------
+can u fix this missing and loop issue.  let me know if you need anymore info.
+
+❗ Critical errors
+HL loops are incomplete (missing subscriber/patient NM1 segments in correct order)
+
+Provider NM1 segments are duplicated incorrectly
+
+SE segment count is wrong (SE320001 is not correct)
+
+❗ Availity-specific issues
+Receiver ID must be a real Availity-assigned payer ID
+
+Submitter/Receiver IDs must match your Availity trading partner setup
+
+_________________________________
+
 8/26/26
 
 I want to know how much it costs.

@@ -354,8 +354,9 @@ function Get-PayerEDI {
 
     $cmd = $conn.CreateCommand()
     # Payer.PayerCode/CodeQualifier are legacy — PayerEDI is the authoritative source for the
-    # payer's own EDI identifier. Receiver/clearinghouse fields were removed from this table
-    # (renamed *REMOVE) — where that identity lives now (for ISA08/GS03/1000B) is still open.
+    # payer's own EDI identifier (2010BB.NM1.NM108/NM109). Receiver/clearinghouse identity for
+    # ISA08/GS03 lives on cases.Payer itself (EDIReceiverId/AvailitySubmitterId) — see
+    # Get-PayerEdiIdentifiers below.
     $cmd.CommandText = "
         SELECT TOP 1 PayerIdentifier, PayerIdentifierQualifier
         FROM   [cases].[PayerEDI]
@@ -377,12 +378,90 @@ function Get-PayerEDI {
     }
 }
 
-# Rendering provider (loop 2310B) is resolved from the claimed session's own JSON content,
-# matched against cases.Provider — a business entity now (JsonDocumentId renamed *REMOVEME on
-# this table too; cases.RenderingProvider was dropped — all providers, billing org and
-# individual clinicians alike, live in cases.Provider).
+# Availity trading-partner identity for this payer (ISA08/GS03 receiver, and — when a payer
+# requires a different submitter enrollment than the practice-wide default — ISA06/GS02
+# sender). Both columns are blank/dummy for most payers right now; only real values should
+# override Get-PracticeConfiguration's practice-wide defaults, so callers check for blank
+# before overriding.
+function Get-PayerEdiIdentifiers {
+    param([int]$PayerId)
+
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT EDIReceiverId, AvailitySubmitterId
+        FROM   [cases].[Payer]
+        WHERE  PayerId = @PayerId
+    "
+    $cmd.Parameters.AddWithValue("@PayerId", $PayerId) | Out-Null
+    $reader = $cmd.ExecuteReader()
+    $table  = New-Object System.Data.DataTable
+    $table.Load($reader)
+    $conn.Close()
+
+    if ($table.Rows.Count -eq 0) { return $null }
+    $row = $table.Rows[0]
+
+    return @{
+        receiverId   = if ($row.EDIReceiverId -is [DBNull])       { $null } else { $row.EDIReceiverId }
+        submitterId  = if ($row.AvailitySubmitterId -is [DBNull]) { $null } else { $row.AvailitySubmitterId }
+    }
+}
+
+# The billable/credentialed rendering provider for an RBT-run session is the supervising
+# BCBA, not the RBT — RBTs aren't independently payer-enrolled; sessions bill under the
+# BCBA's NPI regardless of which staff member performed the service. Single-practice-wide
+# assumption for now (one active ProviderRole='BCBA' row) — revisit if a second BCBA is added.
+function Get-PracticeBcba {
+    $settings = Get-Content "$projectDir\appsettings.json" | ConvertFrom-Json
+    $connStr  = $settings.ConnectionStrings.DefaultConnection
+
+    $conn = New-Object System.Data.SqlClient.SqlConnection($connStr)
+    $conn.Open()
+
+    $cmd = $conn.CreateCommand()
+    $cmd.CommandText = "
+        SELECT Id, FirstName, LastName, NPI, TaxonomyCode
+        FROM   [cases].[Provider]
+        WHERE  ProviderRole = 'BCBA' AND IsActive = 1
+    "
+    $reader = $cmd.ExecuteReader()
+    $table  = New-Object System.Data.DataTable
+    $table.Load($reader)
+    $conn.Close()
+
+    if ($table.Rows.Count -eq 0) {
+        Write-Error "No active ProviderRole='BCBA' row found in cases.Provider — can't resolve a rendering provider for RBT-run sessions."
+        exit 1
+    }
+    if ($table.Rows.Count -gt 1) {
+        Write-Error "Multiple active ProviderRole='BCBA' rows found — Get-PracticeBcba assumes exactly one. Update this function to pick the right one per case/RBT."
+        exit 1
+    }
+    $row = $table.Rows[0]
+
+    return @{
+        providerId   = [int]$row.Id
+        firstName    = $row.FirstName
+        lastName     = $row.LastName
+        npi          = $row.NPI
+        taxonomyCode = $row.TaxonomyCode
+    }
+}
+
+# Rendering provider (loop 2310B / 2420A) is resolved from the claimed session's own JSON
+# content, matched against cases.Provider — a business entity now (JsonDocumentId renamed
+# *REMOVEME on this table too; cases.RenderingProvider was dropped — all providers, billing
+# org and individual clinicians alike, live in cases.Provider).
 # signature.signedByIdentifier is the lookup key — the current Session projection's canonical
-# source for it.
+# source for it. If the session was signed by an RBT, this returns the supervising BCBA
+# instead (see Get-PracticeBcba) — the RBT who actually performed the service is a distinct
+# "performing provider" concept, not the billable rendering provider.
 function Get-RenderingProvider {
     param([int]$SessionJsonDocId)
 
@@ -398,7 +477,7 @@ function Get-RenderingProvider {
 
     $cmd = $conn.CreateCommand()
     $cmd.CommandText = "
-        SELECT TOP 1 Id, FirstName, LastName, NPI, TaxonomyCode
+        SELECT TOP 1 Id, FirstName, LastName, NPI, TaxonomyCode, ProviderRole
         FROM   [cases].[Provider]
         WHERE  ClinicianUsername = @Username AND IsActive = 1
     "
@@ -410,6 +489,10 @@ function Get-RenderingProvider {
 
     if ($table.Rows.Count -eq 0) { return $null }
     $row = $table.Rows[0]
+
+    if ($row.ProviderRole -eq "RBT") {
+        return Get-PracticeBcba
+    }
 
     return @{
         providerId   = [int]$row.Id
@@ -669,6 +752,23 @@ if ($insuranceCoverage -and $insuranceCoverage.relationshipCode -and $insuranceC
 Write-Host ""
 Write-Host "Practice Configuration : loading active row..." -ForegroundColor Yellow
 $practiceConfig     = Get-PracticeConfiguration
+
+# Payer-specific Availity trading-partner identity (ISA08/GS03 receiver, and ISA06/GS02
+# sender when this payer needs a different submitter enrollment) overrides the practice-wide
+# defaults above — only when cases.Payer actually has real values for this payer.
+if ($payerId) {
+    $payerEdiIds = Get-PayerEdiIdentifiers -PayerId $payerId
+    if ($payerEdiIds -and $payerEdiIds.receiverId) {
+        $practiceConfig.receiverId          = $payerEdiIds.receiverId
+        $practiceConfig.receiverIdQualifier = "ZZ"
+        Write-Host "  receiverId  <- Payer $payerId EDIReceiverId ($($payerEdiIds.receiverId))" -ForegroundColor Gray
+    }
+    if ($payerEdiIds -and $payerEdiIds.submitterId) {
+        $practiceConfig.senderId = $payerEdiIds.submitterId
+        Write-Host "  senderId    <- Payer $payerId AvailitySubmitterId ($($payerEdiIds.submitterId))" -ForegroundColor Gray
+    }
+}
+
 $practiceConfigJson = $practiceConfig | ConvertTo-Json
 $practiceConfigSave = @{ json = $practiceConfigJson; name = "practice-configuration" } | ConvertTo-Json
 $practiceConfigResp = Invoke-RestMethod -Uri "http://localhost:5173/api/saveWorkflow" -Method Post -ContentType "application/json" -Body $practiceConfigSave
