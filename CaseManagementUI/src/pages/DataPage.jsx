@@ -104,6 +104,7 @@ export default function DataPage({
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <ActionTable
           title={resolvedTitle}
+          count={filteredRows.length}
           onReload={fetchData}
           onExport={handleExport}
           onSearch={setSearch}

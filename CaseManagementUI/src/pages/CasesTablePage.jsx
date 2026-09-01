@@ -84,6 +84,7 @@ export default function CasesTablePage() {
       <div className="relative w-full max-w-6xl p-6 rounded shadow bg-white">
         <ActionTable
           title="Cases"
+          count={filteredRows.length}
           onReload={fetchData}
           loading={loading}
           onNew={handleNew}

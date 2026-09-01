@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function ActionTable({
   title,
+  count,
   onNew,
   onReload,
   onExport,
@@ -21,7 +22,14 @@ export default function ActionTable({
 
   return (
     <div className="flex items-center gap-2">
-      {title && <span className="text-lg font-semibold mr-2">{title}</span>}
+      {title && (
+        <span className="text-lg font-semibold mr-2">
+          {title}
+          {typeof count === "number" && (
+            <span className="text-gray-400 font-normal"> ({count})</span>
+          )}
+        </span>
+      )}
       {showNew && (
         <button onClick={onNew} className={buttonClass} disabled={loading}>
           New

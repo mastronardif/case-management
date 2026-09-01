@@ -70,6 +70,7 @@ export default function BillingTablePage() {
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           <ActionTable
             title="Billing"
+            count={filteredRows.length}
             onReload={fetchData}
             onExport={handleExport}
             loading={loading}

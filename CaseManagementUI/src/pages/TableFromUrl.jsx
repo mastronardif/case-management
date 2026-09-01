@@ -63,6 +63,7 @@ export default function TableFromUrl() {
       <div className="flex items-center gap-2 mb-4 flex-wrap">
         <ActionTable
           title={url ? `Data Table (${url})` : "Data Table"}
+          count={filteredRows.length}
           onReload={fetchData}
           onExport={handleExport}
           onSearch={setSearch}

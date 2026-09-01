@@ -1,6 +1,68 @@
 
 
+9/1/2026
+I want to change the column names. Also I want to change if possible on the data level.
+
+http://localhost:5173/cases
+------------------------
+
 8/37/26
+
+Relationship code 19 = Self = Patient is Subscriber = No QC loop.
+
+✔ SBR02 = 19 → “Self”
+This means:
+
+The subscriber and patient are the same person
+
+The insurance policy holder is the one receiving services
+
+You must NOT include a patient loop (2000C)
+
+🧠 How this affects your 837P structure
+When SBR02 = 19:
+
+✔ Allowed:
+Subscriber loop (NM1*IL)
+
+No patient loop
+
+❌ Not allowed:
+HL*23 loop
+
+NM1*QC (patient name)
+
+DMG in patient loop
+
+Because the patient = subscriber, the QC loop is invalid.
+
+🔥 In your claim
+You have:
+
+Code
+SBR*P*19...
+So the patient = subscriber.
+
+But you also have:
+
+Code
+HL*3*2*23*0~
+NM1*QC*1*Alapati*Mia~
+DMG*D8*20210401*F~
+This contradicts the relationship code.
+
+👉 You must delete those three QC loop segments.
+Once you remove them, your claim structure becomes valid.
+
+🎯 Summary
+Relationship code 19 = Self = Patient is Subscriber = No QC loop.
+
+You got it right — now you just need to remove the patient loop to match the relationship code.
+
+If you want, I can generate the fully corrected 837P with all 11 service lines and Kristine as rendering provider.
+
+
+-------------------
 
 i added the role below. do option Single practice 
    [CaseManagement].[cases].[Provider]
