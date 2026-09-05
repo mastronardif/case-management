@@ -1,6 +1,70 @@
 
+9/4/26
+
+--------
+this is Austin Ball case 7
+7	CASE-7707656738	Unknown Case	227	164	true	2026-05-16	Austin Ball
+Case Info — Case 7
+.\BuildQueueForClearingHouse.ps1 -QueueClaimId 2
+
+=== Final EDI ===
+  claimId     : 2
+  claimNumber : CM000000002
+  ruleDocId   : 3414
+  sourcesDocId: 4033
+  docId       : 4039
+  status      : HasErrors
+  queue1      : row 2 marked 'Claim for Clearing House'
+  issues      :
+    - forEach field 'SV1.SV104': Parameter feeSchedule_minutesPerUnit not defined.
+    - forEach field 'SV1.SV102': Parameter feeSchedule_allowedAmount not defined.
+    - Rule 'loops.2010BA.DMG.DMG02': formatDate: empty date value
+    - Subscriber Member ID is required.
+    - Billing units must be greater than zero.
+    - Billing amount is missing — check FeeScheduleLine for this procedure code.
+  Open        : http://localhost:5173/api/getDocument?docId=4039
+
+----------------
+http://localhost:5173/claim/7
+case 7 is Autin
+
+
+=== Final EDI ===
+  claimId     : 1
+  claimNumber : CM000000001
+  ruleDocId   : 3414
+  sourcesDocId: 4003
+  docId       : 4009
+  status      : HasErrors
+  queue1      : row 1 marked 'Claim for Clearing House'
+  issues      :
+    - forEach field 'SV1.SV104': Parameter feeSchedule_minutesPerUnit not defined.
+    - forEach field 'SV1.SV102': Parameter feeSchedule_allowedAmount not defined.
+    - Rule 'loops.2010BA.DMG.DMG02': formatDate: empty date value
+    - Rendering Provider NPI must be 10 digits.
+    - Subscriber Member ID is required.
+    - Billing units must be greater than zero.
+    - Billing amount is missing — check FeeScheduleLine for this procedure code.
+  Open        : http://localhost:5173/api/getDocument?docId=4009
+  
+----------------
 
 9/1/2026
+Why does caseId have to change to id.  
+    { label: "Open", route: "/cases/{id}" },
+CaseManagementUI/src/utils/corqsreact.js
+-----------------------
+CaseId Id
+CaseNumber Number
+Title
+JsonDocumentId    JId
+SourceDocumentId Src
+IsActive Active
+OpenedDate Opened
+patientName Name
+
+
+-------------------------
 I want to change the column names. Also I want to change if possible on the data level.
 
 http://localhost:5173/cases
