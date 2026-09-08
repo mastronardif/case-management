@@ -1,4 +1,44 @@
 
+
+---------------------------
+08/07/28
+
+why still showing the fragment diagnosisCode etc. if its not know or cared at this stage.
+Am i missing something??
+http://localhost:5173/api/getDocument?docId=4188
+{
+"target": "diagnosisCode",
+"source": "client.diagnosis.code",
+"extractedValue": null,
+"status": "missing"
+},
+
+--------------------
+
+question?? why is diagnosisCode here.  Is it becuase it used later on??
+{
+"target": "diagnosisCode",
+"source": "client.diagnosis.code",
+"extractedValue": null,
+"status": "missing"
+},
+
+---------------------
+
+I got the bellow. question isnt the diagnostic code for case 7 known allready.
+the sesson has the 	service.code → serviceCode 97156.
+the session note is minimal.  its not going to overide details already known.
+
+Validation Issues (3)
+diagnosisCode (client.diagnosis.code): Value is null or missing
+diagnosisDescription (client.diagnosis.description): Value is null or missing
+breakOccurred (session.breakOccurred): Value is null or missing
+
+do you understand????????
+----------------------------------
+
+
+
 9/4/26
 
 --------

@@ -56,7 +56,16 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
     public ProjectionResult Project(string sessionJson, string ruleJson)
     {
         var session = JsonNode.Parse(sessionJson)!.AsObject();
-        var fields = JsonNode.Parse(ruleJson)!.AsObject()["fields"]!.AsArray();
+        var ruleRoot = JsonNode.Parse(ruleJson)!.AsObject();
+        var fields = ruleRoot["fields"]!.AsArray();
+
+        // Only fields the rule itself opts into via requiredFields are real validation
+        // issues — most mapped fields (e.g. diagnosisCode on a minimal session note, where
+        // diagnosis is already known at the case level and isn't the session note's job to
+        // restate) are legitimately blank without that being a problem.
+        var requiredFields = ruleRoot.TryGetPropertyValue("requiredFields", out var reqNode) && reqNode is JsonArray reqArray
+            ? reqArray.Select(n => n!.ToString()).ToHashSet()
+            : [];
 
         var mapped = new List<MappedField>();
         var issues = new List<ValidationIssue>();
@@ -96,7 +105,8 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
             mapped.Add(new MappedField(target, source, value));
 
             // Literal fields are always present by definition — never flag them as missing.
-            if (type != "literal" && string.IsNullOrWhiteSpace(value))
+            // Only flag a blank value as an issue when the rule actually requires that field.
+            if (type != "literal" && string.IsNullOrWhiteSpace(value) && requiredFields.Contains(target))
                 issues.Add(new ValidationIssue(target, source, "Value is null or missing"));
         }
 
