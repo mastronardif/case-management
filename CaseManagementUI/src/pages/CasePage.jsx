@@ -2,7 +2,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ActionPage from "../components/ActionPage";
 import PageHeader from "../components/PageHeader";
-import { fetchPayerDocs } from "../services/payerdocService";
 import { setTableActions } from "../utils/tableActionStore";
 
 export default function CasePage() {
@@ -16,10 +15,6 @@ export default function CasePage() {
 
   const greyButtonClass =
     "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-150 flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed";
-  const blueButtonClass =
-    "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-blue-400 bg-blue-500 text-white hover:bg-blue-600 flex-shrink-0";
-  const greenButtonClass =
-    "flex items-center justify-center px-4 py-1 h-9 text-sm rounded-md border border-green-400 bg-green-500 text-white hover:bg-green-600 flex-shrink-0";
 
  
 
@@ -32,29 +27,7 @@ export default function CasePage() {
   ];
 
   const handleWorkbooks = () => {
-    setTableActions("getWorkbooksByCase", [
-      {
-        label: "Payer Docs",
-        onClick: async () => {
-          try {
-            const docs = await fetchPayerDocs(id, []);
-            if (docs.length > 0 && docs[0].url)
-              navigate("/viewer", { state: { fileUrl: docs[0].url, title: `Payer Docs: ${id}` } });
-            else alert("No payer docs available.");
-          } catch { alert("Failed to fetch payer docs."); }
-        },
-        className: blueButtonClass,
-      },
-      {
-        label: "F 2",
-        onClick: () => navigate(`/cases/${id}/new-workbook`),
-        className: greenButtonClass,
-      },
-    ]);
-    //navigate(`/data/getWorkbooksByCase/caseId/${id}`, { state: { caseData } });
-    //navigate(`/data/getBooks22/caseId/${id}`, { state: { caseData, workbookQId: "1001" } });
-    navigate(`/data/Case_GetDocuments/caseId/${id}`, { state: { caseData } });
-    // navigate(`/data/getBooks22/caseId/${id}`)
+    navigate(`/workbooks/${id}`, { state: { caseData } });
   };
 
   const handleRBTbooks = () => {

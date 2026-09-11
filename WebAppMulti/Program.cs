@@ -71,7 +71,8 @@ builder.Services.AddCors(options =>
     {
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .WithExposedHeaders("Tenant-Id");
     });
 });
 
@@ -214,6 +215,7 @@ if (!string.IsNullOrEmpty(pathBase))
 
 app.UseMiddleware<BeforeAfterMiddleware>();
 app.UseMiddleware<RequestTimingMiddleware>();
+app.UseMiddleware<TenantMiddleware>();
 
 app.UseSerilogRequestLogging();
 app.UseDefaultFiles();

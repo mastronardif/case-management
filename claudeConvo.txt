@@ -1,4 +1,58 @@
 
+09/11/2026
+
+
+I want to show the TenantID to the left of Frank Mastronardi (FM).  What do you think? Can you do this not to be to envasive.keep the the change
+at a minimum for now.
+see: http://172.29.80.1:5173/workbooks/9
+--------------------------
+None of you AI genious suggested I make the desgin Multi Tenant.  I am going to have n ABA practices as customers.
+I know i have to add TenatId.
+I am thinking we can do a lot of this later, but now i want to have the tenantId in the resource header in the http response.
+what do you suggest????
+---------------------------
+08/09/28
+leave the session on top.  I dont need and ones that have been processed for claims.
+add these tables. do number 2.
+Insurance Coverage 
+Payer
+Patient
+Authorization 
+
+-----------------------------
+leave claim page as is..
+add the static sections.
+
+
+---------------------------------
+workbook button.  Initially that page shows the Intake of said csae - patient name etc.  
+The manger selects workbooks
+thats intended to show the books for said case.  sessions, the static info we talked about, and for 
+now Documents for my deuging viewing.
+
+question: what do you mean The static-info cards???
+i think of it as table a mini spreadsheet.
+
+---------------------------
+What do you think.  Talk it out i dont want new SP code if i can help it. and little react code.
+reuse.
+
+add the data contents like claim for the static info between sections and Documents.
+[sections]
+[]
+...
+[]
+[Documents]
+---------------------------
+
+All data needed  is governed by the 837P claim.  
+I like the idea of keeping the SP with possible a view the results.
+I was thinking tabs for each section.  What do you suggest other then tabs?
+
+---------------------
+I want to be able to show te  static info for  authorization, patient payer like claim
+suggest me how.  ill compare to my ideaa
+---------------------------
 
 ---------------------------
 08/07/28

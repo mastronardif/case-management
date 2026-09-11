@@ -23,6 +23,7 @@ export function GlobalProvider({ children }) {
 
   const [loading, setLoading] = useState(false);
   const [requestCount, setRequestCount] = useState(0);
+  const [tenantId, setTenantId] = useState(null);
 
   useEffect(() => {
     const reqInterceptor = api.interceptors.request.use((config) => {
@@ -33,7 +34,12 @@ export function GlobalProvider({ children }) {
     });
 
     const resInterceptor = api.interceptors.response.use(
-      (res) => { setRequestCount((c) => c - 1); return res; },
+      (res) => {
+        setRequestCount((c) => c - 1);
+        const tenant = res.headers["tenant-id"];
+        if (tenant) setTenantId(tenant);
+        return res;
+      },
       (err) => {
         setRequestCount((c) => c - 1);
         if (err.response?.status === 401) logout();
@@ -62,6 +68,7 @@ export function GlobalProvider({ children }) {
         urlCases, setUrlCases,
         urlTemplates, setUrlTemplates,
         loading, setLoading,
+        tenantId,
       }}
     >
       {children}
