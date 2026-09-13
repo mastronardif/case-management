@@ -1,7 +1,34 @@
 
+09/12/2026
+Question: the BuildQueueForClearingHouse.ps1 which is a temporary.
+Should that stay as a powershell
+or something better.
+its going to be a background job.  I dont like it to be tied to microsoft licenses and whimsical lib changes.
+This may run on linux one day.
+I was thinking Python or a C# console app.  
+What do you suggest? Is there something better.   want it to be more instructive and less code if you know what i mean.
+
+--------------------
+I am going to re run a claim.  so i want to delete  QueueClaimId=5;
+give me the sql for that.
+this is the one to delete all
+
+use CaseManagement
+-- Order matters: children before parents (FKs)
+DELETE FROM cases.QueueClaimSession where QueueClaimId=5;
+DELETE FROM cases.queueClaimsToBeCreated where QueueClaimId=5;;
+DELETE FROM cases.queueClaimsToBeSubmitted ;
+DELETE FROM cases.ClaimSession;
+DELETE FROM cases.Claim;
+------------------
 09/11/2026
 
+I want to make a change to sp [cases].[usp_SearchCases] to remind me of for the tenantId work i have to do later for the DB.
+What do you think? 
+Is there a hire level i can make the DB know about what tenant i am using.  Do I have to add tenantId all over????
+I was thinking of 
 
+----------------------
 I want to show the TenantID to the left of Frank Mastronardi (FM).  What do you think? Can you do this not to be to envasive.keep the the change
 at a minimum for now.
 see: http://172.29.80.1:5173/workbooks/9

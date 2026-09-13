@@ -1,3 +1,6 @@
+
+dotnet run --project ..\CaseManagement.SessionBillResolvers.V2.csproj -- --queue-claim-id 6
+
 1346.edi.txt
 1346.edi.QQ.txt
 

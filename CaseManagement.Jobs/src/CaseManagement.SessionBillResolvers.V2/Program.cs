@@ -32,6 +32,7 @@ var tableNameOption = new Option<string?>("--table-name",  "Target [cases] table
 var caseIdOption    = new Option<int?>   ("--case-id",     "CaseId (workflow param caseId)");
 var urlOption       = new Option<string?>("--url",         "URL to shorten (workflow param url, used by (S))");
 var lifetimeOption  = new Option<int?>   ("--lifetime",    "Hours until a shortened link expires; omit for no expiration (workflow param lifetime)");
+var queueClaimIdOption = new Option<int?>("--queue-claim-id", "Build the 837P claim for one cases.queueClaimsToBeCreated row and exit (in-process replacement for BuildQueueForClearingHouse.ps1)");
 
 var rootCommand = new RootCommand("CaseManagement session billing resolver")
 {
@@ -49,7 +50,8 @@ var rootCommand = new RootCommand("CaseManagement session billing resolver")
     tableNameOption,
     caseIdOption,
     urlOption,
-    lifetimeOption
+    lifetimeOption,
+    queueClaimIdOption
 };
 
 // Command manifest — add entries here as new jobs are built
@@ -93,6 +95,7 @@ int?                             selectedWorkflowDocId  = null;
 bool                             saveManifestHtml       = false;
 string?                          selectedExpression     = null;
 Dictionary<string, JsonElement>? workflowParamOverrides = null;
+int?                             selectedQueueClaimId   = null;
 
 void HandleRoot(InvocationContext context)
 {
@@ -111,11 +114,19 @@ void HandleRoot(InvocationContext context)
     var caseId        = context.ParseResult.GetValueForOption(caseIdOption);
     var url           = context.ParseResult.GetValueForOption(urlOption);
     var lifetime      = context.ParseResult.GetValueForOption(lifetimeOption);
+    var queueClaimId  = context.ParseResult.GetValueForOption(queueClaimIdOption);
 
     if (list)
     {
         if (!html) { Console.WriteLine(JsonSerializer.Serialize(manifest, manifestOptions)); return; }
         saveManifestHtml = true;
+        return;
+    }
+
+    if (queueClaimId is not null)
+    {
+        selectedQueueClaimId = queueClaimId;
+        runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
         return;
     }
 
@@ -248,6 +259,9 @@ builder.Services.AddSingleton<IWorkflowStep, BillingRule837PStep>();
 builder.Services.AddSingleton<IWorkflowStep, X12WriterStep>();
 builder.Services.AddSingleton<IWorkflowStep, ShortenStep>();
 builder.Services.AddSingleton<WorkflowEngine>();
+builder.Services.AddSingleton<CaseManagement.SessionBillResolvers.V2.Jobs.ClaimDataGateway>();
+builder.Services.AddSingleton<CaseManagement.SessionBillResolvers.V2.Jobs.DslRunner>();
+builder.Services.AddSingleton<CaseManagement.SessionBillResolvers.V2.Jobs.ClearingHouseQueueJob>();
 
 var host = builder.Build();
 
@@ -313,6 +327,38 @@ if (selectedExpression is not null)
         foreach (var docId in outputs[si])
             Console.WriteLine($"  step {si + 1}  docId {docId,-6}  http://localhost:5173/api/getDocument?docId={docId}");
     Console.WriteLine();
+    return;
+}
+
+if (selectedQueueClaimId is not null)
+{
+    var job = host.Services.GetRequiredService<CaseManagement.SessionBillResolvers.V2.Jobs.ClearingHouseQueueJob>();
+    try
+    {
+        var result = await job.RunAsync(selectedQueueClaimId.Value, CancellationToken.None);
+
+        Console.WriteLine();
+        Console.WriteLine("── Final EDI ────────────────────────────────────────────────────────");
+        Console.WriteLine($"  claimId      : {result.ClaimId}");
+        Console.WriteLine($"  claimNumber  : {result.ClaimNumber}");
+        Console.WriteLine($"  ruleDocId    : {result.RuleDocId}");
+        Console.WriteLine($"  sourcesDocId : {result.SourcesDocId}");
+        Console.WriteLine($"  status       : {result.Status}");
+        if (result.Issues.Count > 0)
+        {
+            Console.WriteLine("  issues       :");
+            foreach (var issue in result.Issues) Console.WriteLine($"    - {issue}");
+        }
+        Console.WriteLine($"  Open EDI     : http://localhost:5173/api/getDocument?docId={result.EdiDocId}");
+        Console.WriteLine($"  Open Availity: http://localhost:5173/api/getDocument?docId={result.AvailityReviewDocId}");
+        Console.WriteLine();
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Clearing-house queue job failed. QueueClaimId={QueueClaimId}", selectedQueueClaimId);
+        Log.CloseAndFlush();
+        return;
+    }
     return;
 }
 
