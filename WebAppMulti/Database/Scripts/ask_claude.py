@@ -59,7 +59,8 @@ def _log_usage(wrapper, cwd, caller):
 
         cost = record["totalCostUsd"]
         if cost is not None:
-            print(f"[ask_claude] cost: ${cost:.4f}  ({caller})", file=sys.stderr)
+            print(f"[SHADOW\\ask_claude] done: cost=${cost:.4f} duration={record['durationMs']}ms turns={record['numTurns']} ({caller})",
+                  file=sys.stderr, flush=True)
     except Exception as ex:
         # Logging must never break the actual call — worst case, one row is missing.
         print(f"[ask_claude] usage logging failed: {ex}", file=sys.stderr)
@@ -74,6 +75,13 @@ def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, tim
         cmd += ["--allowedTools", allowed_tools]
     if permission_mode:
         cmd += ["--permission-mode", permission_mode]
+
+    # [SHADOW]-tagged lines are how session_doc_agent_ui.py's side panel finds this nested
+    # subprocess's own activity inside the outer session_doc_agent.py process's stdout/stderr —
+    # subprocess.run(capture_output=True) blocks until the call finishes, so there's no live
+    # output from claude -p itself, just a "starting" marker and a "done" marker (below, in
+    # _log_usage) bracketing the wait.
+    print(f"[SHADOW\\ask_claude] cmd: {' '.join(cmd)}", file=sys.stderr, flush=True)
 
     # Headless Claude Code scopes file access to its working directory — pass cwd explicitly
     # rather than relying on whatever directory the calling script happens to be run from.

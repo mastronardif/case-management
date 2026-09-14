@@ -127,7 +127,12 @@ def save_json_document(json_str, name):
 
 def run_pipeline_step(extra_args, case_id):
     cmd = ["dotnet", "run", "--"] + extra_args + ["--case-id", str(case_id)]
+    # [SHADOW\dotnet] brackets this the same way ask_claude.py brackets its own nested
+    # subprocess — subprocess.run(capture_output=True) blocks until dotnet fully exits, so
+    # there's no live output during the call itself, just a start/end marker either side of it.
+    print(f"[SHADOW\\dotnet] cmd: {' '.join(cmd)}", file=sys.stderr, flush=True)
     result = subprocess.run(cmd, cwd=PROJECT_DIR, capture_output=True, text=True)
+    print(f"[SHADOW\\dotnet] done: exit={result.returncode}", file=sys.stderr, flush=True)
     output = result.stdout + result.stderr
     print(output)
     doc_ids = [int(m) for m in re.findall(r"docId\s+(\d+)\s", output)]
