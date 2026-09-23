@@ -25,7 +25,7 @@ USE CaseManagement;
 -- Order matters: children before parents (FKs). Scoped to QueueClaimId 5 / ClaimId 5 only —
 -- your original had no WHERE on queueClaimsToBeSubmitted/ClaimSession/Claim, which would have
 -- wiped every claim across every case, not just this one.
-DECLARE @CaseId  INT = 6
+DECLARE @CaseId  INT = 9
 DELETE FROM cases.QueueClaimSession        WHERE QueueClaimId = @CaseId ;
 DELETE FROM cases.queueClaimsToBeCreated   WHERE QueueClaimId = @CaseId ;
 DELETE FROM cases.queueClaimsToBeSubmitted WHERE ClaimId = @CaseId;

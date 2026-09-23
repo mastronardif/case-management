@@ -66,7 +66,8 @@ def _log_usage(wrapper, cwd, caller):
         print(f"[ask_claude] usage logging failed: {ex}", file=sys.stderr)
 
 
-def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, timeout=300, caller=None):
+def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, timeout=300, caller=None,
+                resume=None, return_meta=False):
     # On Windows, "claude" is an npm-installed .cmd/.ps1 shim, not a plain executable —
     # subprocess needs the resolved path (with extension) to launch it without shell=True.
     claude_exe = shutil.which("claude.cmd") or shutil.which("claude") or "claude"
@@ -75,6 +76,8 @@ def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, tim
         cmd += ["--allowedTools", allowed_tools]
     if permission_mode:
         cmd += ["--permission-mode", permission_mode]
+    if resume:
+        cmd += ["--resume", resume]
 
     # [SHADOW]-tagged lines are how session_doc_agent_ui.py's side panel finds this nested
     # subprocess's own activity inside the outer session_doc_agent.py process's stdout/stderr —
@@ -85,12 +88,19 @@ def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, tim
 
     # Headless Claude Code scopes file access to its working directory — pass cwd explicitly
     # rather than relying on whatever directory the calling script happens to be run from.
-    result = subprocess.run(cmd, input=prompt, capture_output=True, text=True, timeout=timeout, cwd=cwd)
+    result = subprocess.run(cmd, input=prompt, capture_output=True, text=True, encoding="utf-8",
+                             errors="replace", timeout=timeout, cwd=cwd)
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}):\n{result.stderr}")
 
     wrapper = json.loads(result.stdout)
     _log_usage(wrapper, cwd, caller or os.path.basename(sys.argv[0]))
+    if return_meta:
+        return {
+            "result": wrapper.get("result", ""),
+            "session_id": wrapper.get("session_id"),
+            "total_cost_usd": wrapper.get("total_cost_usd"),
+        }
     return wrapper.get("result", "")
 
 

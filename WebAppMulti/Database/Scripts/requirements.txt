@@ -1,3 +1,7 @@
 pyodbc
 requests
 streamlit
+fastapi
+uvicorn
+asyncssh
+paramiko

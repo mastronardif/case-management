@@ -20,9 +20,9 @@ public class X12Writer : IX12Writer
     private const string DefaultVersionIdentifier = "005010X222A1";
     private const string DefaultTestIndicator = "T";
 
-    private const string InterchangeControlNumber = "000000001";
-    private const string GroupControlNumber = "1";
-    private const string TransactionControlNumber = "0001";
+    private const string DefaultInterchangeControlNumber = "000000001";
+    private const string DefaultGroupControlNumber = "1";
+    private const string DefaultTransactionControlNumber = "0001";
     private const string ProviderTaxonomyCodeListQualifier = "PXC";
     private const string ClmFacilityCodeQualifier = "B";
     private const string ClmFrequencyCodeOriginal = "1"; // Medicare CG: CLM05-3 must equal "1" (ORIGINAL)
@@ -43,6 +43,13 @@ public class X12Writer : IX12Writer
         var versionIdentifier = GetStringOrDefault(practiceConfig, "versionIdentifier", DefaultVersionIdentifier);
         var testIndicator = GetStringOrDefault(practiceConfig, "testIndicator", DefaultTestIndicator);
 
+        // ISA13/GS06/ST02 — claimed per-claim by ClearingHouseQueueJob so ISA13 is never repeated
+        // (Availity rejects a duplicate ISA13 outright). Falls back to the fixed defaults for any
+        // caller that builds a claim outside that job.
+        var interchangeControlNumber = GetStringOrDefault(practiceConfig, "isaControlNumber", DefaultInterchangeControlNumber);
+        var groupControlNumber = GetStringOrDefault(practiceConfig, "gsControlNumber", DefaultGroupControlNumber);
+        var transactionControlNumber = GetStringOrDefault(practiceConfig, "stControlNumber", DefaultTransactionControlNumber);
+
         var sb = new StringBuilder();
         var segmentCount = 0;
 
@@ -53,18 +60,26 @@ public class X12Writer : IX12Writer
             segmentCount++;
         }
 
-        // Envelope (ISA is fixed-width per spec; not trimmed)
+        // Envelope (ISA is fixed-width per spec; not trimmed). Each variable element is checked
+        // against its exact spec width first — PadRight alone only pads short values; a value
+        // that's already too long (e.g. a payer EDI id over 15 chars) would pass through
+        // unchanged and silently shift every element after it, corrupting the header with no
+        // visible error until Availity (or the mock) rejects the file.
         sb.AppendLine(BuildFixedSegment("ISA",
             "00", "          ", "00", "          ",
-            senderIdQualifier, senderId.PadRight(15), receiverIdQualifier, receiverId.PadRight(15),
+            RequireIsaWidth(senderIdQualifier, 2, "ISA05 senderIdQualifier"),
+            RequireIsaWidth(senderId, 15, "ISA06 senderId"),
+            RequireIsaWidth(receiverIdQualifier, 2, "ISA07 receiverIdQualifier"),
+            RequireIsaWidth(receiverId, 15, "ISA08 receiverId"),
             now.ToString("yyMMdd"), now.ToString("HHmm"), "^", "00501",
-            InterchangeControlNumber, "0", testIndicator, ":"));
+            RequireIsaWidth(interchangeControlNumber, 9, "ISA13 interchangeControlNumber"),
+            "0", RequireIsaWidth(testIndicator, 1, "ISA15 testIndicator"), ":"));
 
         Write("GS", functionalIdentifierCode, senderId, receiverId, now.ToString("yyyyMMdd"), now.ToString("HHmm"),
-            GroupControlNumber, "X", versionIdentifier);
+            groupControlNumber, "X", versionIdentifier);
 
         var transactionStart = segmentCount; // segments from here through SE (inclusive) count toward SE01
-        Write("ST", "837", TransactionControlNumber, versionIdentifier);
+        Write("ST", "837", transactionControlNumber, versionIdentifier);
         Write("BHT", "0019", "00", GetString(metadata, "claimNumber"), now.ToString("yyyyMMdd"), now.ToString("HHmm"), "CH");
 
         WriteNM1(Write, GetObject(loops, "1000A"), "NM1");
@@ -130,9 +145,9 @@ public class X12Writer : IX12Writer
         }
 
         var transactionSegments = (segmentCount - transactionStart) + 1; // +1 for SE itself
-        Write("SE", transactionSegments.ToString(CultureInfo.InvariantCulture), TransactionControlNumber);
-        Write("GE", "1", GroupControlNumber);
-        sb.AppendLine(BuildFixedSegment("IEA", "1", InterchangeControlNumber));
+        Write("SE", transactionSegments.ToString(CultureInfo.InvariantCulture), transactionControlNumber);
+        Write("GE", "1", groupControlNumber);
+        sb.AppendLine(BuildFixedSegment("IEA", "1", interchangeControlNumber));
 
         return sb.ToString();
     }
@@ -328,5 +343,16 @@ public class X12Writer : IX12Writer
             sb.Append(ElementSeparator).Append(e);
         sb.Append(SegmentSeparator);
         return sb.ToString();
+    }
+
+    // Pads to the required width, or throws if the value is already too long to fit — a hard
+    // stop rather than a validationIssue, since a malformed ISA can't be sent at all, not even
+    // with a warning attached.
+    private static string RequireIsaWidth(string value, int width, string elementName)
+    {
+        if (value.Length > width)
+            throw new InvalidOperationException(
+                $"ISA element '{elementName}' is {value.Length} characters ('{value}'); the X12 spec fixes it at {width}.");
+        return value.PadRight(width);
     }
 }

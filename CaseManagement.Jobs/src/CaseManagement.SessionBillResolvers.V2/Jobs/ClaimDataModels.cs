@@ -9,6 +9,9 @@ public record QueueClaimRow(int QueueClaimId, int? SpecDocumentId);
 
 public record ClaimInfo(int ClaimId, string ClaimNumber);
 
+// One claim's ISA13/GS06/ST02, handed out atomically by ClaimDataGateway.ClaimNextControlNumbersAsync.
+public record ControlNumbers(int Isa, int Gs, int St);
+
 public record PracticeConfiguration
 {
     public string? SubmitterName { get; set; }

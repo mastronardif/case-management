@@ -297,6 +297,13 @@ public class ClearingHouseQueueJob(ClaimDataGateway data, DslRunner dsl, ILogger
             }
         }
 
+        // Control numbers — claimed atomically so a repeated ISA13 never goes out (Availity
+        // rejects duplicates outright, guide §9.5). (M) below deep-merges this onto the
+        // metadata.practiceConfiguration object the earlier (P) step already populated.
+        var controlNumbers = await data.ClaimNextControlNumbersAsync(ct);
+        logger.LogInformation("Control numbers: ISA13={Isa} GS06={Gs} ST02={St}",
+            controlNumbers.Isa, controlNumbers.Gs, controlNumbers.St);
+
         // Metadata — build from spec and (M) merge into final invoice.
         logger.LogInformation("Metadata: building from spec...");
         var pipelineRunId = Guid.NewGuid().ToString();
@@ -312,6 +319,12 @@ public class ClearingHouseQueueJob(ClaimDataGateway data, DslRunner dsl, ILogger
                     ["sessions"] = new JsonArray(sessionDocIdsForBilling.Select(id => (JsonNode)new JsonObject { ["documentId"] = id }).ToArray()),
                     ["authorization"] = spec.Authorization,
                     ["patientId"] = patientId,
+                },
+                ["practiceConfiguration"] = new JsonObject
+                {
+                    ["isaControlNumber"] = controlNumbers.Isa.ToString("D9"),
+                    ["gsControlNumber"] = controlNumbers.Gs.ToString(),
+                    ["stControlNumber"] = controlNumbers.St.ToString("D4"),
                 },
             },
         };

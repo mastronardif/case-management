@@ -127,6 +127,32 @@ public class ClaimDataGateway(ConnectionSettings conn, ILogger<ClaimDataGateway>
         return config ?? throw new InvalidOperationException("No active row found in [cases].[PracticeConfiguration].");
     }
 
+    // Claims this claim's ISA13/GS06/ST02, atomically incrementing the counters on the active
+    // row so two claims never get the same ISA13 — Availity rejects a repeated ISA13 outright
+    // (guide §9.5, TA1 note code 025). Single UPDATE...OUTPUT is atomic under SQL Server's row
+    // locking; no separate read-then-write, so no race even if two jobs run at once.
+    public async Task<ControlNumbers> ClaimNextControlNumbersAsync(CancellationToken ct)
+    {
+        await using var db = Open();
+        var result = await db.QuerySingleOrDefaultAsync<ControlNumbers>(
+            """
+            UPDATE pc
+            SET    pc.NextIsaControlNumber = pc.NextIsaControlNumber + 1,
+                   pc.NextGsControlNumber  = pc.NextGsControlNumber + 1,
+                   pc.NextStControlNumber  = pc.NextStControlNumber + 1,
+                   pc.ModifiedDate = SYSUTCDATETIME()
+            OUTPUT deleted.NextIsaControlNumber AS Isa,
+                   deleted.NextGsControlNumber  AS Gs,
+                   deleted.NextStControlNumber  AS St
+            FROM   [cases].[PracticeConfiguration] pc
+            WHERE  pc.PracticeConfigurationId = (
+                       SELECT TOP 1 PracticeConfigurationId FROM [cases].[PracticeConfiguration]
+                       WHERE IsActive = 1 ORDER BY PracticeConfigurationId DESC)
+            """);
+
+        return result ?? throw new InvalidOperationException("No active row found in [cases].[PracticeConfiguration].");
+    }
+
     public async Task<InsuranceCoverage?> GetInsuranceCoverageAsync(int caseId, CancellationToken ct)
     {
         await using var db = Open();
