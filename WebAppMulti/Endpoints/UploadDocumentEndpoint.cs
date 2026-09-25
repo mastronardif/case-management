@@ -1,8 +1,25 @@
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
 public static class UploadDocumentEndpoint
 {
+    private static readonly FileExtensionContentTypeProvider ContentTypes = new();
+
+    // Browsers send application/octet-stream (or nothing) for any file the OS has no type registered
+    // for — PDFs included — and that used to be stored as-is, so the document then downloaded instead of
+    // displaying and read as a "binary" to tools that go by type. The client's value is only trusted when
+    // it's specific; otherwise the type comes from the file name, with octet-stream as the last resort.
+    public static string ResolveContentType(string? clientContentType, string fileName)
+    {
+        if (!string.IsNullOrEmpty(clientContentType)
+            && clientContentType.Contains('/')
+            && !clientContentType.Equals("application/octet-stream", StringComparison.OrdinalIgnoreCase))
+            return clientContentType;
+
+        return ContentTypes.TryGetContentType(fileName, out var inferred) ? inferred : "application/octet-stream";
+    }
+
     public static void MapUploadDocumentEndpoint(this WebApplication app)
     {
         app.MapPost("/api/uploadDocument", async (HttpRequest request, IConfiguration config) =>
@@ -21,7 +38,7 @@ public static class UploadDocumentEndpoint
 
             int? sessionId = int.TryParse(form["sessionId"], out var sid) ? sid : null;
             var documentType = form["documentType"].FirstOrDefault() ?? Path.GetFileNameWithoutExtension(file.FileName);
-            var contentType  = file.ContentType.Contains('/') ? file.ContentType : "application/octet-stream";
+            var contentType  = ResolveContentType(file.ContentType, file.FileName);
 
             using var ms = new MemoryStream();
             await file.CopyToAsync(ms);

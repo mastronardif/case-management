@@ -376,15 +376,28 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
               return corrected;
             }
 
+            // Did the user change any field? Each input starts out as the extracted value. A browser
+            // strips newlines from a text input's .value but not from its original value attribute
+            // (.defaultValue), so strip them from the baseline too — otherwise any multi-line field
+            // would look edited when nothing was touched.
+            function isModified() {
+              return [...document.querySelectorAll('input[data-path]')]
+                .some(input => input.value !== input.defaultValue.replace(/[\r\n]/g, ''));
+            }
+
             async function saveJson() {
               const corrected = collectCorrected();
               const resp = await fetch('/api/saveDocument', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sourceDocId: SOURCE_DOC_ID, json: JSON.stringify(corrected, null, 2) })
+                body: JSON.stringify({
+                  sourceDocId: SOURCE_DOC_ID,
+                  json: JSON.stringify(corrected, null, 2),
+                  modified: isModified()
+                })
               });
               if (!resp.ok) throw new Error(await resp.text());
-              return (await resp.json()).docId;
+              return await resp.json();
             }
 
             const status = document.getElementById('saveStatus');
@@ -399,8 +412,8 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
               status.innerHTML = 'Saving…';
               status.className = '';
               try {
-                const docId = await saveJson();
-                status.innerHTML = `Saved ✓  docId: ${docLink(docId)}`;
+                const { docId, fileName } = await saveJson();
+                status.innerHTML = `Saved ✓  ${fileName ?? ''} docId: ${docLink(docId)}`;
                 status.className = 'status-ok';
               } catch (err) {
                 status.innerHTML = `Error: ${err.message}`;
@@ -417,15 +430,15 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
                 status.innerHTML = 'Saving…';
                 status.className = '';
                 try {
-                  const docId = await saveJson();
-                  status.innerHTML = `Saved ${docLink(docId)} — Resolving…`;
+                  const { docId, fileName } = await saveJson();
+                  status.innerHTML = `Saved ${fileName ?? ''} ${docLink(docId)} — Resolving…`;
                   const resp = await fetch('/api/resolveDoc', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ docId, tableName: TABLE_NAME, caseId: CASE_ID, srcDocId: SRC_DOC_ID })
                   });
                   if (!resp.ok) throw new Error(await resp.text());
-                  status.innerHTML = `Resolved ✓  docId: ${docLink(docId)}`;
+                  status.innerHTML = `Resolved ✓  ${fileName ?? ''} docId: ${docLink(docId)}`;
                   status.className = 'status-ok';
                 } catch (err) {
                   status.innerHTML = `Error: ${err.message}`;

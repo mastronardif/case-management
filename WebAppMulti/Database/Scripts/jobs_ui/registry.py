@@ -26,6 +26,15 @@ JOBS = [
         "status": "planned",
     },
     {
+        "id": "build_claim",
+        "title": "Build Claim — Queue → 837P",
+        "description": "Build the claim and 837P EDI for one queued session set (QueueClaimId), "
+                       "validate it, and hand it to the Availity send queue.",
+        "command": "dotnet run -- --queue-claim-id <QueueClaimId>",
+        "page": "jobs_ui/pages/build_claim.py",
+        "status": "ready",
+    },
+    {
         "id": "availity",
         "title": "Availity — Send Claims & Check Status",
         "description": "Send ReadyToSubmit claims to Availity over SFTP and check their status. "

@@ -3,6 +3,11 @@ using System.Data;
 
 public static class SaveDocumentEndpoint
 {
+    // The review page reports whether any field was changed. Saved exactly as extracted it's just
+    // the session ("session.json"); with edits it's "sessionCorrected.json". A page generated before
+    // the flag existed doesn't send it, so absent means corrected — the old behavior.
+    public static string NameFor(bool? modified) => modified == false ? "session" : "sessionCorrected";
+
     public static void MapSaveDocumentEndpoint(this WebApplication app)
     {
         app.MapPost("/api/saveDocument", async (SaveDocumentRequest req, IConfiguration config) =>
@@ -34,6 +39,8 @@ public static class SaveDocumentEndpoint
                 sessionId = r.IsDBNull(r.GetOrdinal("SessionId")) ? null : r.GetInt32(r.GetOrdinal("SessionId"));
             }
 
+            var name = NameFor(req.Modified);
+
             int newDocId;
             using (var saveCmd = new SqlCommand("[cases].[usp_Document_Save]", conn)
                    { CommandType = CommandType.StoredProcedure })
@@ -42,9 +49,9 @@ public static class SaveDocumentEndpoint
                 saveCmd.Parameters.AddWithValue("@SessionId",    (object?)sessionId ?? DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@WorkbookQId",  DBNull.Value);
                 saveCmd.Parameters.AddWithValue("@CaseNumber",   DBNull.Value);
-                saveCmd.Parameters.AddWithValue("@DocumentType", "sessionCorrected");
-                saveCmd.Parameters.AddWithValue("@Title",        "sessionCorrected");
-                saveCmd.Parameters.AddWithValue("@FileName",     "sessionCorrected.json");
+                saveCmd.Parameters.AddWithValue("@DocumentType", name);
+                saveCmd.Parameters.AddWithValue("@Title",        name);
+                saveCmd.Parameters.AddWithValue("@FileName",     $"{name}.json");
                 saveCmd.Parameters.AddWithValue("@ContentType",  "application/json");
                 saveCmd.Parameters.AddWithValue("@FileData",     jsonBytes);
                 saveCmd.Parameters.AddWithValue("@CreatedBy",    "review-ui");
@@ -60,9 +67,9 @@ public static class SaveDocumentEndpoint
                 newDocId = (int)docIdParam.Value;
             }
 
-            return Results.Ok(new { docId = newDocId });
+            return Results.Ok(new { docId = newDocId, fileName = $"{name}.json" });
         });
     }
 }
 
-public record SaveDocumentRequest(int SourceDocId, string? Json);
+public record SaveDocumentRequest(int SourceDocId, string? Json, bool? Modified = null);

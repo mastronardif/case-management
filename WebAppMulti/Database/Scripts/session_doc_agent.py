@@ -77,6 +77,19 @@ CONTENT_TYPE_EXT = {
     "image/png": ".png",
     "image/tiff": ".tiff",
 }
+
+# Real file type from the first bytes. Documents uploaded through the UI are stored as
+# application/octet-stream, so the stored content type can't be trusted — and Claude's Read tool
+# opens a file as PDF/image or "binary" purely by its extension, so a PDF saved as source.bin
+# can't be read at all (headless claude then flails and answers in prose instead of JSON).
+FILE_SIGNATURES = [
+    (b"\x89PNG\r\n\x1a\n", ".png"),
+    (b"\xff\xd8\xff", ".jpg"),
+    (b"II*\x00", ".tiff"),
+    (b"MM\x00*", ".tiff"),
+    (b"GIF87a", ".gif"),
+    (b"GIF89a", ".gif"),
+]
 # ===============================
 
 
@@ -108,6 +121,30 @@ def get_document(doc_id):
     resp.raise_for_status()
     content_type = resp.headers.get("Content-Type", "").split(";")[0].strip()
     return resp.content, content_type
+
+
+def detect_source_ext(data, content_type):
+    """File extension for the source doc: what the bytes say first, the stored content type second,
+    ".bin" only as a last resort."""
+    # The PDF spec allows a little junk before the header, so look in the first 1 KB, not just byte 0.
+    if b"%PDF-" in data[:1024]:
+        return ".pdf"
+    for signature, ext in FILE_SIGNATURES:
+        if data.startswith(signature):
+            return ext
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return ".webp"
+    return CONTENT_TYPE_EXT.get(content_type, ".bin")
+
+
+def write_source_file(work_dir, source_ext, source_bytes):
+    """Writes source<ext>, first removing any other source.* left in a reused --dest folder —
+    two source files would leave Claude guessing which one to read."""
+    for name in os.listdir(work_dir):
+        if name.startswith("source."):
+            os.remove(os.path.join(work_dir, name))
+    with open(os.path.join(work_dir, f"source{source_ext}"), "wb") as f:
+        f.write(source_bytes)
 
 
 def upload_document(case_id, file_path):
@@ -153,7 +190,10 @@ def resolve_source_and_context(case_id, file, src_doc_id):
         print(f"  source doc: {src_doc_id}")
 
     source_bytes, source_content_type = get_document(src_doc_id)
-    source_ext = CONTENT_TYPE_EXT.get(source_content_type, ".bin")
+    source_ext = detect_source_ext(source_bytes, source_content_type)
+    if source_ext == ".bin":
+        print(f"WARNING: couldn't identify the source file type (stored as {source_content_type!r}); "
+              "Claude can't read a .bin, so extraction will likely fail.")
 
     projection_doc_id, rule_doc_id = get_active_projector_rule("Session")
     print(f"Session projection/rule: {projection_doc_id} / {rule_doc_id}")
@@ -281,8 +321,7 @@ def cmd_run(args):
     if keep_dir:
         os.makedirs(work_dir, exist_ok=True)
     try:
-        with open(os.path.join(work_dir, f"source{source_ext}"), "wb") as f:
-            f.write(source_bytes)
+        write_source_file(work_dir, source_ext, source_bytes)
         with open(os.path.join(work_dir, "projection.json"), "wb") as f:
             f.write(projection_bytes)
         with open(os.path.join(work_dir, "rule.json"), "wb") as f:
