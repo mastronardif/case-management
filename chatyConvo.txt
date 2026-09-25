@@ -1,4 +1,20 @@
 ﻿
+
+09/24/2026
+I need to 
+add column to my session table to make the row identifiable. I have the date, case, time of session currently
+what do you think.
+ServiceCode varchar 25
+to have "code": "97153",
+
+"service": {
+"code": "97153",
+"modifier": "HM",
+"type": "RBT"
+},
+
+
+-----------------
 09/06/2026
 
 Give me a pot card advertisement.

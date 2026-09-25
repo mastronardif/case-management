@@ -1,7 +1,22 @@
 
+
+09/24/2026
+
+[CaseId], [SessionDate], Session.Code, [StartTime],[EndTime]
+------------------------
+the sessions are unique by [ClientName], [SessionDate],[StartTime],[EndTime].
+Question your thoughts I want to make a SessionId from [ClientName], [SessionDate],[StartTime],[EndTime]
+preferable a readable SessionId. A compund key thing.
+lets talk about it
+-------------------
 09/22/2026
 
 -------------------
+option B
+For now mark as error(sftp transmition what ever).
+we can work on a retry fix later.
+
+--------------------
 
 should col status have an value of Sumited/failed if that was the case???
 http://localhost:5173/claim/5
