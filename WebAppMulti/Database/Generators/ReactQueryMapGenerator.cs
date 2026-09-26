@@ -36,6 +36,12 @@ public class ReactQueryMapGenerator
                 sb.AppendLine("    ],");
             }
 
+            if (api.Columns != null && api.Columns.Any())
+            {
+                var columns = string.Join(", ", api.Columns.Select(c => $"\"{c}\""));
+                sb.AppendLine($"    columns: [{columns}],");
+            }
+
             sb.AppendLine("  },");
         }
         sb.AppendLine("];");

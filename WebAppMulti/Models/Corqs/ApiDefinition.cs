@@ -40,6 +40,9 @@ public class ApiDefinition
     public DataRouteDefinition? DataRoute { get; set; }
     public List<ActionDefinition>? Actions { get; set; }
     public List<EnrichmentDefinition>? Enrichments { get; set; }
+    // Display order for a result table, left to right by importance (row keys, incl. enrichment
+    // columns). Columns not listed still show, after these — see utils/columnOrder.js.
+    public string[]? Columns { get; set; }
     public string? Returns { get; set; }
 }
 

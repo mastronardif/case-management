@@ -11,7 +11,11 @@
           "label": "Open",
           "route": "/cases/{id}"
         }
-      ]
+      ],
+      "enrichments": [
+        { "column": "name", "sourceColumn": "jId", "path": "patient.name" }
+      ],
+      "columns": ["id", "number", "name", "src", "jId", "title", "active", "opened"]
     },
     {
       "name": "Case_GetDocuments",

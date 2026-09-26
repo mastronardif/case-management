@@ -4,6 +4,7 @@ import ActionTable from "../components/ActionTable";
 import DataTable from "../components/DataTable";
 import { useGlobalStore } from "../context/GlobalStore";
 import { apiFetch } from "../services/apiFetch";
+import { orderColumns } from "../utils/columnOrder";
 import { QUERY_MAP } from "../utils/corqsreact";
 import { enrichDocIdLinks } from "../utils/docIdLinks";
 import { enrichRows } from "../utils/documentEnrichment";
@@ -98,6 +99,7 @@ export default function CasesTablePage() {
           <DataTable
             ref={dataTableRef}
             rows={filteredRows}
+            columns={orderColumns(filteredRows, schemaEntry?.columns)}
             actions={actions}
             emptyMessage="No cases found."
           />

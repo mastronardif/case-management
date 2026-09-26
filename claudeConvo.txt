@@ -1,6 +1,104 @@
 
+09/25/2026
+
+I want the tables to be column ordered letf to right by importance.
+for now just do the table below.
+http://localhost:5173/cases
+id, number name, src, jId, ... Actions
+
+------------------
+09/25/2026
+
+where is the JOB run claim
+> dotnet run -- --queue-claim-id 6 
+------------------
+
+you --- say but it was just a pass through i did not modify any fields.  When that is the csae say session.json
+if it is modified say sessionCorrected.json
+
+can you do that?  Can you determine it was modified???
+
+------------------
+Using existing source doc 4885
+Session projection/rule: 4182 / 4183
+Working files: c:\temp\sep1\sept01
+Calling `claude -p` for extraction (uses your Claude Code subscription auth)...
+claude -p did not return valid JSON: Expecting value: line 1 column 1 (char 0)
+---
+The command needs your approval to run (extracting text from the PDF via `pdftotext`, output only to stdout — no files written). Could you approve it?
+
+error when doing --- job.
+Uploading C:\Users\mastronardif\Downloads\MiAl_2026-09-01_CASP Direct Session Note 97153.pdf...
+  source doc: 4885
+Session projection/rule: 4182 / 4183
+Working files: c:\temp\sep1\sept01
+Calling `claude -p` for extraction (uses your Claude Code subscription auth)...
+claude -p did not return valid JSON: Expecting value: line 1 column 1 (char 0)
+---
+I've hit a hard sandbox restriction: this session blocks all script/interpreter execution (python, node, perl, openssl), file copying (cp, Copy-Item), file writing, and even .NET method calls in PowerShell (running in Constrained Language Mode). `source.bin` is actually a PDF (confirmed via `file`), and its text content is stored in FlateDecode-compressed streams, so I can't get the clinical note text out using only the plain read-only commands that are allowed (cat/grep/wc/file/which).
+
+The one tool that would solve this is `pdftotext` (Poppler, already installed, read-only, standard PDF-to-text utility) — but every attempt to run it returns "This command requires approval" and isn't going through.
+
+Could you either:
+1. Approve running `pdftotext -layout "c:\temp\sep1\sept01\source.bin" -` (read-only, just prints text to stdout, no files created), or
+2. Paste the clinical note's text content directly here?
+
+Either way I can then proceed with the extraction per projection.json/rule.json.
+
+---------------------------
+Back Office Jobs
+Some jobs reaure the http server to be available.  Is a way to make it work regardless.
+Just talk about if this is good or bad idea.  Dont make a code change.
+
+---------------------
+09/24/2026
+
+add the two new session items to the below screens
+
+http://localhost:5173/workbooks/5
+Cases
+/
+Case 5
+/
+Workbooks
+Workbooks — Case 5
+
+add the row session identifiable cols 
+      ,[CPTCode]
+      ,[CPTModifier1]
+     after the sessionDate
+     
+ to here also
+ http://localhost:5173/claim/5
+Cases
+/
+Case 5
+/
+Claim 🦪
+Case Info — Case 5
+Sessions — Case 5 (17)
+Reload
+Submit Claim (0)
+
+--------------------
 
 09/24/2026
+cleanup the archive_projector_rules call it archive_jsons
+Folder: Scripts\Archive\ArchiveJson
+call the zip file ArchiveJson.
+Having three folders ProjectorRules, Constants, FieldMaps.
+
+also can usp_GetManifestProjectorRule be usp_GetManifestJson and have that return a list a union of the three.  What do you think???
+
+
+------------------------
+I added two columns ServiceCode varchar(25) NULL,    Modifier varchar(10) NULL;
+like you did for [SessionDate] do for the two new cols.
+I think you did in a resolveer.
+
+Then we will update the schema to show 
+
+-------------
 
 [CaseId], [SessionDate], Session.Code, [StartTime],[EndTime]
 ------------------------

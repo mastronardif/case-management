@@ -9,6 +9,7 @@ export const QUERY_MAP = [
     enrichments: [
       { column: "name", sourceColumn: "jId", path: "patient.name" },
     ],
+    columns: ["id", "number", "name", "src", "jId", "title", "active", "opened"],
   },
   {
     resource: "Case_GetDocuments",
