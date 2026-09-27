@@ -220,27 +220,23 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
     private static void RenderArray(StringBuilder sb, string name, JsonArray arr, string basePath, Dictionary<string, string> ruleMap)
     {
         OpenSection(sb, name);
-        sb.AppendLine("<div class=\"nested\">");
 
-        for (int i = 0; i < arr.Count; i++)
+        // A list of plain values (e.g. authorizedCodes, participants) is one compact table, one
+        // row per item — not a separate boxed section per item, which only an array of
+        // objects/nested arrays actually needs (each of those has its own fields to lay out).
+        if (arr.All(IsLeaf))
         {
-            var item = arr[i];
-            var path = $"{basePath}[{i}]";
-
-            if (item is JsonObject or JsonArray)
-            {
-                RenderNode(sb, $"{name} [{i}]", item!, path, ruleMap);
-            }
-            else
-            {
-                OpenSection(sb, $"{name} [{i}]");
-                OpenTable(sb);
-                AppendRow(sb, $"{name} [{i}]", path, item?.ToString(), ruleMap);
-                CloseTable(sb);
-                CloseSection(sb);
-            }
+            OpenTable(sb);
+            for (int i = 0; i < arr.Count; i++)
+                AppendRow(sb, $"[{i}]", $"{basePath}[{i}]", arr[i]?.ToString(), ruleMap);
+            CloseTable(sb);
+            CloseSection(sb);
+            return;
         }
 
+        sb.AppendLine("<div class=\"nested\">");
+        for (int i = 0; i < arr.Count; i++)
+            RenderNode(sb, $"{name} [{i}]", arr[i]!, $"{basePath}[{i}]", ruleMap);
         sb.AppendLine("</div>");
         CloseSection(sb);
     }

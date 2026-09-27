@@ -80,7 +80,7 @@ def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, tim
         cmd += ["--resume", resume]
 
     # [SHADOW]-tagged lines are how session_doc_agent_ui.py's side panel finds this nested
-    # subprocess's own activity inside the outer session_doc_agent.py process's stdout/stderr —
+    # subprocess's own activity inside the outer doc_extraction_agent.py process's stdout/stderr —
     # subprocess.run(capture_output=True) blocks until the call finishes, so there's no live
     # output from claude -p itself, just a "starting" marker and a "done" marker (below, in
     # _log_usage) bracketing the wait.

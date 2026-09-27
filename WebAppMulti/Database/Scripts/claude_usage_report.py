@@ -1,6 +1,6 @@
 """
 Summarizes claude_usage_log.jsonl — the running record of every headless `claude -p` call
-made through ask_claude.py (by session_doc_agent.py or any future script that reuses it).
+made through ask_claude.py (by doc_extraction_agent.py or any future script that reuses it).
 
 Usage:
     python claude_usage_report.py

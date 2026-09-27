@@ -1,6 +1,88 @@
 
+
+
+09/27/2026
+
+
+
+------------------------
+
+I thought if authorization came from more sources you might want a fork.  But I want to go with what you suggest if authorization breaks the current form
+i will worry about it then.
+
+Also update the session_extraction_notes.md 
+So: generalize with defaults, split the notes file per table, fix that one line in ask.claude.txt. Optionally rename the script, mirroring archive_jsons.py
+
+Tell me your plan i will review that we on same page.  
+---------------
+
+The extraction job — still open: generalize session_doc_agent.py with --table-name, or a sibling script?
+What do you think???? I have an suggestion but i want to here your explanation.
+--------------------
+
+If payerId does not come from Authoritative I think we should remove that column.
+---------------
+
+lets do in this order the projection for authorization and i run the job that does it.
+have the mapping have identifiable fileds.
+      ,[PayerId]
+      ,[AuthorizationNumber]
+then fix the Authorization837P projection fuzziness.
+
+What do you think.
+------------------
+
+lets do 1.
+I have an authorization doc for caseId 5. its json is different from test case 999.
+
+!Question: unlike session notes where i know what i want. The Authorization from the Payer and it may come from differnt docs.
+I want to follow a similar approach like the sessin note.  Or i can have the user enter the authorization details.
+Give me a good sujestion
+
+
+1. Does case 5 (Mia Alapati) have a real authorization number to put in, or is a placeholder still needed there too?
+2. Role → modifier mapping — just RBT→HM / BCBA→HO, or does it vary by code/payer?
+
+------------------
+
 09/25/2026
 
+Other than the Modifier being null.  Whats worng. everything looks good otherwise.
+
+DocumentType: null
+[12:57:26 INF] Workflow dsl-pipeline v1.0 started. RunId: 81bda2b3-4372-4d30-9706-68568c945703, Steps: 2
+[12:57:26 INF] Step [1] step1 (projector) inputs: [5016, 3415]
+[12:57:26 INF] Fetching document. DocumentId: 5016, SessionId: null, CaseId: null, DocumentType: null
+[12:57:26 INF] Fetching document. DocumentId: 3415, SessionId: null, CaseId: null, DocumentType: null
+[12:57:26 INF] Saving document. Type: billingProjection, CaseId: 5, SessionId: null
+[12:57:26 INF] Projector complete. OutputDocId: 5020
+[12:57:26 INF] Step [1] step1 complete. Outputs: [5020]
+[12:57:26 INF] Step [2] step2 (availityHtmlRender) inputs: [5020]
+[12:57:26 INF] Fetching document. DocumentId: 5020, SessionId: null, CaseId: null, DocumentType: null
+[12:57:26 INF] Saving document. Type: availityClaimReview, CaseId: 5, SessionId: null
+[12:57:26 INF] AvailityHtmlRender complete. previewDocId=5020 â†’ htmlDocId=5021
+[12:57:26 INF] Step [2] step2 complete. Outputs: [5021]
+[12:57:26 INF] Workflow dsl-pipeline complete. RunId: 81bda2b3-4372-4d30-9706-68568c945703, Outputs: [5020 | 5021]
+[12:57:26 INF] Saving document. Type: workflowRun, CaseId: null, SessionId: null
+[12:57:26 INF] Run manifest saved. DocId: 5022, RunId: 81bda2b3-4372-4d30-9706-68568c945703
+[12:57:26 INF]   => 5020, 5021
+[12:57:26 INF] === Final EDI === claimId=16 claimNumber=CM000000016 status=HasErrors docId=5018
+[12:57:26 WRN]   issue: forEach field 'SV1.SV101_3': Parameter service_modifier not defined.
+
+--
+  claimId      : 16
+  claimNumber  : CM000000016
+  ruleDocId    : 3414
+  sourcesDocId : 5009
+  status       : HasErrors
+  issues       :
+    - forEach field 'SV1.SV101_3': Parameter service_modifier not defined.
+  Open EDI     : http://localhost:5173/api/getDocument?docId=5018
+  Open Availity: http://localhost:5173/api/getDocument?docId=5021
+  
+----------------------
+I want to move name a "schema thing" to the right after number
+---------------
 I want the tables to be column ordered letf to right by importance.
 for now just do the table below.
 http://localhost:5173/cases

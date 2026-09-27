@@ -1,8 +1,9 @@
 """
 session_get_zip.py — fetches [source document, projection.json, rule.json] for a session and
-writes them into a folder as loose files (the same shape session_doc_agent.py's `local`
+writes them into a folder as loose files (the same shape doc_extraction_agent.py's `local`
 command consumes), plus a zip of the same three files for archival/hand-off. Skips the manual
-"run pack, then Expand-Archive it yourself" step.
+"run pack, then Expand-Archive it yourself" step. Session-specific — doc_extraction_agent.py
+itself is the generalized (--table-name) version of this same idea.
 
 Usage:
     python session_get_zip.py --case-id 5 --src-doc-id 1978 --dir "C:\\temp\\session-context-5-1978"
@@ -12,7 +13,7 @@ import argparse
 import os
 import zipfile
 
-from session_doc_agent import CONTENT_TYPE_EXT, get_active_projector_rule, get_document
+from doc_extraction_agent import CONTENT_TYPE_EXT, get_active_projector_rule, get_document
 
 
 def main():

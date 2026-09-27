@@ -10,9 +10,9 @@ STATUS_COLORS = {"ready": "green", "in progress": "orange", "planned": "gray"}
 JOBS = [
     {
         "id": "source_doc_to_json",
-        "title": "Source Doc → Session JSON",
-        "description": "Extract a session document into session JSON with Claude, validate it, "
-                       "and get the review link.",
+        "title": "Source Doc → JSON",
+        "description": "Extract a source document (Session, Authorization, ...) into JSON with "
+                       "Claude, validate it, and get the review link.",
         "page": "jobs_ui/pages/source_doc_to_json.py",
         "status": "ready",
     },

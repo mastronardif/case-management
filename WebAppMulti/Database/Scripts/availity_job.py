@@ -20,7 +20,7 @@ Built and tested against the local mock (mock_availity/) until real Availity SFT
 exist; when they do, only the three CONFIG constants below change.
 
 Requires WebAppMulti running (dotnet run) — EDI content comes from GET /api/getDocument, same as
-session_doc_agent.py. Every run logs through job_logging (console + C:/temp file +
+doc_extraction_agent.py. Every run logs through job_logging (console + C:/temp file +
 dbo.ApplicationLogs), same as the C# jobs.
 
 Usage:

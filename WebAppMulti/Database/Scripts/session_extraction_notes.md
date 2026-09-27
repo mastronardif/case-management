@@ -1,8 +1,13 @@
 # Session extraction — accumulated corrections
 
-Read by `session_doc_agent.py` and appended to every extraction prompt. When a `run` produces
-a mistake, add a short rule here describing the correct behavior — it applies to every future
-run automatically, no code change needed.
+Read by `doc_extraction_agent.py` for `--table-name Session` runs (the default) and appended to
+every extraction prompt. When a `run` produces a mistake, add a short rule here describing the
+correct behavior — it applies to every future run automatically, no code change needed.
+
+Session-specific — other tables get their own file (e.g. `authorization_extraction_notes.md`),
+since a correction learned from a clinical note is often noise, or wrong, for a payer letter.
+A table with no corrections yet simply has no notes file; one gets created here the first time
+a run needs one.
 
 - Dates must be exactly `YYYY-MM-DD` (e.g. `2026-07-13`), never a written-out format like
   "Jul 13, 2026" or "7/13/2026".

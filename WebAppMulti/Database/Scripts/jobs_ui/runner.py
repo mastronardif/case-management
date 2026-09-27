@@ -1,7 +1,7 @@
 """
 Shared runner for the jobs hub pages: runs a command as a subprocess and streams its output live
 into the page — a resizable output box, clickable doc links, and a Shadow panel for the nested
-subprocesses (ask_claude, dotnet) that session_doc_agent.py brackets with [SHADOW\\<source>] lines.
+subprocesses (ask_claude, dotnet) that doc_extraction_agent.py brackets with [SHADOW\\<source>] lines.
 """
 
 import re
