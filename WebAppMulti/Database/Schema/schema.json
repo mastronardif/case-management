@@ -105,6 +105,31 @@
     },
 
     {
+      "name": "listPayers",
+      "type": "sql",
+      "sql": "SELECT * FROM cases.vw_PayerAdmin ORDER BY PayerName",
+      "route": "/api/corqs/listPayers"
+    },
+    {
+      "name": "listInsuranceCoverage",
+      "type": "sql",
+      "sql": "SELECT * FROM cases.vw_InsuranceCoverageAdmin ORDER BY CaseNumber",
+      "route": "/api/corqs/listInsuranceCoverage"
+    },
+    {
+      "name": "listPatients",
+      "type": "sql",
+      "sql": "SELECT * FROM cases.vw_PatientAdmin ORDER BY CaseNumber",
+      "route": "/api/corqs/listPatients"
+    },
+    {
+      "name": "listAuthorizations",
+      "type": "sql",
+      "sql": "SELECT * FROM cases.vw_AuthorizationAdmin ORDER BY CaseNumber",
+      "route": "/api/corqs/listAuthorizations"
+    },
+
+    {
       "name": "getBooks",
       "type": "handler",
       "handler": "GetBooks",

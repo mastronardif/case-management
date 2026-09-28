@@ -1,4 +1,5 @@
 // routes.js
+import AdminListPage from "./pages/AdminListPage";
 import BillingPage from "./pages/BillingPage";
 import BillingTablePage from "./pages/BillingTablePage";
 import CalendarPage from "./pages/CalendarPage";
@@ -16,6 +17,7 @@ import FileViewerPage from "./pages/FileViewerPage";
 import IframeView from "./pages/IframeView";
 import InvoiceDetailPage from "./pages/InvoiceDetailPage";
 import Login from "./pages/Login";
+import RowFormPage from "./pages/RowFormPage";
 import Settings from "./pages/Settings";
 import TableFromUrl from "./pages/TableFromUrl";
 import WorkbooksTablePage from "./pages/WorkbooksPage";
@@ -37,6 +39,7 @@ const routes = [
 
   { path: "/viewer", element: <FileViewerPage />, hideFromNav: true },
   { path: "/docviewer/:documentId", element: <DocumentViewerPage />, hideFromNav: true },
+  { path: "/rowform", element: <RowFormPage />, hideFromNav: true },
 
   // {
   //   path: "/iframe/session/:vvv?",
@@ -59,6 +62,12 @@ const routes = [
   { path: "/billing", element: <BillingTablePage />, label: "Billing", navGroup: "Bill" },
   { path: "/billing/:caseId", element: <BillingPage />, hideFromNav: true },
   { path: "/invoice/:invoiceId", element: <InvoiceDetailPage />, hideFromNav: true },
+
+  // Static/reference entities — system-wide read-only lists, see AdminListPage.jsx.
+  { path: "/admin/payer", element: <AdminListPage resource="payer" />, label: "Payer", navGroup: "Admin" },
+  { path: "/admin/insuranceCoverage", element: <AdminListPage resource="insuranceCoverage" />, label: "Insurance Coverage", navGroup: "Admin" },
+  { path: "/admin/patient", element: <AdminListPage resource="patient" />, label: "Patient", navGroup: "Admin" },
+  { path: "/admin/authorization", element: <AdminListPage resource="authorization" />, label: "Authorization", navGroup: "Admin" },
 
   { path: "*", element: <div>Not Found</div>, hideFromNav: true },
 

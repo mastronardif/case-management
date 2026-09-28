@@ -1,7 +1,59 @@
 
 
 
+09/28/2026
+
+I want Bill, Experimental to be collaspe.  I want collaspe to be the default.
+
+For now make the readable.  and the actions are like the other pages [Form , export, Search]. 
+the Entities are the static ones, [ Insurance Coverage, Payer , Patient , Authorization  ]
+if you think its good you can suggest a View or SP that returns the list.
+All inteligence comes from the DB.
+In the future adding editing static ones will be a more involved process becuase this data mostly comes from a authorized source.
+
+do you have any questions????
+
+-----------------
+
+Queston: I want to have an item on the left bar Admin/
+then underneath it has the n Entities Aauthorization, Insurance Coverage, etc.
+is that a good place for them.
+I wuoud bring upa  page that list the contents of the table and the same actions as Form , export, 
+what do you think o fthe layout any suggestions
+
+-------------------
+let me explain for example
+on the http://localhost:5173/claim/9
+if i press a link / button whatever it show the payer as a form.
+same fo the others
+-----------------------
+
+i forget didyou create a json to html.
+I will have a basic form views.
+for the following entities: Authorization, [Assessment], 
+
+table ojs: [InsuranceCoverageId] [Provider] [Payer]
+
+----------------
+
 09/27/2026
+
+----------------
+the below did NOT get maped over to the table.
+"authorizationNumber": "OP2636620079"
+
+back office page shows
+Source Doc → Session JSON
+should be general or table 
+Source Doc → {table} JSON
+
+----------------------------
+
+looks good a few issues:
+http://localhost:8501/source_doc_to_json
+the list of cptCodes should we show as a list
+
+also i need a field for the --table-name Session)  maybe a select box.
 
 
 

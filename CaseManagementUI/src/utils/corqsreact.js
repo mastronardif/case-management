@@ -45,6 +45,22 @@ export const QUERY_MAP = [
     action: "activeCases",
   },
   {
+    resource: "listPayers",
+    action: "listPayers",
+  },
+  {
+    resource: "listInsuranceCoverage",
+    action: "listInsuranceCoverage",
+  },
+  {
+    resource: "listPatients",
+    action: "listPatients",
+  },
+  {
+    resource: "listAuthorizations",
+    action: "listAuthorizations",
+  },
+  {
     resource: "getBooks",
     action: "getBooks",
   },

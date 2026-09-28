@@ -17,6 +17,7 @@ export default function XyzTablePage({
   ActionRowComponent,
   rowActions = [],
   tableActions = [],
+  beforeExportActions = [],
   emptyMessage,
   newPath,
 }) {
@@ -111,6 +112,7 @@ export default function XyzTablePage({
               onExport={handleExport}
               onSearch={setSearch}
               buttonClass={greyButtonClass}
+              beforeExportActions={beforeExportActions}
             />
             {tableActions.map((action, i) => (
               <button

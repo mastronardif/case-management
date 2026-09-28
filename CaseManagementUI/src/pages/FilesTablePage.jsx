@@ -1,26 +1,12 @@
 // src/pages/FilesTablePage.jsx
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ActionRow from "../components/ActionRow";
 import { useGlobalStore } from "../context/GlobalStore";
 import { apiFetch } from "../services/apiFetch";
 import { enrichDocIdLinks } from "../utils/docIdLinks";
 import { fetchFileList } from "../services/fileService";
 import XyzTablePage from "./XyzTablePage";
-
-// Unified action row for files
-const FileActionRow = ({ row, actions }) => (
-  <div className="flex gap-1">
-    {actions.map((action, i) => (
-      <button
-        key={i}
-        onClick={() => action.onClick(row)}
-        className={action.className || "px-3 py-1 text-sm rounded bg-green-500 text-white hover:bg-green-600"}
-      >
-        {action.label}
-      </button>
-    ))}
-  </div>
-);
 
 export default function FilesTablePage() {
   const { urlTemplates, urlCases } = useGlobalStore();
@@ -119,7 +105,7 @@ export default function FilesTablePage() {
       <XyzTablePage
         title="Files"
         rows={rows}
-        ActionRowComponent={FileActionRow}
+        ActionRowComponent={ActionRow}
         rowActions={rowActions}
         tableActions={tableActions}
       />
@@ -128,7 +114,7 @@ export default function FilesTablePage() {
       <XyzTablePage
         title="Documents (templates)"
         rows={docRows}
-        ActionRowComponent={FileActionRow}
+        ActionRowComponent={ActionRow}
         rowActions={docRowActions}
         tableActions={docTableActions}
       />

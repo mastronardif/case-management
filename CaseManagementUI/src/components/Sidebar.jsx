@@ -18,9 +18,9 @@ export default function Sidebar({ open, toggle }) {
     return acc;
   }, {});
 
-  const [expandedGroups, setExpandedGroups] = useState({
-    Experimental: true,
-  });
+  // Every group (other than "Main", which has no header/toggle at all) starts collapsed —
+  // expandedGroups only ever holds entries for groups the user has explicitly opened.
+  const [expandedGroups, setExpandedGroups] = useState({});
 
   const toggleGroup = (groupName) => {
     setExpandedGroups((prev) => ({
@@ -70,7 +70,7 @@ export default function Sidebar({ open, toggle }) {
                   <span>{expandedGroups[groupName] ? "▾" : "▸"}</span>
                 </button>
               )}
-              {(!open || expandedGroups[groupName] !== false) &&
+              {(!open || groupName === "Main" || expandedGroups[groupName] === true) &&
                 groupRoutes.map((route) => (
                   <NavLink
                     key={route.path}

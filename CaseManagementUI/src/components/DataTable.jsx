@@ -18,6 +18,22 @@ export const formatCellValue = (value) => {
   return `${datePart} ${timePart}`;
 };
 
+// Shared with any other hand-rolled cell display (e.g. RowFormPage) so "how do we show one
+// value" — null, a pre-rendered link element, a plain object, a date string — is one function,
+// not copy-pasted per view.
+export const renderValue = (value) => {
+  if (value === null || value === undefined) return "";
+  if (React.isValidElement(value)) return value;
+  if (typeof value === "object") {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "[object]";
+    }
+  }
+  return String(formatCellValue(value));
+};
+
 const escapeCsvValue = (value) => {
   if (value === null || value === undefined) return "";
   if (typeof value === "object") {
@@ -88,18 +104,6 @@ const DataTable = forwardRef(
       [exportCSV]
     );
 
-    const renderValue = (value) => {
-      if (value === null || value === undefined) return "";
-      if (React.isValidElement(value)) return value;
-      if (typeof value === "object") {
-        try {
-          return JSON.stringify(value);
-        } catch {
-          return "[object]";
-        }
-      }
-      return String(formatCellValue(value));
-    };
 
     if (!rows || rows.length === 0) {
       return <div className={className}>{emptyMessage}</div>;

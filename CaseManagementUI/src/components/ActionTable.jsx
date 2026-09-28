@@ -11,6 +11,7 @@ export default function ActionTable({
   showNew = true,
   showReload = true,
   buttonClass, // receives grey button style from parent
+  beforeExportActions = [], // rendered between Reload and Export, in order
 }) {
   const [searchValue, setSearchValue] = useState("");
 
@@ -40,6 +41,16 @@ export default function ActionTable({
           Reload
         </button>
       )}
+      {beforeExportActions.map((action, i) => (
+        <button
+          key={action.label ?? i}
+          onClick={action.onClick}
+          className={buttonClass}
+          disabled={loading || action.disabled}
+        >
+          {action.label}
+        </button>
+      ))}
       <button onClick={onExport} className={buttonClass} disabled={loading}>
         Export
       </button>

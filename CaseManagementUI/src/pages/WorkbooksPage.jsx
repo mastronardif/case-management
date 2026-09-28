@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
 import api from "../services/http";
 import { enrichDocIdLinks, omitColumns } from "../utils/docIdLinks";
+import { openRowForm } from "../utils/rowForm";
 import XyzTablePage from "./XyzTablePage";
 
 // Same shape as ClaimPage's GetClaimInfo-backed sections, minus the claim-submission pieces
@@ -96,9 +97,18 @@ export default function WorkbooksPage() {
         {STATIC_SECTIONS.map(({ key, label }) => {
           let rows = enrichDocIdLinks(info?.[key] ?? [], navigate);
           if (key === "payer") rows = omitColumns(rows, ["publicId"]);
+          // Same row already shown in the table, just relaid-out one field per line — not a
+          // re-fetch, see utils/rowForm.js.
+          const beforeExportActions =
+            rows.length > 0 ? [{ label: "Form", onClick: () => openRowForm(navigate, label, rows[0]) }] : [];
           return (
             <div key={key} className="mb-6">
-              <XyzTablePage title={label} rows={rows} emptyMessage={`No ${label.toLowerCase()} found.`} />
+              <XyzTablePage
+                title={label}
+                rows={rows}
+                emptyMessage={`No ${label.toLowerCase()} found.`}
+                beforeExportActions={beforeExportActions}
+              />
             </div>
           );
         })}
