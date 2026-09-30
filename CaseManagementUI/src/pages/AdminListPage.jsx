@@ -6,14 +6,18 @@ import { openRowForm } from "../utils/rowForm";
 import XyzTablePage from "./XyzTablePage";
 
 // Static/reference entities — system-wide lists (every case, not just one), each backed by a
-// cases.vw_*Admin view (join for CaseNumber etc. lives in SQL, not here). Read-only for now:
-// this data mostly comes from an authorized source (payer letters, intake forms), so editing it
-// is a separate, more careful piece of work for later.
+// cases.vw_*Admin view (join for CaseNumber etc. lives in SQL, not here). Read-only for now.
+// Payer/InsuranceCoverage/Patient/Authorization mostly come from an authorized source (payer
+// letters, intake forms), so editing them is a separate, more careful piece of work for later.
+// SessionSchedule is different — it's the practice's own scheduling decision, not sourced from
+// an external document — so a real add/edit form is a much smaller, lower-risk step whenever
+// it's wanted; it's read-only here only because 6 rows didn't justify a form yet, not caution.
 export const ADMIN_ENTITIES = {
   payer: { action: "listPayers", label: "Payer" },
   insuranceCoverage: { action: "listInsuranceCoverage", label: "Insurance Coverage" },
   patient: { action: "listPatients", label: "Patient" },
   authorization: { action: "listAuthorizations", label: "Authorization" },
+  sessionSchedule: { action: "listSessionSchedules", label: "Session Schedule" },
 };
 
 export default function AdminListPage({ resource }) {

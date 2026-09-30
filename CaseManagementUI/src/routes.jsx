@@ -68,6 +68,7 @@ const routes = [
   { path: "/admin/insuranceCoverage", element: <AdminListPage resource="insuranceCoverage" />, label: "Insurance Coverage", navGroup: "Admin" },
   { path: "/admin/patient", element: <AdminListPage resource="patient" />, label: "Patient", navGroup: "Admin" },
   { path: "/admin/authorization", element: <AdminListPage resource="authorization" />, label: "Authorization", navGroup: "Admin" },
+  { path: "/admin/sessionSchedule", element: <AdminListPage resource="sessionSchedule" />, label: "Session Schedule", navGroup: "Admin" },
 
   { path: "*", element: <div>Not Found</div>, hideFromNav: true },
 

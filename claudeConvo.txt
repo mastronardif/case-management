@@ -1,5 +1,48 @@
 
 
+09/29/2026
+
+One new table, cases.SessionSchedule — one row per case, per day-of-week: per caseId and CPTCode, CPTModifier1.  
+A Case can have a parent session, cptCode at a different time.
+
+Its like appointments if they dont happen 
+nothing is written to cases.Session. case.Sessions get writeen when the user imports its session.  Its a real authorized document.!!
+
+Are you going to have traoinsient data in cases.SessionSchedule adn an SP that populates it via the Rules????
+
+I see how this can be a more involved process in the future.  For now I want to go with our basic schedule.  Its a small practice.
+
+----------------
+
+I like the stored Rule. Lite green entrys on the Calendar.
+and they are forward thinking.  Meaning in the past the rule dont apply.
+Real session that have been done are marked on the calendar.
+ Provider and CPT code/modifier, or just the day/time slot? YES. and i like your date range from the authoriztion or whatever it comes from.  
+ That can be fuzzy for now and left out.
+ 
+ Its all session based.
+ We are getting cl0se to agreeing.
+ More talking I dont want you to over complicate the design and eventual the SP, tables.
+  Lets talk more.
+ 
+
+If it's a stored rule (e.g. CaseId 5, Days=[Mon,Tue,Fri], 4:00–6:00), the calendar computes "what would be projected today" on the fly for whatever date range you're viewing — no Session rows exist for future dates at all until a real one gets documented. Change the pattern once, every future week reflects it immediately.
+---------------------
+
+I want your suggestion.  keeping my design theme in mind.
+
+I want to do a calendar post.
+I can proect a posible session in the future.  It may or maynot happen.
+for example i have  session at 4:00 PM sept 29 2026.
+Right now the calendar entrys are by sessions.  
+I am thinking  tab button on the calendar page http://localhost:5173/calendar
+[admin]
+it brings up a new page where i do these clendar post etc.
+[][clone session dates for] => creates n appointments.  These dates will 99% of the time be the same time day, time slots
+
+
+
+---------------
 
 09/28/2026
 

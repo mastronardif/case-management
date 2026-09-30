@@ -61,6 +61,10 @@ export const QUERY_MAP = [
     action: "listAuthorizations",
   },
   {
+    resource: "listSessionSchedules",
+    action: "listSessionSchedules",
+  },
+  {
     resource: "getBooks",
     action: "getBooks",
   },

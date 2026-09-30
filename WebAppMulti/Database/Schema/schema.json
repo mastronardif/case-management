@@ -128,6 +128,12 @@
       "sql": "SELECT * FROM cases.vw_AuthorizationAdmin ORDER BY CaseNumber",
       "route": "/api/corqs/listAuthorizations"
     },
+    {
+      "name": "listSessionSchedules",
+      "type": "sql",
+      "sql": "SELECT * FROM cases.vw_SessionScheduleAdmin ORDER BY CaseNumber, CASE DayOfWeek WHEN 'Mon' THEN 1 WHEN 'Tue' THEN 2 WHEN 'Wed' THEN 3 WHEN 'Thu' THEN 4 WHEN 'Fri' THEN 5 WHEN 'Sat' THEN 6 WHEN 'Sun' THEN 7 END",
+      "route": "/api/corqs/listSessionSchedules"
+    },
 
     {
       "name": "getBooks",

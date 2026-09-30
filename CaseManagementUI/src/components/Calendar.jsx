@@ -4,6 +4,19 @@ import api from "../services/http";
 
 const toDateOnly = (d) => d.toISOString().slice(0, 10);
 
+// One consistent color per case (not per status) — every event for a given case looks the same
+// whether it's real or projected; "projected" is marked with a "*" prefix instead (see below),
+// so color stays free to do the more useful job of telling cases apart on a shared calendar.
+const CASE_COLORS = [
+  "bg-blue-100", "bg-orange-100", "bg-purple-100", "bg-pink-100",
+  "bg-teal-100", "bg-amber-100", "bg-indigo-100", "bg-rose-100",
+];
+
+function colorForCase(caseId) {
+  if (caseId == null) return "bg-gray-100";
+  return CASE_COLORS[Math.abs(caseId) % CASE_COLORS.length];
+}
+
 export default function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
@@ -97,10 +110,11 @@ export default function Calendar() {
                   {dayEvents.map(e => (
                     <div
                       key={e.eventId}
-                      title={`${e.provider ?? ""} — ${e.status ?? ""}`}
-                      className="text-xs bg-blue-100 rounded px-1 py-0.5 mb-1"
+                      title={`Case ${e.caseId} — ${e.provider ?? ""} — ${e.status ?? ""}`}
+                      className={`text-xs rounded px-1 py-0.5 mb-1 ${colorForCase(e.caseId)}`}
                     >
                       {new Date(e.start).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}{" "}
+                      {e.status === "Projected" ? "* " : ""}
                       {e.title}
                     </div>
                   ))}
