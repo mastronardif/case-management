@@ -241,6 +241,18 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         CloseSection(sb);
     }
 
+    // Pipeline-injected bookkeeping, not AI-extracted content — see doc_extraction_agent.py's
+    // finish(): extracted["sourceDocs"] = [src_doc_id] is stamped on after extraction, by code
+    // that already knows the real value. Never something a human "corrects". Add future
+    // pipeline-only fields here the same way.
+    private static readonly HashSet<string> ReadOnlyFieldNames = ["sourceDocs"];
+
+    // path carries any bundle prefix ("pa."/"tpa.") and array indices ("[0]") — check each
+    // dot/bracket-separated segment, not path==name, so "sourceDocs[0]" and "tpa.sourceDocs[0]"
+    // both match on the "sourceDocs" segment.
+    private static bool IsReadOnlyPath(string path) =>
+        path.Replace("]", "").Split('.', '[').Any(ReadOnlyFieldNames.Contains);
+
     private static void AppendRow(StringBuilder sb, string field, string path, string? value, Dictionary<string, string> ruleMap)
     {
         ruleMap.TryGetValue(path, out var rule);
@@ -254,7 +266,14 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         sb.AppendLine($"  <td>{E(field)}</td>");
         sb.AppendLine($"  <td>{displayValue}</td>");
         sb.AppendLine($"  <td>{ruleCell}</td>");
-        sb.AppendLine($"  <td><input type=\"text\" data-path=\"{E(path)}\" value=\"{displayValue}\"></td>");
+        // readonly (not disabled!) — still reports its value via input.value/.defaultValue, so
+        // collectCorrected() still round-trips it on save; disabled inputs aren't guaranteed to.
+        // Omitting the input entirely would be worse: the field would vanish from the saved JSON
+        // the next time anyone clicks Save, since the save overwrites the whole document.
+        var inputAttrs = IsReadOnlyPath(path)
+            ? " readonly class=\"readonly-field\" title=\"Pipeline metadata, not extracted content — can't be corrected here\""
+            : "";
+        sb.AppendLine($"  <td><input type=\"text\" data-path=\"{E(path)}\" value=\"{displayValue}\"{inputAttrs}></td>");
         sb.AppendLine("</tr>");
     }
 
@@ -298,6 +317,192 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         return current;
     }
 
+    // Dedicated to the one PriorAuthForm+TreatmentPlanAuthorization bundle — not a generic
+    // N-section engine (see project_priorauth_treatmentplan_evernorth: deliberately not built
+    // general until a second real bundle type exists). Reuses RenderObject/RenderArray/AppendRow
+    // completely unchanged — each section just starts its path walk with its own prefix ("pa"/
+    // "tpa") instead of a bare field name, so the two sections' data-path attributes never
+    // collide and can be split back apart client-side before each is saved to its own doc.
+    public string RenderPriorAuthBundleReviewHtml(
+        string priorAuthJson, string priorAuthRuleJson, ProjectionResult priorAuthResult,
+        int priorAuthSrcDocId, int priorAuthJsonDocId,
+        string treatmentPlanJson, string treatmentPlanRuleJson, ProjectionResult treatmentPlanResult,
+        int treatmentPlanSrcDocId, int treatmentPlanJsonDocId,
+        int caseId)
+    {
+        var sb = new StringBuilder();
+        AppendHeader(sb);
+        sb.AppendLine("<h1>--- Projection Review — Prior Auth Bundle</h1>");
+        sb.AppendLine("<div class=\"save-bar\">");
+        sb.AppendLine("  <button id=\"saveBtn\" class=\"save-btn\">Save Corrected JSON</button>");
+        sb.AppendLine("  <button id=\"resolveBtn\" class=\"save-btn resolve-btn\">Save &amp; Resolve</button>");
+        sb.AppendLine($"  <a href=\"/api/getDocument?docId={priorAuthSrcDocId}\" target=\"_blank\" class=\"src-link\">src {priorAuthSrcDocId} ↗</a>");
+        sb.AppendLine($"  <a href=\"/api/getDocument?docId={treatmentPlanSrcDocId}\" target=\"_blank\" class=\"src-link\">src {treatmentPlanSrcDocId} ↗</a>");
+        sb.AppendLine("  <span id=\"saveStatus\"></span>");
+        sb.AppendLine("</div>");
+
+        // Alternating tint per form — both sections otherwise render identical white .section
+        // cards, so without a visual break the heading is the only thing telling you which form
+        // a field belongs to once there are several fields.
+        sb.AppendLine("<div class=\"form-block form-block-0\">");
+        AppendBundleSection(sb, "PriorAuthForm", "pa", priorAuthJson, priorAuthResult);
+        sb.AppendLine("</div>");
+        sb.AppendLine("<div class=\"form-block form-block-1\">");
+        AppendBundleSection(sb, "TreatmentPlanAuthorization", "tpa", treatmentPlanJson, treatmentPlanResult);
+        sb.AppendLine("</div>");
+
+        AppendBundleFooter(sb, caseId,
+            priorAuthSrcDocId, priorAuthJsonDocId,
+            treatmentPlanSrcDocId, treatmentPlanJsonDocId);
+        return sb.ToString();
+    }
+
+    private static void AppendBundleSection(StringBuilder sb, string heading, string prefix, string json, ProjectionResult result)
+    {
+        var session = JsonNode.Parse(json)!.AsObject();
+        // Same ruleMap idea as the single-doc page, just keyed by the prefixed path so it lines
+        // up with this section's own data-path attributes.
+        var ruleMap = result.MappedFields.ToDictionary(f => $"{prefix}.{f.Source}", f => $"{f.Source} → {f.Target}");
+
+        sb.AppendLine($"<h2 style=\"margin-bottom:4px;\">{E(heading)}</h2>");
+
+        if (result.ValidationIssues.Count > 0)
+        {
+            sb.AppendLine("<div class=\"validation-errors\">");
+            sb.AppendLine($"<h2>Validation Issues ({result.ValidationIssues.Count})</h2><ul>");
+            foreach (var issue in result.ValidationIssues)
+                sb.AppendLine($"<li><strong>{E(issue.Target)}</strong> ({E(issue.Source)}): {E(issue.Reason)}</li>");
+            sb.AppendLine("</ul></div>");
+        }
+
+        var rootLeaves = session.Where(p => IsLeaf(p.Value)).ToList();
+        if (rootLeaves.Count > 0)
+        {
+            OpenSection(sb, "Root");
+            OpenTable(sb);
+            foreach (var p in rootLeaves)
+                AppendRow(sb, p.Key, $"{prefix}.{p.Key}", p.Value?.ToString(), ruleMap);
+            CloseTable(sb);
+            CloseSection(sb);
+        }
+
+        foreach (var p in session.Where(p => !IsLeaf(p.Value)))
+            RenderNode(sb, p.Key, p.Value!, $"{prefix}.{p.Key}", ruleMap);
+    }
+
+    private static void AppendBundleFooter(StringBuilder sb, int caseId,
+        int priorAuthSrcDocId, int priorAuthJsonDocId, int treatmentPlanSrcDocId, int treatmentPlanJsonDocId)
+    {
+        sb.AppendLine($$"""
+            <script>
+            const CASE_ID = {{caseId}};
+            const DOCS = [
+              { prefix: 'pa',  sourceDocId: {{priorAuthJsonDocId}},     srcDocId: {{priorAuthSrcDocId}} },
+              { prefix: 'tpa', sourceDocId: {{treatmentPlanJsonDocId}}, srcDocId: {{treatmentPlanSrcDocId}} },
+            ];
+
+            function parsePath(path) {
+              return path.replace(/\[(\d+)\]/g, '.$1').split('.').map(p => /^\d+$/.test(p) ? +p : p);
+            }
+
+            function setByPath(obj, path, value) {
+              const parts = parsePath(path);
+              let cur = obj;
+              for (let i = 0; i < parts.length - 1; i++) {
+                const part = parts[i];
+                const next = parts[i + 1];
+                if (cur[part] == null) cur[part] = typeof next === 'number' ? [] : {};
+                cur = cur[part];
+              }
+              cur[parts[parts.length - 1]] = value;
+            }
+
+            // Splits the page's one flat set of inputs back into one corrected object per
+            // section, by stripping each input's own "pa."/"tpa." prefix before rebuilding paths.
+            function collectCorrected(prefix) {
+              const corrected = {};
+              document.querySelectorAll(`input[data-path^="${prefix}."]`).forEach(input => {
+                setByPath(corrected, input.dataset.path.slice(prefix.length + 1), input.value);
+              });
+              return corrected;
+            }
+
+            function isModified(prefix) {
+              return [...document.querySelectorAll(`input[data-path^="${prefix}."]`)]
+                .some(input => input.value !== input.defaultValue.replace(/[\r\n]/g, ''));
+            }
+
+            async function saveOne(doc) {
+              const corrected = collectCorrected(doc.prefix);
+              const resp = await fetch('/api/saveDocument', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  sourceDocId: doc.sourceDocId,
+                  json: JSON.stringify(corrected, null, 2),
+                  modified: isModified(doc.prefix)
+                })
+              });
+              if (!resp.ok) throw new Error(await resp.text());
+              return await resp.json();
+            }
+
+            const status = document.getElementById('saveStatus');
+
+            function docLink(docId) {
+              return `<a href="/api/getDocument?docId=${docId}" target="_blank" style="color:#1d4ed8;font-weight:bold">${docId} ↗</a>`;
+            }
+
+            document.getElementById('saveBtn').addEventListener('click', async () => {
+              const btn = document.getElementById('saveBtn');
+              btn.disabled = true;
+              status.innerHTML = 'Saving…';
+              status.className = '';
+              try {
+                const results = await Promise.all(DOCS.map(saveOne));
+                status.innerHTML = 'Saved ✓  ' + results.map(r => docLink(r.docId)).join(', ');
+                status.className = 'status-ok';
+              } catch (err) {
+                status.innerHTML = `Error: ${err.message}`;
+                status.className = 'status-err';
+              } finally {
+                btn.disabled = false;
+              }
+            });
+
+            document.getElementById('resolveBtn').addEventListener('click', async () => {
+              const btn = document.getElementById('resolveBtn');
+              btn.disabled = true;
+              status.innerHTML = 'Saving…';
+              status.className = '';
+              try {
+                const [pa, tpa] = await Promise.all(DOCS.map(saveOne));
+                status.innerHTML = `Saved ${docLink(pa.docId)}, ${docLink(tpa.docId)} — Resolving…`;
+                const resp = await fetch('/api/resolvePriorAuthBundle', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    caseId: CASE_ID,
+                    priorAuthFormDocId: pa.docId, priorAuthFormSrcDocId: DOCS[0].srcDocId,
+                    treatmentPlanDocId: tpa.docId, treatmentPlanSrcDocId: DOCS[1].srcDocId
+                  })
+                });
+                if (!resp.ok) throw new Error(await resp.text());
+                const result = await resp.json();
+                status.innerHTML = `Resolved ✓  PriorAuthForm.Id=${result.priorAuthFormId}, TreatmentPlanAuthorization.Id=${result.treatmentPlanAuthorizationId}`;
+                status.className = 'status-ok';
+              } catch (err) {
+                status.innerHTML = `Error: ${err.message}`;
+                status.className = 'status-err';
+              } finally {
+                btn.disabled = false;
+              }
+            });
+            </script>
+            </body></html>
+            """);
+    }
+
     private static void AppendHeader(StringBuilder sb) => sb.AppendLine("""
         <!DOCTYPE html>
         <html lang="en">
@@ -318,6 +523,9 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
                 .src-link   { font-size: 0.82rem; color: #1d4ed8; text-decoration: none; margin-left: 4px; }
                 .src-link:hover { text-decoration: underline; }
                 .section { background: white; border-radius: 8px; padding: 16px; margin-bottom: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+                .form-block { border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+                .form-block-0 { background: #e8f0fe; }
+                .form-block-1 { background: #fef3e2; }
                 .section h2 { margin-top: 0; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
                 .nested { margin-left: 20px; margin-top: 10px; }
                 table { width: 100%; border-collapse: collapse; }
@@ -327,6 +535,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
                 tr.mapped td:nth-child(3) { color: #2a7a2a; font-size: 0.85em; font-family: monospace; }
                 .not-mapped { color: #bbb; }
                 input[type="text"] { width: 100%; padding: 6px; box-sizing: border-box; }
+                input.readonly-field { background: #f3f4f6; color: #888; cursor: not-allowed; }
                 .validation-errors { background: #fff3f3; border: 1px solid #f5c6cb; border-radius: 8px; padding: 16px; margin-bottom: 24px; }
                 .validation-errors h2 { color: #c0392b; margin-top: 0; }
             </style>

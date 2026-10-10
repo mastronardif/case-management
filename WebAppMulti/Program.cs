@@ -195,6 +195,7 @@ app.MapCorqsEndpoints();
 app.MapGetDocumentEndpoint();
 app.MapSaveDocumentEndpoint();
 app.MapResolveDocEndpoint();
+app.MapResolvePriorAuthBundleEndpoint();
 app.MapUploadDocumentEndpoint();
 app.MapSaveWorkflowEndpoint();
 app.MapShortLinkEndpoint();

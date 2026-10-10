@@ -1,5 +1,82 @@
 ﻿
 
+
+python doc_extraction_agent.py upload --case-id 5 --file "C:\Users\mastronardif\Downloads\MA applied-behavior-analysis.pdf" --doc-type PriorAuthForm
+python doc_extraction_agent.py upload --case-id 5 --file "C:\Users\mastronardif\Downloads\MA Reassessement.pdf"   --doc-type TreatmentPlanAuthorization
+
+10-05-2026
+
+Identifiable fields i mean given a list of how do i can identify.
+for example caseiID, patientName, InsuranceName
+
+
+
+----------------
+give me two tables that follow the format below for
+Applied Behavior Analysis  Prior Authorization Form
+Treatment Plan Reauthorization
+
+names
+case.PriorAuthForm
+case.TreatmentPlanAuthorization
+
+
+similar to the below caseId, indentifiable fields, oc it.
+SELECT TOP (1000) [Id]
+      ,[CaseId]
+      ,[AssessmentDate]
+      ,[AssessorName]
+      ,[DiagnosisCode]
+      ,[DocumentJson]
+      ,[CreatedDate]
+      ,[SourceDocumentId]
+      ,[JsonDocumentId]
+  FROM [CaseManagement].[cases].[Assessment]
+------------------------
+I have to docs i want to name, track and valideate.
+
+Applied Behavior Analysis  Prior Authorization Form
+Treatment Plan Reauthorization
+
+----------------------
+10/03/2026
+
+New claim type Treatment plan.  this do gets emailed to the Payer CIgna.  Do you know the process for that.
+-----------------
+
+09/26/2026
+
+I got this from my session note document
+why is the CPT code, and Modifier missing.  Can I get this from another table??
+{
+  "client": {
+    "name": "zzzz yyyyy",
+    "dob": "2021-04-01"
+  },
+  "session": {
+    "date": "2026-09-25",
+    "startTime": "16:00",
+    "endTime": "18:00",
+    "durationHours": "2",
+    "modality": "In Person",
+    "location": "Home"
+  },
+  "service": {
+    "code": "97153"
+  },
+  "sessionSummary": {
+    "narrative": "The learner began the first activity without interfering behavior and participated in planned activities throughout the session.The clinician and learner engaged in a karaoke activity, singing back and forth and together. The clinician paused at intervals to elicit social sharing and eye contact. The learner made eye contact often and looked at the clinician when pauses occurred. The clinician reinforced appropriate gaze during the activity.These interactions targeted initiation of face-to-face gaze and gaze-shift responses. The learner oriented to the clinician during the shared activity. She shifted gaze in response to pauses and social bids across observed opportunities.No barriers to treatment were observed during the session. The clinician documented continuing the plan as written for next steps."
+  },
+  "signature": {
+    "signedBy": "Isabella Bonenfant",
+    "signedByIdentifier": "bonenfanti17"
+  },
+  "sourceDocs": [
+    "4972"
+  ]
+}
+-------------------
+
 09/24/2026
 I need to 
 add column to my session table to make the row identifiable. I have the date, case, time of session currently

@@ -5,7 +5,11 @@ documents the original Session-only version of this flow). --table-name selects 
 active projection + rule to extract against; it defaults to "Session", so every command below
 that omits it behaves exactly as before the script was generalized.
 
-Three commands:
+Four commands:
+
+  upload  Just uploads a source document and prints its docId — nothing else. For a table that
+          doesn't have a projection/rule yet (a brand new entity), this is the "add it to the DB
+          the same way a session note gets added" step on its own, with no extraction attached.
 
   pack    Uploads the source document (or reuses one already uploaded), pulls the target table's
           currently active projection + rule docs, and bundles all three into a local zip — the
@@ -38,6 +42,8 @@ Never commits to the target table itself — Save & Resolve on the review page i
 click, regardless of which command produced the JSON.
 
 Usage:
+    python doc_extraction_agent.py upload --case-id 5 --file "C:\\path\\to\\letter.pdf" --doc-type PriorAuthForm
+
     python doc_extraction_agent.py run --case-id 5 --file "C:\\path\\to\\session.pdf"
     python doc_extraction_agent.py run --case-id 5 --src-doc-id 1626
     python doc_extraction_agent.py run --case-id 5 --src-doc-id 3532 --dest "C:\\temp\\session-5-3532"
@@ -161,6 +167,36 @@ def upload_document(case_id, file_path, doc_type):
         resp = requests.post(f"{API_BASE}/uploadDocument", data=data, files=files, timeout=60, verify=False)
     resp.raise_for_status()
     return resp.json()["docId"]
+
+
+def cmd_upload(args):
+    """Add-to-DB only — no projector rule lookup, so this works for a table that doesn't have
+    one yet. Same /uploadDocument call every other command makes before it goes on to extract;
+    this just stops right after, the way a session note gets added before anyone touches
+    extraction."""
+    doc_id = upload_document(args.case_id, args.file, args.doc_type)
+    print(f"Uploaded {args.file} as DocumentType={args.doc_type!r} for case {args.case_id} -> docId {doc_id}")
+
+
+def cmd_bundle_review(args):
+    """Takes the two already-extracted JSON doc ids from two independent, unchanged single-table
+    `run`/`finish` calls (one for PriorAuthForm, one for TreatmentPlanAuthorization) and renders
+    them as one combined review page instead of two separate ones. Looks up each table's own
+    active rule doc the normal way; doesn't touch cases.PriorAuthForm/TreatmentPlanAuthorization
+    itself — Save & Resolve on the resulting page is still the only thing that does that."""
+    _, pa_rule_id = get_active_projector_rule("PriorAuthForm")
+    _, tpa_rule_id = get_active_projector_rule("TreatmentPlanAuthorization")
+
+    extra_args = [
+        "--prior-auth-doc-id", str(args.prior_auth_doc_id),
+        "--prior-auth-rule-doc-id", str(pa_rule_id),
+        "--prior-auth-src-doc-id", str(args.prior_auth_src_doc_id),
+        "--treatment-plan-doc-id", str(args.treatment_plan_doc_id),
+        "--treatment-plan-rule-doc-id", str(tpa_rule_id),
+        "--treatment-plan-src-doc-id", str(args.treatment_plan_src_doc_id),
+    ]
+    doc_ids = run_pipeline_step(extra_args, args.case_id)
+    print(f"\nCombined review: http://localhost:5173/api/getDocument?docId={doc_ids[0]}")
 
 
 def save_json_document(json_str, name):
@@ -412,6 +448,12 @@ def main():
         p.add_argument("--doc-type", default="SessionSource",
                         help="DocumentType to upload as, when --file is given (default: SessionSource)")
 
+    upload_parser = sub.add_parser("upload", help="Upload a source document only — no projection/rule required")
+    upload_parser.add_argument("--case-id", type=int, required=True)
+    upload_parser.add_argument("--file", required=True, help="Path to the document to upload")
+    upload_parser.add_argument("--doc-type", required=True, help="DocumentType to upload as")
+    upload_parser.set_defaults(func=cmd_upload)
+
     pack_parser = sub.add_parser("pack", help="Upload + bundle [doc, projection, rule] into a zip")
     add_table_arg(pack_parser)
     add_source_args(pack_parser)
@@ -437,6 +479,17 @@ def main():
     local_parser.add_argument("--case-id", type=int, help="If given with --src-doc-id, also runs finish")
     local_parser.add_argument("--src-doc-id", type=int)
     local_parser.set_defaults(func=cmd_local)
+
+    bundle_parser = sub.add_parser("bundle-review",
+        help="Combine two already-extracted PriorAuthForm/TreatmentPlanAuthorization JSONs into one review page")
+    bundle_parser.add_argument("--case-id", type=int, required=True)
+    bundle_parser.add_argument("--prior-auth-doc-id", type=int, required=True,
+        help="Extracted JSON doc id from `run --table-name PriorAuthForm`")
+    bundle_parser.add_argument("--prior-auth-src-doc-id", type=int, required=True)
+    bundle_parser.add_argument("--treatment-plan-doc-id", type=int, required=True,
+        help="Extracted JSON doc id from `run --table-name TreatmentPlanAuthorization`")
+    bundle_parser.add_argument("--treatment-plan-src-doc-id", type=int, required=True)
+    bundle_parser.set_defaults(func=cmd_bundle_review)
 
     args = parser.parse_args()
     if args.command in ("pack", "run") and not args.file and not args.src_doc_id:

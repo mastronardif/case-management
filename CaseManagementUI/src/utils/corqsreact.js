@@ -132,6 +132,26 @@ export const QUERY_MAP = [
     action: "GetClaimQueue",
     routeParams: ["caseId"],
   },
+  {
+    resource: "getPriorAuthFormsForCase",
+    action: "getPriorAuthFormsForCase",
+    routeParams: ["caseId"],
+  },
+  {
+    resource: "getTreatmentPlanAuthorizationsForCase",
+    action: "getTreatmentPlanAuthorizationsForCase",
+    routeParams: ["caseId"],
+  },
+  {
+    resource: "SubmitAuthDocs",
+    action: "SubmitAuthDocs",
+    routeParams: ["caseId", "priorAuthFormId", "treatmentPlanAuthorizationId", "createdBy"],
+  },
+  {
+    resource: "GetAuthDocsQueue",
+    action: "GetAuthDocsQueue",
+    routeParams: ["caseId"],
+  },
 ];
 
 export const DIRECT_ENDPOINTS = [

@@ -88,8 +88,12 @@ def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, tim
 
     # Headless Claude Code scopes file access to its working directory — pass cwd explicitly
     # rather than relying on whatever directory the calling script happens to be run from.
+    # CREATE_NO_WINDOW stops claude.cmd (a cmd.exe shim) from flashing a console window when
+    # called from a console-less parent (e.g. a detached background process); harmless no-op
+    # when called from an already-interactive terminal, since all 3 streams are piped either way.
+    creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
     result = subprocess.run(cmd, input=prompt, capture_output=True, text=True, encoding="utf-8",
-                             errors="replace", timeout=timeout, cwd=cwd)
+                             errors="replace", timeout=timeout, cwd=cwd, creationflags=creationflags)
     if result.returncode != 0:
         raise RuntimeError(f"claude -p failed (exit {result.returncode}):\n{result.stderr}")
 

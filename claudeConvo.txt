@@ -1,6 +1,161 @@
 
 
+10-10-2026
+
+http://localhost:5173/api/getDocument?docId=5082
+--- Projection Review
+I noticed sourceDocs corrected Value.  That field is read only you can NOT change it.
+the correction is a ocr error or something like that.  you can not change root information.  do youknow what i mean????
+Is that something that is easily changed?  I noticed if you change it doesnt getwrtten anyway.
+-------------------
+
+give me the select and delete for 
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT PA.[Id], TP.id, PA.*
+       ,TP.*
+
+  FROM [CaseManagement].[cases].[PriorAuthForm] PA
+  join [CaseManagement].[cases].[TreatmentPlanAuthorization] TP on TP.id=PA.id
+[PriorAuthFormId]
+-----------------------
+sorce to json bob
+the list should have PriorAuthForm, TreatmentPlanAuthorization" not the individual ones.
+This one is a list not a scalar and the file, docId the same.
+Do you understand
+
+--------------------
+
+10-09-2026
+
+not sure what you mean. After i run the job doc to table 
+you should see two links like below
+http://localhost:5173/api/getDocument?docId=5081
+http://localhost:5173/api/getDocument?docId=5082
+-----------------------
+
+YES Should it be a hard error ("PriorAuthForm must come before TreatmentPlanAuthorization in this list")?
+and the saving has to be in a transaction 
+
+----------------------
+the validation thats a foreach shows N tables on the same page
+
+projectin review for src [,]:
+[save correcte JSON] [save ^ resolve] src [a,2]
+T1
+[]
+=-=-=-=-=-=-==-=-
+T2
+[]
+
+WHAT DO YOU THINK??????
+
+
+now the maping the tables thats a for each.
+-------------------
+In the table list combine the two.
+Source Doc → [PriorAuthForm, TreatmentPlanAuthorization].  So coceptually everything works the same.
+Doyou understand i can explain more.
+
+--------------
+I dont want to over complicate this.
+Right now doc_extraction_agent.py operates on one table at a time.
+let me bring you back to the design and my way of thinking.  and you can or shouldh ave this inyour memory.
+
+even though this is 2 docs tey are related because its a bundle. it can have two tables because its two docs.  We have that.
+before it was validate [1]
+now its validate [1,2 ,n, ...]
+DO YOU UNDERSTAND?????????????
+----------------
+
+a bundle n docs.  the review page n review sections. 
+I think two tables that hold the data can stay.
+What do you think?????????
+
+----------------
+make the two rows look like on the same table.  and if I select the radio button they boyth get selected.
+suggest make the first have a checkbox and that selects both.  Since they go as a bundle.
+what do you think.  also can you make the info be on a single line. for exampl provider name.
+
+---------------------
+
+10-07-2026
+the two dos always go together.
+
+add a section to claim page.
+the case manager will select and submit like Claims.
+http://localhost:5173/claim/5
+
+
+------------------
+10-06-2026
+
+------------------
+Before that 
+------------------
+email as a bundle.
+For now mock that and put the files in a folder acccordingly. Currently they send an  email via Goolge email. and they get a email back of the status.
+have the case mgr. manual ly update status (case manager marks it Approved/Denied + enters the auth number).
+------------------
+10-05-2026
+talk about it.  I want your suggestion.
+the two docs TreatmentPlanAuthorization, PriorAuthForm I want to have them similarly do what claims. In this case its email to Evernorth
+
+Later once i figure it out.  I will have the validation from everNorth.  Unless you know it.
+
+
+
+-------------------
+These tow forms a filled out by the case manager.
+form 1 is a form from evernothre.
+form 2 is the treatment plann.
+for now its been filled out alread and i want to keep track of it and show the validation process.
+
+Later on i will have the ability for the case manager to fill out.
+So make it like the session, auth process.
+
+Do you understand.
+
+not pulling a carrier name from letter text.  If its not there what do you mean.  Dont enfer any values.
+ 
+---------------
+
+10-05-2026
+
+I have two new  Entitys [TreatmentPlanAuthorization] [PriorAuthForm]. they are like the others authorization, etc 
+
+they will be added like session note
+and eventual be submited to the payer like i do for the claims.
+
+for now lets do the add doc to db like session note.
+
+
+---------------------
+09/30/6
+---------------
+
+I want to brainstorm about this.  aka talk about it, WHAT DO YOU THINK????
+
+Reminder one of my root design is  projections.
+
+Now i want to create a blank session note, a dummy note, that validates a dummy claim.
+Also I want a session note template that the RBT can populate when doing the session.
+
+new admin feature i want to implament.
+given caseId, projection => blank session note.
+Mostly the header information the the information that will be used to create the claim.
+Other info like what we plan on doing in he session ect will be poulated later.
+
+
+
+-------------------------
 09/29/2026
+
+OK sounds good.  
+I may use a job to import/update the table.  That way they could use a real scheduler in the future.
+----------------
+
+how does the table get populated.  From the calendar admin page.  Or do you want to have data hand inputued ???
+---------------
 
 One new table, cases.SessionSchedule — one row per case, per day-of-week: per caseId and CPTCode, CPTModifier1.  
 A Case can have a parent session, cptCode at a different time.

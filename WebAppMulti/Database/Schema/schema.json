@@ -406,6 +406,44 @@
           "source": "body"
         }
       }
+    },
+
+    {
+      "name": "getPriorAuthFormsForCase",
+      "type": "sql",
+      "sql": "SELECT * FROM cases.PriorAuthForm WHERE CaseId = @CaseId ORDER BY CreatedDate DESC",
+      "route": "/api/corqs/getPriorAuthFormsForCase",
+      "params": {
+        "caseId": { "type": "int", "required": true, "source": "body" }
+      }
+    },
+    {
+      "name": "getTreatmentPlanAuthorizationsForCase",
+      "type": "sql",
+      "sql": "SELECT * FROM cases.TreatmentPlanAuthorization WHERE CaseId = @CaseId ORDER BY CreatedDate DESC",
+      "route": "/api/corqs/getTreatmentPlanAuthorizationsForCase",
+      "params": {
+        "caseId": { "type": "int", "required": true, "source": "body" }
+      }
+    },
+    {
+      "name": "SubmitAuthDocs",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_SubmitAuthDocs",
+      "params": {
+        "caseId": { "type": "int", "required": true, "source": "body" },
+        "priorAuthFormId": { "type": "int", "required": true, "source": "body" },
+        "treatmentPlanAuthorizationId": { "type": "int", "required": true, "source": "body" },
+        "createdBy": { "type": "string", "required": false, "source": "body" }
+      }
+    },
+    {
+      "name": "GetAuthDocsQueue",
+      "type": "storedProcedure",
+      "storedProcedure": "cases.usp_GetAuthDocsQueue",
+      "params": {
+        "caseId": { "type": "int", "required": false, "source": "body" }
+      }
     }
 
   ]

@@ -20,7 +20,10 @@ SHADOW_PATTERN = re.compile(r"\[SHADOW\\(\w+)\]\s*(.*)")
 
 
 def run_streaming(cmd, cwd, key_prefix):
-    """Run cmd, streaming output into the page. Returns the process exit code."""
+    """Run cmd, streaming output into the page. Returns (exit code, captured output lines) —
+    the lines so a caller can pull out whatever it needs (e.g. doc_extraction_agent.py's plain-text
+    "Saved extracted JSON: 1234", which isn't a URL and so isn't one of the clickable links this
+    function already scrapes for display)."""
     st.caption("Command:")
     st.code(" ".join(cmd), language="powershell")
 
@@ -76,4 +79,4 @@ def run_streaming(cmd, cwd, key_prefix):
         st.success("Done.")
     else:
         st.error(f"Exited with code {process.returncode}.")
-    return process.returncode
+    return process.returncode, lines

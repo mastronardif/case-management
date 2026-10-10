@@ -34,6 +34,17 @@ var urlOption       = new Option<string?>("--url",         "URL to shorten (work
 var lifetimeOption  = new Option<int?>   ("--lifetime",    "Hours until a shortened link expires; omit for no expiration (workflow param lifetime)");
 var queueClaimIdOption = new Option<int?>("--queue-claim-id", "Build the 837P claim for one cases.queueClaimsToBeCreated row and exit (in-process replacement for BuildQueueForClearingHouse.ps1)");
 
+// Dedicated to the one PriorAuthForm+TreatmentPlanAuthorization bundle review page — bypasses the
+// DSL entirely, same as --workflow/--queue-claim-id above. doc_extraction_agent.py still runs the
+// two single-table extractions completely unchanged; this just takes the two resulting (json,
+// rule) doc id pairs it already has and renders them as one combined review page.
+var priorAuthDocIdOption          = new Option<int?>("--prior-auth-doc-id",           "Extracted JSON doc for PriorAuthForm");
+var priorAuthRuleDocIdOption      = new Option<int?>("--prior-auth-rule-doc-id",      "Active rule doc for PriorAuthForm");
+var priorAuthSrcDocIdOption       = new Option<int?>("--prior-auth-src-doc-id",       "Original source PDF for PriorAuthForm");
+var treatmentPlanDocIdOption      = new Option<int?>("--treatment-plan-doc-id",       "Extracted JSON doc for TreatmentPlanAuthorization");
+var treatmentPlanRuleDocIdOption  = new Option<int?>("--treatment-plan-rule-doc-id",  "Active rule doc for TreatmentPlanAuthorization");
+var treatmentPlanSrcDocIdOption   = new Option<int?>("--treatment-plan-src-doc-id",   "Original source PDF for TreatmentPlanAuthorization");
+
 var rootCommand = new RootCommand("CaseManagement session billing resolver")
 {
     caseNumberOption,
@@ -51,7 +62,13 @@ var rootCommand = new RootCommand("CaseManagement session billing resolver")
     caseIdOption,
     urlOption,
     lifetimeOption,
-    queueClaimIdOption
+    queueClaimIdOption,
+    priorAuthDocIdOption,
+    priorAuthRuleDocIdOption,
+    priorAuthSrcDocIdOption,
+    treatmentPlanDocIdOption,
+    treatmentPlanRuleDocIdOption,
+    treatmentPlanSrcDocIdOption
 };
 
 // Command manifest — add entries here as new jobs are built
@@ -96,6 +113,8 @@ bool                             saveManifestHtml       = false;
 string?                          selectedExpression     = null;
 Dictionary<string, JsonElement>? workflowParamOverrides = null;
 int?                             selectedQueueClaimId   = null;
+(int CaseId, int PriorAuthDocId, int PriorAuthRuleDocId, int? PriorAuthSrcDocId,
+ int TreatmentPlanDocId, int TreatmentPlanRuleDocId, int? TreatmentPlanSrcDocId)? selectedPriorAuthBundle = null;
 
 void HandleRoot(InvocationContext context)
 {
@@ -115,6 +134,12 @@ void HandleRoot(InvocationContext context)
     var url           = context.ParseResult.GetValueForOption(urlOption);
     var lifetime      = context.ParseResult.GetValueForOption(lifetimeOption);
     var queueClaimId  = context.ParseResult.GetValueForOption(queueClaimIdOption);
+    var priorAuthDocId          = context.ParseResult.GetValueForOption(priorAuthDocIdOption);
+    var priorAuthRuleDocId      = context.ParseResult.GetValueForOption(priorAuthRuleDocIdOption);
+    var priorAuthSrcDocId       = context.ParseResult.GetValueForOption(priorAuthSrcDocIdOption);
+    var treatmentPlanDocId      = context.ParseResult.GetValueForOption(treatmentPlanDocIdOption);
+    var treatmentPlanRuleDocId  = context.ParseResult.GetValueForOption(treatmentPlanRuleDocIdOption);
+    var treatmentPlanSrcDocId   = context.ParseResult.GetValueForOption(treatmentPlanSrcDocIdOption);
 
     if (list)
     {
@@ -126,6 +151,19 @@ void HandleRoot(InvocationContext context)
     if (queueClaimId is not null)
     {
         selectedQueueClaimId = queueClaimId;
+        runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
+        return;
+    }
+
+    if (priorAuthDocId is not null && treatmentPlanDocId is not null)
+    {
+        if (priorAuthRuleDocId is null || treatmentPlanRuleDocId is null || caseId is null)
+            throw new InvalidOperationException(
+                "--prior-auth-doc-id/--treatment-plan-doc-id also need --prior-auth-rule-doc-id, "
+                + "--treatment-plan-rule-doc-id and --case-id.");
+
+        selectedPriorAuthBundle = (caseId.Value, priorAuthDocId.Value, priorAuthRuleDocId.Value, priorAuthSrcDocId,
+                                    treatmentPlanDocId.Value, treatmentPlanRuleDocId.Value, treatmentPlanSrcDocId);
         runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
         return;
     }
@@ -359,6 +397,40 @@ if (selectedQueueClaimId is not null)
         Log.CloseAndFlush();
         return;
     }
+    return;
+}
+
+if (selectedPriorAuthBundle is not null)
+{
+    var b    = selectedPriorAuthBundle.Value;
+    var ct   = CancellationToken.None;
+    var repo = host.Services.GetRequiredService<ICaseManagementRepository>();
+    var bundleProcessor = host.Services.GetRequiredService<ProjectProcessor>();
+
+    var paJsonDoc  = await repo.GetDocumentAsync(new DocumentContext(DocumentId: b.PriorAuthDocId), ct)
+        ?? throw new InvalidOperationException($"PriorAuthForm JSON doc {b.PriorAuthDocId} not found");
+    var paRuleDoc  = await repo.GetDocumentAsync(new DocumentContext(DocumentId: b.PriorAuthRuleDocId), ct)
+        ?? throw new InvalidOperationException($"PriorAuthForm rule doc {b.PriorAuthRuleDocId} not found");
+    var tpaJsonDoc = await repo.GetDocumentAsync(new DocumentContext(DocumentId: b.TreatmentPlanDocId), ct)
+        ?? throw new InvalidOperationException($"TreatmentPlanAuthorization JSON doc {b.TreatmentPlanDocId} not found");
+    var tpaRuleDoc = await repo.GetDocumentAsync(new DocumentContext(DocumentId: b.TreatmentPlanRuleDocId), ct)
+        ?? throw new InvalidOperationException($"TreatmentPlanAuthorization rule doc {b.TreatmentPlanRuleDocId} not found");
+
+    var paResult  = bundleProcessor.Project(paJsonDoc.Content, paRuleDoc.Content);
+    var tpaResult = bundleProcessor.Project(tpaJsonDoc.Content, tpaRuleDoc.Content);
+
+    var html = bundleProcessor.RenderPriorAuthBundleReviewHtml(
+        paJsonDoc.Content, paRuleDoc.Content, paResult, b.PriorAuthSrcDocId ?? 0, b.PriorAuthDocId,
+        tpaJsonDoc.Content, tpaRuleDoc.Content, tpaResult, b.TreatmentPlanSrcDocId ?? 0, b.TreatmentPlanDocId,
+        b.CaseId);
+
+    var docId = await repo.SaveDocumentAsync(new DocumentContext(CaseId: b.CaseId),
+        html, "PriorAuthBundleReview", "prior-auth-bundle-review.html", "text/html", ct);
+
+    Console.WriteLine();
+    Console.WriteLine("── Outputs ──────────────────────────────────────────────────────────");
+    Console.WriteLine($"  docId {docId,-6}  http://localhost:5173/api/getDocument?docId={docId}");
+    Console.WriteLine();
     return;
 }
 

@@ -17,6 +17,74 @@ const DISPLAY_SECTIONS = [
   { key: "practiceConfiguration", label: "Practice Configuration" },
 ];
 
+function DocLink({ id, navigate }) {
+  if (id == null) return null;
+  return (
+    <button onClick={() => navigate(`/docviewer/${id}`)} className="text-blue-600 underline hover:text-blue-800">
+      {id}
+    </button>
+  );
+}
+
+// The two docs always go together — one PriorAuthForm row paired with one TreatmentPlanAuthorization
+// row, same bundle a submission needs. Both lists come back sorted newest-first, so pairing by
+// position lines up the PA and TPA that were actually filled out together; one checkbox per pair
+// selects both ids at once instead of two separate single-select tables.
+function BundleSelectTable({ paRows, tpaRows, selectedPaId, onSelect, navigate, emptyMessage }) {
+  const pairCount = Math.min(paRows.length, tpaRows.length);
+  if (pairCount === 0) return <p className="px-4 py-2 text-gray-500">{emptyMessage}</p>;
+
+  const pairs = Array.from({ length: pairCount }, (_, i) => ({ pa: paRows[i], tpa: tpaRows[i] }));
+  const nowrap = "border border-gray-300 px-2 py-1 whitespace-nowrap";
+
+  return (
+    <>
+      <table className="w-full border-collapse border border-gray-300">
+        <thead>
+          <tr>
+            <th className={`${nowrap} bg-gray-100`}></th>
+            <th className={`${nowrap} text-left bg-gray-100`}>Patient</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>DOB</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>Member ID</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>Diagnosis</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>PA Provider</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>TPA Provider (NPI)</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>Auth #</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>PA Doc</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>TPA Doc</th>
+          </tr>
+        </thead>
+        <tbody>
+          {pairs.map(({ pa, tpa }, i) => (
+            <tr key={pa.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+              <td className={nowrap}>
+                <input type="checkbox" checked={selectedPaId === pa.id} onChange={() => onSelect(pa, tpa)} />
+              </td>
+              <td className={nowrap}>{formatCellValue(pa.patientName) ?? ""}</td>
+              <td className={nowrap}>{formatCellValue(pa.patientDOB) ?? ""}</td>
+              <td className={nowrap}>{formatCellValue(pa.memberId) ?? ""}</td>
+              <td className={nowrap}>{formatCellValue(pa.diagnosisCode) ?? ""}</td>
+              <td className={nowrap}>{formatCellValue(pa.providerName) ?? ""}</td>
+              <td className={nowrap}>
+                {formatCellValue(tpa.providerName) ?? ""}{tpa.providerNPI ? ` (${tpa.providerNPI})` : ""}
+              </td>
+              <td className={nowrap}>{formatCellValue(pa.authorizationNumber) ?? ""}</td>
+              <td className={nowrap}><DocLink id={pa.sourceDocumentId} navigate={navigate} /></td>
+              <td className={nowrap}><DocLink id={tpa.sourceDocumentId} navigate={navigate} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {paRows.length !== tpaRows.length && (
+        <p className="px-4 py-2 text-amber-600 text-sm">
+          {paRows.length} Prior Auth Form(s) but {tpaRows.length} Treatment Plan Authorization(s) —
+          only the first {pairCount} paired by most-recent are shown as bundles.
+        </p>
+      )}
+    </>
+  );
+}
+
 export default function ClaimPage() {
   const { caseId } = useParams();
   const navigate = useNavigate();
@@ -29,6 +97,16 @@ export default function ClaimPage() {
   const [submitResult, setSubmitResult] = useState(null);
   const [queueRows, setQueueRows] = useState([]);
   const [queueLoading, setQueueLoading] = useState(false);
+
+  const [paForms, setPaForms] = useState([]);
+  const [tpaForms, setTpaForms] = useState([]);
+  const [authDocsLoading, setAuthDocsLoading] = useState(false);
+  const [selectedPaId, setSelectedPaId] = useState(null);
+  const [selectedTpaId, setSelectedTpaId] = useState(null);
+  const [authSubmitting, setAuthSubmitting] = useState(false);
+  const [authSubmitResult, setAuthSubmitResult] = useState(null);
+  const [authQueueRows, setAuthQueueRows] = useState([]);
+  const [authQueueLoading, setAuthQueueLoading] = useState(false);
 
   const fetchInfo = useCallback(async () => {
     setLoading(true);
@@ -65,10 +143,72 @@ export default function ClaimPage() {
     }
   }, [caseId]);
 
+  const fetchAuthDocs = useCallback(async () => {
+    setAuthDocsLoading(true);
+    try {
+      const [paRes, tpaRes] = await Promise.all([
+        api.post("/api/corqs", { action: "getPriorAuthFormsForCase", params: { caseId: Number(caseId) } }),
+        api.post("/api/corqs", { action: "getTreatmentPlanAuthorizationsForCase", params: { caseId: Number(caseId) } }),
+      ]);
+      setPaForms(paRes.data?.data ?? []);
+      setTpaForms(tpaRes.data?.data ?? []);
+      setSelectedPaId(null);
+      setSelectedTpaId(null);
+    } catch (err) {
+      console.error("Failed to fetch prior auth docs:", err);
+      setPaForms([]);
+      setTpaForms([]);
+    } finally {
+      setAuthDocsLoading(false);
+    }
+  }, [caseId]);
+
+  const fetchAuthQueue = useCallback(async () => {
+    setAuthQueueLoading(true);
+    try {
+      const res = await api.post("/api/corqs", {
+        action: "GetAuthDocsQueue",
+        params: { caseId: Number(caseId) },
+      });
+      setAuthQueueRows(res.data?.data ?? []);
+    } catch (err) {
+      console.error("Failed to fetch auth docs queue:", err);
+      setAuthQueueRows([]);
+    } finally {
+      setAuthQueueLoading(false);
+    }
+  }, [caseId]);
+
   useEffect(() => {
     fetchInfo();
     fetchQueue();
-  }, [fetchInfo, fetchQueue]);
+    fetchAuthDocs();
+    fetchAuthQueue();
+  }, [fetchInfo, fetchQueue, fetchAuthDocs, fetchAuthQueue]);
+
+  const handleSubmitAuthDocs = async () => {
+    if (!selectedPaId || !selectedTpaId) return;
+    setAuthSubmitting(true);
+    setAuthSubmitResult(null);
+    try {
+      const res = await api.post("/api/corqs", {
+        action: "SubmitAuthDocs",
+        params: {
+          caseId: Number(caseId),
+          priorAuthFormId: selectedPaId,
+          treatmentPlanAuthorizationId: selectedTpaId,
+        },
+      });
+      const queueSubmitId = res.data?.data?.[0]?.queueSubmitId;
+      setAuthSubmitResult({ ok: true, queueSubmitId });
+      fetchAuthQueue();
+    } catch (err) {
+      console.error("Failed to submit auth docs:", err);
+      setAuthSubmitResult({ ok: false });
+    } finally {
+      setAuthSubmitting(false);
+    }
+  };
 
   const toggleSession = (jsonDocumentId) => {
     setSelectedIds((prev) => {
@@ -230,6 +370,60 @@ export default function ClaimPage() {
             rows={enrichDocIdLinks(queueRows, navigate)}
             emptyMessage="Nothing queued."
             tableActions={[{ label: queueLoading ? "Loading..." : "Reload", onClick: fetchQueue }]}
+          />
+        </div>
+
+        <div className="rounded shadow bg-white border border-gray-200 mb-6">
+          <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-2">
+            <h2 className="font-semibold text-lg">Prior Authorization Submission — Case {caseId}</h2>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={fetchAuthDocs}
+                className="px-4 py-1 h-9 text-sm rounded-md border border-gray-300 bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                {authDocsLoading ? "Loading..." : "Reload"}
+              </button>
+              <button
+                onClick={handleSubmitAuthDocs}
+                disabled={!selectedPaId || !selectedTpaId || authSubmitting}
+                className="px-4 py-1 h-9 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {authSubmitting ? "Submitting..." : "Submit to Evernorth (bundle)"}
+              </button>
+            </div>
+          </div>
+
+          {authSubmitResult?.ok && (
+            <p className="text-green-600 px-4 py-2">
+              Submitted — queue id {authSubmitResult.queueSubmitId}. Status starts Pending until the
+              (mocked) send step runs.
+            </p>
+          )}
+          {authSubmitResult && !authSubmitResult.ok && (
+            <p className="text-red-500 px-4 py-2">Submit failed — see console.</p>
+          )}
+
+          <div className="overflow-x-auto">
+            <p className="px-4 pt-2 pb-2 text-sm text-gray-500">
+              Select a bundle to submit — the two docs always go together, so one checkbox picks both.
+            </p>
+            <BundleSelectTable
+              paRows={paForms}
+              tpaRows={tpaForms}
+              selectedPaId={selectedPaId}
+              onSelect={(pa, tpa) => { setSelectedPaId(pa.id); setSelectedTpaId(tpa.id); }}
+              navigate={navigate}
+              emptyMessage={authDocsLoading ? "Loading..." : "No Prior Auth / Treatment Plan docs for this case."}
+            />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <XyzTablePage
+            title="Queue — Auth Docs To Be Submitted"
+            rows={enrichDocIdLinks(authQueueRows, navigate)}
+            emptyMessage="Nothing queued."
+            tableActions={[{ label: authQueueLoading ? "Loading..." : "Reload", onClick: fetchAuthQueue }]}
           />
         </div>
 
