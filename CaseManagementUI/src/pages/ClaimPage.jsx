@@ -43,6 +43,8 @@ function BundleSelectTable({ paRows, tpaRows, selectedPaId, onSelect, navigate, 
         <thead>
           <tr>
             <th className={`${nowrap} bg-gray-100`}></th>
+            <th className={`${nowrap} text-left bg-gray-100`}>PA Id</th>
+            <th className={`${nowrap} text-left bg-gray-100`}>TPA Id</th>
             <th className={`${nowrap} text-left bg-gray-100`}>Patient</th>
             <th className={`${nowrap} text-left bg-gray-100`}>DOB</th>
             <th className={`${nowrap} text-left bg-gray-100`}>Member ID</th>
@@ -60,6 +62,8 @@ function BundleSelectTable({ paRows, tpaRows, selectedPaId, onSelect, navigate, 
               <td className={nowrap}>
                 <input type="checkbox" checked={selectedPaId === pa.id} onChange={() => onSelect(pa, tpa)} />
               </td>
+              <td className={nowrap}>{pa.id}</td>
+              <td className={nowrap}>{tpa.id}</td>
               <td className={nowrap}>{formatCellValue(pa.patientName) ?? ""}</td>
               <td className={nowrap}>{formatCellValue(pa.patientDOB) ?? ""}</td>
               <td className={nowrap}>{formatCellValue(pa.memberId) ?? ""}</td>
@@ -201,6 +205,7 @@ export default function ClaimPage() {
       });
       const queueSubmitId = res.data?.data?.[0]?.queueSubmitId;
       setAuthSubmitResult({ ok: true, queueSubmitId });
+      fetchAuthDocs();
       fetchAuthQueue();
     } catch (err) {
       console.error("Failed to submit auth docs:", err);
@@ -375,7 +380,12 @@ export default function ClaimPage() {
 
         <div className="rounded shadow bg-white border border-gray-200 mb-6">
           <div className="flex items-center justify-between bg-gray-50 border-b border-gray-200 px-4 py-2">
-            <h2 className="font-semibold text-lg">Prior Authorization Submission — Case {caseId}</h2>
+            <h2 className="font-semibold text-lg">
+              Prior Authorization Submission{" "}
+              <span className="text-gray-400 font-normal text-base">(PriorAuthForm, TreatmentPlanAuthorization)</span>
+              {" "}— Case {caseId}{" "}
+              <span className="text-gray-400 font-normal">({Math.min(paForms.length, tpaForms.length)})</span>
+            </h2>
             <div className="flex items-center gap-2">
               <button
                 onClick={fetchAuthDocs}

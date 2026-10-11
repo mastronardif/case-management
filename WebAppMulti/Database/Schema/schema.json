@@ -411,7 +411,7 @@
     {
       "name": "getPriorAuthFormsForCase",
       "type": "sql",
-      "sql": "SELECT * FROM cases.PriorAuthForm WHERE CaseId = @CaseId ORDER BY CreatedDate DESC",
+      "sql": "SELECT * FROM cases.PriorAuthForm pa WHERE CaseId = @CaseId AND NOT EXISTS (SELECT 1 FROM cases.queueAuthDocsToBeSubmitted q WHERE q.PriorAuthFormId = pa.Id) ORDER BY CreatedDate DESC",
       "route": "/api/corqs/getPriorAuthFormsForCase",
       "params": {
         "caseId": { "type": "int", "required": true, "source": "body" }
@@ -420,7 +420,7 @@
     {
       "name": "getTreatmentPlanAuthorizationsForCase",
       "type": "sql",
-      "sql": "SELECT * FROM cases.TreatmentPlanAuthorization WHERE CaseId = @CaseId ORDER BY CreatedDate DESC",
+      "sql": "SELECT * FROM cases.TreatmentPlanAuthorization tpa WHERE CaseId = @CaseId AND NOT EXISTS (SELECT 1 FROM cases.queueAuthDocsToBeSubmitted q WHERE q.TreatmentPlanAuthorizationId = tpa.Id) ORDER BY CreatedDate DESC",
       "route": "/api/corqs/getTreatmentPlanAuthorizationsForCase",
       "params": {
         "caseId": { "type": "int", "required": true, "source": "body" }

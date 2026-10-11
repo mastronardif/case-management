@@ -43,6 +43,15 @@ JOBS = [
         "status": "in progress",
     },
     {
+        "id": "evernorth",
+        "title": "Evernorth — Prior Auth Submission",
+        "description": "Bundle a case's PriorAuthForm + TreatmentPlanAuthorization and send them "
+                       "to Evernorth, then record the Approved/Denied outcome. Send is a local-folder "
+                       "mock for now; resolve is always a manual update.",
+        "page": "jobs_ui/pages/evernorth.py",
+        "status": "in progress",
+    },
+    {
         "id": "tbd",
         "title": "TBD",
         "description": "Reserved for the next job.",
