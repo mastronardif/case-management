@@ -65,8 +65,34 @@ is_bundle = isinstance(table_sel, tuple)
 st.title(f"Source Doc → {table_label(table_sel)} JSON")
 st.caption("Front end for doc_extraction_agent.py — runs the real CLI, nothing reimplemented here.")
 
+# Nothing gets created here — clicking "New Case" only stages the intent (session_state), never
+# touches the DB. Case doesn't exist until Save & Resolve on the review page actually confirms a
+# real document (usp_NewCase_Assessment_Resolve) — no planning ahead, no case without a doc behind it.
+is_new_case = st.session_state.get("staged_new_case", False) and table_sel == "Assessment"
+
+with st.expander("➕ New case instead?", expanded=is_new_case):
+    if table_sel != "Assessment":
+        st.caption("Only available for Table = Assessment right now.")
+    elif is_new_case:
+        staged_title = st.session_state.get("staged_new_case_title") or "Unknown Case"
+        st.success(f'Staged — Save & Resolve on the review page will create the Case (title: "{staged_title}").')
+        if st.button("Cancel"):
+            st.session_state["staged_new_case"] = False
+            st.rerun()
+    else:
+        st.text_input('Patient / case name (optional — defaults to "Unknown Case")', key="new_case_title_input")
+        if st.button("New Case"):
+            st.session_state["staged_new_case"] = True
+            st.session_state["staged_new_case_title"] = st.session_state.get("new_case_title_input", "")
+            st.rerun()
+
 with st.form("run_form"):
-    case_id = st.number_input("Case ID", min_value=1, step=1, value=None, placeholder="e.g. 7")
+    if is_new_case:
+        st.caption("Case ID: will be created on Save & Resolve — no case yet.")
+        case_id = None
+    else:
+        case_id = st.number_input("Case ID", min_value=1, step=1, value=None, placeholder="e.g. 7",
+                                   key="case_id_input")
 
     if is_bundle:
         # One File/Doc ID pair per table in the bundle — a list of inputs, not one, matching the
@@ -89,7 +115,23 @@ with st.form("run_form"):
     submitted = st.form_submit_button("Run")
 
 if submitted:
-    if not case_id:
+    if is_new_case:
+        if not file_path and not src_doc_id:
+            st.error("Provide either File or Doc ID.")
+        elif file_path and src_doc_id:
+            st.error("Provide only one of File or Doc ID, not both.")
+        else:
+            cmd = [sys.executable, "-u", str(AGENT_SCRIPT), "new-case", "--table-name", table_sel]
+            cmd += ["--src-doc-id", str(int(src_doc_id))] if src_doc_id else ["--file", file_path]
+            if st.session_state.get("staged_new_case_title"):
+                cmd += ["--case-title", st.session_state["staged_new_case_title"]]
+            if dest:
+                cmd += ["--dest", dest]
+            code, _ = run_streaming(cmd, cwd=SCRIPT_DIR, key_prefix="source_doc_new_case")
+            if code == 0:
+                st.session_state["staged_new_case"] = False  # un-stage once it's actually run
+
+    elif not case_id:
         st.error("Case ID is required.")
 
     elif is_bundle:

@@ -161,10 +161,19 @@ def write_source_file(work_dir, source_ext, source_bytes):
 
 
 def upload_document(case_id, file_path, doc_type):
+    # case_id=None means no case yet (brand-new patient, see cmd_new_case) — the field has to be
+    # genuinely absent from the form, not sent as the literal string "None", so the endpoint's own
+    # IsNullOrWhiteSpace check treats it as "no case" rather than failing to parse it as an int.
     with open(file_path, "rb") as f:
         files = {"file": (os.path.basename(file_path), f)}
-        data = {"caseId": case_id, "documentType": doc_type}
+        data = {"documentType": doc_type}
+        if case_id is not None:
+            data["caseId"] = case_id
         resp = requests.post(f"{API_BASE}/uploadDocument", data=data, files=files, timeout=60, verify=False)
+    if not resp.ok:
+        # raise_for_status() alone drops the response body — this is where the real reason
+        # (e.g. "CaseId 111 does not exist.") actually lives, so print it before failing.
+        print(f"Upload failed ({resp.status_code}): {resp.text}", file=sys.stderr)
     resp.raise_for_status()
     return resp.json()["docId"]
 
@@ -422,6 +431,86 @@ def finish(case_id, src_doc_id, extracted, projection_doc_id, table_name):
     print(f"This agent does not commit to cases.{table_name} on its own.")
 
 
+def cmd_new_case(args):
+    """Onboard a brand-new patient from one document — no CaseId exists anywhere until Save &
+    Resolve on the resulting review page creates one (usp_NewCase_Assessment_Resolve). Deliberately
+    not built on cmd_run/finish/resolve_source_and_context — every one of those assumes a real case
+    already exists, which is exactly the thing this command is for when it doesn't yet."""
+    if args.src_doc_id:
+        src_doc_id = args.src_doc_id
+        print(f"Using existing source doc {src_doc_id}")
+    else:
+        print(f"Uploading {args.file} (no case yet)...")
+        src_doc_id = upload_document(None, args.file, args.table_name)
+        print(f"  source doc: {src_doc_id}")
+
+    source_bytes, source_content_type = get_document(src_doc_id)
+    source_ext = detect_source_ext(source_bytes, source_content_type)
+
+    projection_doc_id, rule_doc_id = get_active_projector_rule(args.table_name)
+    print(f"{args.table_name} projection/rule: {projection_doc_id} / {rule_doc_id}")
+    projection_bytes, _ = get_document(projection_doc_id)
+    rule_bytes, _ = get_document(rule_doc_id)
+
+    keep_dir = bool(args.dest)
+    work_dir = args.dest or tempfile.mkdtemp(prefix="doc_extraction_agent_")
+    if keep_dir:
+        os.makedirs(work_dir, exist_ok=True)
+    try:
+        write_source_file(work_dir, source_ext, source_bytes)
+        with open(os.path.join(work_dir, "projection.json"), "wb") as f:
+            f.write(projection_bytes)
+        with open(os.path.join(work_dir, "rule.json"), "wb") as f:
+            f.write(rule_bytes)
+        if keep_dir:
+            print(f"Working files: {work_dir}")
+
+        prompt = build_extraction_prompt(work_dir, args.table_name)
+        print("Calling `claude -p` for extraction (uses your Claude Code subscription auth)...")
+        result_text = ask_claude(prompt, cwd=work_dir)
+        try:
+            extracted = extract_json_object(result_text)
+        except json.JSONDecodeError as ex:
+            sys.exit(f"claude -p did not return valid JSON: {ex}\n---\n{result_text}")
+        print(json.dumps(extracted, indent=2))
+
+        if keep_dir:
+            with open(os.path.join(work_dir, "extracted.json"), "w", encoding="utf-8") as f:
+                json.dump(extracted, f, indent=2)
+    finally:
+        if not keep_dir:
+            shutil.rmtree(work_dir, ignore_errors=True)
+
+    # Same provenance convention finish() uses — survives even if this doc is later looked at
+    # in isolation.
+    extracted["sourceDocs"] = [src_doc_id]
+    json_doc_id = save_json_document(json.dumps(extracted, indent=2), f"{args.table_name.lower()}-note-ai")
+    print(f"Saved extracted JSON: {json_doc_id}")
+
+    # Same convention finish() uses for the (V) step's second operand — projection_doc_id, not
+    # rule_doc_id (the two "fields" arrays are identical; projection.json is just what's actually
+    # passed through consistently everywhere else in this script).
+    cmd = ["dotnet", "run", "--", "--new-case", "--table-name", args.table_name,
+           "--json-doc-id", str(json_doc_id), "--rule-doc-id", str(projection_doc_id),
+           "--src-doc-id", str(src_doc_id)]
+    if args.case_title:
+        cmd += ["--new-case-title", args.case_title]
+    print(f"[SHADOW\\dotnet] cmd: {' '.join(cmd)}", file=sys.stderr, flush=True)
+    result = subprocess.run(cmd, cwd=PROJECT_DIR, capture_output=True, text=True)
+    print(f"[SHADOW\\dotnet] done: exit={result.returncode}", file=sys.stderr, flush=True)
+    output = result.stdout + result.stderr
+    print(output)
+    doc_ids = [int(m) for m in re.findall(r"docId\s+(\d+)\s", output)]
+    if not doc_ids:
+        raise RuntimeError("No output docId found — see log above.")
+
+    print("\n=== Review before committing — Save & Resolve creates the Case ===")
+    for doc_id in doc_ids:
+        print(f"  http://localhost:5173/api/getDocument?docId={doc_id}")
+    print("Nothing exists in cases.Case yet. Open the link above and click 'Save & Resolve "
+          "(New Case)' when it looks right — that's the one moment the Case actually gets created.")
+
+
 def cmd_finish(args):
     with open(args.json_file, "r", encoding="utf-8") as f:
         extracted = json.load(f)  # fail fast here if the JSON file wasn't valid
@@ -445,8 +534,9 @@ def main():
         p.add_argument("--case-id", type=int, required=True)
         p.add_argument("--file", help="Path to the raw source document to upload")
         p.add_argument("--src-doc-id", type=int, help="Already-uploaded source document id")
-        p.add_argument("--doc-type", default="SessionSource",
-                        help="DocumentType to upload as, when --file is given (default: SessionSource)")
+        p.add_argument("--doc-type", default=None,
+                        help="DocumentType to upload as, when --file is given "
+                             "(default: SessionSource for Session, else the table name itself)")
 
     upload_parser = sub.add_parser("upload", help="Upload a source document only — no projection/rule required")
     upload_parser.add_argument("--case-id", type=int, required=True)
@@ -491,9 +581,28 @@ def main():
     bundle_parser.add_argument("--treatment-plan-src-doc-id", type=int, required=True)
     bundle_parser.set_defaults(func=cmd_bundle_review)
 
+    new_case_parser = sub.add_parser("new-case",
+        help="Onboard a brand-new patient from one document — no CaseId required; "
+             "Save & Resolve on the resulting review page creates the Case")
+    new_case_parser.add_argument("--table-name", default="Assessment",
+        help="Target [cases] table (default: Assessment)")
+    new_case_parser.add_argument("--file", help="Path to the source document to upload")
+    new_case_parser.add_argument("--src-doc-id", type=int, help="Already-uploaded source document id")
+    new_case_parser.add_argument("--case-title", help="Optional Case title (defaults to \"Unknown Case\")")
+    new_case_parser.add_argument("--dest", help="Folder to keep working files in (optional)")
+    new_case_parser.set_defaults(func=cmd_new_case)
+
     args = parser.parse_args()
-    if args.command in ("pack", "run") and not args.file and not args.src_doc_id:
+    if args.command in ("pack", "run", "new-case") and not args.file and not args.src_doc_id:
         parser.error("Provide either --file or --src-doc-id")
+
+    # --doc-type defaults to the table name itself (Assessment -> Assessment, Authorization ->
+    # Authorization, ...) unless explicitly overridden — only Session keeps the historical
+    # "SessionSource" name. Deriving this here, once, means every caller gets it right even if it
+    # forgets to pass --doc-type explicitly (that's exactly how case 11 ended up with a Document
+    # row tagged "SessionSource" for what was really an Assessment doc).
+    if args.command in ("pack", "run") and args.doc_type is None:
+        args.doc_type = "SessionSource" if args.table_name == "Session" else args.table_name
 
     args.func(args)
 

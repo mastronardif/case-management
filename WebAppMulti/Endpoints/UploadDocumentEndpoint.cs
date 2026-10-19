@@ -33,8 +33,18 @@ public static class UploadDocumentEndpoint
             if (file is null || file.Length == 0)
                 return Results.BadRequest("No file provided");
 
-            if (!int.TryParse(form["caseId"], out var caseId) || caseId <= 0)
-                return Results.BadRequest("caseId is required");
+            // caseId is optional — cases.Document.CaseId is genuinely nullable (3400+ existing rows
+            // already sit at NULL, mostly catalog/projection docs). A document for a brand-new
+            // patient is uploaded the same way, with no case yet — Case doesn't get created until
+            // a dedicated resolve step confirms it (see usp_NewCase_Assessment_Resolve), never here.
+            var caseIdRaw = form["caseId"].FirstOrDefault();
+            int? caseId = null;
+            if (!string.IsNullOrWhiteSpace(caseIdRaw))
+            {
+                if (!int.TryParse(caseIdRaw, out var parsedCaseId) || parsedCaseId <= 0)
+                    return Results.BadRequest("caseId, if given, must be a positive integer");
+                caseId = parsedCaseId;
+            }
 
             int? sessionId = int.TryParse(form["sessionId"], out var sid) ? sid : null;
             var documentType = form["documentType"].FirstOrDefault() ?? Path.GetFileNameWithoutExtension(file.FileName);
@@ -48,11 +58,23 @@ public static class UploadDocumentEndpoint
             await using var conn = new SqlConnection(connStr);
             await conn.OpenAsync();
 
+            // cases.Document.CaseId has a real FK to cases.Case — without this check, a bogus
+            // caseId doesn't fail here, it fails inside usp_Document_Save's INSERT with an
+            // unhandled FK-violation exception, which ASP.NET Core turns into a bare 500 with no
+            // body (by design, so it doesn't leak SQL internals) — the caller sees nothing useful.
+            if (caseId is not null)
+            {
+                using var existsCmd = new SqlCommand("SELECT 1 FROM cases.[Case] WHERE CaseId = @CaseId", conn);
+                existsCmd.Parameters.AddWithValue("@CaseId", caseId);
+                if (await existsCmd.ExecuteScalarAsync() is null)
+                    return Results.BadRequest($"CaseId {caseId} does not exist.");
+            }
+
             using var cmd = new SqlCommand("[cases].[usp_Document_Save]", conn)
             {
                 CommandType = CommandType.StoredProcedure
             };
-            cmd.Parameters.AddWithValue("@CaseId",       caseId);
+            cmd.Parameters.AddWithValue("@CaseId",       (object?)caseId ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@SessionId",    (object?)sessionId ?? DBNull.Value);
             cmd.Parameters.AddWithValue("@WorkbookQId",  DBNull.Value);
             cmd.Parameters.AddWithValue("@CaseNumber",   DBNull.Value);

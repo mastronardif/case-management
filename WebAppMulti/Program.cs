@@ -196,6 +196,7 @@ app.MapGetDocumentEndpoint();
 app.MapSaveDocumentEndpoint();
 app.MapResolveDocEndpoint();
 app.MapResolvePriorAuthBundleEndpoint();
+app.MapResolveNewCaseAssessmentEndpoint();
 app.MapUploadDocumentEndpoint();
 app.MapSaveWorkflowEndpoint();
 app.MapShortLinkEndpoint();

@@ -45,6 +45,15 @@ var treatmentPlanDocIdOption      = new Option<int?>("--treatment-plan-doc-id", 
 var treatmentPlanRuleDocIdOption  = new Option<int?>("--treatment-plan-rule-doc-id",  "Active rule doc for TreatmentPlanAuthorization");
 var treatmentPlanSrcDocIdOption   = new Option<int?>("--treatment-plan-src-doc-id",   "Original source PDF for TreatmentPlanAuthorization");
 
+// Dedicated to onboarding a brand-new patient from an Assessment doc — no CaseId exists yet, by
+// design (see feedback_validate_takes_a_list / project_priorauth_treatmentplan_evernorth sibling:
+// nothing gets created ahead of a real resolved document). Reuses the existing --json-doc-id/
+// --rule-doc-id/--src-doc-id/--table-name options above — just a different bypass flag, same as
+// --prior-auth-bundle, so Case/Document-backfill/Assessment all land in usp_NewCase_Assessment_Resolve's
+// one transaction when the page's Save & Resolve is clicked, never before.
+var newCaseOption      = new Option<bool>("--new-case", "Render a review page with no CaseId yet; Save & Resolve on the page creates the Case");
+var newCaseTitleOption = new Option<string?>("--new-case-title", "Optional Case title to bake into the --new-case review page");
+
 var rootCommand = new RootCommand("CaseManagement session billing resolver")
 {
     caseNumberOption,
@@ -68,7 +77,9 @@ var rootCommand = new RootCommand("CaseManagement session billing resolver")
     priorAuthSrcDocIdOption,
     treatmentPlanDocIdOption,
     treatmentPlanRuleDocIdOption,
-    treatmentPlanSrcDocIdOption
+    treatmentPlanSrcDocIdOption,
+    newCaseOption,
+    newCaseTitleOption
 };
 
 // Command manifest — add entries here as new jobs are built
@@ -115,6 +126,7 @@ Dictionary<string, JsonElement>? workflowParamOverrides = null;
 int?                             selectedQueueClaimId   = null;
 (int CaseId, int PriorAuthDocId, int PriorAuthRuleDocId, int? PriorAuthSrcDocId,
  int TreatmentPlanDocId, int TreatmentPlanRuleDocId, int? TreatmentPlanSrcDocId)? selectedPriorAuthBundle = null;
+(int JsonDocId, int RuleDocId, int SrcDocId, string TableName, string? Title)? selectedNewCase = null;
 
 void HandleRoot(InvocationContext context)
 {
@@ -140,6 +152,8 @@ void HandleRoot(InvocationContext context)
     var treatmentPlanDocId      = context.ParseResult.GetValueForOption(treatmentPlanDocIdOption);
     var treatmentPlanRuleDocId  = context.ParseResult.GetValueForOption(treatmentPlanRuleDocIdOption);
     var treatmentPlanSrcDocId   = context.ParseResult.GetValueForOption(treatmentPlanSrcDocIdOption);
+    var newCase       = context.ParseResult.GetValueForOption(newCaseOption);
+    var newCaseTitle  = context.ParseResult.GetValueForOption(newCaseTitleOption);
 
     if (list)
     {
@@ -164,6 +178,17 @@ void HandleRoot(InvocationContext context)
 
         selectedPriorAuthBundle = (caseId.Value, priorAuthDocId.Value, priorAuthRuleDocId.Value, priorAuthSrcDocId,
                                     treatmentPlanDocId.Value, treatmentPlanRuleDocId.Value, treatmentPlanSrcDocId);
+        runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
+        return;
+    }
+
+    if (newCase)
+    {
+        if (jsonDocId is null || ruleDocId is null || srcDocId is null || tableName is null)
+            throw new InvalidOperationException(
+                "--new-case requires --json-doc-id, --rule-doc-id, --src-doc-id and --table-name.");
+
+        selectedNewCase = (jsonDocId.Value, ruleDocId.Value, srcDocId.Value, tableName, newCaseTitle);
         runOptions = new BillingRunOptions(BillingRunMode.SingleRun);
         return;
     }
@@ -426,6 +451,35 @@ if (selectedPriorAuthBundle is not null)
 
     var docId = await repo.SaveDocumentAsync(new DocumentContext(CaseId: b.CaseId),
         html, "PriorAuthBundleReview", "prior-auth-bundle-review.html", "text/html", ct);
+
+    Console.WriteLine();
+    Console.WriteLine("── Outputs ──────────────────────────────────────────────────────────");
+    Console.WriteLine($"  docId {docId,-6}  http://localhost:5173/api/getDocument?docId={docId}");
+    Console.WriteLine();
+    return;
+}
+
+if (selectedNewCase is not null)
+{
+    var n    = selectedNewCase.Value;
+    var ct   = CancellationToken.None;
+    var repo = host.Services.GetRequiredService<ICaseManagementRepository>();
+    var newCaseProcessor = host.Services.GetRequiredService<ProjectProcessor>();
+
+    var jsonDoc = await repo.GetDocumentAsync(new DocumentContext(DocumentId: n.JsonDocId), ct)
+        ?? throw new InvalidOperationException($"JSON doc {n.JsonDocId} not found");
+    var ruleDoc = await repo.GetDocumentAsync(new DocumentContext(DocumentId: n.RuleDocId), ct)
+        ?? throw new InvalidOperationException($"Rule doc {n.RuleDocId} not found");
+
+    var result = newCaseProcessor.Project(jsonDoc.Content, ruleDoc.Content);
+    var html = newCaseProcessor.RenderReviewHtml(jsonDoc.Content, ruleDoc.Content, result,
+        n.JsonDocId, n.TableName, resolveParamCaseId: null, resolveParamSrcDocId: n.SrcDocId,
+        newCase: true, newCaseTitle: n.Title);
+
+    // No CaseId to tag this review page's own Document row with either — same rule, nothing
+    // gets a case until Save & Resolve actually creates one.
+    var docId = await repo.SaveDocumentAsync(new DocumentContext(),
+        html, "newCaseReview", "new-case-review.html", "text/html", ct);
 
     Console.WriteLine();
     Console.WriteLine("── Outputs ──────────────────────────────────────────────────────────");

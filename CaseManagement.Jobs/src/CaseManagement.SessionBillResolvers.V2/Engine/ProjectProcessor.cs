@@ -141,7 +141,8 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
     // sourceDocId is embedded in the page so the Save button knows which doc to update.
     // tableName/resolveParamCaseId: when present, a "Save & Resolve" button calls the generic resolve SP directly from the page.
     public string RenderReviewHtml(string sessionJson, string ruleJson, ProjectionResult result,
-        int sourceDocId = 0, string? tableName = null, int? resolveParamCaseId = null, int? resolveParamSrcDocId = null)
+        int sourceDocId = 0, string? tableName = null, int? resolveParamCaseId = null, int? resolveParamSrcDocId = null,
+        bool newCase = false, string? newCaseTitle = null)
     {
         var session = JsonNode.Parse(sessionJson)!.AsObject();
 
@@ -152,11 +153,15 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
 
         var sb = new StringBuilder();
         AppendHeader(sb);
-        sb.AppendLine("<h1>--- Projection Review</h1>");
+        var titleSuffix = newCase ? " — New Case" : resolveParamCaseId is not null ? $" (caseId {resolveParamCaseId})" : "";
+        sb.AppendLine($"<h1>--- Projection Review{titleSuffix}</h1>");
         sb.AppendLine("<div class=\"save-bar\">");
         sb.AppendLine("  <button id=\"saveBtn\" class=\"save-btn\">Save Corrected JSON</button>");
-        if (tableName is not null && resolveParamCaseId is not null)
-            sb.AppendLine("  <button id=\"resolveBtn\" class=\"save-btn resolve-btn\">Save &amp; Resolve</button>");
+        // newCase: there's no CaseId yet by design — Case doesn't exist until this button is
+        // clicked (see usp_NewCase_Assessment_Resolve) — so the usual "need an existing caseId"
+        // gate doesn't apply here; the button still shows, it just resolves a different way.
+        if (tableName is not null && (resolveParamCaseId is not null || newCase))
+            sb.AppendLine($"  <button id=\"resolveBtn\" class=\"save-btn resolve-btn\">Save &amp; Resolve{(newCase ? " (New Case)" : "")}</button>");
         if (resolveParamSrcDocId is not null)
             sb.AppendLine($"  <a href=\"/api/getDocument?docId={resolveParamSrcDocId}\" target=\"_blank\" class=\"src-link\">src {resolveParamSrcDocId} ↗</a>");
         sb.AppendLine("  <span id=\"saveStatus\"></span>");
@@ -186,7 +191,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         foreach (var p in session.Where(p => !IsLeaf(p.Value)))
             RenderNode(sb, p.Key, p.Value!, p.Key, ruleMap);
 
-        AppendFooter(sb, sourceDocId, tableName, resolveParamCaseId, resolveParamSrcDocId);
+        AppendFooter(sb, sourceDocId, tableName, resolveParamCaseId, resolveParamSrcDocId, newCase, newCaseTitle);
         return sb.ToString();
     }
 
@@ -332,7 +337,7 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
     {
         var sb = new StringBuilder();
         AppendHeader(sb);
-        sb.AppendLine("<h1>--- Projection Review — Prior Auth Bundle</h1>");
+        sb.AppendLine($"<h1>--- Projection Review — Prior Auth Bundle (caseId {caseId})</h1>");
         sb.AppendLine("<div class=\"save-bar\">");
         sb.AppendLine("  <button id=\"saveBtn\" class=\"save-btn\">Save Corrected JSON</button>");
         sb.AppendLine("  <button id=\"resolveBtn\" class=\"save-btn resolve-btn\">Save &amp; Resolve</button>");
@@ -544,11 +549,14 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
         """);
 
     private static void AppendFooter(StringBuilder sb, int sourceDocId,
-        string? tableName = null, int? caseId = null, int? srcDocId = null)
+        string? tableName = null, int? caseId = null, int? srcDocId = null,
+        bool newCase = false, string? newCaseTitle = null)
     {
-        var jsTableName = tableName is not null ? "'" + tableName + "'"     : "null";
-        var jsCaseId    = caseId    is not null ? caseId.Value.ToString()   : "null";
-        var jsSrcDocId  = srcDocId  is not null ? srcDocId.Value.ToString() : "null";
+        var jsTableName    = tableName    is not null ? "'" + tableName + "'"     : "null";
+        var jsCaseId       = caseId       is not null ? caseId.Value.ToString()   : "null";
+        var jsSrcDocId     = srcDocId     is not null ? srcDocId.Value.ToString() : "null";
+        var jsNewCase      = newCase ? "true" : "false";
+        var jsNewCaseTitle = newCaseTitle is not null ? "'" + newCaseTitle.Replace("'", "\\'") + "'" : "null";
 
         sb.AppendLine($$"""
             <script>
@@ -556,6 +564,8 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
             const TABLE_NAME = {{jsTableName}};
             const CASE_ID    = {{jsCaseId}};
             const SRC_DOC_ID = {{jsSrcDocId}};
+            const NEW_CASE = {{jsNewCase}};
+            const NEW_CASE_TITLE = {{jsNewCaseTitle}};
 
             function parsePath(path) {
               return path.replace(/\[(\d+)\]/g, '.$1').split('.').map(p => /^\d+$/.test(p) ? +p : p);
@@ -637,13 +647,27 @@ public class ProjectProcessor(ICaseManagementRepository repository, ILogger<Proj
                 try {
                   const { docId, fileName } = await saveJson();
                   status.innerHTML = `Saved ${fileName ?? ''} ${docLink(docId)} — Resolving…`;
-                  const resp = await fetch('/api/resolveDoc', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ docId, tableName: TABLE_NAME, caseId: CASE_ID, srcDocId: SRC_DOC_ID })
-                  });
+                  // NEW_CASE: no CaseId exists yet, by design — this one call is what creates
+                  // Case, backfills the source doc's CaseId, and resolves Assessment, all in one
+                  // transaction (usp_NewCase_Assessment_Resolve). Never used when CASE_ID is set.
+                  const resp = NEW_CASE
+                    ? await fetch('/api/resolveNewCaseAssessment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sourceDocumentId: SRC_DOC_ID, assessmentJsonDocId: docId, caseTitle: NEW_CASE_TITLE })
+                      })
+                    : await fetch('/api/resolveDoc', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ docId, tableName: TABLE_NAME, caseId: CASE_ID, srcDocId: SRC_DOC_ID })
+                      });
                   if (!resp.ok) throw new Error(await resp.text());
-                  status.innerHTML = `Resolved ✓  ${fileName ?? ''} docId: ${docLink(docId)}`;
+                  if (NEW_CASE) {
+                    const result = await resp.json();
+                    status.innerHTML = `Resolved ✓  CaseId=${result.caseId} (${result.caseNumber}), AssessmentId=${result.assessmentId}`;
+                  } else {
+                    status.innerHTML = `Resolved ✓  ${fileName ?? ''} docId: ${docLink(docId)}`;
+                  }
                   status.className = 'status-ok';
                 } catch (err) {
                   status.innerHTML = `Error: ${err.message}`;

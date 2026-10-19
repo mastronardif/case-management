@@ -43,6 +43,15 @@ JOBS = [
         "status": "in progress",
     },
     {
+        "id": "new_patient",
+        "title": "New Patient",
+        "description": "Checklist of the documents a new patient needs — Intake, Insurance, "
+                       "Authorization, Prior Auth, Treatment Plan. Not a form yet; shows the case "
+                       "manager what to send, Frank still gets them into the system by hand.",
+        "page": "jobs_ui/pages/new_patient.py",
+        "status": "in progress",
+    },
+    {
         "id": "evernorth",
         "title": "Evernorth — Prior Auth Submission",
         "description": "Bundle a case's PriorAuthForm + TreatmentPlanAuthorization and send them "
