@@ -25,16 +25,30 @@ function toRelativePath(value) {
   }
 }
 
+// A per-action route like schema.json's "/api/corqs/searchCases" is real metadata (used to
+// generate corqsreact.js/OpenAPI docs), but nothing in the app ever calls it directly — every
+// real call POSTs {action, params} to the bare dispatcher. A stored urlCases/url value that's a
+// sub-path of it is always a mistake (e.g. pasted from schema.json instead of /api/corqs itself),
+// and since there's no real GET handler for it, hitting it 404s/405s confusingly instead of
+// cleanly — so collapse it back to the known-good dispatcher path rather than leave it stuck.
+function collapseStaleCorqsSubPath(value) {
+  return value && value.startsWith("/api/corqs/") ? "/api/corqs" : value;
+}
+
+function normalizeStoredUrl(value) {
+  return collapseStaleCorqsSubPath(toRelativePath(value));
+}
+
 export function GlobalProvider({ children }) {
   const { auth, logout } = useAuth();
 
-  const [urlCases,     setUrlCasesRaw]     = useState(toRelativePath(localStorage.getItem("urlCases")     || DEFAULTS.urlCases));
-  const [urlTemplates, setUrlTemplatesRaw] = useState(toRelativePath(localStorage.getItem("urlTemplates") || DEFAULTS.urlTemplates));
-  const [url,          setUrlRaw]          = useState(toRelativePath(localStorage.getItem("url")          || DEFAULTS.url));
+  const [urlCases,     setUrlCasesRaw]     = useState(normalizeStoredUrl(localStorage.getItem("urlCases")     || DEFAULTS.urlCases));
+  const [urlTemplates, setUrlTemplatesRaw] = useState(normalizeStoredUrl(localStorage.getItem("urlTemplates") || DEFAULTS.urlTemplates));
+  const [url,          setUrlRaw]          = useState(normalizeStoredUrl(localStorage.getItem("url")          || DEFAULTS.url));
 
-  const setUrlCases     = (v) => setUrlCasesRaw(toRelativePath(v));
-  const setUrlTemplates = (v) => setUrlTemplatesRaw(toRelativePath(v));
-  const setUrl          = (v) => setUrlRaw(toRelativePath(v));
+  const setUrlCases     = (v) => setUrlCasesRaw(normalizeStoredUrl(v));
+  const setUrlTemplates = (v) => setUrlTemplatesRaw(normalizeStoredUrl(v));
+  const setUrl          = (v) => setUrlRaw(normalizeStoredUrl(v));
 
   const [body, setBody] = useState(() => {
     const saved = localStorage.getItem("body");
