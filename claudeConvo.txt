@@ -1,6 +1,31 @@
 
+10-18-2026
+ ca you show the Case ID if appropriate ????????
+http://localhost:5173/api/getDocument?docId=5175
+
+--- Projection Review (caseId 14)
+--------------------
+python doc_extraction_agent.py run --table-name Authorization --case-id 13 --doc-type Authorization --file "C:\Users\mastronardif\Downloads\aliana castillo secure.horizonblue.com_CareAffiliate_Authorizations_wf8c16151d84144dad80af84f594856ff9_PrintRecord_28116058.pdf"
 
 
+-----------------------
+http://localhost:5173/workbooks/11
+why title and documentTYpe _______\
+I would like it to say Assessment.  That is where we doc sourced it from.
+maybe its the default. Can you fix it.
+
+-------------------
+ew case 
+If I  File new case
+Case ID
+-------------------
+I want [create case] to be {New Case]
+
+Case not to be created until the hit [save resolve].  I want the data to have integritty.
+Memory - things get created from a authorized doc. If you have a doc you have a case.  No planning ahead yet.  When you get here you have a case.
+Do you know what i mean????
+ 
+------------------
 
 10-17-2026
 

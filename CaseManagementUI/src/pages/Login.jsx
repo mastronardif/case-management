@@ -13,8 +13,10 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      //https://localhost:7009/api/Auth/login
-      const res = await api.post("https://localhost:7009/api/Auth/login", { username, password });
+      // Relative, not absolute — same reason as GlobalContext's urlCases/url/urlTemplates:
+      // an absolute "localhost" URL only ever means the device that typed it, not whichever
+      // device actually loads this page. Goes through Vite's own /api proxy either way.
+      const res = await api.post("/api/Auth/login", { username, password });
 
       // Suppose your API returns: { token: "...", user: {...}, roles: [...] }
       const { token, user, roles } = res.data;

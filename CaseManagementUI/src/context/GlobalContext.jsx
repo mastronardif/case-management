@@ -9,12 +9,32 @@ export const DEFAULTS = {
   url:          "/api/corqs",
 };
 
+// These URLs are free-text editable on the (Experimental) Settings page and persisted per-device
+// in localStorage. A value typed/pasted with a scheme+host baked in (e.g. "https://localhost:44344/
+// api/corqs") "works" on whichever device saved it, since that device's own localhost means itself
+// — then silently breaks on every other device loading the same saved value, since localhost means
+// something different there. Stripping to just path+search makes that failure mode impossible: an
+// already-relative value passes through unchanged, an absolute one degrades to its path.
+function toRelativePath(value) {
+  if (!value) return value;
+  try {
+    const u = new URL(value, window.location.origin);
+    return u.pathname + u.search;
+  } catch {
+    return value;
+  }
+}
+
 export function GlobalProvider({ children }) {
   const { auth, logout } = useAuth();
 
-  const [urlCases,     setUrlCases]     = useState(localStorage.getItem("urlCases")     || DEFAULTS.urlCases);
-  const [urlTemplates, setUrlTemplates] = useState(localStorage.getItem("urlTemplates") || DEFAULTS.urlTemplates);
-  const [url,          setUrl]          = useState(localStorage.getItem("url")          || DEFAULTS.url);
+  const [urlCases,     setUrlCasesRaw]     = useState(toRelativePath(localStorage.getItem("urlCases")     || DEFAULTS.urlCases));
+  const [urlTemplates, setUrlTemplatesRaw] = useState(toRelativePath(localStorage.getItem("urlTemplates") || DEFAULTS.urlTemplates));
+  const [url,          setUrlRaw]          = useState(toRelativePath(localStorage.getItem("url")          || DEFAULTS.url));
+
+  const setUrlCases     = (v) => setUrlCasesRaw(toRelativePath(v));
+  const setUrlTemplates = (v) => setUrlTemplatesRaw(toRelativePath(v));
+  const setUrl          = (v) => setUrlRaw(toRelativePath(v));
 
   const [body, setBody] = useState(() => {
     const saved = localStorage.getItem("body");
