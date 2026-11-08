@@ -21,11 +21,13 @@ Usage (standalone):
 Usage (from another script):
     from ask_claude import ask_claude
     answer = ask_claude(prompt_text, allowed_tools="Read")
+    answer = ask_claude(prompt_text, tools="")   # genuinely no tools at all (see --tools below)
 
-Every call is logged to claude_usage_log.jsonl (next to this file) — one JSON line per call
-with cost/token/duration figures straight from claude -p's own --output-format json response.
-This is the single funnel every headless call in this Scripts folder goes through, so the log
-is a global usage record, not just for this script. See claude_usage_report.py to summarize it.
+Every call is logged to claude_usage_log.jsonl (next to this file, or ASK_CLAUDE_LOG_FILE if
+set) — one JSON line per call with cost/token/duration figures straight from claude -p's own
+--output-format json response. This is the single funnel every headless call in this Scripts
+folder goes through, so the log is a global usage record, not just for this script. See
+claude_usage_report.py to summarize it.
 """
 
 import argparse
@@ -37,7 +39,10 @@ import subprocess
 import sys
 from datetime import datetime, timezone
 
-LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "claude_usage_log.jsonl")
+LOG_FILE = os.environ.get(
+    "ASK_CLAUDE_LOG_FILE",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "claude_usage_log.jsonl"),
+)
 
 
 def _log_usage(wrapper, cwd, caller):
@@ -67,13 +72,20 @@ def _log_usage(wrapper, cwd, caller):
 
 
 def ask_claude(prompt, allowed_tools="Read", permission_mode=None, cwd=None, timeout=300, caller=None,
-                resume=None, return_meta=False):
+                resume=None, return_meta=False, tools=None):
     # On Windows, "claude" is an npm-installed .cmd/.ps1 shim, not a plain executable —
     # subprocess needs the resolved path (with extension) to launch it without shell=True.
     claude_exe = shutil.which("claude.cmd") or shutil.which("claude") or "claude"
     cmd = [claude_exe, "-p", "--output-format", "json"]
     if allowed_tools:
         cmd += ["--allowedTools", allowed_tools]
+    # --tools is a different flag from --allowedTools: --tools "" genuinely disables every
+    # built-in tool, where --allowedTools "" is an empty allow-list that this wrapper's own
+    # `if allowed_tools:` check above skips, leaving claude -p's own tool defaults in effect.
+    # `tools` defaults to None (flag omitted, behavior unchanged) rather than "" so existing
+    # callers that don't pass it see no change at all.
+    if tools is not None:
+        cmd += ["--tools", tools]
     if permission_mode:
         cmd += ["--permission-mode", permission_mode]
     if resume:
@@ -131,6 +143,10 @@ def main():
     parser.add_argument("--var", action="append", metavar="name=value",
                          help="Substitute {name} in the prompt with value; repeatable")
     parser.add_argument("--allowed-tools", default="Read", help="Comma-separated tool names to allow (default: Read)")
+    parser.add_argument("--tools", default=None,
+                         help='Built-in tool set, forwarded to claude -p --tools. Use "" to disable '
+                              'every tool (unlike --allowed-tools "", this actually takes effect). '
+                              "Default: unset, i.e. claude's own default.")
     parser.add_argument("--permission-mode", default=None,
                          choices=["default", "acceptEdits", "plan", "auto", "dontAsk", "bypassPermissions"],
                          help="Forwarded to claude -p --permission-mode (default: unset, i.e. claude's own default)")
@@ -148,8 +164,8 @@ def main():
     if not prompt:
         sys.exit("No prompt provided")
 
-    print(ask_claude(prompt, allowed_tools=args.allowed_tools, permission_mode=args.permission_mode,
-                      cwd=args.cwd, timeout=args.timeout))
+    print(ask_claude(prompt, allowed_tools=args.allowed_tools, tools=args.tools,
+                      permission_mode=args.permission_mode, cwd=args.cwd, timeout=args.timeout))
 
 
 if __name__ == "__main__":

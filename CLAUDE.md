@@ -96,3 +96,29 @@ Reports and generated documents are self-contained HTML files. They are saved to
 The JWT secret in `appsettings.json` is a placeholder (`super_secret_long_key_change_this`) — not production-ready. `DummyAuthStore.cs` is also dev-only.
 
 Dev SQL Server: `LAPTOP-JIH94VS9\SQLEXPRESS`, database `CaseManagement`, Windows trusted auth.
+
+## Related projects
+
+The owner moves between these projects in one conversation, so decisions in one often apply to
+the others.
+
+- **OpenHost:** `C:\FxM\Dev\OpenHost` (the project is in its nested `OpenHost/` folder). It's the
+  owner's platform for running their apps with Docker and Nginx on the HP laptop HPEliteBook01
+  (`frank@192.168.1.45`, Ubuntu). The next plan, as of 2026-11-05, is to run Case Management
+  there with a mock database. OpenHost's safety rules apply: no personal files or real client
+  data on the server, and secrets go in `.env` files that stay on the server.
+- **JoeSchedule:** `C:\FxM\Dev\JoeSchedule\NewJoeschedule`, a Node app already running on OpenHost.
+  Its AI button will call this repo's `ask_claude.py` through the AI gateway.
+- **AI gateway (planned, not built):** a small REST service, likely `Scripts/ask_api.py`, that
+  wraps `ask_claude.py` (`POST /ask {prompt, caller, mode}`) for other apps to call over a private
+  Docker network.
+  - **`agent` mode:** `claude -p` on the subscription, with `CLAUDE_CODE_OAUTH_TOKEN`.
+  - **`quick` mode, later:** the Anthropic API with a key.
+  - **Shared key:** in a header between the apps.
+  - **No tools on web asks:** `ask_claude.py` needs a real tools-off option for this, because
+    `--allowed-tools ""` still leaves the read-only tools on.
+  - **Usage log:** its location should become configurable.
+
+  `ask_claude.py` stays the one copy, and its command line and `ask_claude()` function are what
+  the other callers use, so don't change or remove them. The full design is in JoeSchedule's
+  `PLAN.md`, under "AI button".

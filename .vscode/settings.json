@@ -1,0 +1,10 @@
+{
+  "window.title": "${rootName} ➡️ ${activeEditorShort}${dirty}",
+    "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#026430",
+    "titleBar.activeForeground": "#ffffff",
+    "activityBar.background": "#431407",
+    "statusBar.background": "#7c2d12",
+    "window.activeBorder": "#9a3412"
+  }
+}

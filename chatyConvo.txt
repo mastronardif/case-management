@@ -1,8 +1,15 @@
-﻿
+﻿10/22/26
 
+suggestions on a Behavior Plan Builder
+i have the following docs.  Session notes, assessement, parent interview and myself the BCBA
+
+--------------------------
+Downloads
+Source Doc →  JSON
+http://localhost:8501/source_doc_to_json
 
 python doc_extraction_agent.py upload --case-id 5 --file "C:\Users\mastronardif\Downloads\MA applied-behavior-analysis.pdf" --doc-type PriorAuthForm
-python doc_extraction_agent.py upload --case-id 5 --file "C:\Users\mastronardif\Downloads\MA Reassessement.pdf"   --doc-type TreatmentPlanAuthorization
+python doc_extraction_agent.py upload --case-id 5 --file "C:\Users\mastronardif\Downloads\MA Reassessement.pdf"             --doc-type TreatmentPlanAuthorization
 
 10-05-2026
 

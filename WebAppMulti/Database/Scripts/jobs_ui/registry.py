@@ -43,6 +43,14 @@ JOBS = [
         "status": "in progress",
     },
     {
+        "id": "behavior_plan",
+        "title": "Behavior Plan & Progress Reports",
+        "description": "Plan Builder -> Sheet Generator -> Data & Graphing -> Progress Report. "
+                       "Layer 1 flow skeleton only — no real schema, AI, or persistence yet.",
+        "page": "jobs_ui/pages/behavior_plan.py",
+        "status": "planned",
+    },
+    {
         "id": "new_patient",
         "title": "New Patient",
         "description": "Checklist of the documents a new patient needs — Intake, Insurance, "

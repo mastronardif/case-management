@@ -1,4 +1,73 @@
 
+
+
+10-22-2026
+1. Behavior Plan Builder
+Lets do the AI from sesson notes, etc for a case givee me a behaviour plan.
+we need to discurss. 
+here is a treatment plan
+http://localhost:5173/docviewer/5049
+
+Existing Case / Client
+|
+Behavior Plan
+|
+Plan Version
+Source evidence, Targets and goals , Interventions, 
+|
+Generated sheets → Collected data → Progress report 
+
+
+
+------------------
+10-20-2026
+make a sample kinda like the below. 
+see C:\Users\mastronardif\Downloads\ABA_ABC_Data_Collection_Sheet.xlsx
+store at DB: ____________.
+samples, bx
+populated. cses.
+what do you think????
+
+--------------------
+
+10-19-2026
+
+---------------------------
+
+1. stag 1. plan builder I want AI-drafting and the BCBA can modify / guide.
+2. Sheets get filled out by hand.  Data entry is to labourish I can scan that in like the session Notes.
+3. Charting static embedd or part of the spredsheet. Bc
+4. Where it lives to day no where.   I am thinking a Streamlit job.  Sees DB cases and DB bx.
+
+more ways to look at this.  This is a real use of AI and my humane in the middle.
+I think for now we can start in layers.
+1. flow.
+2. dummy reports
+later
+Humane in the middle. save to db.
+
+There is a lot to do and im ot sre if you will halucinate and over complicate it.
+Do you agree / understand the approach????
+s
+-------------
+four stages:
+1. Behavior Plan Builder: A BCBA creates and approves the plan, including measurable goals and data-collection methods.
+2. Sheet Generator: The system generates client-specific fillable forms, printable PDFs, and eventually phone/tablet entry screens.
+3. Data and Graphing: Store each observation as structured data, then automatically plot trends by date, behavior, goal, and intervention phase.
+4. Progress Report: Generate a professional PDF with the plan summary, graphs, baseline/current comparisons, goal status, and a BCBA review/sign-off section.
+One important design decision: keep the behavior plan, data collected, and generated report as separate records. That way, a revised plan doesn't overwrite historical data, and every report can show which plan version and observations it used.
+
+AI can help draft a plan from BCBA-provided information and summarize trends, but the BCBA should approve the clinical plan and conclusions. Graphs and measurements should be calculated deterministically from the collected data.
+
+The differentiator for your product could be simplicity: enter the behavior plan once, generate the exact sheets staff need, collect the data, and produce a polished report without manually rebuilding spreadsheets and charts.
+_________
+
+I want ot add another feature.  A lousely coupled item.
+Similar to the jobs. What do you think and how can i do this in a more foral way???????
+
+---------------
+
+
 10-18-2026
  ca you show the Case ID if appropriate ????????
 http://localhost:5173/api/getDocument?docId=5175

@@ -1,0 +1,56 @@
+
+ Forest Green (Great for live/production apps)
+{
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#1b4332",
+    "titleBar.activeForeground": "#ffffff",
+    "activityBar.background": "#081c15",
+    "statusBar.background": "#1b4332",
+    "window.activeBorder": "#2d6a4f"
+  }
+}
+
+
+Ocean Blue (Great for frontend/client folders)
+{
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#005f73",
+    "titleBar.activeForeground": "#ffffff",
+    "activityBar.background": "#0a2f35",
+    "statusBar.background": "#005f73",
+    "window.activeBorder": "#0a9396"
+  }
+}
+
+ Dark Crimson / Rust (Great for backend/API folders)
+ {
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#6b21a8",
+    "titleBar.activeForeground": "#ffffff",
+    "activityBar.background": "#4c1d95",
+    "statusBar.background": "#6b21a8",
+    "window.activeBorder": "#7c3aed"
+  }
+}
+
+Burnt Orange (Great for testing/staging environments)
+{
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#7c2d12",
+    "titleBar.activeForeground": "#ffffff",
+    "activityBar.background": "#431407",
+    "statusBar.background": "#7c2d12",
+    "window.activeBorder": "#9a3412"
+  }
+}
+
+Charcoal & Gold (A clean, sleek premium look)
+{
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#1e1e24",
+    "titleBar.activeForeground": "#ffffff",
+    "activityBar.background": "#111115",
+    "statusBar.background": "#1e1e24",
+    "window.activeBorder": "#d4af37"
+  }
+}
